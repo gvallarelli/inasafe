@@ -85,8 +85,7 @@ make test</pre>
 </div>
 <p>This will run all the regression tests and also highlight any code issues.
 Note that first time the tests are run they will pull 250MB of test data from
-our subversion repository (If asked for a password just hit Enter). See further
-notes on running tests below.</p>
+our git repository. See further notes on running tests below.</p>
 <p>To run the plugin start QGIS and enable it from the
 <em class="menuselection">Plugins ‣ Manage Plugins</em> menu.</p>
 <p>If this doesn&#8217;t work see section towards the end of this document about
@@ -103,7 +102,7 @@ technologies (python, Qt4, PyQt4, QGIS). In addition, the following are needed
 on your machine in order to work effectively with the code base:</p>
 <ul class="simple">
 <li>git</li>
-<li>subversion</li>
+<li>rsync</li>
 <li>pep8</li>
 <li>nosetests (with coverage plugin)</li>
 <li>python-numpy (for numerical computations)</li>
@@ -116,7 +115,7 @@ on your machine in order to work effectively with the code base:</p>
 <li>python-nosexcover and python-coverage (code coverage reporting)</li>
 </ul>
 <p>On an ubuntu system you can install these requirements using apt:</p>
-<div class="highlight-python"><pre>sudo apt-get install git subversion pep8 python-nose python-coverage \
+<div class="highlight-python"><pre>sudo apt-get install git rsync pep8 python-nose python-coverage \
 python-gdal python-numpy python-sphinx pyqt4-dev-tools pyflakes \
 sudo pip install cloud-sptheme python-nosexcover</pre>
 </div>

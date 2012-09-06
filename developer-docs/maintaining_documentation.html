@@ -244,11 +244,10 @@ git push origin gh-pages</pre>
 <p>See also: <a class="reference external" href="http://help.github.com/articles/creating-project-pages-manually">http://help.github.com/articles/creating-project-pages-manually</a></p>
 <p>Deployment of the site requires the following steps:</p>
 <ul class="simple">
-<li>Regenerate the docs using make docs in the root dir of a master branch
-checkout of InaSAFE.</li>
-<li>Copy all files from <tt class="file docutils literal"><span class="pre">docs/build/html</span></tt> into a separate local repo
-checked out in the gh-pages branch</li>
-<li>Commit those changes and push</li>
+<li>Update the documentation as needed</li>
+<li>Commit/push to master</li>
+<li>Run scripts/update_website.sh</li>
+<li>Apidoc are build automatically, this might update/create/remove some files. If it is the case, the script will ask you if you wish to commit those changes to master. Normally you should.</li>
 <li>Wait approximately 10 minutes</li>
 </ul>
 <p>After this the changes should be visible here <a class="reference external" href="http://aifdr.github.com/inasafe/">http://aifdr.github.com/inasafe/</a>
