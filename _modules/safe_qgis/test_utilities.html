@@ -76,6 +76,7 @@
 <span class="kn">from</span> <span class="nn">safe_qgis.utilities_test</span> <span class="kn">import</span> <span class="n">unitTestDataPath</span>
 <span class="kn">from</span> <span class="nn">safe_qgis.utilities_test</span> <span class="kn">import</span> <span class="p">(</span><span class="n">loadLayer</span><span class="p">,</span> <span class="n">getQgisTestApp</span><span class="p">)</span>
 <span class="kn">from</span> <span class="nn">safe_qgis.exceptions</span> <span class="kn">import</span> <span class="n">StyleError</span>
+<span class="kn">from</span> <span class="nn">safe.common.exceptions</span> <span class="kn">import</span> <span class="n">VerificationError</span>
 
 <span class="n">QGISAPP</span><span class="p">,</span> <span class="n">CANVAS</span><span class="p">,</span> <span class="n">IFACE</span><span class="p">,</span> <span class="n">PARENT</span> <span class="o">=</span> <span class="n">getQgisTestApp</span><span class="p">()</span>
 
@@ -94,6 +95,8 @@
         <span class="sd">&quot;&quot;&quot;Stack traces can be caught and rendered as html</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
+        <span class="c"># This is about general exception handling, so ok to use catch-all</span>
+        <span class="c"># pylint: disable=W0703</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">bbox_intersection</span><span class="p">(</span><span class="s">&#39;aoeu&#39;</span><span class="p">,</span> <span class="s">&#39;oaeu&#39;</span><span class="p">,</span> <span class="p">[])</span>
         <span class="k">except</span> <span class="ne">Exception</span><span class="p">,</span> <span class="n">e</span><span class="p">:</span>
@@ -110,6 +113,7 @@
             <span class="k">assert</span> <span class="s">&#39;&lt;pre id=&quot;traceback&quot;&#39;</span> <span class="ow">in</span> <span class="n">myMessage</span>
             <span class="k">assert</span> <span class="s">&#39;line&#39;</span> <span class="ow">in</span> <span class="n">myMessage</span>
             <span class="k">assert</span> <span class="s">&#39;File&#39;</span> <span class="ow">in</span> <span class="n">myMessage</span>
+        <span class="c"># pylint: enable=W0703</span>
 </div>
 <div class="viewcode-block" id="UtilitiesTest.test_issue126"><a class="viewcode-back" href="../../api-docs/safe_qgis_tests/test_utilities.html#safe_qgis.test_utilities.UtilitiesTest.test_issue126">[docs]</a>    <span class="k">def</span> <span class="nf">test_issue126</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Test that non integer transparency ranges fail gracefully.</span>
@@ -217,7 +221,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">bbox_intersection</span><span class="p">(</span><span class="s">&#39;aoeu&#39;</span><span class="p">,</span> <span class="s">&#39;oaeu&#39;</span><span class="p">,</span> <span class="p">[])</span>
-        <span class="k">except</span> <span class="ne">Exception</span><span class="p">,</span> <span class="n">e</span><span class="p">:</span>
+        <span class="k">except</span> <span class="n">VerificationError</span><span class="p">,</span> <span class="n">e</span><span class="p">:</span>
             <span class="n">myMessage</span> <span class="o">=</span> <span class="n">getExceptionWithStacktrace</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">html</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
             <span class="k">assert</span> <span class="s">&#39;VerificationError : Western&#39;</span> <span class="ow">in</span> <span class="n">myMessage</span><span class="p">,</span> <span class="n">myMessage</span>
 </div>
@@ -230,62 +234,55 @@
         <span class="k">del</span> <span class="n">myType</span>
         <span class="n">myStyle</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;legend_title&#39;</span><span class="p">:</span> <span class="s">u&#39;Population Count&#39;</span><span class="p">,</span>
                    <span class="s">&#39;target_field&#39;</span><span class="p">:</span> <span class="s">&#39;population&#39;</span><span class="p">,</span>
-                   <span class="s">&#39;style_classes&#39;</span><span class="p">:</span> <span class="p">[{</span>
-                       <span class="s">&#39;transparency&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
-                       <span class="s">&#39;min&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">],</span>  <span class="c"># &lt;-- intentionally broken list not number!</span>
-                       <span class="s">&#39;max&#39;</span><span class="p">:</span> <span class="mf">139904.08186340332</span><span class="p">,</span>
-                       <span class="s">&#39;colour&#39;</span><span class="p">:</span> <span class="s">&#39;#FFFFFF&#39;</span><span class="p">,</span>
-                       <span class="s">&#39;size&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
-                       <span class="s">&#39;label&#39;</span><span class="p">:</span> <span class="s">u&#39;Nil&#39;</span><span class="p">},</span>
-                                     <span class="p">{</span>
-                       <span class="s">&#39;transparency&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
-                       <span class="s">&#39;min&#39;</span><span class="p">:</span> <span class="mf">139904.08186340332</span><span class="p">,</span>
-                       <span class="s">&#39;max&#39;</span><span class="p">:</span> <span class="mf">279808.16372680664</span><span class="p">,</span>
-                       <span class="s">&#39;colour&#39;</span><span class="p">:</span> <span class="s">&#39;#38A800&#39;</span><span class="p">,</span>
-                       <span class="s">&#39;size&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
-                       <span class="s">&#39;label&#39;</span><span class="p">:</span> <span class="s">u&#39;Low&#39;</span><span class="p">},</span>
-                                     <span class="p">{</span>
-                       <span class="s">&#39;transparency&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
-                       <span class="s">&#39;min&#39;</span><span class="p">:</span> <span class="mf">279808.16372680664</span><span class="p">,</span>
-                       <span class="s">&#39;max&#39;</span><span class="p">:</span> <span class="mf">419712.24559020996</span><span class="p">,</span>
-                       <span class="s">&#39;colour&#39;</span><span class="p">:</span> <span class="s">&#39;#79C900&#39;</span><span class="p">,</span>
-                       <span class="s">&#39;size&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
-                       <span class="s">&#39;label&#39;</span><span class="p">:</span> <span class="s">u&#39;Low&#39;</span><span class="p">},</span>
-                                     <span class="p">{</span>
-                       <span class="s">&#39;transparency&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
-                       <span class="s">&#39;min&#39;</span><span class="p">:</span> <span class="mf">419712.24559020996</span><span class="p">,</span>
-                       <span class="s">&#39;max&#39;</span><span class="p">:</span> <span class="mf">559616.32745361328</span><span class="p">,</span>
-                       <span class="s">&#39;colour&#39;</span><span class="p">:</span> <span class="s">&#39;#CEED00&#39;</span><span class="p">,</span>
-                       <span class="s">&#39;size&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
-                       <span class="s">&#39;label&#39;</span><span class="p">:</span> <span class="s">u&#39;Low&#39;</span><span class="p">},</span>
-                                     <span class="p">{</span>
-                       <span class="s">&#39;transparency&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
-                       <span class="s">&#39;min&#39;</span><span class="p">:</span> <span class="mf">559616.32745361328</span><span class="p">,</span>
-                       <span class="s">&#39;max&#39;</span><span class="p">:</span> <span class="mf">699520.4093170166</span><span class="p">,</span>
-                       <span class="s">&#39;colour&#39;</span><span class="p">:</span> <span class="s">&#39;#FFCC00&#39;</span><span class="p">,</span>
-                       <span class="s">&#39;size&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
-                       <span class="s">&#39;label&#39;</span><span class="p">:</span> <span class="s">u&#39;Medium&#39;</span><span class="p">},</span>
-                                     <span class="p">{</span>
-                       <span class="s">&#39;transparency&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
-                       <span class="s">&#39;min&#39;</span><span class="p">:</span> <span class="mf">699520.4093170166</span><span class="p">,</span>
-                       <span class="s">&#39;max&#39;</span><span class="p">:</span> <span class="mf">839424.49118041992</span><span class="p">,</span>
-                       <span class="s">&#39;colour&#39;</span><span class="p">:</span> <span class="s">&#39;#FF6600&#39;</span><span class="p">,</span>
-                       <span class="s">&#39;size&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
-                       <span class="s">&#39;label&#39;</span><span class="p">:</span> <span class="s">u&#39;Medium&#39;</span><span class="p">},</span>
-                                     <span class="p">{</span>
-                       <span class="s">&#39;transparency&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
-                       <span class="s">&#39;min&#39;</span><span class="p">:</span> <span class="mf">839424.49118041992</span><span class="p">,</span>
-                       <span class="s">&#39;max&#39;</span><span class="p">:</span> <span class="mf">979328.57304382324</span><span class="p">,</span>
-                       <span class="s">&#39;colour&#39;</span><span class="p">:</span> <span class="s">&#39;#FF0000&#39;</span><span class="p">,</span>
-                       <span class="s">&#39;size&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
-                       <span class="s">&#39;label&#39;</span><span class="p">:</span> <span class="s">u&#39;Medium&#39;</span><span class="p">},</span>
-                                     <span class="p">{</span>
-                       <span class="s">&#39;transparency&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
-                       <span class="s">&#39;min&#39;</span><span class="p">:</span> <span class="mf">979328.57304382324</span><span class="p">,</span>
-                       <span class="s">&#39;max&#39;</span><span class="p">:</span> <span class="mf">1119232.6549072266</span><span class="p">,</span>
-                       <span class="s">&#39;colour&#39;</span><span class="p">:</span> <span class="s">&#39;#7A0000&#39;</span><span class="p">,</span>
-                       <span class="s">&#39;size&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
-                       <span class="s">&#39;label&#39;</span><span class="p">:</span> <span class="s">u&#39;High&#39;</span><span class="p">}]}</span>
+                   <span class="s">&#39;style_classes&#39;</span><span class="p">:</span>
+                   <span class="p">[{</span><span class="s">&#39;transparency&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+                     <span class="s">&#39;min&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">],</span>  <span class="c"># &lt;-- intentionally broken list not number!</span>
+                     <span class="s">&#39;max&#39;</span><span class="p">:</span> <span class="mf">139904.08186340332</span><span class="p">,</span>
+                     <span class="s">&#39;colour&#39;</span><span class="p">:</span> <span class="s">&#39;#FFFFFF&#39;</span><span class="p">,</span>
+                     <span class="s">&#39;size&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+                     <span class="s">&#39;label&#39;</span><span class="p">:</span> <span class="s">u&#39;Nil&#39;</span><span class="p">},</span>
+                    <span class="p">{</span><span class="s">&#39;transparency&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+                     <span class="s">&#39;min&#39;</span><span class="p">:</span> <span class="mf">139904.08186340332</span><span class="p">,</span>
+                     <span class="s">&#39;max&#39;</span><span class="p">:</span> <span class="mf">279808.16372680664</span><span class="p">,</span>
+                     <span class="s">&#39;colour&#39;</span><span class="p">:</span> <span class="s">&#39;#38A800&#39;</span><span class="p">,</span>
+                     <span class="s">&#39;size&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+                     <span class="s">&#39;label&#39;</span><span class="p">:</span> <span class="s">u&#39;Low&#39;</span><span class="p">},</span>
+                    <span class="p">{</span><span class="s">&#39;transparency&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+                     <span class="s">&#39;min&#39;</span><span class="p">:</span> <span class="mf">279808.16372680664</span><span class="p">,</span>
+                     <span class="s">&#39;max&#39;</span><span class="p">:</span> <span class="mf">419712.24559020996</span><span class="p">,</span>
+                     <span class="s">&#39;colour&#39;</span><span class="p">:</span> <span class="s">&#39;#79C900&#39;</span><span class="p">,</span>
+                     <span class="s">&#39;size&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+                     <span class="s">&#39;label&#39;</span><span class="p">:</span> <span class="s">u&#39;Low&#39;</span><span class="p">},</span>
+                    <span class="p">{</span><span class="s">&#39;transparency&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+                     <span class="s">&#39;min&#39;</span><span class="p">:</span> <span class="mf">419712.24559020996</span><span class="p">,</span>
+                     <span class="s">&#39;max&#39;</span><span class="p">:</span> <span class="mf">559616.32745361328</span><span class="p">,</span>
+                     <span class="s">&#39;colour&#39;</span><span class="p">:</span> <span class="s">&#39;#CEED00&#39;</span><span class="p">,</span>
+                     <span class="s">&#39;size&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+                     <span class="s">&#39;label&#39;</span><span class="p">:</span> <span class="s">u&#39;Low&#39;</span><span class="p">},</span>
+                    <span class="p">{</span><span class="s">&#39;transparency&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+                     <span class="s">&#39;min&#39;</span><span class="p">:</span> <span class="mf">559616.32745361328</span><span class="p">,</span>
+                     <span class="s">&#39;max&#39;</span><span class="p">:</span> <span class="mf">699520.4093170166</span><span class="p">,</span>
+                     <span class="s">&#39;colour&#39;</span><span class="p">:</span> <span class="s">&#39;#FFCC00&#39;</span><span class="p">,</span>
+                     <span class="s">&#39;size&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+                     <span class="s">&#39;label&#39;</span><span class="p">:</span> <span class="s">u&#39;Medium&#39;</span><span class="p">},</span>
+                    <span class="p">{</span><span class="s">&#39;transparency&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+                     <span class="s">&#39;min&#39;</span><span class="p">:</span> <span class="mf">699520.4093170166</span><span class="p">,</span>
+                     <span class="s">&#39;max&#39;</span><span class="p">:</span> <span class="mf">839424.49118041992</span><span class="p">,</span>
+                     <span class="s">&#39;colour&#39;</span><span class="p">:</span> <span class="s">&#39;#FF6600&#39;</span><span class="p">,</span>
+                     <span class="s">&#39;size&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+                     <span class="s">&#39;label&#39;</span><span class="p">:</span> <span class="s">u&#39;Medium&#39;</span><span class="p">},</span>
+                    <span class="p">{</span><span class="s">&#39;transparency&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+                     <span class="s">&#39;min&#39;</span><span class="p">:</span> <span class="mf">839424.49118041992</span><span class="p">,</span>
+                     <span class="s">&#39;max&#39;</span><span class="p">:</span> <span class="mf">979328.57304382324</span><span class="p">,</span>
+                     <span class="s">&#39;colour&#39;</span><span class="p">:</span> <span class="s">&#39;#FF0000&#39;</span><span class="p">,</span>
+                     <span class="s">&#39;size&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+                     <span class="s">&#39;label&#39;</span><span class="p">:</span> <span class="s">u&#39;Medium&#39;</span><span class="p">},</span>
+                    <span class="p">{</span><span class="s">&#39;transparency&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+                     <span class="s">&#39;min&#39;</span><span class="p">:</span> <span class="mf">979328.57304382324</span><span class="p">,</span>
+                     <span class="s">&#39;max&#39;</span><span class="p">:</span> <span class="mf">1119232.6549072266</span><span class="p">,</span>
+                     <span class="s">&#39;colour&#39;</span><span class="p">:</span> <span class="s">&#39;#7A0000&#39;</span><span class="p">,</span>
+                     <span class="s">&#39;size&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+                     <span class="s">&#39;label&#39;</span><span class="p">:</span> <span class="s">u&#39;High&#39;</span><span class="p">}]}</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">setVectorStyle</span><span class="p">(</span><span class="n">myVectorLayer</span><span class="p">,</span> <span class="n">myStyle</span><span class="p">)</span>
         <span class="k">except</span> <span class="n">StyleError</span><span class="p">:</span>
@@ -302,7 +299,7 @@
         <span class="k">assert</span> <span class="n">myVersion</span> <span class="o">&gt;</span> <span class="mi">10700</span><span class="p">,</span> <span class="n">myMessage</span>
 </div></div>
 <span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&#39;__main__&#39;</span><span class="p">:</span>
-    <span class="n">suite</span> <span class="o">=</span> <span class="n">unittest</span><span class="o">.</span><span class="n">makeSuite</span><span class="p">(</span><span class="n">ISUtilitiesTest</span><span class="p">,</span> <span class="s">&#39;test&#39;</span><span class="p">)</span>
+    <span class="n">suite</span> <span class="o">=</span> <span class="n">unittest</span><span class="o">.</span><span class="n">makeSuite</span><span class="p">(</span><span class="n">UtilitiesTest</span><span class="p">,</span> <span class="s">&#39;test&#39;</span><span class="p">)</span>
     <span class="n">runner</span> <span class="o">=</span> <span class="n">unittest</span><span class="o">.</span><span class="n">TextTestRunner</span><span class="p">(</span><span class="n">verbosity</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
     <span class="n">runner</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">suite</span><span class="p">)</span>
 </pre></div>
@@ -353,7 +350,7 @@
 
     <div class="footer">
         &copy; Copyright 2012, BNPB/AIFDR/GFDRR.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
     </div>
     <!-- cloud_sptheme 1.3 -->
   </body>

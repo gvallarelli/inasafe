@@ -32,7 +32,7 @@
     <link rel="top" title="InaSAFE 0.5.0-alpha documentation" href="../../index.html" />
     <link rel="up" title="Package::safe_qgis_tests" href="../safe_qgis_tests.html" />
     <link rel="next" title="Module: safe_qgis.test_utilities" href="test_utilities.html" />
-    <link rel="prev" title="Module: safe_qgis.test_keyword_io" href="test_keyword_io.html" /> 
+    <link rel="prev" title="Module: safe_qgis.test_impact_calculator" href="test_impact_calculator.html" /> 
   </head>
   <body>
     <div class="relbar-top">
@@ -50,7 +50,7 @@
           <a href="test_utilities.html" title="Module: safe_qgis.test_utilities"
              accesskey="N">next</a> &nbsp; &nbsp;</li>
         <li class="right" >
-          <a href="test_keyword_io.html" title="Module: safe_qgis.test_keyword_io"
+          <a href="test_impact_calculator.html" title="Module: safe_qgis.test_impact_calculator"
              accesskey="P">previous</a> &nbsp; &nbsp;</li>
     <li><a href="../../index.html">Home</a> &raquo;</li>
     <li><a href="../../contents.html">Contents</a> &raquo;</li>
@@ -156,6 +156,13 @@ See also
 </dd></dl>
 
 <dl class="method">
+<dt id="safe_qgis.test_dock.DockTest.test_runCategorizedHazardBuildingImpact">
+<tt class="descname">test_runCategorizedHazardBuildingImpact</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/safe_qgis/test_dock.html#DockTest.test_runCategorizedHazardBuildingImpact"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe_qgis.test_dock.DockTest.test_runCategorizedHazardBuildingImpact" title="Permalink to this definition">¶</a></dt>
+<dd><p>Flood function runs in GUI with Flood in Jakarta hazard data
+Uses DKI buildings exposure data.</p>
+</dd></dl>
+
+<dl class="method">
 <dt id="safe_qgis.test_dock.DockTest.test_runEarthQuakeGuidelinesFunction">
 <tt class="descname">test_runEarthQuakeGuidelinesFunction</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/safe_qgis/test_dock.html#DockTest.test_runEarthQuakeGuidelinesFunction"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe_qgis.test_dock.DockTest.test_runEarthQuakeGuidelinesFunction" title="Permalink to this definition">¶</a></dt>
 <dd><p>GUI runs with Shakemap 2009 and Padang Buildings</p>
@@ -197,7 +204,7 @@ Uses population raster exposure layer</p>
 <dl class="method">
 <dt id="safe_qgis.test_dock.DockTest.test_runTsunamiBuildingImpactFunction">
 <tt class="descname">test_runTsunamiBuildingImpactFunction</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/safe_qgis/test_dock.html#DockTest.test_runTsunamiBuildingImpactFunction"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe_qgis.test_dock.DockTest.test_runTsunamiBuildingImpactFunction" title="Permalink to this definition">¶</a></dt>
-<dd><p>Tsunami function runs in GUI with Batemans Bay model</p>
+<dd><p>Tsunami function runs in GUI as expected.</p>
 </dd></dl>
 
 <dl class="method">
@@ -252,7 +259,7 @@ of inasafedock.</p>
 
 <dl class="function">
 <dt id="safe_qgis.test_dock.loadLayers">
-<tt class="descclassname">safe_qgis.test_dock.</tt><tt class="descname">loadLayers</tt><big>(</big><em>theLayerList</em>, <em>theClearFlag=True</em>, <em>theDataDirectory='/home/timlinux/dev/python/inasafe_data/test'</em><big>)</big><a class="reference internal" href="../../_modules/safe_qgis/test_dock.html#loadLayers"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe_qgis.test_dock.loadLayers" title="Permalink to this definition">¶</a></dt>
+<tt class="descclassname">safe_qgis.test_dock.</tt><tt class="descname">loadLayers</tt><big>(</big><em>theLayerList</em>, <em>theClearFlag=True</em>, <em>theDataDirectory='/home/marco/dev/qgis-plugins/inasafe_data/test'</em><big>)</big><a class="reference internal" href="../../_modules/safe_qgis/test_dock.html#loadLayers"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe_qgis.test_dock.loadLayers" title="Permalink to this definition">¶</a></dt>
 <dd><p>Helper function to load layers as defined in a python list.</p>
 </dd></dl>
 
@@ -306,8 +313,8 @@ sure we have the right one.</p>
           <img class="logo" src="../../_static/icon.png" alt="Logo"/>
         </a></p>
   <h4>Previous topic</h4>
-  <p class="topless"><a href="test_keyword_io.html"
-                        title="previous chapter">Module:  safe_qgis.test_keyword_io</a></p>
+  <p class="topless"><a href="test_impact_calculator.html"
+                        title="previous chapter">Module:  safe_qgis.test_impact_calculator</a></p>
   <h4>Next topic</h4>
   <p class="topless"><a href="test_utilities.html"
                         title="next chapter">Module:  safe_qgis.test_utilities</a></p>
@@ -348,7 +355,7 @@ sure we have the right one.</p>
           <a href="test_utilities.html" title="Module: safe_qgis.test_utilities"
              >next</a> &nbsp; &nbsp;</li>
         <li class="right" >
-          <a href="test_keyword_io.html" title="Module: safe_qgis.test_keyword_io"
+          <a href="test_impact_calculator.html" title="Module: safe_qgis.test_impact_calculator"
              >previous</a> &nbsp; &nbsp;</li>
     <li><a href="../../index.html">Home</a> &raquo;</li>
     <li><a href="../../contents.html">Contents</a> &raquo;</li>
@@ -361,7 +368,7 @@ sure we have the right one.</p>
 
     <div class="footer">
         &copy; Copyright 2012, BNPB/AIFDR/GFDRR.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
     </div>
     <!-- cloud_sptheme 1.3 -->
   </body>

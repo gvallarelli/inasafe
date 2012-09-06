@@ -1,0 +1,706 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>safe.engine.interpolation &mdash; InaSAFE 0.5.0-alpha documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/cloud.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Noticia+Text|Droid+Sans+Mono" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '0.5.0-alpha',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../../_static/jquery.cookie.js"></script>
+    <script type="text/javascript" src="../../../_static/toggle_sections.js"></script>
+    <link rel="top" title="InaSAFE 0.5.0-alpha documentation" href="../../../index.html" />
+    <link rel="up" title="Module code" href="../../index.html" /> 
+  </head>
+  <body>
+    <div class="relbar-top">
+        
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> &nbsp; &nbsp;</li>
+    <li><a href="../../../index.html">Home</a> &raquo;</li>
+    <li><a href="../../../contents.html">Contents</a> &raquo;</li>
+
+          <li><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    </div>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for safe.engine.interpolation</h1><div class="highlight"><pre>
+<span class="sd">&quot;&quot;&quot;**Interpolation from hazard to exposure layers.**</span>
+
+<span class="sd">Provides interpolation functionality to assign values from one layer instance</span>
+<span class="sd">to another irrespective of layer types.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span>
+
+<span class="kn">from</span> <span class="nn">safe.common.interpolation2d</span> <span class="kn">import</span> <span class="n">interpolate_raster</span>
+<span class="kn">from</span> <span class="nn">safe.common.utilities</span> <span class="kn">import</span> <span class="n">verify</span>
+<span class="kn">from</span> <span class="nn">safe.common.utilities</span> <span class="kn">import</span> <span class="n">ugettext</span> <span class="k">as</span> <span class="n">_</span>
+<span class="kn">from</span> <span class="nn">safe.common.numerics</span> <span class="kn">import</span> <span class="n">ensure_numeric</span>
+<span class="kn">from</span> <span class="nn">safe.common.exceptions</span> <span class="kn">import</span> <span class="n">InaSAFEError</span><span class="p">,</span> <span class="n">BoundsError</span>
+<span class="kn">from</span> <span class="nn">safe.common.polygon</span> <span class="kn">import</span> <span class="p">(</span><span class="n">inside_polygon</span><span class="p">,</span>
+                                 <span class="n">clip_lines_by_polygons</span><span class="p">,</span> <span class="n">clip_grid_by_polygons</span><span class="p">)</span>
+<span class="c">#from safe.common.polygon import line_dictionary_to_geometry</span>
+
+<span class="kn">from</span> <span class="nn">safe.storage.vector</span> <span class="kn">import</span> <span class="n">Vector</span><span class="p">,</span> <span class="n">convert_polygons_to_centroids</span>
+<span class="kn">from</span> <span class="nn">safe.storage.utilities</span> <span class="kn">import</span> <span class="n">geometrytype2string</span>
+<span class="kn">from</span> <span class="nn">safe.storage.utilities</span> <span class="kn">import</span> <span class="n">DEFAULT_ATTRIBUTE</span>
+
+
+<div class="viewcode-block" id="assign_hazard_values_to_exposure_data"><a class="viewcode-back" href="../../../api-docs/safe/engine/interpolation.html#safe.engine.interpolation.assign_hazard_values_to_exposure_data">[docs]</a><span class="k">def</span> <span class="nf">assign_hazard_values_to_exposure_data</span><span class="p">(</span><span class="n">hazard</span><span class="p">,</span> <span class="n">exposure</span><span class="p">,</span>
+                                          <span class="n">layer_name</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+                                          <span class="n">attribute_name</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+                                          <span class="n">mode</span><span class="o">=</span><span class="s">&#39;linear&#39;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Assign hazard values to exposure data</span>
+
+<span class="sd">    This is the high level wrapper around interpolation functions for different</span>
+<span class="sd">    combinations of data types.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">       * hazard: Layer representing the hazard levels</span>
+<span class="sd">       * exposure: Layer representing the exposure data</span>
+<span class="sd">       * layer_name: Optional name of returned layer.</span>
+<span class="sd">             If None (default) the name of the exposure layer is used for</span>
+<span class="sd">             the returned layer.</span>
+<span class="sd">       * attribute_name:</span>
+<span class="sd">             If hazard layer is of type raster, this is the name for new</span>
+<span class="sd">             attribute in the result containing the hazard level.</span>
+<span class="sd">             If None (default) the name of hazard is used</span>
+
+<span class="sd">             If hazard layer is of type vector, it is the name of the</span>
+<span class="sd">             attribute to transfer from the hazard layer into the result.</span>
+<span class="sd">             If None (default) all attributes are transferred.</span>
+<span class="sd">        * mode:</span>
+<span class="sd">             Interpolation mode for raster to point interpolation only</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Layer representing the exposure data with hazard levels assigned.</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        Underlying exceptions are propagated</span>
+
+<span class="sd">    Note:</span>
+
+<span class="sd">        Admissible combinations of input layer types are</span>
+
+<span class="sd">               Exposure |  Raster     Polygon    Line     Point</span>
+<span class="sd">        Hazard          |</span>
+<span class="sd">        -------------------------------------------------------</span>
+<span class="sd">        Polygon         |  Y          Y          Y        Y</span>
+<span class="sd">        Raster          |  Y          Y          Y        Y</span>
+
+<span class="sd">        with the following methodologies used:</span>
+
+<span class="sd">        Polygon-Point:   Clip points to polygon and assign polygon attributes</span>
+<span class="sd">            to them.</span>
+<span class="sd">        Polygon-Line:    * Not Implemented *</span>
+<span class="sd">        Polygon-Polygon: * Not Implemented *</span>
+<span class="sd">        Polygon-Raster:  Convert raster to points, clip to polygon,</span>
+<span class="sd">            assign values and return point data</span>
+<span class="sd">        Raster-Point:    Bilinear (or constant) interpolation as currently</span>
+<span class="sd">            implemented</span>
+<span class="sd">        Raster-Line:     * Not Implemented *</span>
+<span class="sd">        Raster-Polygon:  Calculate centroids and use Raster - Point algorithm</span>
+<span class="sd">        Raster-Raster:   Exposure raster is returned as is</span>
+
+
+<span class="sd">        The data type of the resulting layer depends on the combination of</span>
+<span class="sd">        input types as follows:</span>
+
+<span class="sd">        Polygon-Point:   Point data</span>
+<span class="sd">        Polygon-Line:    N/A</span>
+<span class="sd">        Polygon-Polygon: N/A</span>
+<span class="sd">        Polygon-Raster:  Point data</span>
+<span class="sd">        Raster-Point:    Point data</span>
+<span class="sd">        Raster-Line:     N/A</span>
+<span class="sd">        Raster-Polygon:  Polygon data</span>
+<span class="sd">        Raster-Raster:   Raster data</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">layer_name</span><span class="p">,</span> <span class="n">attribute_name</span> <span class="o">=</span> <span class="n">check_inputs</span><span class="p">(</span><span class="n">hazard</span><span class="p">,</span> <span class="n">exposure</span><span class="p">,</span>
+                                              <span class="n">layer_name</span><span class="p">,</span> <span class="n">attribute_name</span><span class="p">)</span>
+    <span class="c"># Raster-Vector</span>
+    <span class="k">if</span> <span class="n">hazard</span><span class="o">.</span><span class="n">is_raster</span> <span class="ow">and</span> <span class="n">exposure</span><span class="o">.</span><span class="n">is_vector</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">interpolate_raster_vector</span><span class="p">(</span><span class="n">hazard</span><span class="p">,</span> <span class="n">exposure</span><span class="p">,</span>
+                                         <span class="n">layer_name</span><span class="o">=</span><span class="n">layer_name</span><span class="p">,</span>
+                                         <span class="n">attribute_name</span><span class="o">=</span><span class="n">attribute_name</span><span class="p">,</span>
+                                         <span class="n">mode</span><span class="o">=</span><span class="n">mode</span><span class="p">)</span>
+    <span class="c"># Raster-Raster</span>
+    <span class="k">elif</span> <span class="n">hazard</span><span class="o">.</span><span class="n">is_raster</span> <span class="ow">and</span> <span class="n">exposure</span><span class="o">.</span><span class="n">is_raster</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">interpolate_raster_raster</span><span class="p">(</span><span class="n">hazard</span><span class="p">,</span> <span class="n">exposure</span><span class="p">)</span>
+    <span class="c"># Vector-Vector</span>
+    <span class="k">elif</span> <span class="n">hazard</span><span class="o">.</span><span class="n">is_vector</span> <span class="ow">and</span> <span class="n">exposure</span><span class="o">.</span><span class="n">is_vector</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">interpolate_polygon_vector</span><span class="p">(</span><span class="n">hazard</span><span class="p">,</span> <span class="n">exposure</span><span class="p">,</span>
+                                          <span class="n">layer_name</span><span class="o">=</span><span class="n">layer_name</span><span class="p">,</span>
+                                          <span class="n">attribute_name</span><span class="o">=</span><span class="n">attribute_name</span><span class="p">)</span>
+    <span class="c"># Vector-Raster</span>
+    <span class="k">elif</span> <span class="n">hazard</span><span class="o">.</span><span class="n">is_vector</span> <span class="ow">and</span> <span class="n">exposure</span><span class="o">.</span><span class="n">is_raster</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">interpolate_polygon_raster</span><span class="p">(</span><span class="n">hazard</span><span class="p">,</span> <span class="n">exposure</span><span class="p">,</span>
+                                          <span class="n">layer_name</span><span class="o">=</span><span class="n">layer_name</span><span class="p">,</span>
+                                          <span class="n">attribute_name</span><span class="o">=</span><span class="n">attribute_name</span><span class="p">)</span>
+    <span class="c"># Unknown</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;Unknown combination of types for hazard and exposure data. &#39;</span>
+               <span class="s">&#39;hazard: </span><span class="si">%s</span><span class="s">, exposure: </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">hazard</span><span class="p">),</span> <span class="nb">str</span><span class="p">(</span><span class="n">exposure</span><span class="p">)))</span>
+        <span class="k">raise</span> <span class="n">InaSAFEError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+</div>
+<div class="viewcode-block" id="check_inputs"><a class="viewcode-back" href="../../../api-docs/safe/engine/interpolation.html#safe.engine.interpolation.check_inputs">[docs]</a><span class="k">def</span> <span class="nf">check_inputs</span><span class="p">(</span><span class="n">hazard</span><span class="p">,</span> <span class="n">exposure</span><span class="p">,</span> <span class="n">layer_name</span><span class="p">,</span> <span class="n">attribute_name</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Check inputs and establish default values</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        * hazard: Hazard layer instance (any type)</span>
+<span class="sd">        * exposure: Exposure layer instance (any type)</span>
+<span class="sd">        * layer_name: Name of returned layer or None</span>
+<span class="sd">        * attribute_name: Name of interpolated attribute or None</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        * layer_name</span>
+<span class="sd">        * attribute_name</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        VerificationError</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;Projections must be the same: I got </span><span class="si">%s</span><span class="s"> and </span><span class="si">%s</span><span class="s">&#39;</span>
+           <span class="o">%</span> <span class="p">(</span><span class="n">hazard</span><span class="o">.</span><span class="n">projection</span><span class="p">,</span> <span class="n">exposure</span><span class="o">.</span><span class="n">projection</span><span class="p">))</span>
+    <span class="n">verify</span><span class="p">(</span><span class="n">hazard</span><span class="o">.</span><span class="n">projection</span> <span class="o">==</span> <span class="n">exposure</span><span class="o">.</span><span class="n">projection</span><span class="p">,</span> <span class="n">msg</span><span class="p">)</span>
+
+    <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;Parameter attribute_name must be either a string or None. &#39;</span>
+           <span class="s">&#39;I got </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">exposure</span><span class="p">)))[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+    <span class="n">verify</span><span class="p">(</span><span class="n">attribute_name</span> <span class="ow">is</span> <span class="bp">None</span>
+           <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">attribute_name</span><span class="p">,</span> <span class="nb">basestring</span><span class="p">),</span> <span class="n">msg</span><span class="p">)</span>
+
+    <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;Parameter layer_name must be either a string or None. &#39;</span>
+           <span class="s">&#39;I got </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">exposure</span><span class="p">)))[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+    <span class="n">verify</span><span class="p">(</span><span class="n">layer_name</span> <span class="ow">is</span> <span class="bp">None</span>
+           <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">layer_name</span><span class="p">,</span> <span class="nb">basestring</span><span class="p">),</span> <span class="n">msg</span><span class="p">)</span>
+
+    <span class="c"># Establish default names</span>
+    <span class="k">if</span> <span class="n">layer_name</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="n">layer_name</span> <span class="o">=</span> <span class="n">exposure</span><span class="o">.</span><span class="n">get_name</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">hazard</span><span class="o">.</span><span class="n">is_raster</span> <span class="ow">and</span> <span class="n">attribute_name</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="n">layer_name</span> <span class="o">=</span> <span class="n">hazard</span><span class="o">.</span><span class="n">get_name</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="n">layer_name</span><span class="p">,</span> <span class="n">attribute_name</span>
+
+
+<span class="c">#-------------------------------------------------------------</span>
+<span class="c"># Specific functions for each individual kind of interpolation</span>
+<span class="c">#-------------------------------------------------------------</span></div>
+<div class="viewcode-block" id="interpolate_raster_vector"><a class="viewcode-back" href="../../../api-docs/safe/engine/interpolation.html#safe.engine.interpolation.interpolate_raster_vector">[docs]</a><span class="k">def</span> <span class="nf">interpolate_raster_vector</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span>
+                              <span class="n">layer_name</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">attribute_name</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+                              <span class="n">mode</span><span class="o">=</span><span class="s">&#39;linear&#39;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Interpolate from raster layer to vector data</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        * source: Raster data set (grid)</span>
+<span class="sd">        * target: Vector data set (points or polygons)</span>
+<span class="sd">        * layer_name: Optional name of returned interpolated layer.</span>
+<span class="sd">              If None the name of V is used for the returned layer.</span>
+<span class="sd">        * attribute_name: Name for new attribute.</span>
+<span class="sd">              If None (default) the name of R is used</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        I: Vector data set; points located as target with values</span>
+<span class="sd">           interpolated from source</span>
+
+<span class="sd">    Note: If target geometry is polygon, data will be interpolated to</span>
+<span class="sd">    its centroids and the output is a point data set.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c"># Input checks</span>
+    <span class="n">verify</span><span class="p">(</span><span class="n">source</span><span class="o">.</span><span class="n">is_raster</span><span class="p">)</span>
+    <span class="n">verify</span><span class="p">(</span><span class="n">target</span><span class="o">.</span><span class="n">is_vector</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">target</span><span class="o">.</span><span class="n">is_point_data</span><span class="p">:</span>
+        <span class="c"># Interpolate from raster to point data</span>
+        <span class="n">R</span> <span class="o">=</span> <span class="n">interpolate_raster_vector_points</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span>
+                                             <span class="n">layer_name</span><span class="o">=</span><span class="n">layer_name</span><span class="p">,</span>
+                                             <span class="n">attribute_name</span><span class="o">=</span><span class="n">attribute_name</span><span class="p">,</span>
+                                             <span class="n">mode</span><span class="o">=</span><span class="n">mode</span><span class="p">)</span>
+    <span class="c">#elif target.is_line_data:</span>
+    <span class="c"># TBA - issue https://github.com/AIFDR/inasafe/issues/36</span>
+    <span class="c">#</span>
+    <span class="k">elif</span> <span class="n">target</span><span class="o">.</span><span class="n">is_polygon_data</span><span class="p">:</span>
+        <span class="c"># Use centroids, in case of polygons</span>
+        <span class="n">P</span> <span class="o">=</span> <span class="n">convert_polygons_to_centroids</span><span class="p">(</span><span class="n">target</span><span class="p">)</span>
+        <span class="n">R</span> <span class="o">=</span> <span class="n">interpolate_raster_vector_points</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="n">P</span><span class="p">,</span>
+                                             <span class="n">layer_name</span><span class="o">=</span><span class="n">layer_name</span><span class="p">,</span>
+                                             <span class="n">attribute_name</span><span class="o">=</span><span class="n">attribute_name</span><span class="p">)</span>
+        <span class="c"># In case of polygon data, restore the polygon geometry</span>
+        <span class="c"># Do this setting the geometry of the returned set to</span>
+        <span class="c"># that of the original polygon</span>
+        <span class="n">R</span> <span class="o">=</span> <span class="n">Vector</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">R</span><span class="o">.</span><span class="n">get_data</span><span class="p">(),</span>
+                   <span class="n">projection</span><span class="o">=</span><span class="n">R</span><span class="o">.</span><span class="n">get_projection</span><span class="p">(),</span>
+                   <span class="n">geometry</span><span class="o">=</span><span class="n">target</span><span class="o">.</span><span class="n">get_geometry</span><span class="p">(),</span>
+                   <span class="n">name</span><span class="o">=</span><span class="n">R</span><span class="o">.</span><span class="n">get_name</span><span class="p">())</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;Unknown datatype for raster2vector interpolation: &#39;</span>
+               <span class="s">&#39;I got </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="nb">str</span><span class="p">(</span><span class="n">target</span><span class="p">))</span>
+        <span class="k">raise</span> <span class="n">InaSAFEError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+    <span class="c"># Return interpolated vector layer</span>
+    <span class="k">return</span> <span class="n">R</span>
+
+</div>
+<div class="viewcode-block" id="interpolate_polygon_vector"><a class="viewcode-back" href="../../../api-docs/safe/engine/interpolation.html#safe.engine.interpolation.interpolate_polygon_vector">[docs]</a><span class="k">def</span> <span class="nf">interpolate_polygon_vector</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span>
+                               <span class="n">layer_name</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">attribute_name</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Interpolate from polygon vector layer to vector data</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        * source: Vector data set (polygon)</span>
+<span class="sd">        * target: Vector data set (points or polygons)  - TBA also lines</span>
+<span class="sd">        * layer_name: Optional name of returned interpolated layer.</span>
+<span class="sd">              If None the name of target is used for the returned layer.</span>
+<span class="sd">        * attribute_name: Name for new attribute.</span>
+<span class="sd">              If None (default) the name of source is used</span>
+
+<span class="sd">    Output</span>
+<span class="sd">        I: Vector data set; points located as target with values interpolated</span>
+<span class="sd">           from source</span>
+
+<span class="sd">    Note:</span>
+<span class="sd">        If target geometry is polygon, data will be interpolated to</span>
+<span class="sd">        its centroids and the output is a point data set.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c"># Input checks</span>
+    <span class="n">verify</span><span class="p">(</span><span class="n">source</span><span class="o">.</span><span class="n">is_vector</span><span class="p">)</span>
+    <span class="n">verify</span><span class="p">(</span><span class="n">target</span><span class="o">.</span><span class="n">is_vector</span><span class="p">)</span>
+    <span class="n">verify</span><span class="p">(</span><span class="n">source</span><span class="o">.</span><span class="n">is_polygon_data</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">target</span><span class="o">.</span><span class="n">is_point_data</span><span class="p">:</span>
+        <span class="n">R</span> <span class="o">=</span> <span class="n">interpolate_polygon_points</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span>
+                                       <span class="n">layer_name</span><span class="o">=</span><span class="n">layer_name</span><span class="p">,</span>
+                                       <span class="n">attribute_name</span><span class="o">=</span><span class="n">attribute_name</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">target</span><span class="o">.</span><span class="n">is_line_data</span><span class="p">:</span>
+        <span class="n">R</span> <span class="o">=</span> <span class="n">interpolate_polygon_lines</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span>
+                                      <span class="n">layer_name</span><span class="o">=</span><span class="n">layer_name</span><span class="p">,</span>
+                                      <span class="n">attribute_name</span><span class="o">=</span><span class="n">attribute_name</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">target</span><span class="o">.</span><span class="n">is_polygon_data</span><span class="p">:</span>
+        <span class="c"># Use polygon centroids</span>
+        <span class="n">X</span> <span class="o">=</span> <span class="n">convert_polygons_to_centroids</span><span class="p">(</span><span class="n">target</span><span class="p">)</span>
+        <span class="n">P</span> <span class="o">=</span> <span class="n">interpolate_polygon_points</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span>
+                                       <span class="n">layer_name</span><span class="o">=</span><span class="n">layer_name</span><span class="p">,</span>
+                                       <span class="n">attribute_name</span><span class="o">=</span><span class="n">attribute_name</span><span class="p">)</span>
+
+        <span class="c"># In case of polygon data, restore the polygon geometry</span>
+        <span class="c"># Do this setting the geometry of the returned set to</span>
+        <span class="c"># that of the original polygon</span>
+        <span class="n">R</span> <span class="o">=</span> <span class="n">Vector</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">P</span><span class="o">.</span><span class="n">get_data</span><span class="p">(),</span>
+                   <span class="n">projection</span><span class="o">=</span><span class="n">P</span><span class="o">.</span><span class="n">get_projection</span><span class="p">(),</span>
+                   <span class="n">geometry</span><span class="o">=</span><span class="n">X</span><span class="o">.</span><span class="n">get_geometry</span><span class="p">(),</span>
+                   <span class="n">name</span><span class="o">=</span><span class="n">P</span><span class="o">.</span><span class="n">get_name</span><span class="p">())</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;Unknown datatype for polygon2vector interpolation: &#39;</span>
+               <span class="s">&#39;I got </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="nb">str</span><span class="p">(</span><span class="n">target</span><span class="p">))</span>
+        <span class="k">raise</span> <span class="n">InaSAFEError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+    <span class="c"># Return interpolated vector layer</span>
+    <span class="k">return</span> <span class="n">R</span>
+
+</div>
+<div class="viewcode-block" id="interpolate_polygon_raster"><a class="viewcode-back" href="../../../api-docs/safe/engine/interpolation.html#safe.engine.interpolation.interpolate_polygon_raster">[docs]</a><span class="k">def</span> <span class="nf">interpolate_polygon_raster</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span>
+                               <span class="n">layer_name</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">attribute_name</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Interpolate from polygon layer to raster data</span>
+
+<span class="sd">    Args</span>
+<span class="sd">        * source: Polygon data set</span>
+<span class="sd">        * target: Raster data set</span>
+<span class="sd">        * layer_name: Optional name of returned interpolated layer.</span>
+<span class="sd">              If None the name of source is used for the returned layer.</span>
+<span class="sd">        * attribute_name: Name for new attribute.</span>
+<span class="sd">              If None (default) the name of layer target is used</span>
+<span class="sd">    Output</span>
+<span class="sd">        I: Vector data set; points located as target with</span>
+<span class="sd">           values interpolated from source</span>
+
+<span class="sd">    Note:</span>
+<span class="sd">        Each point in the resulting dataset will have an attribute</span>
+<span class="sd">        &#39;polygon_id&#39; which refers to the polygon it belongs to.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c"># Input checks</span>
+    <span class="n">verify</span><span class="p">(</span><span class="n">target</span><span class="o">.</span><span class="n">is_raster</span><span class="p">)</span>
+    <span class="n">verify</span><span class="p">(</span><span class="n">source</span><span class="o">.</span><span class="n">is_vector</span><span class="p">)</span>
+    <span class="n">verify</span><span class="p">(</span><span class="n">source</span><span class="o">.</span><span class="n">is_polygon_data</span><span class="p">)</span>
+
+    <span class="c"># Run underlying clipping algorithm</span>
+    <span class="n">polygon_geometry</span> <span class="o">=</span> <span class="n">source</span><span class="o">.</span><span class="n">get_geometry</span><span class="p">()</span>
+    <span class="n">polygon_attributes</span> <span class="o">=</span> <span class="n">source</span><span class="o">.</span><span class="n">get_data</span><span class="p">()</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="n">clip_grid_by_polygons</span><span class="p">(</span><span class="n">target</span><span class="o">.</span><span class="n">get_data</span><span class="p">(),</span>
+                                <span class="n">target</span><span class="o">.</span><span class="n">get_geotransform</span><span class="p">(),</span>
+                                <span class="n">polygon_geometry</span><span class="p">)</span>
+
+    <span class="c"># Create one new point layer with interpolated attributes</span>
+    <span class="n">new_geometry</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">new_attributes</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="p">(</span><span class="n">geometry</span><span class="p">,</span> <span class="n">values</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">res</span><span class="p">):</span>
+
+        <span class="c"># For each polygon assign attributes to points that fall inside it</span>
+        <span class="k">for</span> <span class="n">j</span><span class="p">,</span> <span class="n">geom</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">geometry</span><span class="p">):</span>
+            <span class="n">attr</span> <span class="o">=</span> <span class="n">polygon_attributes</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>  <span class="c"># Attributes for this polygon</span>
+            <span class="n">attr</span><span class="p">[</span><span class="n">attribute_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">values</span><span class="p">[</span><span class="n">j</span><span class="p">]</span>  <span class="c"># Attribute value from grid cell</span>
+            <span class="n">attr</span><span class="p">[</span><span class="s">&#39;polygon_id&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">i</span>  <span class="c"># Store id for associated polygon</span>
+
+            <span class="n">new_attributes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">attr</span><span class="p">)</span>
+            <span class="n">new_geometry</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">geom</span><span class="p">)</span>
+
+    <span class="n">R</span> <span class="o">=</span> <span class="n">Vector</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">new_attributes</span><span class="p">,</span>
+               <span class="n">projection</span><span class="o">=</span><span class="n">source</span><span class="o">.</span><span class="n">get_projection</span><span class="p">(),</span>
+               <span class="n">geometry</span><span class="o">=</span><span class="n">new_geometry</span><span class="p">,</span>
+               <span class="n">name</span><span class="o">=</span><span class="n">layer_name</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">R</span>
+
+</div>
+<div class="viewcode-block" id="interpolate_raster_vector_points"><a class="viewcode-back" href="../../../api-docs/safe/engine/interpolation.html#safe.engine.interpolation.interpolate_raster_vector_points">[docs]</a><span class="k">def</span> <span class="nf">interpolate_raster_vector_points</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span>
+                                     <span class="n">layer_name</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+                                     <span class="n">attribute_name</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+                                     <span class="n">mode</span><span class="o">=</span><span class="s">&#39;linear&#39;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Interpolate from raster layer to point data</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        * source: Raster data set (grid)</span>
+<span class="sd">        * target: Vector data set (points)</span>
+<span class="sd">        * layer_name: Optional name of returned interpolated layer.</span>
+<span class="sd">              If None the name of target is used for the returned layer.</span>
+<span class="sd">        * attribute_name: Name for new attribute.</span>
+<span class="sd">              If None (default) the name of layer source is used</span>
+<span class="sd">        * mode: &#39;linear&#39; or &#39;constant&#39; - determines whether interpolation</span>
+<span class="sd">              from grid to points should be bilinear or piecewise constant</span>
+
+<span class="sd">    Output</span>
+<span class="sd">        I: Vector data set; points located as target with values</span>
+<span class="sd">           interpolated from source</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;There are no data points to interpolate to. Perhaps zoom out &#39;</span>
+           <span class="s">&#39;and try again&#39;</span><span class="p">)</span>
+    <span class="n">verify</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">target</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span> <span class="n">msg</span><span class="p">)</span>
+
+    <span class="c"># Input checks</span>
+    <span class="n">verify</span><span class="p">(</span><span class="n">source</span><span class="o">.</span><span class="n">is_raster</span><span class="p">)</span>
+    <span class="n">verify</span><span class="p">(</span><span class="n">target</span><span class="o">.</span><span class="n">is_vector</span><span class="p">)</span>
+    <span class="n">verify</span><span class="p">(</span><span class="n">target</span><span class="o">.</span><span class="n">is_point_data</span><span class="p">)</span>
+
+    <span class="c"># FIXME (Ole): Why can we not remove this ???</span>
+    <span class="c"># It should now be taken care of in the general input_check above</span>
+    <span class="c"># OK - remove when we leave using the form H.interpolate in impact funcs</span>
+    <span class="k">if</span> <span class="n">layer_name</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="n">layer_name</span> <span class="o">=</span> <span class="n">target</span><span class="o">.</span><span class="n">get_name</span><span class="p">()</span>
+
+    <span class="c"># Get raster data and corresponding x and y axes</span>
+    <span class="n">A</span> <span class="o">=</span> <span class="n">source</span><span class="o">.</span><span class="n">get_data</span><span class="p">(</span><span class="n">nan</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+    <span class="n">longitudes</span><span class="p">,</span> <span class="n">latitudes</span> <span class="o">=</span> <span class="n">source</span><span class="o">.</span><span class="n">get_geometry</span><span class="p">()</span>
+    <span class="n">verify</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">longitudes</span><span class="p">)</span> <span class="o">==</span> <span class="n">A</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+    <span class="n">verify</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">latitudes</span><span class="p">)</span> <span class="o">==</span> <span class="n">A</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+
+    <span class="c"># Get vector point geometry as Nx2 array</span>
+    <span class="n">coordinates</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">target</span><span class="o">.</span><span class="n">get_geometry</span><span class="p">(),</span>
+                              <span class="n">dtype</span><span class="o">=</span><span class="s">&#39;d&#39;</span><span class="p">,</span>
+                              <span class="n">copy</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+    <span class="c"># Get original attributes</span>
+    <span class="n">attributes</span> <span class="o">=</span> <span class="n">target</span><span class="o">.</span><span class="n">get_data</span><span class="p">()</span>
+
+    <span class="c"># Create new attribute and interpolate</span>
+    <span class="c"># Remove?</span>
+    <span class="n">N</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">target</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">attribute_name</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="n">attribute_name</span> <span class="o">=</span> <span class="n">source</span><span class="o">.</span><span class="n">get_name</span><span class="p">()</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">values</span> <span class="o">=</span> <span class="n">interpolate_raster</span><span class="p">(</span><span class="n">longitudes</span><span class="p">,</span> <span class="n">latitudes</span><span class="p">,</span> <span class="n">A</span><span class="p">,</span>
+                                    <span class="n">coordinates</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="n">mode</span><span class="p">)</span>
+    <span class="k">except</span> <span class="p">(</span><span class="n">BoundsError</span><span class="p">,</span> <span class="n">InaSAFEError</span><span class="p">),</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="n">_</span><span class="p">(</span><span class="s">&#39;Could not interpolate from raster layer </span><span class="si">%(raster)s</span><span class="s"> to &#39;</span>
+                 <span class="s">&#39;vector layer </span><span class="si">%(vector)s</span><span class="s">. Error message: </span><span class="si">%(error)s</span><span class="s">&#39;</span><span class="p">)</span>
+               <span class="o">%</span> <span class="p">{</span><span class="s">&#39;raster&#39;</span><span class="p">:</span> <span class="n">source</span><span class="o">.</span><span class="n">get_name</span><span class="p">(),</span>
+                  <span class="s">&#39;vector&#39;</span><span class="p">:</span> <span class="n">target</span><span class="o">.</span><span class="n">get_name</span><span class="p">(),</span>
+                  <span class="s">&#39;error&#39;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)})</span>
+        <span class="k">raise</span> <span class="n">InaSAFEError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+    <span class="c"># Add interpolated attribute to existing attributes and return</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">N</span><span class="p">):</span>
+        <span class="n">attributes</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">attribute_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">values</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+
+    <span class="k">return</span> <span class="n">Vector</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">attributes</span><span class="p">,</span>
+                  <span class="n">projection</span><span class="o">=</span><span class="n">target</span><span class="o">.</span><span class="n">get_projection</span><span class="p">(),</span>
+                  <span class="n">geometry</span><span class="o">=</span><span class="n">coordinates</span><span class="p">,</span>
+                  <span class="n">name</span><span class="o">=</span><span class="n">layer_name</span><span class="p">)</span>
+
+</div>
+<div class="viewcode-block" id="interpolate_polygon_points"><a class="viewcode-back" href="../../../api-docs/safe/engine/interpolation.html#safe.engine.interpolation.interpolate_polygon_points">[docs]</a><span class="k">def</span> <span class="nf">interpolate_polygon_points</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span>
+                               <span class="n">layer_name</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+                               <span class="n">attribute_name</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Interpolate from polygon vector layer to point vector data</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        * source: Vector data set (polygon)</span>
+<span class="sd">        * target: Vector data set (points)</span>
+<span class="sd">        * layer_name: Optional name of returned interpolated layer.</span>
+<span class="sd">              If None the name of target is used for the returned layer.</span>
+<span class="sd">        * attribute_name: Name for new attribute.</span>
+<span class="sd">              If None (default) the name of source is used</span>
+
+<span class="sd">    Output</span>
+<span class="sd">        I: Vector data set; points located as target with values interpolated</span>
+<span class="sd">        from source</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;Vector layer to interpolate to must be point geometry. &#39;</span>
+           <span class="s">&#39;I got OGR geometry type </span><span class="si">%s</span><span class="s">&#39;</span>
+           <span class="o">%</span> <span class="n">geometrytype2string</span><span class="p">(</span><span class="n">target</span><span class="o">.</span><span class="n">geometry_type</span><span class="p">))</span>
+    <span class="n">verify</span><span class="p">(</span><span class="n">target</span><span class="o">.</span><span class="n">is_point_data</span><span class="p">,</span> <span class="n">msg</span><span class="p">)</span>
+
+    <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;Name must be either a string or None. I got </span><span class="si">%s</span><span class="s">&#39;</span>
+           <span class="o">%</span> <span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">target</span><span class="p">)))[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+    <span class="n">verify</span><span class="p">(</span><span class="n">layer_name</span> <span class="ow">is</span> <span class="bp">None</span> <span class="ow">or</span>
+           <span class="nb">isinstance</span><span class="p">(</span><span class="n">layer_name</span><span class="p">,</span> <span class="nb">basestring</span><span class="p">),</span> <span class="n">msg</span><span class="p">)</span>
+
+    <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;Attribute must be either a string or None. I got </span><span class="si">%s</span><span class="s">&#39;</span>
+           <span class="o">%</span> <span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">target</span><span class="p">)))[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+    <span class="n">verify</span><span class="p">(</span><span class="n">attribute_name</span> <span class="ow">is</span> <span class="bp">None</span> <span class="ow">or</span>
+           <span class="nb">isinstance</span><span class="p">(</span><span class="n">attribute_name</span><span class="p">,</span> <span class="nb">basestring</span><span class="p">),</span> <span class="n">msg</span><span class="p">)</span>
+
+    <span class="n">attribute_names</span> <span class="o">=</span> <span class="n">source</span><span class="o">.</span><span class="n">get_attribute_names</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">attribute_name</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;Requested attribute &quot;</span><span class="si">%s</span><span class="s">&quot; did not exist in </span><span class="si">%s</span><span class="s">&#39;</span>
+               <span class="o">%</span> <span class="p">(</span><span class="n">attribute_name</span><span class="p">,</span> <span class="n">attribute_names</span><span class="p">))</span>
+        <span class="n">verify</span><span class="p">(</span><span class="n">attribute_name</span> <span class="ow">in</span> <span class="n">attribute_names</span><span class="p">,</span> <span class="n">msg</span><span class="p">)</span>
+
+    <span class="c">#----------------</span>
+    <span class="c"># Start algorithm</span>
+    <span class="c">#----------------</span>
+
+    <span class="c"># Extract point features</span>
+    <span class="n">points</span> <span class="o">=</span> <span class="n">ensure_numeric</span><span class="p">(</span><span class="n">target</span><span class="o">.</span><span class="n">get_geometry</span><span class="p">())</span>
+    <span class="n">attributes</span> <span class="o">=</span> <span class="n">target</span><span class="o">.</span><span class="n">get_data</span><span class="p">()</span>
+    <span class="n">original_geometry</span> <span class="o">=</span> <span class="n">target</span><span class="o">.</span><span class="n">get_geometry</span><span class="p">()</span>  <span class="c"># Geometry for returned data</span>
+
+    <span class="c"># Extract polygon features</span>
+    <span class="n">geom</span> <span class="o">=</span> <span class="n">source</span><span class="o">.</span><span class="n">get_geometry</span><span class="p">()</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">source</span><span class="o">.</span><span class="n">get_data</span><span class="p">()</span>
+    <span class="n">verify</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">geom</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">))</span>
+
+    <span class="c"># Augment point features with empty attributes from polygon</span>
+    <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">attributes</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">attribute_name</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="c"># Use all attributes</span>
+            <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">attribute_names</span><span class="p">:</span>
+                <span class="n">a</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c"># Use only requested attribute</span>
+            <span class="c"># FIXME (Ole): Test for this is not finished</span>
+            <span class="n">a</span><span class="p">[</span><span class="n">attribute_name</span><span class="p">]</span> <span class="o">=</span> <span class="bp">None</span>
+
+        <span class="c"># Always create default attribute flagging if point was</span>
+        <span class="c"># inside any of the polygons</span>
+        <span class="n">a</span><span class="p">[</span><span class="n">DEFAULT_ATTRIBUTE</span><span class="p">]</span> <span class="o">=</span> <span class="bp">None</span>
+
+    <span class="c"># Traverse polygons and assign attributes to points that fall inside</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">polygon</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">geom</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">attribute_name</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="c"># Use all attributes</span>
+            <span class="n">poly_attr</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c"># Use only requested attribute</span>
+            <span class="n">poly_attr</span> <span class="o">=</span> <span class="p">{</span><span class="n">attribute_name</span><span class="p">:</span> <span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">attribute_name</span><span class="p">]}</span>
+
+        <span class="c"># Assign default attribute to indicate points inside</span>
+        <span class="n">poly_attr</span><span class="p">[</span><span class="n">DEFAULT_ATTRIBUTE</span><span class="p">]</span> <span class="o">=</span> <span class="bp">True</span>
+
+        <span class="c"># Clip data points by polygons and add polygon attributes</span>
+        <span class="n">indices</span> <span class="o">=</span> <span class="n">inside_polygon</span><span class="p">(</span><span class="n">points</span><span class="p">,</span> <span class="n">polygon</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">indices</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">poly_attr</span><span class="p">:</span>
+                <span class="c"># Assign attributes from polygon to points</span>
+                <span class="n">attributes</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">poly_attr</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+
+    <span class="c"># Create new Vector instance and return</span>
+    <span class="n">V</span> <span class="o">=</span> <span class="n">Vector</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">attributes</span><span class="p">,</span>
+               <span class="n">projection</span><span class="o">=</span><span class="n">target</span><span class="o">.</span><span class="n">get_projection</span><span class="p">(),</span>
+               <span class="n">geometry</span><span class="o">=</span><span class="n">original_geometry</span><span class="p">,</span>
+               <span class="n">name</span><span class="o">=</span><span class="n">layer_name</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">V</span>
+
+</div>
+<div class="viewcode-block" id="interpolate_polygon_lines"><a class="viewcode-back" href="../../../api-docs/safe/engine/interpolation.html#safe.engine.interpolation.interpolate_polygon_lines">[docs]</a><span class="k">def</span> <span class="nf">interpolate_polygon_lines</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span>
+                              <span class="n">layer_name</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+                              <span class="n">attribute_name</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Interpolate from polygon vector layer to line vector data</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        * source: Vector data set (polygon)</span>
+<span class="sd">        * target: Vector data set (lines)</span>
+<span class="sd">        * layer_name: Optional name of returned interpolated layer.</span>
+<span class="sd">              If None the name of target is used for the returned layer.</span>
+<span class="sd">        * attribute_name: Name for new attribute.</span>
+<span class="sd">              If None (default) the name of source is used</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Vector data set of lines inside polygons</span>
+<span class="sd">           Attributes are combined from polygon they fall into and</span>
+<span class="sd">           line that was clipped.</span>
+
+<span class="sd">           Lines not in any polygon are ignored.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c"># Remove?</span>
+    <span class="k">if</span> <span class="n">attribute_name</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="n">attribute_name</span> <span class="o">=</span> <span class="n">source</span><span class="o">.</span><span class="n">get_name</span><span class="p">()</span>
+
+    <span class="c"># Extract line features</span>
+    <span class="n">lines</span> <span class="o">=</span> <span class="n">target</span><span class="o">.</span><span class="n">get_geometry</span><span class="p">()</span>
+    <span class="n">line_attributes</span> <span class="o">=</span> <span class="n">target</span><span class="o">.</span><span class="n">get_data</span><span class="p">()</span>
+    <span class="n">N</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">target</span><span class="p">)</span>
+    <span class="n">verify</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span> <span class="o">==</span> <span class="n">N</span><span class="p">)</span>
+    <span class="n">verify</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">line_attributes</span><span class="p">)</span> <span class="o">==</span> <span class="n">N</span><span class="p">)</span>
+
+    <span class="c"># Extract polygon features</span>
+    <span class="n">polygons</span> <span class="o">=</span> <span class="n">source</span><span class="o">.</span><span class="n">get_geometry</span><span class="p">()</span>
+    <span class="n">polygon_attributes</span> <span class="o">=</span> <span class="n">source</span><span class="o">.</span><span class="n">get_data</span><span class="p">()</span>
+    <span class="n">verify</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">polygons</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">polygon_attributes</span><span class="p">))</span>
+
+    <span class="c"># Data structure for resulting line segments</span>
+    <span class="c">#clipped_geometry = []</span>
+    <span class="c">#clipped_attributes = []</span>
+
+    <span class="c"># Clip line lines to polygons</span>
+    <span class="n">lines_covered</span> <span class="o">=</span> <span class="n">clip_lines_by_polygons</span><span class="p">(</span><span class="n">lines</span><span class="p">,</span> <span class="n">polygons</span><span class="p">)</span>
+
+    <span class="c"># Create one new line data layer with joined attributes</span>
+    <span class="c"># from polygons and lines</span>
+    <span class="n">new_geometry</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">new_attributes</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">polygons</span><span class="p">)):</span>
+        <span class="c"># Loop over polygons</span>
+
+        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">lines_covered</span><span class="p">[</span><span class="n">i</span><span class="p">]:</span>
+            <span class="c"># Loop over parent lines</span>
+
+            <span class="n">lines</span> <span class="o">=</span> <span class="n">lines_covered</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span>
+            <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">lines</span><span class="p">:</span>
+                <span class="c"># Loop over lines clipped from line j by polygon i</span>
+
+                <span class="c"># Associated polygon and line attributes</span>
+                <span class="n">attr</span> <span class="o">=</span> <span class="n">polygon_attributes</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+                <span class="n">attr</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">line_attributes</span><span class="p">[</span><span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">())</span>
+                <span class="n">attr</span><span class="p">[</span><span class="s">&#39;polygon_id&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">i</span>  <span class="c"># Store id for associated polygon</span>
+                <span class="n">attr</span><span class="p">[</span><span class="s">&#39;parent_line_id&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">j</span>  <span class="c"># Store id for parent line</span>
+                <span class="n">attr</span><span class="p">[</span><span class="n">DEFAULT_ATTRIBUTE</span><span class="p">]</span> <span class="o">=</span> <span class="bp">True</span>
+
+                <span class="c"># Store new line feature</span>
+                <span class="n">new_geometry</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+                <span class="n">new_attributes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">attr</span><span class="p">)</span>
+
+    <span class="n">R</span> <span class="o">=</span> <span class="n">Vector</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">new_attributes</span><span class="p">,</span>
+               <span class="n">projection</span><span class="o">=</span><span class="n">source</span><span class="o">.</span><span class="n">get_projection</span><span class="p">(),</span>
+               <span class="n">geometry</span><span class="o">=</span><span class="n">new_geometry</span><span class="p">,</span>
+               <span class="n">geometry_type</span><span class="o">=</span><span class="s">&#39;line&#39;</span><span class="p">,</span>
+               <span class="n">name</span><span class="o">=</span><span class="n">layer_name</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">R</span>
+
+</div>
+<div class="viewcode-block" id="interpolate_raster_raster"><a class="viewcode-back" href="../../../api-docs/safe/engine/interpolation.html#safe.engine.interpolation.interpolate_raster_raster">[docs]</a><span class="k">def</span> <span class="nf">interpolate_raster_raster</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="n">target</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Check for alignment and returns target layer as is</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="n">source</span><span class="o">.</span><span class="n">get_geotransform</span><span class="p">()</span> <span class="o">!=</span> <span class="n">target</span><span class="o">.</span><span class="n">get_geotransform</span><span class="p">():</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;Intergrid interpolation not implemented here. &#39;</span>
+               <span class="s">&#39;Make sure rasters are aligned and sampled to &#39;</span>
+               <span class="s">&#39;the same resolution&#39;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="n">InaSAFEError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c"># Rasters are aligned, no need to interpolate</span>
+        <span class="k">return</span> <span class="n">target</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+        <p class="logo"><a href="../../../contents.html">
+          <img class="logo" src="../../../_static/icon.png" alt="Logo"/>
+        </a></p>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="relbar-bottom">
+        
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> &nbsp; &nbsp;</li>
+    <li><a href="../../../index.html">Home</a> &raquo;</li>
+    <li><a href="../../../contents.html">Contents</a> &raquo;</li>
+
+          <li><a href="../../index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    </div>
+
+    <div class="footer">
+        &copy; Copyright 2012, BNPB/AIFDR/GFDRR.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+    <!-- cloud_sptheme 1.3 -->
+  </body>
+</html>

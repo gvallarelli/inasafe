@@ -1,0 +1,482 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Module: safe.engine.interpolation &mdash; InaSAFE 0.5.0-alpha documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/cloud.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Noticia+Text|Droid+Sans+Mono" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '0.5.0-alpha',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../../_static/jquery.cookie.js"></script>
+    <script type="text/javascript" src="../../../_static/toggle_sections.js"></script>
+    <link rel="top" title="InaSAFE 0.5.0-alpha documentation" href="../../../index.html" />
+    <link rel="up" title="Package::safe.engine" href="../engine.html" />
+    <link rel="next" title="Module: safe.engine.utilities" href="utilities.html" />
+    <link rel="prev" title="Module: safe.engine.test_engine" href="test_engine.html" /> 
+  </head>
+  <body>
+    <div class="relbar-top">
+        
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> &nbsp; &nbsp;</li>
+        <li class="right" >
+          <a href="utilities.html" title="Module: safe.engine.utilities"
+             accesskey="N">next</a> &nbsp; &nbsp;</li>
+        <li class="right" >
+          <a href="test_engine.html" title="Module: safe.engine.test_engine"
+             accesskey="P">previous</a> &nbsp; &nbsp;</li>
+    <li><a href="../../../index.html">Home</a> &raquo;</li>
+    <li><a href="../../../contents.html">Contents</a> &raquo;</li>
+
+          <li><a href="../../index.html" >InaSAFE&#8217;s API documentation</a> &raquo;</li>
+          <li><a href="../../safe.html" >Package::safe</a> &raquo;</li>
+          <li><a href="../engine.html" accesskey="U">Package::safe.engine</a> &raquo;</li> 
+      </ul>
+    </div>
+    </div>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="module-safe.engine.interpolation">
+<span id="module-safe-engine-interpolation"></span><h1>Module:  safe.engine.interpolation<a class="headerlink" href="#module-safe.engine.interpolation" title="Permalink to this headline">¶</a></h1>
+<p><strong>Interpolation from hazard to exposure layers.</strong></p>
+<p>Provides interpolation functionality to assign values from one layer instance
+to another irrespective of layer types.</p>
+<dl class="function">
+<dt id="safe.engine.interpolation.assign_hazard_values_to_exposure_data">
+<tt class="descclassname">safe.engine.interpolation.</tt><tt class="descname">assign_hazard_values_to_exposure_data</tt><big>(</big><em>hazard</em>, <em>exposure</em>, <em>layer_name=None</em>, <em>attribute_name=None</em>, <em>mode='linear'</em><big>)</big><a class="reference internal" href="../../../_modules/safe/engine/interpolation.html#assign_hazard_values_to_exposure_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe.engine.interpolation.assign_hazard_values_to_exposure_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Assign hazard values to exposure data</p>
+<p>This is the high level wrapper around interpolation functions for different
+combinations of data types.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><ul class="first">
+<li><p class="first">hazard: Layer representing the hazard levels</p>
+</li>
+<li><p class="first">exposure: Layer representing the exposure data</p>
+</li>
+<li><dl class="first docutils">
+<dt>layer_name: Optional name of returned layer.</dt>
+<dd><p class="first last">If None (default) the name of the exposure layer is used for
+the returned layer.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>attribute_name:</dt>
+<dd><p class="first">If hazard layer is of type raster, this is the name for new
+attribute in the result containing the hazard level.
+If None (default) the name of hazard is used</p>
+<p class="last">If hazard layer is of type vector, it is the name of the
+attribute to transfer from the hazard layer into the result.
+If None (default) all attributes are transferred.</p>
+</dd>
+</dl>
+</li>
+</ul>
+<blockquote class="last">
+<div><ul>
+<li><dl class="first docutils">
+<dt>mode:</dt>
+<dd><p class="first last">Interpolation mode for raster to point interpolation only</p>
+</dd>
+</dl>
+</li>
+</ul>
+</div></blockquote>
+</dd>
+<dt>Returns:</dt>
+<dd>Layer representing the exposure data with hazard levels assigned.</dd>
+<dt>Raises:</dt>
+<dd>Underlying exceptions are propagated</dd>
+</dl>
+<p>Note:</p>
+<blockquote>
+<div><p>Admissible combinations of input layer types are</p>
+<blockquote>
+<div>Exposure |  Raster     Polygon    Line     Point</div></blockquote>
+<p>Polygon         |  Y          Y          Y        Y
+Raster          |  Y          Y          Y        Y</p>
+<p>with the following methodologies used:</p>
+<dl class="docutils">
+<dt>Polygon-Point:   Clip points to polygon and assign polygon attributes</dt>
+<dd>to them.</dd>
+</dl>
+<p>Polygon-Line:    * Not Implemented *
+Polygon-Polygon: * Not Implemented *
+Polygon-Raster:  Convert raster to points, clip to polygon,</p>
+<blockquote>
+<div>assign values and return point data</div></blockquote>
+<dl class="docutils">
+<dt>Raster-Point:    Bilinear (or constant) interpolation as currently</dt>
+<dd>implemented</dd>
+</dl>
+<p>Raster-Line:     * Not Implemented *
+Raster-Polygon:  Calculate centroids and use Raster - Point algorithm
+Raster-Raster:   Exposure raster is returned as is</p>
+<p>The data type of the resulting layer depends on the combination of
+input types as follows:</p>
+<p>Polygon-Point:   Point data
+Polygon-Line:    N/A
+Polygon-Polygon: N/A
+Polygon-Raster:  Point data
+Raster-Point:    Point data
+Raster-Line:     N/A
+Raster-Polygon:  Polygon data
+Raster-Raster:   Raster data</p>
+</div></blockquote>
+</dd></dl>
+
+<dl class="function">
+<dt id="safe.engine.interpolation.check_inputs">
+<tt class="descclassname">safe.engine.interpolation.</tt><tt class="descname">check_inputs</tt><big>(</big><em>hazard</em>, <em>exposure</em>, <em>layer_name</em>, <em>attribute_name</em><big>)</big><a class="reference internal" href="../../../_modules/safe/engine/interpolation.html#check_inputs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe.engine.interpolation.check_inputs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check inputs and establish default values</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><ul class="first last simple">
+<li>hazard: Hazard layer instance (any type)</li>
+<li>exposure: Exposure layer instance (any type)</li>
+<li>layer_name: Name of returned layer or None</li>
+<li>attribute_name: Name of interpolated attribute or None</li>
+</ul>
+</dd>
+<dt>Returns:</dt>
+<dd><ul class="first last simple">
+<li>layer_name</li>
+<li>attribute_name</li>
+</ul>
+</dd>
+<dt>Raises:</dt>
+<dd>VerificationError</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="safe.engine.interpolation.interpolate_polygon_lines">
+<tt class="descclassname">safe.engine.interpolation.</tt><tt class="descname">interpolate_polygon_lines</tt><big>(</big><em>source</em>, <em>target</em>, <em>layer_name=None</em>, <em>attribute_name=None</em><big>)</big><a class="reference internal" href="../../../_modules/safe/engine/interpolation.html#interpolate_polygon_lines"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe.engine.interpolation.interpolate_polygon_lines" title="Permalink to this definition">¶</a></dt>
+<dd><p>Interpolate from polygon vector layer to line vector data</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><ul class="first last">
+<li><p class="first">source: Vector data set (polygon)</p>
+</li>
+<li><p class="first">target: Vector data set (lines)</p>
+</li>
+<li><dl class="first docutils">
+<dt>layer_name: Optional name of returned interpolated layer.</dt>
+<dd><p class="first last">If None the name of target is used for the returned layer.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>attribute_name: Name for new attribute.</dt>
+<dd><p class="first last">If None (default) the name of source is used</p>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+<dt>Returns:</dt>
+<dd><dl class="first last docutils">
+<dt>Vector data set of lines inside polygons</dt>
+<dd><p class="first">Attributes are combined from polygon they fall into and
+line that was clipped.</p>
+<p class="last">Lines not in any polygon are ignored.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="safe.engine.interpolation.interpolate_polygon_points">
+<tt class="descclassname">safe.engine.interpolation.</tt><tt class="descname">interpolate_polygon_points</tt><big>(</big><em>source</em>, <em>target</em>, <em>layer_name=None</em>, <em>attribute_name=None</em><big>)</big><a class="reference internal" href="../../../_modules/safe/engine/interpolation.html#interpolate_polygon_points"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe.engine.interpolation.interpolate_polygon_points" title="Permalink to this definition">¶</a></dt>
+<dd><p>Interpolate from polygon vector layer to point vector data</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><ul class="first last">
+<li><p class="first">source: Vector data set (polygon)</p>
+</li>
+<li><p class="first">target: Vector data set (points)</p>
+</li>
+<li><dl class="first docutils">
+<dt>layer_name: Optional name of returned interpolated layer.</dt>
+<dd><p class="first last">If None the name of target is used for the returned layer.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>attribute_name: Name for new attribute.</dt>
+<dd><p class="first last">If None (default) the name of source is used</p>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+<dt>Output</dt>
+<dd>I: Vector data set; points located as target with values interpolated
+from source</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="safe.engine.interpolation.interpolate_polygon_raster">
+<tt class="descclassname">safe.engine.interpolation.</tt><tt class="descname">interpolate_polygon_raster</tt><big>(</big><em>source</em>, <em>target</em>, <em>layer_name=None</em>, <em>attribute_name=None</em><big>)</big><a class="reference internal" href="../../../_modules/safe/engine/interpolation.html#interpolate_polygon_raster"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe.engine.interpolation.interpolate_polygon_raster" title="Permalink to this definition">¶</a></dt>
+<dd><p>Interpolate from polygon layer to raster data</p>
+<dl class="docutils">
+<dt>Args</dt>
+<dd><ul class="first last">
+<li><p class="first">source: Polygon data set</p>
+</li>
+<li><p class="first">target: Raster data set</p>
+</li>
+<li><dl class="first docutils">
+<dt>layer_name: Optional name of returned interpolated layer.</dt>
+<dd><p class="first last">If None the name of source is used for the returned layer.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>attribute_name: Name for new attribute.</dt>
+<dd><p class="first last">If None (default) the name of layer target is used</p>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+<dt>Output</dt>
+<dd><dl class="first last docutils">
+<dt>I: Vector data set; points located as target with</dt>
+<dd>values interpolated from source</dd>
+</dl>
+</dd>
+<dt>Note:</dt>
+<dd>Each point in the resulting dataset will have an attribute
+&#8216;polygon_id&#8217; which refers to the polygon it belongs to.</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="safe.engine.interpolation.interpolate_polygon_vector">
+<tt class="descclassname">safe.engine.interpolation.</tt><tt class="descname">interpolate_polygon_vector</tt><big>(</big><em>source</em>, <em>target</em>, <em>layer_name=None</em>, <em>attribute_name=None</em><big>)</big><a class="reference internal" href="../../../_modules/safe/engine/interpolation.html#interpolate_polygon_vector"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe.engine.interpolation.interpolate_polygon_vector" title="Permalink to this definition">¶</a></dt>
+<dd><p>Interpolate from polygon vector layer to vector data</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><ul class="first last">
+<li><p class="first">source: Vector data set (polygon)</p>
+</li>
+<li><p class="first">target: Vector data set (points or polygons)  - TBA also lines</p>
+</li>
+<li><dl class="first docutils">
+<dt>layer_name: Optional name of returned interpolated layer.</dt>
+<dd><p class="first last">If None the name of target is used for the returned layer.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>attribute_name: Name for new attribute.</dt>
+<dd><p class="first last">If None (default) the name of source is used</p>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+<dt>Output</dt>
+<dd><dl class="first last docutils">
+<dt>I: Vector data set; points located as target with values interpolated</dt>
+<dd>from source</dd>
+</dl>
+</dd>
+<dt>Note:</dt>
+<dd>If target geometry is polygon, data will be interpolated to
+its centroids and the output is a point data set.</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="safe.engine.interpolation.interpolate_raster_raster">
+<tt class="descclassname">safe.engine.interpolation.</tt><tt class="descname">interpolate_raster_raster</tt><big>(</big><em>source</em>, <em>target</em><big>)</big><a class="reference internal" href="../../../_modules/safe/engine/interpolation.html#interpolate_raster_raster"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe.engine.interpolation.interpolate_raster_raster" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check for alignment and returns target layer as is</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="safe.engine.interpolation.interpolate_raster_vector">
+<tt class="descclassname">safe.engine.interpolation.</tt><tt class="descname">interpolate_raster_vector</tt><big>(</big><em>source</em>, <em>target</em>, <em>layer_name=None</em>, <em>attribute_name=None</em>, <em>mode='linear'</em><big>)</big><a class="reference internal" href="../../../_modules/safe/engine/interpolation.html#interpolate_raster_vector"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe.engine.interpolation.interpolate_raster_vector" title="Permalink to this definition">¶</a></dt>
+<dd><p>Interpolate from raster layer to vector data</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><ul class="first last">
+<li><p class="first">source: Raster data set (grid)</p>
+</li>
+<li><p class="first">target: Vector data set (points or polygons)</p>
+</li>
+<li><dl class="first docutils">
+<dt>layer_name: Optional name of returned interpolated layer.</dt>
+<dd><p class="first last">If None the name of V is used for the returned layer.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>attribute_name: Name for new attribute.</dt>
+<dd><p class="first last">If None (default) the name of R is used</p>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+<dt>Returns:</dt>
+<dd><dl class="first last docutils">
+<dt>I: Vector data set; points located as target with values</dt>
+<dd>interpolated from source</dd>
+</dl>
+</dd>
+</dl>
+<p>Note: If target geometry is polygon, data will be interpolated to
+its centroids and the output is a point data set.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="safe.engine.interpolation.interpolate_raster_vector_points">
+<tt class="descclassname">safe.engine.interpolation.</tt><tt class="descname">interpolate_raster_vector_points</tt><big>(</big><em>source</em>, <em>target</em>, <em>layer_name=None</em>, <em>attribute_name=None</em>, <em>mode='linear'</em><big>)</big><a class="reference internal" href="../../../_modules/safe/engine/interpolation.html#interpolate_raster_vector_points"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe.engine.interpolation.interpolate_raster_vector_points" title="Permalink to this definition">¶</a></dt>
+<dd><p>Interpolate from raster layer to point data</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><ul class="first last">
+<li><p class="first">source: Raster data set (grid)</p>
+</li>
+<li><p class="first">target: Vector data set (points)</p>
+</li>
+<li><dl class="first docutils">
+<dt>layer_name: Optional name of returned interpolated layer.</dt>
+<dd><p class="first last">If None the name of target is used for the returned layer.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>attribute_name: Name for new attribute.</dt>
+<dd><p class="first last">If None (default) the name of layer source is used</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>mode: &#8216;linear&#8217; or &#8216;constant&#8217; - determines whether interpolation</dt>
+<dd><p class="first last">from grid to points should be bilinear or piecewise constant</p>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+<dt>Output</dt>
+<dd><dl class="first last docutils">
+<dt>I: Vector data set; points located as target with values</dt>
+<dd>interpolated from source</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<p>This module forms part of the <a class="reference external" href="http://inasafe.org">InaSAFE</a> tool.</p>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+        <p class="logo"><a href="../../../contents.html">
+          <img class="logo" src="../../../_static/icon.png" alt="Logo"/>
+        </a></p>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="test_engine.html"
+                        title="previous chapter">Module:  safe.engine.test_engine</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="utilities.html"
+                        title="next chapter">Module:  safe.engine.utilities</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../../../_sources/api-docs/safe/engine/interpolation.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="relbar-bottom">
+        
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> &nbsp; &nbsp;</li>
+        <li class="right" >
+          <a href="utilities.html" title="Module: safe.engine.utilities"
+             >next</a> &nbsp; &nbsp;</li>
+        <li class="right" >
+          <a href="test_engine.html" title="Module: safe.engine.test_engine"
+             >previous</a> &nbsp; &nbsp;</li>
+    <li><a href="../../../index.html">Home</a> &raquo;</li>
+    <li><a href="../../../contents.html">Contents</a> &raquo;</li>
+
+          <li><a href="../../index.html" >InaSAFE&#8217;s API documentation</a> &raquo;</li>
+          <li><a href="../../safe.html" >Package::safe</a> &raquo;</li>
+          <li><a href="../engine.html" >Package::safe.engine</a> &raquo;</li> 
+      </ul>
+    </div>
+    </div>
+
+    <div class="footer">
+        &copy; Copyright 2012, BNPB/AIFDR/GFDRR.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+    <!-- cloud_sptheme 1.3 -->
+  </body>
+</html>

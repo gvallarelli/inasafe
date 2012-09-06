@@ -31,7 +31,7 @@
     <script type="text/javascript" src="../../../_static/toggle_sections.js"></script>
     <link rel="top" title="InaSAFE 0.5.0-alpha documentation" href="../../../index.html" />
     <link rel="up" title="Package::safe.storage" href="../storage.html" />
-    <link rel="next" title="Module: safe.storage.clipping" href="clipping.html" />
+    <link rel="next" title="Package::safe.engine" href="../engine.html" />
     <link rel="prev" title="Module: safe.storage.vector" href="vector.html" /> 
   </head>
   <body>
@@ -47,7 +47,7 @@
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
         <li class="right" >
-          <a href="clipping.html" title="Module: safe.storage.clipping"
+          <a href="../engine.html" title="Package::safe.engine"
              accesskey="N">next</a> &nbsp; &nbsp;</li>
         <li class="right" >
           <a href="vector.html" title="Module: safe.storage.vector"
@@ -78,10 +78,16 @@ raster and vector layers from numerical data.</p>
 <tt class="descclassname">safe.storage.core.</tt><tt class="descname">bboxlist2string</tt><big>(</big><em>bbox</em>, <em>decimals=6</em><big>)</big><a class="reference internal" href="../../../_modules/safe/storage/core.html#bboxlist2string"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe.storage.core.bboxlist2string" title="Permalink to this definition">¶</a></dt>
 <dd><p>Convert bounding box list to comma separated string</p>
 <dl class="docutils">
-<dt>Input</dt>
-<dd>bbox: List of coordinates of the form [W, S, E, N]</dd>
-<dt>Output</dt>
-<dd>bbox_string: Format &#8216;W,S,E,N&#8217; - each will have 6 decimal points</dd>
+<dt>Args:</dt>
+<dd><ul class="first last simple">
+<li>bbox: List of coordinates of the form [W, S, E, N]</li>
+</ul>
+</dd>
+<dt>Returns:</dt>
+<dd><ul class="first last simple">
+<li>bbox_string: Format &#8216;W,S,E,N&#8217; - each will have 6 decimal points</li>
+</ul>
+</dd>
 </dl>
 </dd></dl>
 
@@ -90,10 +96,16 @@ raster and vector layers from numerical data.</p>
 <tt class="descclassname">safe.storage.core.</tt><tt class="descname">bboxstring2list</tt><big>(</big><em>bbox_string</em><big>)</big><a class="reference internal" href="../../../_modules/safe/storage/core.html#bboxstring2list"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe.storage.core.bboxstring2list" title="Permalink to this definition">¶</a></dt>
 <dd><p>Convert bounding box string to list</p>
 <dl class="docutils">
-<dt>Input</dt>
-<dd>bbox_string: String of bounding box coordinates of the form &#8216;W,S,E,N&#8217;</dd>
-<dt>Output</dt>
-<dd>bbox: List of floating point numbers with format [W, S, E, N]</dd>
+<dt>Args:</dt>
+<dd><ul class="first last simple">
+<li>bbox_string: String of bounding box coordinates of the form &#8216;W,S,E,N&#8217;</li>
+</ul>
+</dd>
+<dt>Returns:</dt>
+<dd><ul class="first last simple">
+<li>bbox: List of floating point numbers with format [W, S, E, N]</li>
+</ul>
+</dd>
 </dl>
 </dd></dl>
 
@@ -108,10 +120,16 @@ raster and vector layers from numerical data.</p>
 <tt class="descclassname">safe.storage.core.</tt><tt class="descname">get_bounding_box</tt><big>(</big><em>filename</em><big>)</big><a class="reference internal" href="../../../_modules/safe/storage/core.html#get_bounding_box"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe.storage.core.get_bounding_box" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get bounding box for specified raster or vector file</p>
 <dl class="docutils">
-<dt>Input:</dt>
-<dd>filename</dd>
-<dt>Output:</dt>
-<dd>bounding box as python list of numbers [West, South, East, North]</dd>
+<dt>Args:</dt>
+<dd><ul class="first last simple">
+<li>filename</li>
+</ul>
+</dd>
+<dt>Returns:</dt>
+<dd><ul class="first last simple">
+<li>bounding box as python list of numbers [West, South, East, North]</li>
+</ul>
+</dd>
 </dl>
 </dd></dl>
 
@@ -120,10 +138,16 @@ raster and vector layers from numerical data.</p>
 <tt class="descclassname">safe.storage.core.</tt><tt class="descname">get_bounding_box_string</tt><big>(</big><em>filename</em><big>)</big><a class="reference internal" href="../../../_modules/safe/storage/core.html#get_bounding_box_string"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe.storage.core.get_bounding_box_string" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get bounding box for specified raster or vector file</p>
 <dl class="docutils">
-<dt>Input:</dt>
-<dd>filename</dd>
-<dt>Output:</dt>
-<dd>bounding box as python string &#8216;West, South, East, North&#8217;</dd>
+<dt>Args:</dt>
+<dd><ul class="first last simple">
+<li>filename</li>
+</ul>
+</dd>
+<dt>Returns:</dt>
+<dd><ul class="first last simple">
+<li>bounding box as python string &#8216;West, South, East, North&#8217;</li>
+</ul>
+</dd>
 </dl>
 </dd></dl>
 
@@ -139,22 +163,32 @@ This can be either raster or vector data.</p>
 <tt class="descclassname">safe.storage.core.</tt><tt class="descname">write_raster_data</tt><big>(</big><em>data</em>, <em>projection</em>, <em>geotransform</em>, <em>filename</em>, <em>keywords=None</em><big>)</big><a class="reference internal" href="../../../_modules/safe/storage/core.html#write_raster_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe.storage.core.write_raster_data" title="Permalink to this definition">¶</a></dt>
 <dd><p>Write array to raster file with specified metadata and one data layer</p>
 <dl class="docutils">
-<dt>Input:</dt>
-<dd><p class="first">data: Numpy array containing grid data
-projection: WKT projection information
-geotransform: 6 digit vector</p>
-<blockquote>
-<div><dl class="docutils">
+<dt>Args:</dt>
+<dd><ul class="first last">
+<li><p class="first">data: Numpy array containing grid data</p>
+</li>
+<li><p class="first">projection: WKT projection information</p>
+</li>
+<li><dl class="first docutils">
+<dt>geotransform: 6 digit vector</dt>
+<dd><dl class="first last docutils">
 <dt>(top left x, w-e pixel resolution, rotation,</dt>
-<dd>top left y, rotation, n-s pixel resolution).
-See e.g. <a class="reference external" href="http://www.gdal.org/gdal_tutorial.html">http://www.gdal.org/gdal_tutorial.html</a></dd>
-</dl>
-</div></blockquote>
-<p class="last">filename: Output filename
-keywords: Optional dictionary</p>
+<dd><p class="first last">top left y, rotation, n-s pixel resolution).
+See e.g. <a class="reference external" href="http://www.gdal.org/gdal_tutorial.html">http://www.gdal.org/gdal_tutorial.html</a></p>
 </dd>
 </dl>
-<p>Note: The only format implemented is GTiff and the extension must be .tif</p>
+</dd>
+</dl>
+</li>
+<li><p class="first">filename: Output filename</p>
+</li>
+<li><p class="first">keywords: Optional dictionary</p>
+</li>
+</ul>
+</dd>
+<dt>Note:</dt>
+<dd>The only format implemented is GTiff and the extension must be .tif</dd>
+</dl>
 </dd></dl>
 
 <dl class="function">
@@ -162,26 +196,40 @@ keywords: Optional dictionary</p>
 <tt class="descclassname">safe.storage.core.</tt><tt class="descname">write_vector_data</tt><big>(</big><em>data</em>, <em>projection</em>, <em>geometry</em>, <em>filename</em>, <em>keywords=None</em><big>)</big><a class="reference internal" href="../../../_modules/safe/storage/core.html#write_vector_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe.storage.core.write_vector_data" title="Permalink to this definition">¶</a></dt>
 <dd><p>Write point data and any associated attributes to vector file</p>
 <dl class="docutils">
-<dt>Input:</dt>
-<dd><dl class="first docutils">
+<dt>Args:</dt>
+<dd><ul class="first last">
+<li><dl class="first docutils">
 <dt>data: List of N dictionaries each with M fields where</dt>
-<dd>M is the number of attributes.
-A value of None is acceptable.</dd>
-</dl>
-<p class="last">projection: WKT projection information
-geometry: List of points or polygons.
-filename: Output filename
-keywords: Optional dictionary</p>
+<dd><p class="first last">M is the number of attributes.
+A value of None is acceptable.</p>
 </dd>
 </dl>
-<p>Note: The only format implemented is GML and SHP so the extension
-must be either .gml or .shp</p>
+</li>
+<li><p class="first">projection: WKT projection information</p>
+</li>
+<li><p class="first">geometry: List of points or polygons.</p>
+</li>
+<li><p class="first">filename: Output filename</p>
+</li>
+<li><p class="first">keywords: Optional dictionary</p>
+</li>
+</ul>
+</dd>
+<dt>Note</dt>
+<dd>The only format implemented is GML and SHP so the extension
+must be either .gml or .shp</dd>
+</dl>
 <p># FIXME (Ole): When the GML driver is used,
 #              the spatial reference is not stored.
 #              I suspect this is a bug in OGR.</p>
-<p>Background:
-* <a class="reference external" href="http://www.gdal.org/ogr/ogr_apitut.html">http://www.gdal.org/ogr/ogr_apitut.html</a> (last example)
-* <a class="reference external" href="http://invisibleroads.com/tutorials/gdal-shapefile-points-save.html">http://invisibleroads.com/tutorials/gdal-shapefile-points-save.html</a></p>
+<dl class="docutils">
+<dt>Background:</dt>
+<dd><ul class="first last simple">
+<li><a class="reference external" href="http://www.gdal.org/ogr/ogr_apitut.html">http://www.gdal.org/ogr/ogr_apitut.html</a> (last example)</li>
+<li><a class="reference external" href="http://invisibleroads.com/tutorials/gdal-shapefile-points-save.html">http://invisibleroads.com/tutorials/gdal-shapefile-points-save.html</a></li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 
 <p>This module forms part of the <a class="reference external" href="http://inasafe.org">InaSAFE</a> tool.</p>
@@ -200,8 +248,8 @@ must be either .gml or .shp</p>
   <p class="topless"><a href="vector.html"
                         title="previous chapter">Module:  safe.storage.vector</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="clipping.html"
-                        title="next chapter">Module:  safe.storage.clipping</a></p>
+  <p class="topless"><a href="../engine.html"
+                        title="next chapter">Package::safe.engine</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="../../../_sources/api-docs/safe/storage/core.txt"
@@ -236,7 +284,7 @@ must be either .gml or .shp</p>
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
         <li class="right" >
-          <a href="clipping.html" title="Module: safe.storage.clipping"
+          <a href="../engine.html" title="Package::safe.engine"
              >next</a> &nbsp; &nbsp;</li>
         <li class="right" >
           <a href="vector.html" title="Module: safe.storage.vector"
@@ -253,7 +301,7 @@ must be either .gml or .shp</p>
 
     <div class="footer">
         &copy; Copyright 2012, BNPB/AIFDR/GFDRR.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
     </div>
     <!-- cloud_sptheme 1.3 -->
   </body>

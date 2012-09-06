@@ -104,8 +104,9 @@ should use the format
 <h3>Translation of strings <em>not</em> in the gui such as impact functions<a class="headerlink" href="#translation-of-strings-not-in-the-gui-such-as-impact-functions" title="Permalink to this headline">¶</a></h3>
 <ul>
 <li><p class="first">Import the gettext helper e.g:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">common.utilities</span> <span class="kn">import</span> <span class="n">ugettext</span> <span class="k">as</span> <span class="n">_</span>
-</pre></div>
+<div class="highlight-python"><pre>from safe.common.utilities import ugettext as _
+
+(Note that you must have the sequence "import ugettext" in the statement. It will not work as part of a multiple import such as import x, y, ugettext as _)</pre>
 </div>
 </li>
 <li><p class="first">All strings should be wrapped using the _ helper e.g:</p>
@@ -441,7 +442,7 @@ for each supported locale.</p>
 
     <div class="footer">
         &copy; Copyright 2012, BNPB/AIFDR/GFDRR.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
     </div>
     <!-- cloud_sptheme 1.3 -->
   </body>

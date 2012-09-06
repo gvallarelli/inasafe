@@ -31,7 +31,7 @@
     <script type="text/javascript" src="../../../_static/toggle_sections.js"></script>
     <link rel="top" title="InaSAFE 0.5.0-alpha documentation" href="../../../index.html" />
     <link rel="up" title="Package::safe.impact_functions" href="../impact_functions.html" />
-    <link rel="next" title="Module: safe.impact_functions.styles" href="styles.html" />
+    <link rel="next" title="Package::safe.impact_functions.tephra" href="tephra.html" />
     <link rel="prev" title="Module: safe.impact_functions.test_plugins" href="test_plugins.html" /> 
   </head>
   <body>
@@ -47,7 +47,7 @@
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
         <li class="right" >
-          <a href="styles.html" title="Module: safe.impact_functions.styles"
+          <a href="tephra.html" title="Package::safe.impact_functions.tephra"
              accesskey="N">next</a> &nbsp; &nbsp;</li>
         <li class="right" >
           <a href="test_plugins.html" title="Module: safe.impact_functions.test_plugins"
@@ -230,7 +230,8 @@ Use get_hazard_layers if more are expected and needed</p>
 <dt id="safe.impact_functions.core.get_plugin">
 <tt class="descclassname">safe.impact_functions.core.</tt><tt class="descname">get_plugin</tt><big>(</big><em>name</em><big>)</big><a class="reference internal" href="../../../_modules/safe/impact_functions/core.html#get_plugin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe.impact_functions.core.get_plugin" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get plugin that matches given name</p>
-<p>This is just a wrapper around get_plugins to simplify</p>
+<p>This is just a wrapper around get_plugins to simplify
+the overly complicated way of extracting the function</p>
 </dd></dl>
 
 <dl class="function">
@@ -260,6 +261,12 @@ Use get_hazard_layers if more are expected and needed</p>
 exposure_title: string
 func: impact function class</dd>
 </dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="safe.impact_functions.core.get_thresholds">
+<tt class="descclassname">safe.impact_functions.core.</tt><tt class="descname">get_thresholds</tt><big>(</big><em>layer</em><big>)</big><a class="reference internal" href="../../../_modules/safe/impact_functions/core.html#get_thresholds"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe.impact_functions.core.get_thresholds" title="Permalink to this definition">¶</a></dt>
+<dd><p>Extract thresholds form layer keywords if present</p>
 </dd></dl>
 
 <dl class="function">
@@ -296,7 +303,7 @@ a &#8216;&#8217; at the end of a line will be a continuation</p>
 
 <dl class="function">
 <dt id="safe.impact_functions.core.requirements_met">
-<tt class="descclassname">safe.impact_functions.core.</tt><tt class="descname">requirements_met</tt><big>(</big><em>requirements</em>, <em>params</em>, <em>verbose=False</em><big>)</big><a class="reference internal" href="../../../_modules/safe/impact_functions/core.html#requirements_met"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe.impact_functions.core.requirements_met" title="Permalink to this definition">¶</a></dt>
+<tt class="descclassname">safe.impact_functions.core.</tt><tt class="descname">requirements_met</tt><big>(</big><em>requirements</em>, <em>params</em><big>)</big><a class="reference internal" href="../../../_modules/safe/impact_functions/core.html#requirements_met"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe.impact_functions.core.requirements_met" title="Permalink to this definition">¶</a></dt>
 <dd><p>Checks the plugin can run with a given layer.</p>
 <p>Based on the requirements specified in the doc string.</p>
 <dl class="docutils">
@@ -322,8 +329,8 @@ False: if it has requirements and none of them are met.</dd>
   <p class="topless"><a href="test_plugins.html"
                         title="previous chapter">Module:  safe.impact_functions.test_plugins</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="styles.html"
-                        title="next chapter">Module:  safe.impact_functions.styles</a></p>
+  <p class="topless"><a href="tephra.html"
+                        title="next chapter">Package::safe.impact_functions.tephra</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="../../../_sources/api-docs/safe/impact_functions/core.txt"
@@ -358,7 +365,7 @@ False: if it has requirements and none of them are met.</dd>
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
         <li class="right" >
-          <a href="styles.html" title="Module: safe.impact_functions.styles"
+          <a href="tephra.html" title="Package::safe.impact_functions.tephra"
              >next</a> &nbsp; &nbsp;</li>
         <li class="right" >
           <a href="test_plugins.html" title="Module: safe.impact_functions.test_plugins"
@@ -375,7 +382,7 @@ False: if it has requirements and none of them are met.</dd>
 
     <div class="footer">
         &copy; Copyright 2012, BNPB/AIFDR/GFDRR.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
     </div>
     <!-- cloud_sptheme 1.3 -->
   </body>

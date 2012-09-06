@@ -215,7 +215,13 @@ gh-pages. To use this, the site is stored in a special branch.</p>
 </div>
 <div class="section" id="initial-gh-pages-setup">
 <h2>Initial gh-pages setup<a class="headerlink" href="#initial-gh-pages-setup" title="Permalink to this headline">¶</a></h2>
-<p>Enable gh-pages in th gh project
+<p>In order to set up the gh-pages branch this is the procedure followed.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">This is a once-off process you do not need to repeat it, it is
+here for reference purposes only.</p>
+</div>
+<p>Enable gh-pages in the gh project
 <a class="reference external" href="https://github.com/AIFDR/inasafe/admin">admin page</a>. On your local system
 do something like this:</p>
 <div class="highlight-python"><pre>git clone file:///home/timlinux/dev/python/inasafe-dev \
@@ -235,6 +241,7 @@ git push origin gh-pages</pre>
 </div>
 <p>Now wait ten minutes or so and the pages should be visble here at
 <a class="reference external" href="http://aifdr.github.com/inasafe/">http://aifdr.github.com/inasafe/</a></p>
+<p>See also: <a class="reference external" href="http://help.github.com/articles/creating-project-pages-manually">http://help.github.com/articles/creating-project-pages-manually</a></p>
 <p>Deployment of the site requires the following steps:</p>
 <ul class="simple">
 <li>Regenerate the docs using make docs in the root dir of a master branch
@@ -244,7 +251,10 @@ checked out in the gh-pages branch</li>
 <li>Commit those changes and push</li>
 <li>Wait approximately 10 minutes</li>
 </ul>
-<p>After this the changes should be visible here <a class="reference external" href="http://aifdr.github.com/inasafe/">http://aifdr.github.com/inasafe/</a></p>
+<p>After this the changes should be visible here <a class="reference external" href="http://aifdr.github.com/inasafe/">http://aifdr.github.com/inasafe/</a>
+and <a class="reference external" href="http://inasafe.org">http://inasafe.org</a>.</p>
+<p>Also see <a class="reference external" href="http://github.com/AIFDR/inasafe/issues/257">http://github.com/AIFDR/inasafe/issues/257</a> for further details of
+how the documentation publishing process works.</p>
 </div>
 </div>
 
@@ -326,7 +336,7 @@ checked out in the gh-pages branch</li>
 
     <div class="footer">
         &copy; Copyright 2012, BNPB/AIFDR/GFDRR.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
     </div>
     <!-- cloud_sptheme 1.3 -->
   </body>

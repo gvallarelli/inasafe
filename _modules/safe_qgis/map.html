@@ -71,6 +71,7 @@
 <span class="sd">     (at your option) any later version.</span>
 
 <span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">safe.common.utilities</span> <span class="kn">import</span> <span class="n">temp_dir</span>
 
 <span class="n">__author__</span> <span class="o">=</span> <span class="s">&#39;tim@linfiniti.com&#39;</span>
 <span class="n">__version__</span> <span class="o">=</span> <span class="s">&#39;0.5.0&#39;</span>
@@ -80,6 +81,8 @@
 <span class="n">__copyright__</span> <span class="o">+=</span> <span class="s">&#39;Disaster Reduction&#39;</span>
 
 <span class="kn">import</span> <span class="nn">os</span>
+
+<span class="kn">from</span> <span class="nn">PyQt4</span> <span class="kn">import</span> <span class="n">QtCore</span><span class="p">,</span> <span class="n">QtGui</span><span class="p">,</span> <span class="n">QtWebKit</span><span class="p">,</span> <span class="n">QtXml</span>
 <span class="kn">from</span> <span class="nn">qgis.core</span> <span class="kn">import</span> <span class="p">(</span><span class="n">QgsComposition</span><span class="p">,</span>
                        <span class="n">QgsComposerMap</span><span class="p">,</span>
                        <span class="n">QgsComposerLabel</span><span class="p">,</span>
@@ -91,11 +94,11 @@
                        <span class="n">QgsPoint</span><span class="p">,</span>
                        <span class="n">QgsRectangle</span><span class="p">)</span>
 <span class="kn">from</span> <span class="nn">qgis.gui</span> <span class="kn">import</span> <span class="n">QgsComposerView</span>
-<span class="kn">from</span> <span class="nn">PyQt4</span> <span class="kn">import</span> <span class="p">(</span><span class="n">QtCore</span><span class="p">,</span> <span class="n">QtGui</span><span class="p">,</span> <span class="n">QtWebKit</span><span class="p">,</span> <span class="n">QtXml</span><span class="p">)</span>
+
 <span class="kn">from</span> <span class="nn">safe_qgis.exceptions</span> <span class="kn">import</span> <span class="p">(</span><span class="n">LegendLayerException</span><span class="p">,</span>
-                           <span class="n">KeywordNotFoundException</span><span class="p">)</span>
+                                  <span class="n">KeywordNotFoundException</span><span class="p">)</span>
 <span class="kn">from</span> <span class="nn">safe_qgis.keyword_io</span> <span class="kn">import</span> <span class="n">KeywordIO</span>
-<span class="kn">from</span> <span class="nn">safe_qgis.utilities</span> <span class="kn">import</span> <span class="n">getTempDir</span><span class="p">,</span> <span class="n">htmlHeader</span><span class="p">,</span> <span class="n">htmlFooter</span>
+<span class="kn">from</span> <span class="nn">safe_qgis.utilities</span> <span class="kn">import</span> <span class="n">htmlHeader</span><span class="p">,</span> <span class="n">htmlFooter</span>
 <span class="c"># Don&#39;t remove this even if it is flagged as unused by your ide</span>
 <span class="c"># it is needed for qrc:/ url resolution. See Qt Resources docs.</span>
 <span class="kn">import</span> <span class="nn">safe_qgis.resources</span>     <span class="c"># pylint: disable=W0611</span>
@@ -901,7 +904,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">getLegend</span><span class="p">()</span>
         <span class="n">myPicture1</span> <span class="o">=</span> <span class="n">QgsComposerPicture</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">composition</span><span class="p">)</span>
-        <span class="n">myLegendFile</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">getTempDir</span><span class="p">(),</span> <span class="s">&#39;legend.png&#39;</span><span class="p">)</span>
+        <span class="n">myLegendFile</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">temp_dir</span><span class="p">(),</span> <span class="s">&#39;legend.png&#39;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">legend</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">myLegendFile</span><span class="p">,</span> <span class="s">&#39;PNG&#39;</span><span class="p">)</span>
         <span class="n">myPicture1</span><span class="o">.</span><span class="n">setPictureFile</span><span class="p">(</span><span class="n">myLegendFile</span><span class="p">)</span>
         <span class="n">myLegendHeight</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pointsToMM</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">legend</span><span class="o">.</span><span class="n">height</span><span class="p">())</span>
@@ -963,7 +966,7 @@
         <span class="n">myTable</span> <span class="o">=</span> <span class="n">QgsComposerPicture</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">composition</span><span class="p">)</span>
         <span class="n">myImage</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">renderImpactTable</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">myImage</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
-            <span class="n">myTableFile</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">getTempDir</span><span class="p">(),</span> <span class="s">&#39;table.png&#39;</span><span class="p">)</span>
+            <span class="n">myTableFile</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">temp_dir</span><span class="p">(),</span> <span class="s">&#39;table.png&#39;</span><span class="p">)</span>
             <span class="n">myImage</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">myTableFile</span><span class="p">,</span> <span class="s">&#39;PNG&#39;</span><span class="p">)</span>
             <span class="n">myTable</span><span class="o">.</span><span class="n">setPictureFile</span><span class="p">(</span><span class="n">myTableFile</span><span class="p">)</span>
             <span class="n">myScaleFactor</span> <span class="o">=</span> <span class="mi">1</span>
@@ -1237,7 +1240,7 @@
 
     <div class="footer">
         &copy; Copyright 2012, BNPB/AIFDR/GFDRR.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
     </div>
     <!-- cloud_sptheme 1.3 -->
   </body>

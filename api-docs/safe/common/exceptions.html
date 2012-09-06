@@ -31,8 +31,8 @@
     <script type="text/javascript" src="../../../_static/toggle_sections.js"></script>
     <link rel="top" title="InaSAFE 0.5.0-alpha documentation" href="../../../index.html" />
     <link rel="up" title="Package::safe.common" href="../common.html" />
-    <link rel="next" title="Module: safe.common.interpolation2d" href="interpolation2d.html" />
-    <link rel="prev" title="Module: safe.common.test_tables" href="test_tables.html" /> 
+    <link rel="next" title="Module: safe.common.numerics" href="numerics.html" />
+    <link rel="prev" title="Module: safe.common.tables" href="tables.html" /> 
   </head>
   <body>
     <div class="relbar-top">
@@ -47,10 +47,10 @@
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
         <li class="right" >
-          <a href="interpolation2d.html" title="Module: safe.common.interpolation2d"
+          <a href="numerics.html" title="Module: safe.common.numerics"
              accesskey="N">next</a> &nbsp; &nbsp;</li>
         <li class="right" >
-          <a href="test_tables.html" title="Module: safe.common.test_tables"
+          <a href="tables.html" title="Module: safe.common.tables"
              accesskey="P">previous</a> &nbsp; &nbsp;</li>
     <li><a href="../../../index.html">Home</a> &raquo;</li>
     <li><a href="../../../contents.html">Contents</a> &raquo;</li>
@@ -88,9 +88,45 @@ the Free Software Foundation; either version 2 of the License, or
 </dd></dl>
 
 <dl class="exception">
+<dt id="safe.common.exceptions.BoundsError">
+<em class="property">exception </em><tt class="descclassname">safe.common.exceptions.</tt><tt class="descname">BoundsError</tt><a class="reference internal" href="../../../_modules/safe/common/exceptions.html#BoundsError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe.common.exceptions.BoundsError" title="Permalink to this definition">¶</a></dt>
+<dd><p>For points falling outside interpolation grid</p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="safe.common.exceptions.GetDataError">
+<em class="property">exception </em><tt class="descclassname">safe.common.exceptions.</tt><tt class="descname">GetDataError</tt><a class="reference internal" href="../../../_modules/safe/common/exceptions.html#GetDataError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe.common.exceptions.GetDataError" title="Permalink to this definition">¶</a></dt>
+<dd><p>When layer data cannot be obtained</p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="safe.common.exceptions.InaSAFEError">
+<em class="property">exception </em><tt class="descclassname">safe.common.exceptions.</tt><tt class="descname">InaSAFEError</tt><a class="reference internal" href="../../../_modules/safe/common/exceptions.html#InaSAFEError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe.common.exceptions.InaSAFEError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Base class for all user defined execptions</p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="safe.common.exceptions.PolygonInputError">
+<em class="property">exception </em><tt class="descclassname">safe.common.exceptions.</tt><tt class="descname">PolygonInputError</tt><a class="reference internal" href="../../../_modules/safe/common/exceptions.html#PolygonInputError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe.common.exceptions.PolygonInputError" title="Permalink to this definition">¶</a></dt>
+<dd><p>For invalid inputs to numeric polygon functions</p>
+</dd></dl>
+
+<dl class="exception">
 <dt id="safe.common.exceptions.ReadLayerError">
 <em class="property">exception </em><tt class="descclassname">safe.common.exceptions.</tt><tt class="descname">ReadLayerError</tt><a class="reference internal" href="../../../_modules/safe/common/exceptions.html#ReadLayerError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe.common.exceptions.ReadLayerError" title="Permalink to this definition">¶</a></dt>
 <dd><p>When a layer can&#8217;t be read</p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="safe.common.exceptions.VerificationError">
+<em class="property">exception </em><tt class="descclassname">safe.common.exceptions.</tt><tt class="descname">VerificationError</tt><a class="reference internal" href="../../../_modules/safe/common/exceptions.html#VerificationError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe.common.exceptions.VerificationError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Exception thrown by verify()</p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="safe.common.exceptions.WriteLayerError">
+<em class="property">exception </em><tt class="descclassname">safe.common.exceptions.</tt><tt class="descname">WriteLayerError</tt><a class="reference internal" href="../../../_modules/safe/common/exceptions.html#WriteLayerError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe.common.exceptions.WriteLayerError" title="Permalink to this definition">¶</a></dt>
+<dd><p>When a layer can&#8217;t be written</p>
 </dd></dl>
 
 <p>This module forms part of the <a class="reference external" href="http://inasafe.org">InaSAFE</a> tool.</p>
@@ -106,11 +142,11 @@ the Free Software Foundation; either version 2 of the License, or
           <img class="logo" src="../../../_static/icon.png" alt="Logo"/>
         </a></p>
   <h4>Previous topic</h4>
-  <p class="topless"><a href="test_tables.html"
-                        title="previous chapter">Module:  safe.common.test_tables</a></p>
+  <p class="topless"><a href="tables.html"
+                        title="previous chapter">Module:  safe.common.tables</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="interpolation2d.html"
-                        title="next chapter">Module:  safe.common.interpolation2d</a></p>
+  <p class="topless"><a href="numerics.html"
+                        title="next chapter">Module:  safe.common.numerics</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="../../../_sources/api-docs/safe/common/exceptions.txt"
@@ -145,10 +181,10 @@ the Free Software Foundation; either version 2 of the License, or
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
         <li class="right" >
-          <a href="interpolation2d.html" title="Module: safe.common.interpolation2d"
+          <a href="numerics.html" title="Module: safe.common.numerics"
              >next</a> &nbsp; &nbsp;</li>
         <li class="right" >
-          <a href="test_tables.html" title="Module: safe.common.test_tables"
+          <a href="tables.html" title="Module: safe.common.tables"
              >previous</a> &nbsp; &nbsp;</li>
     <li><a href="../../../index.html">Home</a> &raquo;</li>
     <li><a href="../../../contents.html">Contents</a> &raquo;</li>
@@ -162,7 +198,7 @@ the Free Software Foundation; either version 2 of the License, or
 
     <div class="footer">
         &copy; Copyright 2012, BNPB/AIFDR/GFDRR.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
     </div>
     <!-- cloud_sptheme 1.3 -->
   </body>

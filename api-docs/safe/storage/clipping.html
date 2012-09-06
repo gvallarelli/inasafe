@@ -31,8 +31,8 @@
     <script type="text/javascript" src="../../../_static/toggle_sections.js"></script>
     <link rel="top" title="InaSAFE 0.5.0-alpha documentation" href="../../../index.html" />
     <link rel="up" title="Package::safe.storage" href="../storage.html" />
-    <link rel="next" title="Module: safe.storage.utilities_test" href="utilities_test.html" />
-    <link rel="prev" title="Module: safe.storage.core" href="core.html" /> 
+    <link rel="next" title="Module: safe.storage.layer" href="layer.html" />
+    <link rel="prev" title="Module: safe.storage.utilities_test" href="utilities_test.html" /> 
   </head>
   <body>
     <div class="relbar-top">
@@ -47,10 +47,10 @@
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
         <li class="right" >
-          <a href="utilities_test.html" title="Module: safe.storage.utilities_test"
+          <a href="layer.html" title="Module: safe.storage.layer"
              accesskey="N">next</a> &nbsp; &nbsp;</li>
         <li class="right" >
-          <a href="core.html" title="Module: safe.storage.core"
+          <a href="utilities_test.html" title="Module: safe.storage.utilities_test"
              accesskey="P">previous</a> &nbsp; &nbsp;</li>
     <li><a href="../../../index.html">Home</a> &raquo;</li>
     <li><a href="../../../contents.html">Contents</a> &raquo;</li>
@@ -76,14 +76,21 @@
 <tt class="descclassname">safe.storage.clipping.</tt><tt class="descname">clip_raster_by_polygons</tt><big>(</big><em>R</em>, <em>P</em><big>)</big><a class="reference internal" href="../../../_modules/safe/storage/clipping.html#clip_raster_by_polygons"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe.storage.clipping.clip_raster_by_polygons" title="Permalink to this definition">¶</a></dt>
 <dd><p>Separate raster grid points by polygons</p>
 <dl class="docutils">
-<dt>Input</dt>
-<dd>R: Raster layer
-P: Polygon layer</dd>
-<dt>Output</dt>
-<dd><dl class="first last docutils">
+<dt>Args:</dt>
+<dd><ul class="first last simple">
+<li>R: Raster layer</li>
+<li>P: Polygon layer</li>
+</ul>
+</dd>
+<dt>Returns:</dt>
+<dd><ul class="first last">
+<li><dl class="first docutils">
 <dt>L: List of point vectors and their associated grid values.</dt>
-<dd>One item for each polygon</dd>
+<dd><p class="first last">One item for each polygon</p>
+</dd>
 </dl>
+</li>
+</ul>
 </dd>
 </dl>
 </dd></dl>
@@ -101,11 +108,11 @@ P: Polygon layer</dd>
           <img class="logo" src="../../../_static/icon.png" alt="Logo"/>
         </a></p>
   <h4>Previous topic</h4>
-  <p class="topless"><a href="core.html"
-                        title="previous chapter">Module:  safe.storage.core</a></p>
-  <h4>Next topic</h4>
   <p class="topless"><a href="utilities_test.html"
-                        title="next chapter">Module:  safe.storage.utilities_test</a></p>
+                        title="previous chapter">Module:  safe.storage.utilities_test</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="layer.html"
+                        title="next chapter">Module:  safe.storage.layer</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="../../../_sources/api-docs/safe/storage/clipping.txt"
@@ -140,10 +147,10 @@ P: Polygon layer</dd>
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
         <li class="right" >
-          <a href="utilities_test.html" title="Module: safe.storage.utilities_test"
+          <a href="layer.html" title="Module: safe.storage.layer"
              >next</a> &nbsp; &nbsp;</li>
         <li class="right" >
-          <a href="core.html" title="Module: safe.storage.core"
+          <a href="utilities_test.html" title="Module: safe.storage.utilities_test"
              >previous</a> &nbsp; &nbsp;</li>
     <li><a href="../../../index.html">Home</a> &raquo;</li>
     <li><a href="../../../contents.html">Contents</a> &raquo;</li>
@@ -157,7 +164,7 @@ P: Polygon layer</dd>
 
     <div class="footer">
         &copy; Copyright 2012, BNPB/AIFDR/GFDRR.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
     </div>
     <!-- cloud_sptheme 1.3 -->
   </body>

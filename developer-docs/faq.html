@@ -32,7 +32,7 @@
     <link rel="top" title="InaSAFE 0.5.0-alpha documentation" href="../index.html" />
     <link rel="up" title="InaSAFE developer documentation" href="index.html" />
     <link rel="next" title="Todo List" href="todo.html" />
-    <link rel="prev" title="Continuous Integration Testing with Jenkins" href="jenkins_ci.html" /> 
+    <link rel="prev" title="IRC Notes for InaSAFE" href="irc.html" /> 
   </head>
   <body>
     <div class="relbar-top">
@@ -50,7 +50,7 @@
           <a href="todo.html" title="Todo List"
              accesskey="N">next</a> &nbsp; &nbsp;</li>
         <li class="right" >
-          <a href="jenkins_ci.html" title="Continuous Integration Testing with Jenkins"
+          <a href="irc.html" title="IRC Notes for InaSAFE"
              accesskey="P">previous</a> &nbsp; &nbsp;</li>
     <li><a href="../index.html">Home</a> &raquo;</li>
     <li><a href="../contents.html">Contents</a> &raquo;</li>
@@ -138,6 +138,18 @@ __revision__ = 'a515345e43b25d065e1ae0d73687c13531ea4c9c'</pre>
 </div>
 <p>The deployment of version tagged files is automated by using the
 <tt class="file docutils literal"><span class="pre">scriptsrelease.sh</span></tt> script.</p>
+<div class="section" id="how-do-you-profile-code">
+<h3>How do you profile code?<a class="headerlink" href="#how-do-you-profile-code" title="Permalink to this headline">¶</a></h3>
+<hr class="docutils" />
+<p>sudo apt-get install python-profiler
+python -m cProfile -s time safe/common/test_polygon.py</p>
+<p>and</p>
+<p>sudo easy_install pycallgraph
+sudo apt-get install graphviz
+pycallgraph safe/common/test_polygon.py</p>
+<p>See also
+<a class="reference external" href="http://stackoverflow.com/questions/582336/how-can-you-profile-a-python-script">http://stackoverflow.com/questions/582336/how-can-you-profile-a-python-script</a></p>
+</div>
 </div>
 </div>
 
@@ -155,14 +167,17 @@ __revision__ = 'a515345e43b25d065e1ae0d73687c13531ea4c9c'</pre>
 <li><a class="reference internal" href="#">Frequently Asked Questions</a><ul>
 <li><a class="reference internal" href="#how-does-the-documentation-work">How does the documentation work?</a></li>
 <li><a class="reference internal" href="#how-do-i-replace-a-string-across-multiple-files">How do I replace a string across multiple files</a></li>
-<li><a class="reference internal" href="#how-did-you-embed-the-git-version-sha1-into-each-py-file">How did you embed the git version SHA1 into each .py file?</a></li>
+<li><a class="reference internal" href="#how-did-you-embed-the-git-version-sha1-into-each-py-file">How did you embed the git version SHA1 into each .py file?</a><ul>
+<li><a class="reference internal" href="#how-do-you-profile-code">How do you profile code?</a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
 
   <h4>Previous topic</h4>
-  <p class="topless"><a href="jenkins_ci.html"
-                        title="previous chapter">Continuous Integration Testing with Jenkins</a></p>
+  <p class="topless"><a href="irc.html"
+                        title="previous chapter">IRC Notes for InaSAFE</a></p>
   <h4>Next topic</h4>
   <p class="topless"><a href="todo.html"
                         title="next chapter">Todo List</a></p>
@@ -203,7 +218,7 @@ __revision__ = 'a515345e43b25d065e1ae0d73687c13531ea4c9c'</pre>
           <a href="todo.html" title="Todo List"
              >next</a> &nbsp; &nbsp;</li>
         <li class="right" >
-          <a href="jenkins_ci.html" title="Continuous Integration Testing with Jenkins"
+          <a href="irc.html" title="IRC Notes for InaSAFE"
              >previous</a> &nbsp; &nbsp;</li>
     <li><a href="../index.html">Home</a> &raquo;</li>
     <li><a href="../contents.html">Contents</a> &raquo;</li>
@@ -215,7 +230,7 @@ __revision__ = 'a515345e43b25d065e1ae0d73687c13531ea4c9c'</pre>
 
     <div class="footer">
         &copy; Copyright 2012, BNPB/AIFDR/GFDRR.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
     </div>
     <!-- cloud_sptheme 1.3 -->
   </body>

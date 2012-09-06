@@ -31,8 +31,8 @@
     <script type="text/javascript" src="../../../_static/toggle_sections.js"></script>
     <link rel="top" title="InaSAFE 0.5.0-alpha documentation" href="../../../index.html" />
     <link rel="up" title="Package::safe.common" href="../common.html" />
-    <link rel="next" title="Module: safe.common.tables" href="tables.html" />
-    <link rel="prev" title="Module: safe.common.utilities" href="utilities.html" /> 
+    <link rel="next" title="Module: safe.common.testing" href="testing.html" />
+    <link rel="prev" title="Module: safe.common.exceptions" href="exceptions.html" /> 
   </head>
   <body>
     <div class="relbar-top">
@@ -47,10 +47,10 @@
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
         <li class="right" >
-          <a href="tables.html" title="Module: safe.common.tables"
+          <a href="testing.html" title="Module: safe.common.testing"
              accesskey="N">next</a> &nbsp; &nbsp;</li>
         <li class="right" >
-          <a href="utilities.html" title="Module: safe.common.utilities"
+          <a href="exceptions.html" title="Module: safe.common.exceptions"
              accesskey="P">previous</a> &nbsp; &nbsp;</li>
     <li><a href="../../../index.html">Home</a> &raquo;</li>
     <li><a href="../../../contents.html">Contents</a> &raquo;</li>
@@ -70,36 +70,45 @@
             
   <div class="section" id="module-safe.common.numerics">
 <span id="module-safe-common-numerics"></span><h1>Module:  safe.common.numerics<a class="headerlink" href="#module-safe.common.numerics" title="Permalink to this headline">¶</a></h1>
-<p>Numerical tools</p>
+<p><strong>Numerical tools</strong></p>
 <dl class="function">
 <dt id="safe.common.numerics.axes2points">
 <tt class="descclassname">safe.common.numerics.</tt><tt class="descname">axes2points</tt><big>(</big><em>x</em>, <em>y</em><big>)</big><a class="reference internal" href="../../../_modules/safe/common/numerics.html#axes2points"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe.common.numerics.axes2points" title="Permalink to this definition">¶</a></dt>
 <dd><p>Generate all combinations of grid point coordinates from x and y axes</p>
 <dl class="docutils">
-<dt>Input</dt>
-<dd>x: x coordinates (array)
-y: y coordinates (array)</dd>
-<dt>Output</dt>
-<dd><dl class="first last docutils">
+<dt>Args:</dt>
+<dd><ul class="first last simple">
+<li>x: x coordinates (array)</li>
+<li>y: y coordinates (array)</li>
+</ul>
+</dd>
+<dt>Returns:</dt>
+<dd><ul class="first last">
+<li><dl class="first docutils">
 <dt>P: Nx2 array consisting of coordinates for all</dt>
-<dd>grid points defined by x and y axes. The x coordinate
+<dd><p class="first last">grid points defined by x and y axes. The x coordinate
 will vary the fastest to match the way 2D numpy
 arrays are laid out by default (&#8216;C&#8217; order). That way,
 the x and y coordinates will match a corresponding
-2D array A when flattened (A.flat[:] or A.reshape(-1))</dd>
-</dl>
+2D array A when flattened (A.flat[:] or A.reshape(-1))</p>
 </dd>
 </dl>
-<p>Example</p>
+</li>
+</ul>
+</dd>
+<dt>Note:</dt>
+<dd><p class="first">Example</p>
 <p>x = [1, 2, 3]
 y = [10, 20]</p>
-<dl class="docutils">
+<dl class="last docutils">
 <dt>P = [[1, 10],</dt>
 <dd>[2, 10],
 [3, 10],
 [1, 20],
 [2, 20],
 [3, 20]]</dd>
+</dl>
+</dd>
 </dl>
 </dd></dl>
 
@@ -108,42 +117,59 @@ y = [10, 20]</p>
 <tt class="descclassname">safe.common.numerics.</tt><tt class="descname">ensure_numeric</tt><big>(</big><em>A</em>, <em>typecode=None</em><big>)</big><a class="reference internal" href="../../../_modules/safe/common/numerics.html#ensure_numeric"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe.common.numerics.ensure_numeric" title="Permalink to this definition">¶</a></dt>
 <dd><p>Ensure that sequence is a numeric array.</p>
 <dl class="docutils">
-<dt>Inputs:</dt>
-<dd><dl class="first docutils">
+<dt>Args:</dt>
+<dd><ul class="first last">
+<li><dl class="first docutils">
 <dt>A: Sequence. If A is already a numeric array it will be returned</dt>
-<dd>unaltered
+<dd><p class="first last">unaltered
 If not, an attempt is made to convert it to a numeric
-array</dd>
-<dt>A: Scalar.   Return 0-dimensional array containing that value. Note</dt>
-<dd>that a 0-dim array DOES NOT HAVE A LENGTH UNDER numpy.</dd>
-</dl>
-<p>A: String.   Array of ASCII values (numpy can&#8217;t handle this)</p>
-<dl class="last docutils">
-<dt>typecode:    numeric type. If specified, use this in the conversion.</dt>
-<dd>If not, let numeric package decide.
-typecode will always be one of num.float, num.int, etc.</dd>
-</dl>
+array</p>
 </dd>
 </dl>
-<p>Note that numpy.array(A, dtype) will sometimes copy.  Use &#8216;copy=False&#8217; to
+</li>
+<li><dl class="first docutils">
+<dt>A: Scalar.   Return 0-dimensional array containing that value. Note</dt>
+<dd><p class="first last">that a 0-dim array DOES NOT HAVE A LENGTH UNDER numpy.</p>
+</dd>
+</dl>
+</li>
+<li><p class="first">A: String.   Array of ASCII values (numpy can&#8217;t handle this)</p>
+</li>
+<li><dl class="first docutils">
+<dt>typecode:    numeric type. If specified, use this in the conversion.</dt>
+<dd><p class="first last">If not, let numeric package decide.
+typecode will always be one of num.float, num.int, etc.</p>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+<dt>Note :</dt>
+<dd><p class="first">that numpy.array(A, dtype) will sometimes copy.  Use &#8216;copy=False&#8217; to
 copy only when required.</p>
-<p>This function is necessary as array(A) can cause memory overflow.</p>
+<p class="last">This function is necessary as array(A) can cause memory overflow.</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="function">
 <dt id="safe.common.numerics.erf">
 <tt class="descclassname">safe.common.numerics.</tt><tt class="descname">erf</tt><big>(</big><em>z</em><big>)</big><a class="reference internal" href="../../../_modules/safe/common/numerics.html#erf"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe.common.numerics.erf" title="Permalink to this definition">¶</a></dt>
 <dd><p>Approximation to ERF</p>
-<p>from:
+<dl class="docutils">
+<dt>Note:</dt>
+<dd><p class="first">from:
 <a class="reference external" href="http://www.cs.princeton.edu/introcs/21function/ErrorFunction.java.html">http://www.cs.princeton.edu/introcs/21function/ErrorFunction.java.html</a>
 Implements the Gauss error function.
 erf(z) = 2 / sqrt(pi) * integral(exp(-t*t), t = 0..z)</p>
 <p>Fractional error in math formula less than 1.2 * 10 ^ -7.
 although subject to catastrophic cancellation when z in very close to 0
 from Chebyshev fitting formula for erf(z) from Numerical Recipes, 6.2</p>
-<p>Source:
+<p class="last">Source:
 <a class="reference external" href="http://stackoverflow.com/questions/457408/">http://stackoverflow.com/questions/457408/</a>
 is-there-an-easily-available-implementation-of-erf-for-python</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="function">
@@ -151,28 +177,37 @@ is-there-an-easily-available-implementation-of-erf-for-python</p>
 <tt class="descclassname">safe.common.numerics.</tt><tt class="descname">geotransform2axes</tt><big>(</big><em>G</em>, <em>nx</em>, <em>ny</em><big>)</big><a class="reference internal" href="../../../_modules/safe/common/numerics.html#geotransform2axes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe.common.numerics.geotransform2axes" title="Permalink to this definition">¶</a></dt>
 <dd><p>Convert geotransform to coordinate axes</p>
 <dl class="docutils">
-<dt>Input</dt>
-<dd><dl class="first docutils">
+<dt>Args:</dt>
+<dd><ul class="first last">
+<li><dl class="first docutils">
 <dt>G: GDAL geotransform (6-tuple).</dt>
 <dd><dl class="first last docutils">
 <dt>(top left x, w-e pixel resolution, rotation,</dt>
-<dd>top left y, rotation, n-s pixel resolution).</dd>
+<dd><p class="first last">top left y, rotation, n-s pixel resolution).</p>
+</dd>
 </dl>
 </dd>
 </dl>
-<p class="last">nx: Number of cells in the w-e direction
-ny: Number of cells in the n-s direction</p>
+</li>
+<li><p class="first">nx: Number of cells in the w-e direction</p>
+</li>
+<li><p class="first">ny: Number of cells in the n-s direction</p>
+</li>
+</ul>
 </dd>
-<dt>Output</dt>
-<dd><p class="first">Return two vectors (longitudes and latitudes) representing the grid
+<dt>Returns:</dt>
+<dd><ul class="first last">
+<li><p class="first">Return two vectors (longitudes and latitudes) representing the grid
 defined by the geotransform.</p>
 <p>The values are offset by half a pixel size to correspond to
 pixel registration.</p>
 <p>I.e. If the grid origin (top left corner) is (105, 10) and the
 resolution is 1 degrees in each direction, then the vectors will
 take the form</p>
-<p class="last">longitudes = [100.5, 101.5, ..., 109.5]
+<p>longitudes = [100.5, 101.5, ..., 109.5]
 latitudes = [0.5, 1.5, ..., 9.5]</p>
+</li>
+</ul>
 </dd>
 </dl>
 </dd></dl>
@@ -182,13 +217,19 @@ latitudes = [0.5, 1.5, ..., 9.5]</p>
 <tt class="descclassname">safe.common.numerics.</tt><tt class="descname">grid2points</tt><big>(</big><em>A</em>, <em>x</em>, <em>y</em><big>)</big><a class="reference internal" href="../../../_modules/safe/common/numerics.html#grid2points"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe.common.numerics.grid2points" title="Permalink to this definition">¶</a></dt>
 <dd><p>Convert grid data to point data</p>
 <dl class="docutils">
-<dt>Input</dt>
-<dd>A: Array of pixel values
-x: Longitudes corresponding to columns in A (left-&gt;right)
-y: Latitudes corresponding to rows in A (top-&gt;bottom)</dd>
-<dt>Output</dt>
-<dd>P: Nx2 array of point coordinates
-V: N array of point values</dd>
+<dt>Args:</dt>
+<dd><ul class="first last simple">
+<li>A: Array of pixel values</li>
+<li>x: Longitudes corresponding to columns in A (left-&gt;right)</li>
+<li>y: Latitudes corresponding to rows in A (top-&gt;bottom)</li>
+</ul>
+</dd>
+<dt>Returns:</dt>
+<dd><ul class="first last simple">
+<li>P: Nx2 array of point coordinates</li>
+<li>V: N array of point values</li>
+</ul>
+</dd>
 </dl>
 </dd></dl>
 
@@ -198,14 +239,21 @@ V: N array of point values</dd>
 <dd><p>Cumulative Log Normal Distribution Function</p>
 <blockquote>
 <div><dl class="docutils">
-<dt>Input</dt>
-<dd>x: scalar or array of real numbers
-mu: Median (exp(mean of log(x)). Default 1
-sigma: Log normal standard deviation. Default 1</dd>
-<dt>Output</dt>
-<dd>An approximation of the cdf of the normal</dd>
+<dt>Args:</dt>
+<dd><ul class="first last simple">
+<li>x: scalar or array of real numbers</li>
+<li>mu: Median (exp(mean of log(x)). Default 1</li>
+<li>sigma: Log normal standard deviation. Default 1</li>
+</ul>
+</dd>
+<dt>Returns:</dt>
+<dd><ul class="first last simple">
+<li>An approximation of the cdf of the normal</li>
+</ul>
+</dd>
+<dt>Note:</dt>
+<dd>CDF of the normal distribution is defined as</dd>
 </dl>
-<p>CDF of the normal distribution is defined as</p>
 </div></blockquote>
 <p>rac12 [1 + erf(
 rac{x - mu}{sigma sqrt{2}})], x in R</p>
@@ -218,12 +266,19 @@ rac{x - mu}{sigma sqrt{2}})], x in R</p>
 <tt class="descclassname">safe.common.numerics.</tt><tt class="descname">nanallclose</tt><big>(</big><em>x</em>, <em>y</em>, <em>rtol=1e-05</em>, <em>atol=1e-08</em><big>)</big><a class="reference internal" href="../../../_modules/safe/common/numerics.html#nanallclose"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe.common.numerics.nanallclose" title="Permalink to this definition">¶</a></dt>
 <dd><p>Numpy allclose function which allows NaN</p>
 <dl class="docutils">
-<dt>Input</dt>
-<dd>x, y: Either scalars or numpy arrays</dd>
-<dt>Output</dt>
-<dd>True or False</dd>
+<dt>Args:</dt>
+<dd><ul class="first last simple">
+<li>x, y: Either scalars or numpy arrays</li>
+</ul>
+</dd>
+<dt>Returns:</dt>
+<dd><ul class="first last simple">
+<li>True or False</li>
+</ul>
+</dd>
+<dt>Note:</dt>
+<dd>Returns True if all non-nan elements pass.</dd>
 </dl>
-<p>Returns True if all non-nan elements pass.</p>
 </dd></dl>
 
 <dl class="function">
@@ -232,14 +287,21 @@ rac{x - mu}{sigma sqrt{2}})], x in R</p>
 <dd><p>Cumulative Normal Distribution Function</p>
 <blockquote>
 <div><dl class="docutils">
-<dt>Input</dt>
-<dd>x: scalar or array of real numbers
-mu: Mean value. Default 0
-sigma: Standard deviation. Default 1</dd>
-<dt>Output</dt>
-<dd>An approximation of the cdf of the normal</dd>
+<dt>Args:</dt>
+<dd><ul class="first last simple">
+<li>x: scalar or array of real numbers</li>
+<li>mu: Mean value. Default 0</li>
+<li>sigma: Standard deviation. Default 1</li>
+</ul>
+</dd>
+<dt>Returns:</dt>
+<dd><ul class="first last simple">
+<li>An approximation of the cdf of the normal</li>
+</ul>
+</dd>
+<dt>Note:</dt>
+<dd>CDF of the normal distribution is defined as</dd>
 </dl>
-<p>CDF of the normal distribution is defined as</p>
 </div></blockquote>
 <p>rac12 [1 + erf(
 rac{x - mu}{sigma sqrt{2}})], x in R</p>
@@ -260,11 +322,11 @@ rac{x - mu}{sigma sqrt{2}})], x in R</p>
           <img class="logo" src="../../../_static/icon.png" alt="Logo"/>
         </a></p>
   <h4>Previous topic</h4>
-  <p class="topless"><a href="utilities.html"
-                        title="previous chapter">Module:  safe.common.utilities</a></p>
+  <p class="topless"><a href="exceptions.html"
+                        title="previous chapter">Module:  safe.common.exceptions</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="tables.html"
-                        title="next chapter">Module:  safe.common.tables</a></p>
+  <p class="topless"><a href="testing.html"
+                        title="next chapter">Module:  safe.common.testing</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="../../../_sources/api-docs/safe/common/numerics.txt"
@@ -299,10 +361,10 @@ rac{x - mu}{sigma sqrt{2}})], x in R</p>
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
         <li class="right" >
-          <a href="tables.html" title="Module: safe.common.tables"
+          <a href="testing.html" title="Module: safe.common.testing"
              >next</a> &nbsp; &nbsp;</li>
         <li class="right" >
-          <a href="utilities.html" title="Module: safe.common.utilities"
+          <a href="exceptions.html" title="Module: safe.common.exceptions"
              >previous</a> &nbsp; &nbsp;</li>
     <li><a href="../../../index.html">Home</a> &raquo;</li>
     <li><a href="../../../contents.html">Contents</a> &raquo;</li>
@@ -316,7 +378,7 @@ rac{x - mu}{sigma sqrt{2}})], x in R</p>
 
     <div class="footer">
         &copy; Copyright 2012, BNPB/AIFDR/GFDRR.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
     </div>
     <!-- cloud_sptheme 1.3 -->
   </body>

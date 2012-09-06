@@ -32,7 +32,7 @@
     <link rel="top" title="InaSAFE 0.5.0-alpha documentation" href="../../../index.html" />
     <link rel="up" title="Package::safe.storage" href="../storage.html" />
     <link rel="next" title="Module: safe.storage.core" href="core.html" />
-    <link rel="prev" title="Module: safe.storage.projection" href="projection.html" /> 
+    <link rel="prev" title="Module: safe.storage.utilities" href="utilities.html" /> 
   </head>
   <body>
     <div class="relbar-top">
@@ -50,7 +50,7 @@
           <a href="core.html" title="Module: safe.storage.core"
              accesskey="N">next</a> &nbsp; &nbsp;</li>
         <li class="right" >
-          <a href="projection.html" title="Module: safe.storage.projection"
+          <a href="utilities.html" title="Module: safe.storage.utilities"
              accesskey="P">previous</a> &nbsp; &nbsp;</li>
     <li><a href="../../../index.html">Home</a> &raquo;</li>
     <li><a href="../../../contents.html">Contents</a> &raquo;</li>
@@ -105,15 +105,20 @@ be in-memory or file based.</p>
 <dt id="safe.storage.vector.Vector.get_data">
 <tt class="descname">get_data</tt><big>(</big><em>attribute=None</em>, <em>index=None</em>, <em>copy=False</em><big>)</big><a class="reference internal" href="../../../_modules/safe/storage/vector.html#Vector.get_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe.storage.vector.Vector.get_data" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get vector attributes</p>
-<p>Data is returned as a list where each entry is a dictionary of
+<dl class="docutils">
+<dt>Note:</dt>
+<dd><p class="first">Data is returned as a list where each entry is a dictionary of
 attributes for one feature. Entries in get_geometry() and
 get_data() are related as 1-to-1</p>
 <p>If optional argument attribute is specified and a valid name,
 then the list of values for that attribute is returned.</p>
 <p>If optional argument index is specified on the that value will
 be returned. Any value of index is ignored if attribute is None.</p>
-<p>If optional argument copy is True and all attributes are requested,
-a copy will be returned. Otherwise a pointer to the data is returned.</p>
+<p class="last">If optional argument copy is True and all attributes are requested,
+a copy will be returned. Otherwise a pointer to the data is
+returned.</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
@@ -150,34 +155,16 @@ polygon           list of arrays of coordinates</p>
 <tt class="descname">get_topN</tt><big>(</big><em>attribute</em>, <em>N=10</em><big>)</big><a class="reference internal" href="../../../_modules/safe/storage/vector.html#Vector.get_topN"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe.storage.vector.Vector.get_topN" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get top N features</p>
 <dl class="docutils">
-<dt>Input</dt>
-<dd>attribute: The name of attribute where values are sought
-N: How many</dd>
-<dt>Output</dt>
-<dd>layer: New vector layer with selected features</dd>
-</dl>
-</dd></dl>
-
-<dl class="method">
-<dt id="safe.storage.vector.Vector.interpolate">
-<tt class="descname">interpolate</tt><big>(</big><em>X</em>, <em>name=None</em>, <em>attribute_name=None</em><big>)</big><a class="reference internal" href="../../../_modules/safe/storage/vector.html#Vector.interpolate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe.storage.vector.Vector.interpolate" title="Permalink to this definition">¶</a></dt>
-<dd><p>Interpolate values of this vector layer to other layer</p>
-<dl class="docutils">
-<dt>Input</dt>
-<dd><p class="first">X: Layer object defining target
-name: Optional name of returned interpolated layer
-attribute_name: Optional attribute name to use.</p>
-<blockquote class="last">
-<div><p>If None, all attributes are used.</p>
-<p>FIXME (Ole): Single attribute not tested well yet
-and not implemented for lines</p>
-</div></blockquote>
+<dt>Args:</dt>
+<dd><ul class="first last simple">
+<li>attribute: The name of attribute where values are sought</li>
+<li>N: How many</li>
+</ul>
 </dd>
-<dt>Output</dt>
-<dd><dl class="first last docutils">
-<dt>Y: Layer object with values of this vector layer interpolated to</dt>
-<dd>geometry of input layer X</dd>
-</dl>
+<dt>Returns:</dt>
+<dd><ul class="first last simple">
+<li>layer: New vector layer with selected features</li>
+</ul>
 </dd>
 </dl>
 </dd></dl>
@@ -221,16 +208,15 @@ combinations thereof.</li>
 </li>
 </ul>
 </dd>
-</dl>
-<div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p>Shp limitation, if attribute names are longer than 10
+<dt>Note:</dt>
+<dd><p class="first">Shp limitation, if attribute names are longer than 10
 characters they will be truncated. This is due to limitations in
 the shp file driver and has to be done here since gdal v1.7 onwards
 has changed its handling of this issue:
 <a class="reference external" href="http://www.gdal.org/ogr/drv_shapefile.html">http://www.gdal.org/ogr/drv_shapefile.html</a></p>
 <p class="last"><strong>For this reason we recommend writing to spatialite.</strong></p>
-</div>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
@@ -240,11 +226,17 @@ has changed its handling of this issue:
 <tt class="descclassname">safe.storage.vector.</tt><tt class="descname">convert_line_to_points</tt><big>(</big><em>V</em>, <em>delta</em><big>)</big><a class="reference internal" href="../../../_modules/safe/storage/vector.html#convert_line_to_points"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe.storage.vector.convert_line_to_points" title="Permalink to this definition">¶</a></dt>
 <dd><p>Convert line vector data to point vector data</p>
 <dl class="docutils">
-<dt>Input</dt>
-<dd>V: Vector layer with line data
-delta: Incremental step to find the points</dd>
-<dt>Output</dt>
-<dd>Vector layer with point data and the same attributes as V</dd>
+<dt>Args:</dt>
+<dd><ul class="first last simple">
+<li>V: Vector layer with line data</li>
+<li>delta: Incremental step to find the points</li>
+</ul>
+</dd>
+<dt>Returns:</dt>
+<dd><ul class="first last simple">
+<li>Vector layer with point data and the same attributes as V</li>
+</ul>
+</dd>
 </dl>
 </dd></dl>
 
@@ -253,10 +245,16 @@ delta: Incremental step to find the points</dd>
 <tt class="descclassname">safe.storage.vector.</tt><tt class="descname">convert_polygons_to_centroids</tt><big>(</big><em>V</em><big>)</big><a class="reference internal" href="../../../_modules/safe/storage/vector.html#convert_polygons_to_centroids"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe.storage.vector.convert_polygons_to_centroids" title="Permalink to this definition">¶</a></dt>
 <dd><p>Convert polygon vector data to point vector data</p>
 <dl class="docutils">
-<dt>Input</dt>
-<dd>V: Vector layer with polygon data</dd>
-<dt>Output</dt>
-<dd>Vector layer with point data and the same attributes as V</dd>
+<dt>Args:</dt>
+<dd><ul class="first last simple">
+<li>V: Vector layer with polygon data</li>
+</ul>
+</dd>
+<dt>Returns:</dt>
+<dd><ul class="first last simple">
+<li>Vector layer with point data and the same attributes as V</li>
+</ul>
+</dd>
 </dl>
 </dd></dl>
 
@@ -273,8 +271,8 @@ delta: Incremental step to find the points</dd>
           <img class="logo" src="../../../_static/icon.png" alt="Logo"/>
         </a></p>
   <h4>Previous topic</h4>
-  <p class="topless"><a href="projection.html"
-                        title="previous chapter">Module:  safe.storage.projection</a></p>
+  <p class="topless"><a href="utilities.html"
+                        title="previous chapter">Module:  safe.storage.utilities</a></p>
   <h4>Next topic</h4>
   <p class="topless"><a href="core.html"
                         title="next chapter">Module:  safe.storage.core</a></p>
@@ -315,7 +313,7 @@ delta: Incremental step to find the points</dd>
           <a href="core.html" title="Module: safe.storage.core"
              >next</a> &nbsp; &nbsp;</li>
         <li class="right" >
-          <a href="projection.html" title="Module: safe.storage.projection"
+          <a href="utilities.html" title="Module: safe.storage.utilities"
              >previous</a> &nbsp; &nbsp;</li>
     <li><a href="../../../index.html">Home</a> &raquo;</li>
     <li><a href="../../../contents.html">Contents</a> &raquo;</li>
@@ -329,7 +327,7 @@ delta: Incremental step to find the points</dd>
 
     <div class="footer">
         &copy; Copyright 2012, BNPB/AIFDR/GFDRR.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
     </div>
     <!-- cloud_sptheme 1.3 -->
   </body>

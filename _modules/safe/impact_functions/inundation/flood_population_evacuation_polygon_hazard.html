@@ -62,11 +62,11 @@
 <span class="kn">import</span> <span class="nn">numpy</span>
 <span class="kn">from</span> <span class="nn">safe.impact_functions.core</span> <span class="kn">import</span> <span class="n">FunctionProvider</span>
 <span class="kn">from</span> <span class="nn">safe.impact_functions.core</span> <span class="kn">import</span> <span class="n">get_hazard_layer</span><span class="p">,</span> <span class="n">get_exposure_layer</span>
-<span class="kn">from</span> <span class="nn">safe.impact_functions.core</span> <span class="kn">import</span> <span class="n">get_question</span><span class="p">,</span> <span class="n">get_function_title</span>
+<span class="kn">from</span> <span class="nn">safe.impact_functions.core</span> <span class="kn">import</span> <span class="n">get_question</span>
 <span class="kn">from</span> <span class="nn">safe.storage.vector</span> <span class="kn">import</span> <span class="n">Vector</span>
-<span class="kn">from</span> <span class="nn">safe.storage.clipping</span> <span class="kn">import</span> <span class="n">clip_raster_by_polygons</span>
 <span class="kn">from</span> <span class="nn">safe.common.utilities</span> <span class="kn">import</span> <span class="n">ugettext</span> <span class="k">as</span> <span class="n">_</span>
 <span class="kn">from</span> <span class="nn">safe.common.tables</span> <span class="kn">import</span> <span class="n">Table</span><span class="p">,</span> <span class="n">TableRow</span>
+<span class="kn">from</span> <span class="nn">safe.engine.interpolation</span> <span class="kn">import</span> <span class="n">assign_hazard_values_to_exposure_data</span>
 
 
 <div class="viewcode-block" id="FloodEvacuationFunctionVectorHazard"><a class="viewcode-back" href="../../../../api-docs/safe/impact_functions/inundation/flood_population_evacuation_polygon_hazard.html#safe.impact_functions.inundation.flood_population_evacuation_polygon_hazard.FloodEvacuationFunctionVectorHazard">[docs]</a><span class="k">class</span> <span class="nc">FloodEvacuationFunctionVectorHazard</span><span class="p">(</span><span class="n">FunctionProvider</span><span class="p">):</span>
@@ -103,65 +103,65 @@
 <span class="sd">          Table with number of people evacuated and supplies required</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="c"># Depth above which people are regarded affected [m]</span>
-        <span class="n">threshold</span> <span class="o">=</span> <span class="mf">1.0</span>  <span class="c"># Threshold [m]</span>
-
         <span class="c"># Identify hazard and exposure layers</span>
-        <span class="n">inundation</span> <span class="o">=</span> <span class="n">get_hazard_layer</span><span class="p">(</span><span class="n">layers</span><span class="p">)</span>  <span class="c"># Flood inundation</span>
-        <span class="n">population</span> <span class="o">=</span> <span class="n">get_exposure_layer</span><span class="p">(</span><span class="n">layers</span><span class="p">)</span>
+        <span class="n">H</span> <span class="o">=</span> <span class="n">get_hazard_layer</span><span class="p">(</span><span class="n">layers</span><span class="p">)</span>  <span class="c"># Flood inundation</span>
+        <span class="n">E</span> <span class="o">=</span> <span class="n">get_exposure_layer</span><span class="p">(</span><span class="n">layers</span><span class="p">)</span>
 
-        <span class="n">question</span> <span class="o">=</span> <span class="n">get_question</span><span class="p">(</span><span class="n">inundation</span><span class="o">.</span><span class="n">get_name</span><span class="p">(),</span>
-                                <span class="n">population</span><span class="o">.</span><span class="n">get_name</span><span class="p">(),</span>
+        <span class="n">question</span> <span class="o">=</span> <span class="n">get_question</span><span class="p">(</span><span class="n">H</span><span class="o">.</span><span class="n">get_name</span><span class="p">(),</span>
+                                <span class="n">E</span><span class="o">.</span><span class="n">get_name</span><span class="p">(),</span>
                                 <span class="bp">self</span><span class="p">)</span>
 
         <span class="c"># Check that hazard is polygon type</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">inundation</span><span class="o">.</span><span class="n">is_vector</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">H</span><span class="o">.</span><span class="n">is_vector</span><span class="p">:</span>
             <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;Input hazard </span><span class="si">%s</span><span class="s">  was not a vector layer as expected &#39;</span>
-                   <span class="o">%</span> <span class="n">inundation</span><span class="o">.</span><span class="n">get_name</span><span class="p">())</span>
+                   <span class="o">%</span> <span class="n">H</span><span class="o">.</span><span class="n">get_name</span><span class="p">())</span>
             <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
         <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;Input hazard must be a polygon layer. I got </span><span class="si">%s</span><span class="s"> with layer &#39;</span>
-               <span class="s">&#39;type </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">inundation</span><span class="o">.</span><span class="n">get_name</span><span class="p">(),</span>
-                            <span class="n">inundation</span><span class="o">.</span><span class="n">get_geometry_name</span><span class="p">()))</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">inundation</span><span class="o">.</span><span class="n">is_polygon_data</span><span class="p">:</span>
+               <span class="s">&#39;type </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">H</span><span class="o">.</span><span class="n">get_name</span><span class="p">(),</span>
+                            <span class="n">H</span><span class="o">.</span><span class="n">get_geometry_name</span><span class="p">()))</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">H</span><span class="o">.</span><span class="n">is_polygon_data</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
-        <span class="c"># Extract data as numeric arrays</span>
-        <span class="n">geometry</span> <span class="o">=</span> <span class="n">inundation</span><span class="o">.</span><span class="n">get_geometry</span><span class="p">()</span>  <span class="c"># Flood footprints</span>
-        <span class="n">attributes</span> <span class="o">=</span> <span class="n">inundation</span><span class="o">.</span><span class="n">get_data</span><span class="p">()</span>    <span class="c"># Flood attributes</span>
+        <span class="c"># Run interpolation function for polygon2raster</span>
+        <span class="n">P</span> <span class="o">=</span> <span class="n">assign_hazard_values_to_exposure_data</span><span class="p">(</span><span class="n">H</span><span class="p">,</span> <span class="n">E</span><span class="p">,</span>
+                                             <span class="n">attribute_name</span><span class="o">=</span><span class="s">&#39;population&#39;</span><span class="p">)</span>
 
-        <span class="c"># Separate population grid points by flood footprints</span>
-        <span class="k">print</span> <span class="s">&#39;Clip&#39;</span>
-        <span class="n">L</span> <span class="o">=</span> <span class="n">clip_raster_by_polygons</span><span class="p">(</span><span class="n">population</span><span class="p">,</span> <span class="n">inundation</span><span class="p">)</span>
+        <span class="c"># Initialise attributes of output dataset with all attributes</span>
+        <span class="c"># from input polygon and a population count of zero</span>
+        <span class="n">new_attributes</span> <span class="o">=</span> <span class="n">H</span><span class="o">.</span><span class="n">get_data</span><span class="p">()</span>
+        <span class="n">category_title</span> <span class="o">=</span> <span class="s">&#39;FLOODPRONE&#39;</span>  <span class="c"># FIXME: Should come from keywords</span>
+        <span class="n">categories</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="n">new_attributes</span><span class="p">:</span>
+            <span class="n">attr</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">target_field</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="n">cat</span> <span class="o">=</span> <span class="n">attr</span><span class="p">[</span><span class="n">category_title</span><span class="p">]</span>
+            <span class="n">categories</span><span class="p">[</span><span class="n">cat</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
 
-        <span class="k">print</span> <span class="s">&#39;Sum&#39;</span>
-        <span class="c"># Sum up population affected by polygons</span>
+        <span class="c"># Count affected population per polygon, per category and total</span>
         <span class="n">evacuated</span> <span class="o">=</span> <span class="mi">0</span>
-        <span class="n">attributes</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="n">minpop</span> <span class="o">=</span> <span class="mi">1000</span>
-        <span class="n">maxpop</span> <span class="o">=</span> <span class="o">-</span><span class="n">minpop</span>
-        <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="n">L</span><span class="p">:</span>
-            <span class="n">values</span> <span class="o">=</span> <span class="n">l</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-            <span class="n">s</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">values</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">s</span> <span class="o">&lt;</span> <span class="n">minpop</span><span class="p">:</span>
-                <span class="n">minpop</span> <span class="o">=</span> <span class="n">s</span>
-            <span class="k">if</span> <span class="n">s</span> <span class="o">&gt;</span> <span class="n">maxpop</span><span class="p">:</span>
-                <span class="n">maxpop</span> <span class="o">=</span> <span class="n">s</span>
-            <span class="n">attributes</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="bp">self</span><span class="o">.</span><span class="n">target_field</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">s</span><span class="p">)})</span>
-            <span class="n">evacuated</span> <span class="o">+=</span> <span class="n">s</span>
+        <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="n">P</span><span class="o">.</span><span class="n">get_data</span><span class="p">():</span>
+            <span class="c"># Get population at this location</span>
+            <span class="n">pop</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">attr</span><span class="p">[</span><span class="s">&#39;population&#39;</span><span class="p">])</span>
 
-        <span class="k">print</span> <span class="s">&#39;minpop&#39;</span><span class="p">,</span> <span class="n">minpop</span>
-        <span class="k">print</span> <span class="s">&#39;maxpop&#39;</span><span class="p">,</span> <span class="n">maxpop</span>
+            <span class="c"># Update population count for associated polygon</span>
+            <span class="n">poly_id</span> <span class="o">=</span> <span class="n">attr</span><span class="p">[</span><span class="s">&#39;polygon_id&#39;</span><span class="p">]</span>
+            <span class="n">new_attributes</span><span class="p">[</span><span class="n">poly_id</span><span class="p">][</span><span class="bp">self</span><span class="o">.</span><span class="n">target_field</span><span class="p">]</span> <span class="o">+=</span> <span class="n">pop</span>
+
+            <span class="c"># Update population count for each category</span>
+            <span class="n">cat</span> <span class="o">=</span> <span class="n">new_attributes</span><span class="p">[</span><span class="n">poly_id</span><span class="p">][</span><span class="n">category_title</span><span class="p">]</span>
+            <span class="n">categories</span><span class="p">[</span><span class="n">cat</span><span class="p">]</span> <span class="o">+=</span> <span class="n">pop</span>
+
+            <span class="c"># Update total</span>
+            <span class="n">evacuated</span> <span class="o">+=</span> <span class="n">pop</span>
 
         <span class="c"># Count totals</span>
-        <span class="n">total</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">population</span><span class="o">.</span><span class="n">get_data</span><span class="p">(</span><span class="n">nan</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">scaling</span><span class="o">=</span><span class="bp">False</span><span class="p">)))</span>
+        <span class="n">total</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">E</span><span class="o">.</span><span class="n">get_data</span><span class="p">(</span><span class="n">nan</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">scaling</span><span class="o">=</span><span class="bp">False</span><span class="p">)))</span>
 
         <span class="c"># Don&#39;t show digits less than a 1000</span>
         <span class="k">if</span> <span class="n">total</span> <span class="o">&gt;</span> <span class="mi">1000</span><span class="p">:</span>
             <span class="n">total</span> <span class="o">=</span> <span class="n">total</span> <span class="o">//</span> <span class="mi">1000</span> <span class="o">*</span> <span class="mi">1000</span>
         <span class="k">if</span> <span class="n">evacuated</span> <span class="o">&gt;</span> <span class="mi">1000</span><span class="p">:</span>
             <span class="n">evacuated</span> <span class="o">=</span> <span class="n">evacuated</span> <span class="o">//</span> <span class="mi">1000</span> <span class="o">*</span> <span class="mi">1000</span>
-        <span class="k">print</span> <span class="s">&#39;Done&#39;</span>
 
         <span class="c"># Calculate estimated needs based on BNPB Perka 7/2008 minimum bantuan</span>
         <span class="n">rice</span> <span class="o">=</span> <span class="n">evacuated</span> <span class="o">*</span> <span class="mf">2.8</span>
@@ -187,7 +187,7 @@
         <span class="n">impact_table</span> <span class="o">=</span> <span class="n">Table</span><span class="p">(</span><span class="n">table_body</span><span class="p">)</span><span class="o">.</span><span class="n">toNewlineFreeString</span><span class="p">()</span>
 
         <span class="c"># Extend impact report for on-screen display</span>
-        <span class="n">table_body</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="n">TableRow</span><span class="p">(</span><span class="n">_</span><span class="p">(</span><span class="s">&#39;Notes:&#39;</span><span class="p">),</span> <span class="n">header</span><span class="o">=</span><span class="bp">True</span><span class="p">),</span>
+        <span class="n">table_body</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="n">TableRow</span><span class="p">(</span><span class="n">_</span><span class="p">(</span><span class="s">&#39;Notes&#39;</span><span class="p">),</span> <span class="n">header</span><span class="o">=</span><span class="bp">True</span><span class="p">),</span>
                            <span class="n">_</span><span class="p">(</span><span class="s">&#39;Total population: </span><span class="si">%i</span><span class="s">&#39;</span><span class="p">)</span> <span class="o">%</span> <span class="n">total</span><span class="p">,</span>
                            <span class="n">_</span><span class="p">(</span><span class="s">&#39;People need evacuation if in area identified &#39;</span>
                              <span class="s">&#39;as &quot;Flood Prone&quot;&#39;</span><span class="p">),</span>
@@ -196,39 +196,28 @@
         <span class="n">impact_summary</span> <span class="o">=</span> <span class="n">Table</span><span class="p">(</span><span class="n">table_body</span><span class="p">)</span><span class="o">.</span><span class="n">toNewlineFreeString</span><span class="p">()</span>
         <span class="n">map_title</span> <span class="o">=</span> <span class="n">_</span><span class="p">(</span><span class="s">&#39;People affected by flood prone areas&#39;</span><span class="p">)</span>
 
-        <span class="c"># Generare 8 intervals across the range of flooded population</span>
-        <span class="n">cls</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">minpop</span><span class="p">,</span> <span class="n">maxpop</span><span class="p">,</span> <span class="mi">9</span><span class="p">)</span>
-        <span class="k">print</span> <span class="s">&#39;cls&#39;</span><span class="p">,</span> <span class="n">cls</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">cls</span><span class="p">)</span>
+        <span class="c"># Define classes for legend for flooded population counts</span>
+        <span class="n">colours</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;#FFFFFF&#39;</span><span class="p">,</span> <span class="s">&#39;#38A800&#39;</span><span class="p">,</span> <span class="s">&#39;#79C900&#39;</span><span class="p">,</span> <span class="s">&#39;#CEED00&#39;</span><span class="p">,</span>
+                   <span class="s">&#39;#FFCC00&#39;</span><span class="p">,</span> <span class="s">&#39;#FF6600&#39;</span><span class="p">,</span> <span class="s">&#39;#FF0000&#39;</span><span class="p">,</span> <span class="s">&#39;#7A0000&#39;</span><span class="p">]</span>
+        <span class="n">population_counts</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="p">[</span><span class="s">&#39;population&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">new_attributes</span><span class="p">]</span>
+        <span class="n">cls</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">numpy</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span>
+                                   <span class="nb">max</span><span class="p">(</span><span class="n">population_counts</span><span class="p">),</span>
+                                   <span class="nb">len</span><span class="p">(</span><span class="n">colours</span><span class="p">))</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
 
         <span class="c"># Define style info for output polygons showing population counts</span>
-        <span class="n">style_classes</span> <span class="o">=</span> <span class="p">[</span><span class="nb">dict</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="n">_</span><span class="p">(</span><span class="s">&#39;Nil&#39;</span><span class="p">),</span>
-                              <span class="n">colour</span><span class="o">=</span><span class="s">&#39;#FFFFFF&#39;</span><span class="p">,</span> <span class="nb">min</span><span class="o">=</span><span class="n">cls</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">max</span><span class="o">=</span><span class="n">cls</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
-                              <span class="n">transparency</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span>
-                         <span class="nb">dict</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="n">_</span><span class="p">(</span><span class="s">&#39;Low&#39;</span><span class="p">),</span>
-                              <span class="n">colour</span><span class="o">=</span><span class="s">&#39;#38A800&#39;</span><span class="p">,</span> <span class="nb">min</span><span class="o">=</span><span class="n">cls</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="nb">max</span><span class="o">=</span><span class="n">cls</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span>
-                              <span class="n">transparency</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span>
-                         <span class="nb">dict</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="n">_</span><span class="p">(</span><span class="s">&#39;Low&#39;</span><span class="p">),</span>
-                              <span class="n">colour</span><span class="o">=</span><span class="s">&#39;#79C900&#39;</span><span class="p">,</span> <span class="nb">min</span><span class="o">=</span><span class="n">cls</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="nb">max</span><span class="o">=</span><span class="n">cls</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span>
-                              <span class="n">transparency</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span>
-                         <span class="nb">dict</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="n">_</span><span class="p">(</span><span class="s">&#39;Low&#39;</span><span class="p">),</span>
-                              <span class="n">colour</span><span class="o">=</span><span class="s">&#39;#CEED00&#39;</span><span class="p">,</span> <span class="nb">min</span><span class="o">=</span><span class="n">cls</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span> <span class="nb">max</span><span class="o">=</span><span class="n">cls</span><span class="p">[</span><span class="mi">4</span><span class="p">],</span>
-                              <span class="n">transparency</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span>
-                         <span class="nb">dict</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="n">_</span><span class="p">(</span><span class="s">&#39;Medium&#39;</span><span class="p">),</span>
-                              <span class="n">colour</span><span class="o">=</span><span class="s">&#39;#FFCC00&#39;</span><span class="p">,</span> <span class="nb">min</span><span class="o">=</span><span class="n">cls</span><span class="p">[</span><span class="mi">4</span><span class="p">],</span> <span class="nb">max</span><span class="o">=</span><span class="n">cls</span><span class="p">[</span><span class="mi">5</span><span class="p">],</span>
-                              <span class="n">transparency</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span>
-                         <span class="nb">dict</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="n">_</span><span class="p">(</span><span class="s">&#39;Medium&#39;</span><span class="p">),</span>
-                              <span class="n">colour</span><span class="o">=</span><span class="s">&#39;#FF6600&#39;</span><span class="p">,</span> <span class="nb">min</span><span class="o">=</span><span class="n">cls</span><span class="p">[</span><span class="mi">5</span><span class="p">],</span> <span class="nb">max</span><span class="o">=</span><span class="n">cls</span><span class="p">[</span><span class="mi">6</span><span class="p">],</span>
-                              <span class="n">transparency</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span>
-                         <span class="nb">dict</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="n">_</span><span class="p">(</span><span class="s">&#39;Medium&#39;</span><span class="p">),</span>
-                              <span class="n">colour</span><span class="o">=</span><span class="s">&#39;#FF0000&#39;</span><span class="p">,</span> <span class="nb">min</span><span class="o">=</span><span class="n">cls</span><span class="p">[</span><span class="mi">6</span><span class="p">],</span> <span class="nb">max</span><span class="o">=</span><span class="n">cls</span><span class="p">[</span><span class="mi">7</span><span class="p">],</span>
-                              <span class="n">transparency</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span>
-                         <span class="nb">dict</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="n">_</span><span class="p">(</span><span class="s">&#39;High&#39;</span><span class="p">),</span>
-                              <span class="n">colour</span><span class="o">=</span><span class="s">&#39;#7A0000&#39;</span><span class="p">,</span> <span class="nb">min</span><span class="o">=</span><span class="n">cls</span><span class="p">[</span><span class="mi">7</span><span class="p">],</span> <span class="nb">max</span><span class="o">=</span><span class="n">cls</span><span class="p">[</span><span class="mi">8</span><span class="p">],</span>
-                              <span class="n">transparency</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">1</span><span class="p">)]</span>
+        <span class="n">style_classes</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">colour</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">colours</span><span class="p">):</span>
+            <span class="n">lo</span> <span class="o">=</span> <span class="n">cls</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="n">hi</span> <span class="o">=</span> <span class="n">cls</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
 
-        <span class="c">#style_classes[1][&#39;label&#39;] = _(&#39;Low [%i people/area]&#39;) % classes[1]</span>
-        <span class="c">#style_classes[4][&#39;label&#39;] = _(&#39;Medium [%i people/area]&#39;) % classes[4]</span>
-        <span class="c">#style_classes[7][&#39;label&#39;] = _(&#39;High [%i people/area]&#39;) % classes[7]</span>
+            <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">label</span> <span class="o">=</span> <span class="n">_</span><span class="p">(</span><span class="s">&#39;0&#39;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">label</span> <span class="o">=</span> <span class="n">_</span><span class="p">(</span><span class="s">&#39;</span><span class="si">%i</span><span class="s"> - </span><span class="si">%i</span><span class="s">&#39;</span><span class="p">)</span> <span class="o">%</span> <span class="p">(</span><span class="n">lo</span><span class="p">,</span> <span class="n">hi</span><span class="p">)</span>
+
+            <span class="n">entry</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="n">label</span><span class="p">,</span> <span class="n">colour</span><span class="o">=</span><span class="n">colour</span><span class="p">,</span> <span class="nb">min</span><span class="o">=</span><span class="n">lo</span><span class="p">,</span> <span class="nb">max</span><span class="o">=</span><span class="n">hi</span><span class="p">,</span>
+                         <span class="n">transparency</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+            <span class="n">style_classes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">entry</span><span class="p">)</span>
 
         <span class="c"># Override style info with new classes and name</span>
         <span class="n">style_info</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">target_field</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">target_field</span><span class="p">,</span>
@@ -236,9 +225,9 @@
                           <span class="n">legend_title</span><span class="o">=</span><span class="n">_</span><span class="p">(</span><span class="s">&#39;Population Count&#39;</span><span class="p">))</span>
 
         <span class="c"># Create vector layer and return</span>
-        <span class="n">V</span> <span class="o">=</span> <span class="n">Vector</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">attributes</span><span class="p">,</span>
-                   <span class="n">projection</span><span class="o">=</span><span class="n">inundation</span><span class="o">.</span><span class="n">get_projection</span><span class="p">(),</span>
-                   <span class="n">geometry</span><span class="o">=</span><span class="n">inundation</span><span class="o">.</span><span class="n">get_geometry</span><span class="p">(),</span>
+        <span class="n">V</span> <span class="o">=</span> <span class="n">Vector</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">new_attributes</span><span class="p">,</span>
+                   <span class="n">projection</span><span class="o">=</span><span class="n">H</span><span class="o">.</span><span class="n">get_projection</span><span class="p">(),</span>
+                   <span class="n">geometry</span><span class="o">=</span><span class="n">H</span><span class="o">.</span><span class="n">get_geometry</span><span class="p">(),</span>
                    <span class="n">name</span><span class="o">=</span><span class="n">_</span><span class="p">(</span><span class="s">&#39;Population affected by flood prone areas&#39;</span><span class="p">),</span>
                    <span class="n">keywords</span><span class="o">=</span><span class="p">{</span><span class="s">&#39;impact_summary&#39;</span><span class="p">:</span> <span class="n">impact_summary</span><span class="p">,</span>
                              <span class="s">&#39;impact_table&#39;</span><span class="p">:</span> <span class="n">impact_table</span><span class="p">,</span>
@@ -293,7 +282,7 @@
 
     <div class="footer">
         &copy; Copyright 2012, BNPB/AIFDR/GFDRR.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
     </div>
     <!-- cloud_sptheme 1.3 -->
   </body>

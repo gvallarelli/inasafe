@@ -31,8 +31,8 @@
     <script type="text/javascript" src="../../../_static/toggle_sections.js"></script>
     <link rel="top" title="InaSAFE 0.5.0-alpha documentation" href="../../../index.html" />
     <link rel="up" title="Package::safe.storage" href="../storage.html" />
-    <link rel="next" title="Module: safe.storage.test_clipping" href="test_clipping.html" />
-    <link rel="prev" title="Module: safe.storage.interpolation" href="interpolation.html" /> 
+    <link rel="next" title="Module: safe.storage.vector" href="vector.html" />
+    <link rel="prev" title="Module: safe.storage.raster" href="raster.html" /> 
   </head>
   <body>
     <div class="relbar-top">
@@ -47,10 +47,10 @@
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
         <li class="right" >
-          <a href="test_clipping.html" title="Module: safe.storage.test_clipping"
+          <a href="vector.html" title="Module: safe.storage.vector"
              accesskey="N">next</a> &nbsp; &nbsp;</li>
         <li class="right" >
-          <a href="interpolation.html" title="Module: safe.storage.interpolation"
+          <a href="raster.html" title="Module: safe.storage.raster"
              accesskey="P">previous</a> &nbsp; &nbsp;</li>
     <li><a href="../../../index.html">Home</a> &raquo;</li>
     <li><a href="../../../contents.html">Contents</a> &raquo;</li>
@@ -70,24 +70,32 @@
             
   <div class="section" id="module-safe.storage.utilities">
 <span id="module-safe-storage-utilities"></span><h1>Module:  safe.storage.utilities<a class="headerlink" href="#module-safe.storage.utilities" title="Permalink to this headline">¶</a></h1>
-<p>Utilities for storage module</p>
+<p><strong>Utilities for storage module</strong></p>
 <dl class="function">
 <dt id="safe.storage.utilities.array2wkt">
 <tt class="descclassname">safe.storage.utilities.</tt><tt class="descname">array2wkt</tt><big>(</big><em>A</em>, <em>geom_type='POLYGON'</em><big>)</big><a class="reference internal" href="../../../_modules/safe/storage/utilities.html#array2wkt"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe.storage.utilities.array2wkt" title="Permalink to this definition">¶</a></dt>
 <dd><p>Convert coordinates to wkt format</p>
 <dl class="docutils">
-<dt>Input</dt>
-<dd><dl class="first docutils">
+<dt>Args:</dt>
+<dd><ul class="first last">
+<li><dl class="first docutils">
 <dt>A: Nx2 Array of coordinates representing either a polygon or a line.</dt>
-<dd>A can be either a numpy array or a list of coordinates.</dd>
+<dd><p class="first last">A can be either a numpy array or a list of coordinates.</p>
+</dd>
 </dl>
-<p class="last">geom_type: Determines output keyword &#8216;POLYGON&#8217; or &#8216;LINESTRING&#8217;</p>
+</li>
+<li><p class="first">geom_type: Determines output keyword &#8216;POLYGON&#8217; or &#8216;LINESTRING&#8217;</p>
+</li>
+</ul>
 </dd>
-<dt>Output</dt>
-<dd><p class="first">wkt: geometry in the format known to ogr: Examples</p>
-<p class="last">POLYGON((1020 1030,1020 1045,1050 1045,1050 1030,1020 1030))
-LINESTRING(1000 1000, 1100 1050)</p>
+<dt>Returns:</dt>
+<dd><ul class="first last simple">
+<li>wkt: geometry in the format known to ogr: Examples</li>
+</ul>
 </dd>
+<dt>Note:</dt>
+<dd>POLYGON((1020 1030,1020 1045,1050 1045,1050 1030,1020 1030))
+LINESTRING(1000 1000, 1100 1050)</dd>
 </dl>
 </dd></dl>
 
@@ -96,15 +104,22 @@ LINESTRING(1000 1000, 1100 1050)</p>
 <tt class="descclassname">safe.storage.utilities.</tt><tt class="descname">bbox_intersection</tt><big>(</big><em>*args</em><big>)</big><a class="reference internal" href="../../../_modules/safe/storage/utilities.html#bbox_intersection"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe.storage.utilities.bbox_intersection" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compute intersection between two or more bounding boxes</p>
 <dl class="docutils">
-<dt>Input</dt>
-<dd><dl class="first last docutils">
+<dt>Args:</dt>
+<dd><ul class="first last">
+<li><dl class="first docutils">
 <dt>args: two or more bounding boxes.</dt>
-<dd>Each is assumed to be a list or a tuple with
-four coordinates (W, S, E, N)</dd>
-</dl>
+<dd><p class="first last">Each is assumed to be a list or a tuple with
+four coordinates (W, S, E, N)</p>
 </dd>
-<dt>Output</dt>
-<dd>result: The minimal common bounding box</dd>
+</dl>
+</li>
+</ul>
+</dd>
+<dt>Returns:</dt>
+<dd><ul class="first last simple">
+<li>result: The minimal common bounding box</li>
+</ul>
+</dd>
 </dl>
 </dd></dl>
 
@@ -112,26 +127,39 @@ four coordinates (W, S, E, N)</dd>
 <dt id="safe.storage.utilities.buffered_bounding_box">
 <tt class="descclassname">safe.storage.utilities.</tt><tt class="descname">buffered_bounding_box</tt><big>(</big><em>bbox</em>, <em>resolution</em><big>)</big><a class="reference internal" href="../../../_modules/safe/storage/utilities.html#buffered_bounding_box"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe.storage.utilities.buffered_bounding_box" title="Permalink to this definition">¶</a></dt>
 <dd><p>Grow bounding box with one unit of resolution in each direction</p>
-<p>This will ensure there is enough pixels to robustly provide
+<dl class="docutils">
+<dt>Note:</dt>
+<dd><p class="first">This will ensure there is enough pixels to robustly provide
 interpolated values without having to painstakingly deal with
 all corner cases such as 1 x 1, 1 x 2 and 2 x 1 arrays.</p>
-<p>The border will also make sure that points that would otherwise fall
+<p class="last">The border will also make sure that points that would otherwise fall
 outside the domain (as defined by a tight bounding box) get assigned
 values.</p>
-<dl class="docutils">
-<dt>Input</dt>
-<dd><p class="first">bbox: Bounding box with format [W, S, E, N]
-resolution: (resx, resy) - Raster resolution in each direction.</p>
-<blockquote class="last">
-<div>res - Raster resolution in either direction
-If resolution is None bbox is returned unchanged.</div></blockquote>
 </dd>
-<dt>Ouput</dt>
-<dd>Adjusted bounding box</dd>
+<dt>Args:</dt>
+<dd><ul class="first last">
+<li><p class="first">bbox: Bounding box with format [W, S, E, N]</p>
+</li>
+<li><dl class="first docutils">
+<dt>resolution: (resx, resy) - Raster resolution in each direction.</dt>
+<dd><p class="first last">res - Raster resolution in either direction
+If resolution is None bbox is returned unchanged.</p>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+<dt>Returns:</dt>
+<dd><ul class="first last simple">
+<li>Adjusted bounding box</li>
+</ul>
+</dd>
+<dt>Note:</dt>
+<dd><dl class="first docutils">
 <dt>Case in point: Interpolation point O would fall outside this domain</dt>
 <dd>even though there are enough grid points to support it</dd>
 </dl>
-<div class="line-block">
+<div class="last line-block">
 <div class="line-block">
 <div class="line"><a href="#id1"><span class="problematic" id="id2">|</span></a></div>
 </div>
@@ -144,6 +172,8 @@ If resolution is None bbox is returned unchanged.</div></blockquote>
 </div>
 <div class="line">*     *  | *    *</div>
 </div>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="function">
@@ -151,22 +181,41 @@ If resolution is None bbox is returned unchanged.</div></blockquote>
 <tt class="descclassname">safe.storage.utilities.</tt><tt class="descname">calculate_polygon_area</tt><big>(</big><em>polygon</em>, <em>signed=False</em><big>)</big><a class="reference internal" href="../../../_modules/safe/storage/utilities.html#calculate_polygon_area"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe.storage.utilities.calculate_polygon_area" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculate the signed area of non-self-intersecting polygon</p>
 <dl class="docutils">
-<dt>Input</dt>
-<dd><dl class="first last docutils">
+<dt>Args:</dt>
+<dd><ul class="first last">
+<li><dl class="first docutils">
 <dt>polygon: Numeric array of points (longitude, latitude). It is assumed</dt>
-<dd>to be closed, i.e. first and last points are identical</dd>
-<dt>signed: Optional flag deciding whether returned area retains its sign:</dt>
-<dd>If points are ordered counter clockwise, the signed area
+<dd><p class="first last">to be closed, i.e. first and last points are identical</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>signed: Optional flag deciding whether returned area retains its</dt>
+<dd><blockquote class="first">
+<div><p>sign:</p>
+</div></blockquote>
+<p class="last">If points are ordered counter clockwise, the signed area
 will be positive.
 If points are ordered clockwise, it will be negative
-Default is False which means that the area is always positive.</dd>
-</dl>
+Default is False which means that the area is always
+positive.</p>
 </dd>
-<dt>Output</dt>
-<dd>area: Area of polygon (subject to the value of argument signed)</dd>
+</dl>
+</li>
+</ul>
+</dd>
+<dt>Returns:</dt>
+<dd><ul class="first last simple">
+<li>area: Area of polygon (subject to the value of argument signed)</li>
+</ul>
+</dd>
+<dt>Note:</dt>
+<dd><dl class="first last docutils">
 <dt>Sources</dt>
 <dd><a class="reference external" href="http://paulbourke.net/geometry/polyarea/">http://paulbourke.net/geometry/polyarea/</a>
 <a class="reference external" href="http://en.wikipedia.org/wiki/Centroid">http://en.wikipedia.org/wiki/Centroid</a></dd>
+</dl>
+</dd>
 </dl>
 </dd></dl>
 
@@ -175,15 +224,23 @@ Default is False which means that the area is always positive.</dd>
 <tt class="descclassname">safe.storage.utilities.</tt><tt class="descname">calculate_polygon_centroid</tt><big>(</big><em>polygon</em><big>)</big><a class="reference internal" href="../../../_modules/safe/storage/utilities.html#calculate_polygon_centroid"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe.storage.utilities.calculate_polygon_centroid" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculate the centroid of non-self-intersecting polygon</p>
 <dl class="docutils">
-<dt>Input</dt>
-<dd><dl class="first last docutils">
+<dt>Args:</dt>
+<dd><ul class="first last">
+<li><dl class="first docutils">
 <dt>polygon: Numeric array of points (longitude, latitude). It is assumed</dt>
-<dd>to be closed, i.e. first and last points are identical</dd>
-</dl>
+<dd><p class="first last">to be closed, i.e. first and last points are identical</p>
 </dd>
+</dl>
+</li>
+</ul>
+</dd>
+<dt>Note:</dt>
+<dd><dl class="first last docutils">
 <dt>Sources</dt>
 <dd><a class="reference external" href="http://paulbourke.net/geometry/polyarea/">http://paulbourke.net/geometry/polyarea/</a>
 <a class="reference external" href="http://en.wikipedia.org/wiki/Centroid">http://en.wikipedia.org/wiki/Centroid</a></dd>
+</dl>
+</dd>
 </dl>
 </dd></dl>
 
@@ -199,26 +256,37 @@ Default is False which means that the area is always positive.</dd>
 <tt class="descclassname">safe.storage.utilities.</tt><tt class="descname">geotransform2bbox</tt><big>(</big><em>geotransform</em>, <em>columns</em>, <em>rows</em><big>)</big><a class="reference internal" href="../../../_modules/safe/storage/utilities.html#geotransform2bbox"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe.storage.utilities.geotransform2bbox" title="Permalink to this definition">¶</a></dt>
 <dd><p>Convert geotransform to bounding box</p>
 <dl class="docutils">
-<dt>Input</dt>
-<dd><dl class="first docutils">
+<dt>Args :</dt>
+<dd><ul class="first last">
+<li><dl class="first docutils">
 <dt>geotransform: GDAL geotransform (6-tuple).</dt>
-<dd>(top left x, w-e pixel resolution, rotation,
+<dd><p class="first last">(top left x, w-e pixel resolution, rotation,
 top left y, rotation, n-s pixel resolution).
-See e.g. <a class="reference external" href="http://www.gdal.org/gdal_tutorial.html">http://www.gdal.org/gdal_tutorial.html</a></dd>
-</dl>
-<p class="last">columns: Number of columns in grid
-rows: Number of rows in grid</p>
+See e.g. <a class="reference external" href="http://www.gdal.org/gdal_tutorial.html">http://www.gdal.org/gdal_tutorial.html</a></p>
 </dd>
-<dt>Output</dt>
-<dd><dl class="first last docutils">
+</dl>
+</li>
+<li><p class="first">columns: Number of columns in grid</p>
+</li>
+<li><p class="first">rows: Number of rows in grid</p>
+</li>
+</ul>
+</dd>
+<dt>Returns:</dt>
+<dd><ul class="first last">
+<li><dl class="first docutils">
 <dt>bbox: Bounding box as a list of geographic coordinates</dt>
-<dd>[west, south, east, north]</dd>
-</dl>
+<dd><p class="first last">[west, south, east, north]</p>
 </dd>
 </dl>
-<p>Rows and columns are needed to determine eastern and northern bounds.
+</li>
+</ul>
+</dd>
+<dt>Note:</dt>
+<dd>Rows and columns are needed to determine eastern and northern bounds.
 FIXME: Not sure if the pixel vs gridline registration issue is observed
-correctly here. Need to check against gdal &gt; v1.7</p>
+correctly here. Need to check against gdal &gt; v1.7</dd>
+</dl>
 </dd></dl>
 
 <dl class="function">
@@ -226,29 +294,41 @@ correctly here. Need to check against gdal &gt; v1.7</p>
 <tt class="descclassname">safe.storage.utilities.</tt><tt class="descname">geotransform2resolution</tt><big>(</big><em>geotransform</em>, <em>isotropic=False</em>, <em>rtol=1e-06</em>, <em>atol=1e-08</em><big>)</big><a class="reference internal" href="../../../_modules/safe/storage/utilities.html#geotransform2resolution"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe.storage.utilities.geotransform2resolution" title="Permalink to this definition">¶</a></dt>
 <dd><p>Convert geotransform to resolution</p>
 <dl class="docutils">
-<dt>Input</dt>
-<dd><dl class="first last docutils">
+<dt>Args:</dt>
+<dd><ul class="first last">
+<li><dl class="first docutils">
 <dt>geotransform: GDAL geotransform (6-tuple).</dt>
-<dd>(top left x, w-e pixel resolution, rotation,
+<dd><p class="first last">(top left x, w-e pixel resolution, rotation,
 top left y, rotation, n-s pixel resolution).
-See e.g. <a class="reference external" href="http://www.gdal.org/gdal_tutorial.html">http://www.gdal.org/gdal_tutorial.html</a></dd>
-<dt>Input</dt>
-<dd><dl class="first last docutils">
+See e.g. <a class="reference external" href="http://www.gdal.org/gdal_tutorial.html">http://www.gdal.org/gdal_tutorial.html</a></p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
 <dt>isotropic: If True, verify that dx == dy and return dx</dt>
-<dd>If False (default) return 2-tuple (dx, dy)</dd>
+<dd><p class="first last">If False (default) return 2-tuple (dx, dy)</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
 <dt>rtol, atol: Used to control how close dx and dy must be</dt>
-<dd>to quality for isotropic. These are passed on to
-numpy.allclose for comparison.</dd>
-</dl>
+<dd><p class="first last">to quality for isotropic. These are passed on to
+numpy.allclose for comparison.</p>
 </dd>
 </dl>
+</li>
+</ul>
 </dd>
-<dt>Output</dt>
-<dd><dl class="first last docutils">
+<dt>Returns:</dt>
+<dd><ul class="first last">
+<li><dl class="first docutils">
 <dt>resolution: grid spacing (resx, resy) in (positive) decimal</dt>
-<dd>degrees ordered as longitude first, then latitude.
-or resx (if isotropic is True)</dd>
+<dd><p class="first last">degrees ordered as longitude first, then latitude.
+or resx (if isotropic is True)</p>
+</dd>
 </dl>
+</li>
+</ul>
 </dd>
 </dl>
 </dd></dl>
@@ -258,27 +338,45 @@ or resx (if isotropic is True)</dd>
 <tt class="descclassname">safe.storage.utilities.</tt><tt class="descname">get_geometry_type</tt><big>(</big><em>geometry</em>, <em>geometry_type</em><big>)</big><a class="reference internal" href="../../../_modules/safe/storage/utilities.html#get_geometry_type"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe.storage.utilities.get_geometry_type" title="Permalink to this definition">¶</a></dt>
 <dd><p>Determine geometry type based on data</p>
 <dl class="docutils">
-<dt>Input</dt>
-<dd><dl class="first docutils">
+<dt>Args:</dt>
+<dd><ul class="first last">
+<li><dl class="first docutils">
 <dt>geometry: A list of either point coordinates [lon, lat] or polygons</dt>
-<dd>which are assumed to be numpy arrays of coordinates</dd>
-</dl>
-<p class="last">geometry_type: Optional type - &#8216;point&#8217;, &#8216;line&#8217;, &#8216;polygon&#8217; or None</p>
+<dd><p class="first last">which are assumed to be numpy arrays of coordinates</p>
 </dd>
-<dt>Output</dt>
-<dd>geometry_type: Either ogr.wkbPoint, ogr.wkbLineString or ogr.wkbPolygon</dd>
 </dl>
-<p>If geometry type cannot be determined an Exception is raised.</p>
-<p>Note, there is no consistency check across all entries of the
+</li>
+<li><p class="first">geometry_type: Optional type - &#8216;point&#8217;, &#8216;line&#8217;, &#8216;polygon&#8217; or None</p>
+</li>
+</ul>
+</dd>
+<dt>Returns:</dt>
+<dd><ul class="first last">
+<li><dl class="first docutils">
+<dt>geometry_type: Either ogr.wkbPoint, ogr.wkbLineString or</dt>
+<dd><p class="first last">ogr.wkbPolygon</p>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+<dt>Note:</dt>
+<dd><p class="first">If geometry type cannot be determined an Exception is raised.</p>
+<p class="last">There is no consistency check across all entries of the
 geometry list, only the first element is used in this determination.</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="function">
 <dt id="safe.storage.utilities.is_sequence">
 <tt class="descclassname">safe.storage.utilities.</tt><tt class="descname">is_sequence</tt><big>(</big><em>x</em><big>)</big><a class="reference internal" href="../../../_modules/safe/storage/utilities.html#is_sequence"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe.storage.utilities.is_sequence" title="Permalink to this definition">¶</a></dt>
 <dd><p>Determine if x behaves like a true sequence but not a string</p>
-<p>This will for example return True for lists, tuples and numpy arrays
-but False for strings and dictionaries.</p>
+<dl class="docutils">
+<dt>Note:</dt>
+<dd>This will for example return True for lists, tuples and numpy arrays
+but False for strings and dictionaries.</dd>
+</dl>
 </dd></dl>
 
 <dl class="function">
@@ -286,12 +384,18 @@ but False for strings and dictionaries.</p>
 <tt class="descclassname">safe.storage.utilities.</tt><tt class="descname">minimal_bounding_box</tt><big>(</big><em>bbox</em>, <em>min_res</em>, <em>eps=1e-06</em><big>)</big><a class="reference internal" href="../../../_modules/safe/storage/utilities.html#minimal_bounding_box"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe.storage.utilities.minimal_bounding_box" title="Permalink to this definition">¶</a></dt>
 <dd><p>Grow bounding box to exceed specified resolution if needed</p>
 <dl class="docutils">
-<dt>Input</dt>
-<dd>bbox: Bounding box with format [W, S, E, N]
-min_res: Minimal acceptable resolution to exceed
-eps: Optional tolerance that will be applied to &#8216;buffer&#8217; result</dd>
-<dt>Ouput</dt>
-<dd>Adjusted bounding box guaranteed to exceed specified resolution</dd>
+<dt>Args:</dt>
+<dd><ul class="first last simple">
+<li>bbox: Bounding box with format [W, S, E, N]</li>
+<li>min_res: Minimal acceptable resolution to exceed</li>
+<li>eps: Optional tolerance that will be applied to &#8216;buffer&#8217; result</li>
+</ul>
+</dd>
+<dt>Returns:</dt>
+<dd><ul class="first last simple">
+<li>Adjusted bounding box guaranteed to exceed specified resolution</li>
+</ul>
+</dd>
 </dl>
 </dd></dl>
 
@@ -300,14 +404,24 @@ eps: Optional tolerance that will be applied to &#8216;buffer&#8217; result</dd>
 <tt class="descclassname">safe.storage.utilities.</tt><tt class="descname">points_along_line</tt><big>(</big><em>line</em>, <em>delta</em><big>)</big><a class="reference internal" href="../../../_modules/safe/storage/utilities.html#points_along_line"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe.storage.utilities.points_along_line" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculate a list of points along a line with a given delta</p>
 <dl class="docutils">
-<dt>Input</dt>
-<dd>line: Numeric array of points (longitude, latitude).
-delta: Decimal number to be used as step</dd>
-<dt>Output</dt>
-<dd>V: Numeric array of points (longitude, latitude).</dd>
+<dt>Args:</dt>
+<dd><ul class="first last simple">
+<li>line: Numeric array of points (longitude, latitude).</li>
+<li>delta: Decimal number to be used as step</li>
+</ul>
+</dd>
+<dt>Returns:</dt>
+<dd><ul class="first last simple">
+<li>V: Numeric array of points (longitude, latitude).</li>
+</ul>
+</dd>
+<dt>Note:</dt>
+<dd><dl class="first last docutils">
 <dt>Sources</dt>
 <dd><a class="reference external" href="http://paulbourke.net/geometry/polyarea/">http://paulbourke.net/geometry/polyarea/</a>
 <a class="reference external" href="http://en.wikipedia.org/wiki/Centroid">http://en.wikipedia.org/wiki/Centroid</a></dd>
+</dl>
+</dd>
 </dl>
 </dd></dl>
 
@@ -315,27 +429,38 @@ delta: Decimal number to be used as step</dd>
 <dt id="safe.storage.utilities.points_between_points">
 <tt class="descclassname">safe.storage.utilities.</tt><tt class="descname">points_between_points</tt><big>(</big><em>point1</em>, <em>point2</em>, <em>delta</em><big>)</big><a class="reference internal" href="../../../_modules/safe/storage/utilities.html#points_between_points"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe.storage.utilities.points_between_points" title="Permalink to this definition">¶</a></dt>
 <dd><p>Creates an array of points between two points given a delta</p>
-<p>u = (x1-x0, y1-y0)/L, where
+<dl class="docutils">
+<dt>Note:</dt>
+<dd>u = (x1-x0, y1-y0)/L, where
 L=sqrt( (x1-x0)^2 + (y1-y0)^2).
 If r is the resolution, then the
 points will be given by
 (x0, y0) + u * n * r for n = 1, 2, ....
-while len(n*u*r) &lt; L</p>
+while len(n*u*r) &lt; L</dd>
+</dl>
 </dd></dl>
 
 <dl class="function">
 <dt id="safe.storage.utilities.raster_geometry2geotransform">
 <tt class="descclassname">safe.storage.utilities.</tt><tt class="descname">raster_geometry2geotransform</tt><big>(</big><em>longitudes</em>, <em>latitudes</em><big>)</big><a class="reference internal" href="../../../_modules/safe/storage/utilities.html#raster_geometry2geotransform"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe.storage.utilities.raster_geometry2geotransform" title="Permalink to this definition">¶</a></dt>
 <dd><p>Convert vectors of longitudes and latitudes to geotransform</p>
-<p>This is the inverse operation of Raster.get_geometry().</p>
 <dl class="docutils">
-<dt>Input</dt>
-<dd>longitudes, latitudes: Vectors of geographic coordinates</dd>
-<dt>Output</dt>
-<dd><dl class="first last docutils">
+<dt>Note:</dt>
+<dd>This is the inverse operation of Raster.get_geometry().</dd>
+<dt>Args:</dt>
+<dd><ul class="first last simple">
+<li>longitudes, latitudes: Vectors of geographic coordinates</li>
+</ul>
+</dd>
+<dt>Returns:</dt>
+<dd><ul class="first last">
+<li><dl class="first docutils">
 <dt>geotransform: 6-tuple (top left x, w-e pixel resolution, rotation,</dt>
-<dd>top left y, rotation, n-s pixel resolution)</dd>
+<dd><p class="first last">top left y, rotation, n-s pixel resolution)</p>
+</dd>
 </dl>
+</li>
+</ul>
 </dd>
 </dl>
 </dd></dl>
@@ -405,55 +530,6 @@ If there are no &#8216;:&#8217;, then the keyword is treated as a key with no va
 </dd></dl>
 
 <dl class="function">
-<dt id="safe.storage.utilities.temp_dir">
-<tt class="descclassname">safe.storage.utilities.</tt><tt class="descname">temp_dir</tt><big>(</big><em>sub_dir='work'</em><big>)</big><a class="reference internal" href="../../../_modules/safe/storage/utilities.html#temp_dir"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe.storage.utilities.temp_dir" title="Permalink to this definition">¶</a></dt>
-<dd><p>Obtain the temporary working directory for the operating system.</p>
-<p>An inasafe subdirectory will automatically be created under this and
-if specified, a user subdirectory under that.</p>
-<div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p>You can use this together with unique_filename to create
-a file in a temporary directory under the inasafe workspace. e.g.</p>
-<p class="last">tmpdir = temp_dir(&#8216;testing&#8217;)
-tmpfile = unique_filename(dir=tmpdir)
-print tmpfile
-/tmp/inasafe/23-08-2012/timlinux/work/testing/tmpMRpF_C</p>
-</div>
-<dl class="docutils">
-<dt>Args:</dt>
-<dd><dl class="first last docutils">
-<dt>sub_dir str - optional argument which will cause an additional</dt>
-<dd>subirectory to be created e.g. /tmp/inasafe/foo/</dd>
-</dl>
-</dd>
-<dt>Returns:</dt>
-<dd>Path to the output clipped layer (placed in the system temp dir).</dd>
-<dt>Raises:</dt>
-<dd>Any errors from the underlying system calls.</dd>
-</dl>
-</dd></dl>
-
-<dl class="function">
-<dt id="safe.storage.utilities.unique_filename">
-<tt class="descclassname">safe.storage.utilities.</tt><tt class="descname">unique_filename</tt><big>(</big><em>**kwargs</em><big>)</big><a class="reference internal" href="../../../_modules/safe/storage/utilities.html#unique_filename"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe.storage.utilities.unique_filename" title="Permalink to this definition">¶</a></dt>
-<dd><p>Create new filename guaranteed not to exist previously</p>
-<p>Use mkstemp to create the file, then remove it and return the name</p>
-<p>If dir is specified, the tempfile will be created in the path specified
-otherwise the file will be created in a directory following this scheme:</p>
-<p>:file:<a href="#id5"><span class="problematic" id="id6">`</span></a>/tmp/inasafe/&lt;dd-mm-yyyy&gt;/&lt;user&gt;/impacts&#8217;</p>
-<p>See <a class="reference external" href="http://docs.python.org/library/tempfile.html">http://docs.python.org/library/tempfile.html</a> for details.</p>
-<p>Example usage:</p>
-<p>tempdir = temp_dir(sub_dir=&#8217;test&#8217;)
-filename = unique_filename(suffix=&#8217;.keywords&#8217;, dir=tempdir)
-print filename
-/tmp/inasafe/23-08-2012/timlinux/test/tmpyeO5VR.keywords</p>
-<p>Or with no preferred subdir, a default subdir of &#8216;impacts&#8217; is used:</p>
-<p>filename = unique_filename(suffix=&#8217;.shp&#8217;)
-print filename
-/tmp/inasafe/23-08-2012/timlinux/impacts/tmpoOAmOi.shp</p>
-</dd></dl>
-
-<dl class="function">
 <dt id="safe.storage.utilities.write_keywords">
 <tt class="descclassname">safe.storage.utilities.</tt><tt class="descname">write_keywords</tt><big>(</big><em>keywords</em>, <em>filename</em>, <em>sublayer=None</em><big>)</big><a class="reference internal" href="../../../_modules/safe/storage/utilities.html#write_keywords"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe.storage.utilities.write_keywords" title="Permalink to this definition">¶</a></dt>
 <dd><p>Write keywords dictonary to file</p>
@@ -471,9 +547,10 @@ print filename
 <dt>sublayer: str Optional sublayer applicable only to multilayer formats</dt>
 <dd><p class="first last">such as sqlite or netcdf which can potentially hold more than
 one layer. The string should map to the layer group as per the
-example below. <strong>If the keywords file contains sublayer definitions
-but no sublayer was defined, keywords file content will be removed
-and replaced with only the keywords provided here.</strong></p>
+example below. <strong>If the keywords file contains sublayer
+definitions but no sublayer was defined, keywords file content
+will be removed and replaced with only the keywords provided
+here.</strong></p>
 </dd>
 </dl>
 </li>
@@ -520,11 +597,11 @@ errors in the application.</p>
           <img class="logo" src="../../../_static/icon.png" alt="Logo"/>
         </a></p>
   <h4>Previous topic</h4>
-  <p class="topless"><a href="interpolation.html"
-                        title="previous chapter">Module:  safe.storage.interpolation</a></p>
+  <p class="topless"><a href="raster.html"
+                        title="previous chapter">Module:  safe.storage.raster</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="test_clipping.html"
-                        title="next chapter">Module:  safe.storage.test_clipping</a></p>
+  <p class="topless"><a href="vector.html"
+                        title="next chapter">Module:  safe.storage.vector</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="../../../_sources/api-docs/safe/storage/utilities.txt"
@@ -559,10 +636,10 @@ errors in the application.</p>
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
         <li class="right" >
-          <a href="test_clipping.html" title="Module: safe.storage.test_clipping"
+          <a href="vector.html" title="Module: safe.storage.vector"
              >next</a> &nbsp; &nbsp;</li>
         <li class="right" >
-          <a href="interpolation.html" title="Module: safe.storage.interpolation"
+          <a href="raster.html" title="Module: safe.storage.raster"
              >previous</a> &nbsp; &nbsp;</li>
     <li><a href="../../../index.html">Home</a> &raquo;</li>
     <li><a href="../../../contents.html">Contents</a> &raquo;</li>
@@ -576,7 +653,7 @@ errors in the application.</p>
 
     <div class="footer">
         &copy; Copyright 2012, BNPB/AIFDR/GFDRR.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
     </div>
     <!-- cloud_sptheme 1.3 -->
   </body>

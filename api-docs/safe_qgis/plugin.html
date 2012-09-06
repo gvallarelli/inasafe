@@ -31,8 +31,8 @@
     <script type="text/javascript" src="../../_static/toggle_sections.js"></script>
     <link rel="top" title="InaSAFE 0.5.0-alpha documentation" href="../../index.html" />
     <link rel="up" title="Package::safe_qgis" href="../safe_qgis.html" />
-    <link rel="next" title="Module: safe_qgis.dock_base" href="dock_base.html" />
-    <link rel="prev" title="Package::safe_qgis" href="../safe_qgis.html" /> 
+    <link rel="next" title="Module: safe_qgis.safe_interface" href="safe_interface.html" />
+    <link rel="prev" title="Module: safe_qgis.help_base" href="help_base.html" /> 
   </head>
   <body>
     <div class="relbar-top">
@@ -47,10 +47,10 @@
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
         <li class="right" >
-          <a href="dock_base.html" title="Module: safe_qgis.dock_base"
+          <a href="safe_interface.html" title="Module: safe_qgis.safe_interface"
              accesskey="N">next</a> &nbsp; &nbsp;</li>
         <li class="right" >
-          <a href="../safe_qgis.html" title="Package::safe_qgis"
+          <a href="help_base.html" title="Module: safe_qgis.help_base"
              accesskey="P">previous</a> &nbsp; &nbsp;</li>
     <li><a href="../../index.html">Home</a> &raquo;</li>
     <li><a href="../../contents.html">Contents</a> &raquo;</li>
@@ -206,6 +206,22 @@ icon or menu item associated with this plugin</p>
 </dd></dl>
 
 <dl class="method">
+<dt id="safe_qgis.plugin.Plugin.toggleActionDock">
+<tt class="descname">toggleActionDock</tt><big>(</big><em>checked</em><big>)</big><a class="headerlink" href="#safe_qgis.plugin.Plugin.toggleActionDock" title="Permalink to this definition">¶</a></dt>
+<dd><p>check or uncheck the toggle inaSAFE toolbar button.</p>
+<p>This slot is called when the user hides the inaSAFE panel using its
+close button or using view-&gt;panels</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>checked - if actionDock has to be checked or not</dd>
+<dt>Returns:</dt>
+<dd>None.</dd>
+<dt>Raises:</dt>
+<dd>no exceptions explicitly raised.</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
 <dt id="safe_qgis.plugin.Plugin.tr">
 <tt class="descname">tr</tt><big>(</big><em>theString</em><big>)</big><a class="reference internal" href="../../_modules/safe_qgis/plugin.html#Plugin.tr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe_qgis.plugin.Plugin.tr" title="Permalink to this definition">¶</a></dt>
 <dd><p>We implement this ourself since we do not inherit QObject.</p>
@@ -250,11 +266,11 @@ any graphical user interface elements that should appear in QGIS.</p>
           <img class="logo" src="../../_static/icon.png" alt="Logo"/>
         </a></p>
   <h4>Previous topic</h4>
-  <p class="topless"><a href="../safe_qgis.html"
-                        title="previous chapter">Package::safe_qgis</a></p>
+  <p class="topless"><a href="help_base.html"
+                        title="previous chapter">Module:  safe_qgis.help_base</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="dock_base.html"
-                        title="next chapter">Module:  safe_qgis.dock_base</a></p>
+  <p class="topless"><a href="safe_interface.html"
+                        title="next chapter">Module:  safe_qgis.safe_interface</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="../../_sources/api-docs/safe_qgis/plugin.txt"
@@ -289,10 +305,10 @@ any graphical user interface elements that should appear in QGIS.</p>
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
         <li class="right" >
-          <a href="dock_base.html" title="Module: safe_qgis.dock_base"
+          <a href="safe_interface.html" title="Module: safe_qgis.safe_interface"
              >next</a> &nbsp; &nbsp;</li>
         <li class="right" >
-          <a href="../safe_qgis.html" title="Package::safe_qgis"
+          <a href="help_base.html" title="Module: safe_qgis.help_base"
              >previous</a> &nbsp; &nbsp;</li>
     <li><a href="../../index.html">Home</a> &raquo;</li>
     <li><a href="../../contents.html">Contents</a> &raquo;</li>
@@ -305,7 +321,7 @@ any graphical user interface elements that should appear in QGIS.</p>
 
     <div class="footer">
         &copy; Copyright 2012, BNPB/AIFDR/GFDRR.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
     </div>
     <!-- cloud_sptheme 1.3 -->
   </body>

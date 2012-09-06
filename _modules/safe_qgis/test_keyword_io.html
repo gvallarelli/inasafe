@@ -66,18 +66,18 @@
 <span class="kn">import</span> <span class="nn">shutil</span>
 <span class="c"># Add parent directory to path to make test aware of other modules</span>
 <span class="c"># We should be able to remove this now that we use env vars. TS</span>
+<span class="kn">from</span> <span class="nn">safe.common.utilities</span> <span class="kn">import</span> <span class="n">temp_dir</span>
+
 <span class="n">pardir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">__file__</span><span class="p">),</span> <span class="s">&#39;..&#39;</span><span class="p">))</span>
 <span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pardir</span><span class="p">)</span>
 
 <span class="kn">from</span> <span class="nn">qgis.core</span> <span class="kn">import</span> <span class="p">(</span><span class="n">QgsDataSourceURI</span><span class="p">,</span> <span class="n">QgsVectorLayer</span><span class="p">)</span>
 
+<span class="c"># For testing and demoing</span>
+<span class="kn">from</span> <span class="nn">safe.common.testing</span> <span class="kn">import</span> <span class="n">HAZDATA</span><span class="p">,</span> <span class="n">TESTDATA</span>
 <span class="kn">from</span> <span class="nn">safe_qgis.utilities_test</span> <span class="kn">import</span> <span class="p">(</span><span class="n">getQgisTestApp</span><span class="p">,</span> <span class="n">loadLayer</span><span class="p">)</span>
 <span class="kn">from</span> <span class="nn">safe_qgis.keyword_io</span> <span class="kn">import</span> <span class="n">KeywordIO</span>
 <span class="kn">from</span> <span class="nn">safe_qgis.exceptions</span> <span class="kn">import</span> <span class="n">HashNotFoundException</span>
-<span class="kn">from</span> <span class="nn">safe_qgis.utilities</span> <span class="kn">import</span> <span class="n">getTempDir</span>
-
-<span class="c"># For testing and demoing</span>
-<span class="kn">from</span> <span class="nn">safe.common.testing</span> <span class="kn">import</span> <span class="n">HAZDATA</span><span class="p">,</span> <span class="n">TESTDATA</span>
 <span class="n">QGISAPP</span><span class="p">,</span> <span class="n">CANVAS</span><span class="p">,</span> <span class="n">IFACE</span><span class="p">,</span> <span class="n">PARENT</span> <span class="o">=</span> <span class="n">getQgisTestApp</span><span class="p">()</span>
 
 <span class="c"># Don&#39;t change this, not even formatting, you will break tests!</span>
@@ -98,7 +98,8 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">sqliteLayer</span> <span class="o">=</span> <span class="n">QgsVectorLayer</span><span class="p">(</span><span class="n">myUri</span><span class="o">.</span><span class="n">uri</span><span class="p">(),</span> <span class="s">&#39;OSM Buildings&#39;</span><span class="p">,</span>
                                        <span class="s">&#39;spatialite&#39;</span><span class="p">)</span>
         <span class="n">myHazardPath</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">HAZDATA</span><span class="p">,</span> <span class="s">&#39;Shakemap_Padang_2009.asc&#39;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">fileRasterLayer</span><span class="p">,</span> <span class="n">myType</span> <span class="o">=</span> <span class="n">loadLayer</span><span class="p">(</span><span class="n">myHazardPath</span><span class="p">,</span> <span class="n">theDirectory</span><span class="o">=</span><span class="bp">None</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fileRasterLayer</span><span class="p">,</span> <span class="n">myType</span> <span class="o">=</span> <span class="n">loadLayer</span><span class="p">(</span><span class="n">myHazardPath</span><span class="p">,</span>
+                                                 <span class="n">theDirectory</span><span class="o">=</span><span class="bp">None</span><span class="p">)</span>
         <span class="k">del</span> <span class="n">myType</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">fileVectorLayer</span><span class="p">,</span> <span class="n">myType</span> <span class="o">=</span> <span class="n">loadLayer</span><span class="p">(</span><span class="s">&#39;Padang_WGS84.shp&#39;</span><span class="p">)</span>
         <span class="k">del</span> <span class="n">myType</span>
@@ -127,7 +128,7 @@
 <div class="viewcode-block" id="KeywordIOTest.test_writeReadKeywordFromUri"><a class="viewcode-back" href="../../api-docs/safe_qgis_tests/test_keyword_io.html#safe_qgis.test_keyword_io.KeywordIOTest.test_writeReadKeywordFromUri">[docs]</a>    <span class="k">def</span> <span class="nf">test_writeReadKeywordFromUri</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Test we can set and get keywords for a non local datasource&quot;&quot;&quot;</span>
         <span class="n">myHandle</span><span class="p">,</span> <span class="n">myFilename</span> <span class="o">=</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">mkstemp</span><span class="p">(</span><span class="s">&#39;.db&#39;</span><span class="p">,</span> <span class="s">&#39;keywords_&#39;</span><span class="p">,</span>
-                                            <span class="n">getTempDir</span><span class="p">())</span>
+                                            <span class="n">temp_dir</span><span class="p">())</span>
 
         <span class="c"># Ensure the file is deleted before we try to write to it</span>
         <span class="c"># fixes windows specific issue where you get a message like this</span>
@@ -282,7 +283,7 @@
 
     <div class="footer">
         &copy; Copyright 2012, BNPB/AIFDR/GFDRR.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
     </div>
     <!-- cloud_sptheme 1.3 -->
   </body>

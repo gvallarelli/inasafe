@@ -31,8 +31,8 @@
     <script type="text/javascript" src="../../../_static/toggle_sections.js"></script>
     <link rel="top" title="InaSAFE 0.5.0-alpha documentation" href="../../../index.html" />
     <link rel="up" title="Package::safe.common" href="../common.html" />
-    <link rel="next" title="Module: safe.common.polygon" href="polygon.html" />
-    <link rel="prev" title="Module: safe.common.interpolation2d" href="interpolation2d.html" /> 
+    <link rel="next" title="Authors, Contributors and Funders" href="../../../authors.html" />
+    <link rel="prev" title="Module: safe.common.test_numerics" href="test_numerics.html" /> 
   </head>
   <body>
     <div class="relbar-top">
@@ -47,10 +47,10 @@
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
         <li class="right" >
-          <a href="polygon.html" title="Module: safe.common.polygon"
+          <a href="../../../authors.html" title="Authors, Contributors and Funders"
              accesskey="N">next</a> &nbsp; &nbsp;</li>
         <li class="right" >
-          <a href="interpolation2d.html" title="Module: safe.common.interpolation2d"
+          <a href="test_numerics.html" title="Module: safe.common.test_numerics"
              accesskey="P">previous</a> &nbsp; &nbsp;</li>
     <li><a href="../../../index.html">Home</a> &raquo;</li>
     <li><a href="../../../contents.html">Contents</a> &raquo;</li>
@@ -70,14 +70,16 @@
             
   <div class="section" id="module-safe.common.interpolation1d">
 <span id="module-safe-common-interpolation1d"></span><h1>Module:  safe.common.interpolation1d<a class="headerlink" href="#module-safe.common.interpolation1d" title="Permalink to this headline">¶</a></h1>
-<p>Module for 1D interpolation</p>
-<p>This module
-* provides piecewise constant (nearest neighbour) and bilinear interpolation
-* is fast (based on numpy vector operations)
-* depends only on numpy
-* guarantees that interpolated values never exceed the two nearest neighbours
-* handles missing values in domain sensibly using NaN
-* is unit tested with a range of common and corner cases</p>
+<p><strong>Module for 1D interpolation</strong></p>
+<p>This module:</p>
+<ul class="simple">
+<li>provides piecewise constant (nearest neighbour) and bilinear interpolation</li>
+<li>is fast (based on numpy vector operations)</li>
+<li>depends only on numpy</li>
+<li>guarantees that interpolated values never exceed the two nearest neighbours</li>
+<li>handles missing values in domain sensibly using NaN</li>
+<li>is unit tested with a range of common and corner cases</li>
+</ul>
 <p>See interpolation2d.py for documentation of the mathematical derivation used.</p>
 <dl class="function">
 <dt id="safe.common.interpolation1d.check_inputs">
@@ -90,27 +92,40 @@
 <tt class="descclassname">safe.common.interpolation1d.</tt><tt class="descname">interpolate1d</tt><big>(</big><em>x</em>, <em>z</em>, <em>points</em>, <em>mode='linear'</em>, <em>bounds_error=False</em><big>)</big><a class="reference internal" href="../../../_modules/safe/common/interpolation1d.html#interpolate1d"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe.common.interpolation1d.interpolate1d" title="Permalink to this definition">¶</a></dt>
 <dd><p>Fundamental 2D interpolation routine</p>
 <dl class="docutils">
-<dt>Input</dt>
-<dd><p class="first">x: 1D array of x-coordinates on which to interpolate
-z: 1D array of values for each x
-points: 1D array of coordinates where interpolated values are sought
-mode: Determines the interpolation order. Options are</p>
-<blockquote>
-<div><p>&#8216;constant&#8217; - piecewise constant nearest neighbour interpolation
+<dt>Args:</dt>
+<dd><ul class="first last">
+<li><p class="first">x: 1D array of x-coordinates on which to interpolate</p>
+</li>
+<li><p class="first">z: 1D array of values for each x</p>
+</li>
+<li><p class="first">points: 1D array of coordinates where interpolated values are sought</p>
+</li>
+<li><dl class="first docutils">
+<dt>mode: Determines the interpolation order. Options are</dt>
+<dd><p class="first">&#8216;constant&#8217; - piecewise constant nearest neighbour interpolation
 &#8216;linear&#8217; - bilinear interpolation using the two</p>
-<blockquote>
-<div>nearest neighbours (default)</div></blockquote>
+<blockquote class="last">
+<div><p>nearest neighbours (default)</p>
 </div></blockquote>
-<dl class="last docutils">
-<dt>bounds_error: Boolean flag. If True (default) an exception will</dt>
-<dd>be raised when interpolated values are requested
-outside the domain of the input data. If False, nan
-is returned for those values</dd>
-</dl>
 </dd>
-<dt>Output</dt>
-<dd>1D array with same length as points with interpolated values</dd>
-<dt>Notes</dt>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>bounds_error: Boolean flag. If True (default) an exception will</dt>
+<dd><p class="first last">be raised when interpolated values are requested
+outside the domain of the input data. If False, nan
+is returned for those values</p>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+<dt>Returns:</dt>
+<dd><ul class="first last simple">
+<li>1D array with same length as points with interpolated values</li>
+</ul>
+</dd>
+<dt>Note:</dt>
 <dd><p class="first">Input coordinates x are assumed to be monotonically increasing,
 but need not be equidistantly spaced.</p>
 <p class="last">z is assumed to have dimension M where M = len(x).</p>
@@ -131,11 +146,11 @@ but need not be equidistantly spaced.</p>
           <img class="logo" src="../../../_static/icon.png" alt="Logo"/>
         </a></p>
   <h4>Previous topic</h4>
-  <p class="topless"><a href="interpolation2d.html"
-                        title="previous chapter">Module:  safe.common.interpolation2d</a></p>
+  <p class="topless"><a href="test_numerics.html"
+                        title="previous chapter">Module:  safe.common.test_numerics</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="polygon.html"
-                        title="next chapter">Module:  safe.common.polygon</a></p>
+  <p class="topless"><a href="../../../authors.html"
+                        title="next chapter">Authors, Contributors and Funders</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="../../../_sources/api-docs/safe/common/interpolation1d.txt"
@@ -170,10 +185,10 @@ but need not be equidistantly spaced.</p>
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
         <li class="right" >
-          <a href="polygon.html" title="Module: safe.common.polygon"
+          <a href="../../../authors.html" title="Authors, Contributors and Funders"
              >next</a> &nbsp; &nbsp;</li>
         <li class="right" >
-          <a href="interpolation2d.html" title="Module: safe.common.interpolation2d"
+          <a href="test_numerics.html" title="Module: safe.common.test_numerics"
              >previous</a> &nbsp; &nbsp;</li>
     <li><a href="../../../index.html">Home</a> &raquo;</li>
     <li><a href="../../../contents.html">Contents</a> &raquo;</li>
@@ -187,7 +202,7 @@ but need not be equidistantly spaced.</p>
 
     <div class="footer">
         &copy; Copyright 2012, BNPB/AIFDR/GFDRR.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
     </div>
     <!-- cloud_sptheme 1.3 -->
   </body>

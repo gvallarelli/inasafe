@@ -82,13 +82,44 @@
                  <span class="s">&#39;Disaster Reduction&#39;</span><span class="p">)</span>
 
 
-<div class="viewcode-block" id="ReadLayerError"><a class="viewcode-back" href="../../../api-docs/safe/common/exceptions.html#safe.common.exceptions.ReadLayerError">[docs]</a><span class="k">class</span> <span class="nc">ReadLayerError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+<div class="viewcode-block" id="InaSAFEError"><a class="viewcode-back" href="../../../api-docs/safe/common/exceptions.html#safe.common.exceptions.InaSAFEError">[docs]</a><span class="k">class</span> <span class="nc">InaSAFEError</span><span class="p">(</span><span class="ne">RuntimeError</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Base class for all user defined execptions&quot;&quot;&quot;</span>
+    <span class="k">pass</span>
+
+</div>
+<div class="viewcode-block" id="ReadLayerError"><a class="viewcode-back" href="../../../api-docs/safe/common/exceptions.html#safe.common.exceptions.ReadLayerError">[docs]</a><span class="k">class</span> <span class="nc">ReadLayerError</span><span class="p">(</span><span class="n">InaSAFEError</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;When a layer can&#39;t be read&quot;&quot;&quot;</span>
     <span class="k">pass</span>
 
 </div>
-<div class="viewcode-block" id="BoundingBoxError"><a class="viewcode-back" href="../../../api-docs/safe/common/exceptions.html#safe.common.exceptions.BoundingBoxError">[docs]</a><span class="k">class</span> <span class="nc">BoundingBoxError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+<div class="viewcode-block" id="WriteLayerError"><a class="viewcode-back" href="../../../api-docs/safe/common/exceptions.html#safe.common.exceptions.WriteLayerError">[docs]</a><span class="k">class</span> <span class="nc">WriteLayerError</span><span class="p">(</span><span class="n">InaSAFEError</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;When a layer can&#39;t be written&quot;&quot;&quot;</span>
+    <span class="k">pass</span>
+
+</div>
+<div class="viewcode-block" id="BoundingBoxError"><a class="viewcode-back" href="../../../api-docs/safe/common/exceptions.html#safe.common.exceptions.BoundingBoxError">[docs]</a><span class="k">class</span> <span class="nc">BoundingBoxError</span><span class="p">(</span><span class="n">InaSAFEError</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;For errors relating to bboxes&quot;&quot;&quot;</span>
+    <span class="k">pass</span>
+
+</div>
+<div class="viewcode-block" id="VerificationError"><a class="viewcode-back" href="../../../api-docs/safe/common/exceptions.html#safe.common.exceptions.VerificationError">[docs]</a><span class="k">class</span> <span class="nc">VerificationError</span><span class="p">(</span><span class="n">InaSAFEError</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Exception thrown by verify()</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">pass</span>
+
+</div>
+<div class="viewcode-block" id="PolygonInputError"><a class="viewcode-back" href="../../../api-docs/safe/common/exceptions.html#safe.common.exceptions.PolygonInputError">[docs]</a><span class="k">class</span> <span class="nc">PolygonInputError</span><span class="p">(</span><span class="n">InaSAFEError</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;For invalid inputs to numeric polygon functions&quot;&quot;&quot;</span>
+    <span class="k">pass</span>
+
+</div>
+<div class="viewcode-block" id="BoundsError"><a class="viewcode-back" href="../../../api-docs/safe/common/exceptions.html#safe.common.exceptions.BoundsError">[docs]</a><span class="k">class</span> <span class="nc">BoundsError</span><span class="p">(</span><span class="n">InaSAFEError</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;For points falling outside interpolation grid&quot;&quot;&quot;</span>
+    <span class="k">pass</span>
+
+</div>
+<div class="viewcode-block" id="GetDataError"><a class="viewcode-back" href="../../../api-docs/safe/common/exceptions.html#safe.common.exceptions.GetDataError">[docs]</a><span class="k">class</span> <span class="nc">GetDataError</span><span class="p">(</span><span class="n">InaSAFEError</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;When layer data cannot be obtained&quot;&quot;&quot;</span>
     <span class="k">pass</span></div>
 </pre></div>
 
@@ -138,7 +169,7 @@
 
     <div class="footer">
         &copy; Copyright 2012, BNPB/AIFDR/GFDRR.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
     </div>
     <!-- cloud_sptheme 1.3 -->
   </body>
