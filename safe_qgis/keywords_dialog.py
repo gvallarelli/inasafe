@@ -111,6 +111,7 @@ class KeywordsDialog(QtGui.QDialog, Ui_KeywordsDialogBase):
         # Set up help dialog showing logic.
         self.helpDialog = None
         myButton = self.buttonBox.button(QtGui.QDialogButtonBox.Help)
+
         QtCore.QObject.connect(myButton, QtCore.SIGNAL('clicked()'),
                                self.showHelp)
 
