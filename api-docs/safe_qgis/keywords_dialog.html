@@ -131,6 +131,16 @@ value pair (kvp)</li>
 </dd></dl>
 
 <dl class="method">
+<dt id="safe_qgis.keywords_dialog.KeywordsDialog.applyPendingChanges">
+<tt class="descname">applyPendingChanges</tt><big>(</big><big>)</big><a class="headerlink" href="#safe_qgis.keywords_dialog.KeywordsDialog.applyPendingChanges" title="Permalink to this definition">¶</a></dt>
+<dd><p>Apply any pending changes e.g. keywords entered without being added.
+See <a class="reference external" href="https://github.com/AIFDR/inasafe/issues/249">https://github.com/AIFDR/inasafe/issues/249</a></p>
+<p>Args: None</p>
+<p>Returns: None</p>
+<p>Raises: None</p>
+</dd></dl>
+
+<dl class="method">
 <dt id="safe_qgis.keywords_dialog.KeywordsDialog.getKeywords">
 <tt class="descname">getKeywords</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/safe_qgis/keywords_dialog.html#KeywordsDialog.getKeywords"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe_qgis.keywords_dialog.KeywordsDialog.getKeywords" title="Permalink to this definition">¶</a></dt>
 <dd><p>Obtain the state of the dialog as a keywords dict</p>
@@ -172,6 +182,15 @@ currently active layer.</p>
 <dt>Raises:</dt>
 <dd>no exceptions explicitly raised.</dd>
 </dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="safe_qgis.keywords_dialog.KeywordsDialog.makeKeyValueEditable">
+<tt class="descname">makeKeyValueEditable</tt><big>(</big><em>theItem</em><big>)</big><a class="headerlink" href="#safe_qgis.keywords_dialog.KeywordsDialog.makeKeyValueEditable" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set leKey and leValue to the clicked item in the lstKeywords.</p>
+<p>Args: None</p>
+<p>Returns: None</p>
+<p>Raises: None</p>
 </dd></dl>
 
 <dl class="method">
@@ -352,12 +371,6 @@ reset Subcategory, datatype and units.</dd>
 <dt>Raises:</dt>
 <dd>no exceptions explicitly raised.</dd>
 </dl>
-</dd></dl>
-
-<dl class="method">
-<dt id="safe_qgis.keywords_dialog.KeywordsDialog.setLeKeyLeValue">
-<tt class="descname">setLeKeyLeValue</tt><big>(</big><big>)</big><a class="headerlink" href="#safe_qgis.keywords_dialog.KeywordsDialog.setLeKeyLeValue" title="Permalink to this definition">¶</a></dt>
-<dd><p>Set lekey and levalue to the clicked item in the lstKeywords.</p>
 </dd></dl>
 
 <dl class="method">

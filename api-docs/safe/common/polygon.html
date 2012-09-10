@@ -256,34 +256,52 @@ a list or a numeric array</p>
 
 <dl class="function">
 <dt id="safe.common.polygon.intersection">
-<tt class="descclassname">safe.common.polygon.</tt><tt class="descname">intersection</tt><big>(</big><em>line0</em>, <em>line1</em>, <em>rtol=1e-12</em>, <em>atol=1e-12</em>, <em>fast=False</em><big>)</big><a class="reference internal" href="../../../_modules/safe/common/polygon.html#intersection"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe.common.polygon.intersection" title="Permalink to this definition">¶</a></dt>
+<tt class="descclassname">safe.common.polygon.</tt><tt class="descname">intersection</tt><big>(</big><em>line0</em>, <em>line1</em><big>)</big><a class="reference internal" href="../../../_modules/safe/common/polygon.html#intersection"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe.common.polygon.intersection" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns intersecting point between two line segments.</p>
-<p>However, if parallel lines coincide partly (i.e. share a common segment),
-the line segment where lines coincide is returned</p>
+<p>If the lines are parallel or coincide partly (i.e. share a common segment),
+they are considered to not intersect.</p>
 <dl class="docutils">
 <dt>Inputs:</dt>
-<dd><dl class="first docutils">
-<dt>line0, line1: Each defined by two end points as in:</dt>
-<dd>[[x0, y0], [x1, y1]]
-A line can also be a 2x2 numpy array with each row
-corresponding to a point.</dd>
+<dd><dl class="first last docutils">
+<dt>line0: A simple line segment defined by two end points:</dt>
+<dd>[[x0, y0], [x1, y1]]</dd>
+<dt>line1: A collection of line segments vectorised following the format</dt>
+<dd>line[0,0,:] = x2
+line[0,1,:] = y2
+line[1,0,:] = x3
+line[1,1,:] = y3</dd>
 </dl>
-<p class="last">rtol, atol: Tolerances passed onto numpy.allclose
-fast: Default False. If True collinear return values are simplified</p>
 </dd>
 <dt>Output:</dt>
-<dd><p class="first">status, value - where status and value is interpreted as follows:
-status == 0: no intersection, value set to None.
-status == 1: intersection point found and returned in value as [x,y].
-status == 2: Collinear overlapping lines found.</p>
-<blockquote>
-<div>Value takes the form [[x0,y0], [x1,y1]] which is the
-segment common to both lines. If argument fast is True
-we return 2, x, y on the common segment</div></blockquote>
-<p class="last">status == 3: Collinear non-overlapping lines. Value set to None.
-status == 4: Lines are parallel. Value set to None.</p>
+<dd><dl class="first last docutils">
+<dt>intersections: Nx2 array with intersection points or nan</dt>
+<dd>(in case of no intersection)
+If line1 consisted of just one line,
+None is returned for backwards compatibility</dd>
+</dl>
 </dd>
 </dl>
+<p>Notes</p>
+<p>A vectorised input line can be constructed either as list:
+line1 = [[[0, 24, 0, 15],    # x2</p>
+<blockquote>
+<div><blockquote>
+<div>[12, 0, 24, 0]],   # y2</div></blockquote>
+<dl class="docutils">
+<dt>[[24, 0, 0, 5],     # x3</dt>
+<dd>[0, 12, 12, 15]]]  # y3</dd>
+</dl>
+</div></blockquote>
+<p>or as an array</p>
+<p>line1 = numpy.zeros(16).reshape(2,2,4)  # Three lines
+line1[0, 0, :] = [0, 24, 0, 15]   # x2
+line1[0, 1, :] = [12, 0, 24, 0]   # y2
+line1[1, 0, :] = [24, 0, 0, 5]    # x3
+line1[1, 1, :] = [0, 12, 12, 15]  # y3</p>
+<p>To select true intersections from result, use the following idiom:</p>
+<p>value = intersection(line0, line1)
+mask = - numpy.isnan(value[:, 0])
+v = value[mask]</p>
 </dd></dl>
 
 <dl class="function">
