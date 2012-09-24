@@ -4,17 +4,14 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
-
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Module: safe.engine.interpolation &mdash; InaSAFE 0.5.0-alpha documentation</title>
-    
+    <title>Module: safe.engine.interpolation &mdash; InaSAFE v0.5.0-alpha documentation</title>
     <link rel="stylesheet" href="../../../_static/cloud.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
-    <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Noticia+Text|Droid+Sans+Mono" type="text/css" />
-    
+    <link rel="stylesheet" href="../../../http://fonts.googleapis.com/css?family=Noticia+Text|Droid+Sans+Mono" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../',
@@ -29,10 +26,10 @@
     <script type="text/javascript" src="../../../_static/doctools.js"></script>
     <script type="text/javascript" src="../../../_static/jquery.cookie.js"></script>
     <script type="text/javascript" src="../../../_static/toggle_sections.js"></script>
-    <link rel="top" title="InaSAFE 0.5.0-alpha documentation" href="../../../index.html" />
+    <link rel="top" title="InaSAFE v0.5.0-alpha documentation" href="../../../index.html" />
     <link rel="up" title="Package::safe.engine" href="../engine.html" />
-    <link rel="next" title="Module: safe.engine.utilities" href="utilities.html" />
-    <link rel="prev" title="Module: safe.engine.test_engine" href="test_engine.html" /> 
+    <link rel="next" title="Module: safe.engine.test_engine" href="test_engine.html" />
+    <link rel="prev" title="Module: safe.engine.utilities" href="utilities.html" /> 
   </head>
   <body>
     <div class="relbar-top">
@@ -47,10 +44,10 @@
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
         <li class="right" >
-          <a href="utilities.html" title="Module: safe.engine.utilities"
+          <a href="test_engine.html" title="Module: safe.engine.test_engine"
              accesskey="N">next</a> &nbsp; &nbsp;</li>
         <li class="right" >
-          <a href="test_engine.html" title="Module: safe.engine.test_engine"
+          <a href="utilities.html" title="Module: safe.engine.utilities"
              accesskey="P">previous</a> &nbsp; &nbsp;</li>
     <li><a href="../../../index.html">Home</a> &raquo;</li>
     <li><a href="../../../contents.html">Contents</a> &raquo;</li>
@@ -106,7 +103,7 @@ If None (default) all attributes are transferred.</p>
 </li>
 </ul>
 <blockquote class="last">
-<div><ul>
+<ul>
 <li><dl class="first docutils">
 <dt>mode:</dt>
 <dd><p class="first last">Interpolation mode for raster to point interpolation only</p>
@@ -114,7 +111,7 @@ If None (default) all attributes are transferred.</p>
 </dl>
 </li>
 </ul>
-</div></blockquote>
+</blockquote>
 </dd>
 <dt>Returns:</dt>
 <dd>Layer representing the exposure data with hazard levels assigned.</dd>
@@ -123,9 +120,9 @@ If None (default) all attributes are transferred.</p>
 </dl>
 <p>Note:</p>
 <blockquote>
-<div><p>Admissible combinations of input layer types are</p>
+<p>Admissible combinations of input layer types are</p>
 <blockquote>
-<div>Exposure |  Raster     Polygon    Line     Point</div></blockquote>
+Exposure |  Raster     Polygon    Line     Point</blockquote>
 <p>Polygon         |  Y          Y          Y        Y
 Raster          |  Y          Y          Y        Y</p>
 <p>with the following methodologies used:</p>
@@ -137,7 +134,7 @@ Raster          |  Y          Y          Y        Y</p>
 Polygon-Polygon: * Not Implemented *
 Polygon-Raster:  Convert raster to points, clip to polygon,</p>
 <blockquote>
-<div>assign values and return point data</div></blockquote>
+assign values and return point data</blockquote>
 <dl class="docutils">
 <dt>Raster-Point:    Bilinear (or constant) interpolation as currently</dt>
 <dd>implemented</dd>
@@ -155,7 +152,7 @@ Raster-Point:    Point data
 Raster-Line:     N/A
 Raster-Polygon:  Polygon data
 Raster-Raster:   Raster data</p>
-</div></blockquote>
+</blockquote>
 </dd></dl>
 
 <dl class="function">
@@ -419,11 +416,11 @@ its centroids and the output is a point data set.</p>
           <img class="logo" src="../../../_static/icon.png" alt="Logo"/>
         </a></p>
   <h4>Previous topic</h4>
-  <p class="topless"><a href="test_engine.html"
-                        title="previous chapter">Module:  safe.engine.test_engine</a></p>
-  <h4>Next topic</h4>
   <p class="topless"><a href="utilities.html"
-                        title="next chapter">Module:  safe.engine.utilities</a></p>
+                        title="previous chapter">Module:  safe.engine.utilities</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="test_engine.html"
+                        title="next chapter">Module:  safe.engine.test_engine</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="../../../_sources/api-docs/safe/engine/interpolation.txt"
@@ -432,7 +429,7 @@ its centroids and the output is a point data set.</p>
 <div id="searchbox" style="display: none">
   <h3>Quick search</h3>
     <form class="search" action="../../../search.html" method="get">
-      <input type="text" name="q" />
+      <input type="text" name="q" size="18" />
       <input type="submit" value="Go" />
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
@@ -458,10 +455,10 @@ its centroids and the output is a point data set.</p>
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
         <li class="right" >
-          <a href="utilities.html" title="Module: safe.engine.utilities"
+          <a href="test_engine.html" title="Module: safe.engine.test_engine"
              >next</a> &nbsp; &nbsp;</li>
         <li class="right" >
-          <a href="test_engine.html" title="Module: safe.engine.test_engine"
+          <a href="utilities.html" title="Module: safe.engine.utilities"
              >previous</a> &nbsp; &nbsp;</li>
     <li><a href="../../../index.html">Home</a> &raquo;</li>
     <li><a href="../../../contents.html">Contents</a> &raquo;</li>
@@ -475,7 +472,7 @@ its centroids and the output is a point data set.</p>
 
     <div class="footer">
         &copy; Copyright 2012, BNPB/AIFDR/GFDRR.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.1.
     </div>
     <!-- cloud_sptheme 1.3 -->
   </body>

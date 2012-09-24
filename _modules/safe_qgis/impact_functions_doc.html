@@ -1,0 +1,303 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>safe_qgis.impact_functions_doc &mdash; InaSAFE v0.5.0-alpha documentation</title>
+    <link rel="stylesheet" href="../../_static/cloud.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../http://fonts.googleapis.com/css?family=Noticia+Text|Droid+Sans+Mono" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.5.0-alpha',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../_static/jquery.cookie.js"></script>
+    <script type="text/javascript" src="../../_static/toggle_sections.js"></script>
+    <link rel="top" title="InaSAFE v0.5.0-alpha documentation" href="../../index.html" />
+    <link rel="up" title="Module code" href="../index.html" /> 
+  </head>
+  <body>
+    <div class="relbar-top">
+        
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> &nbsp; &nbsp;</li>
+    <li><a href="../../index.html">Home</a> &raquo;</li>
+    <li><a href="../../contents.html">Contents</a> &raquo;</li>
+
+          <li><a href="../index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    </div>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for safe_qgis.impact_functions_doc</h1><div class="highlight"><pre>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">InaSAFE Disaster risk assessment tool developed by AusAid -</span>
+<span class="sd">**Impact Functions Dialog.**</span>
+
+<span class="sd">Contact : ole.moller.nielsen@gmail.com</span>
+
+<span class="sd">.. note:: This program is free software; you can redistribute it and/or modify</span>
+<span class="sd">     it under the terms of the GNU General Public License as published by</span>
+<span class="sd">     the Free Software Foundation; either version 2 of the License, or</span>
+<span class="sd">     (at your option) any later version.</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="n">__author__</span> <span class="o">=</span> <span class="s">&#39;ismailsunni@yahoo.co.id&#39;</span>
+<span class="n">__version__</span> <span class="o">=</span> <span class="s">&#39;0.5.0&#39;</span>
+<span class="n">__revision__</span> <span class="o">=</span> <span class="s">&#39;$Format:%H$&#39;</span>
+<span class="n">__date__</span> <span class="o">=</span> <span class="s">&#39;10/09/2012&#39;</span>
+<span class="n">__copyright__</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;Copyright 2012, Australia Indonesia Facility for &#39;</span>
+                 <span class="s">&#39;Disaster Reduction&#39;</span><span class="p">)</span>
+
+
+<span class="kn">from</span> <span class="nn">PyQt4</span> <span class="kn">import</span> <span class="p">(</span><span class="n">QtGui</span><span class="p">,</span> <span class="n">QtCore</span><span class="p">,</span> <span class="n">QtWebKit</span><span class="p">,)</span>
+<span class="kn">from</span> <span class="nn">impact_functions_doc_base</span> <span class="kn">import</span> <span class="n">Ui_ImpactFunctionsDocBase</span>
+<span class="kn">from</span> <span class="nn">safe.impact_functions</span> <span class="kn">import</span> <span class="n">core</span>
+<span class="kn">from</span> <span class="nn">safe_qgis.help</span> <span class="kn">import</span> <span class="n">Help</span>
+<span class="kn">from</span> <span class="nn">safe.impact_functions.core</span> <span class="kn">import</span> <span class="n">get_unique_values</span>
+<span class="kn">from</span> <span class="nn">utilities</span> <span class="kn">import</span> <span class="n">htmlFooter</span><span class="p">,</span> <span class="n">htmlHeader</span>
+
+
+<div class="viewcode-block" id="ImpactFunctionsDoc"><a class="viewcode-back" href="../../api-docs/safe_qgis/impact_functions_doc.html#safe_qgis.impact_functions_doc.ImpactFunctionsDoc">[docs]</a><span class="k">class</span> <span class="nc">ImpactFunctionsDoc</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QDialog</span><span class="p">,</span> <span class="n">Ui_ImpactFunctionsDocBase</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;ImpactFunctions Dialog for InaSAFE.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">theParent</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">dict_filter</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;Constructor for the dialog.</span>
+
+<span class="sd">                This dialog will show the user impact function documentation.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">           * theParent - Optional widget to use as parent</span>
+<span class="sd">        Returns:</span>
+<span class="sd">           not applicable</span>
+<span class="sd">        Raises:</span>
+<span class="sd">           no exceptions explicitly raised</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">QtGui</span><span class="o">.</span><span class="n">QDialog</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">theParent</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parent</span> <span class="o">=</span> <span class="n">theParent</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">header</span> <span class="o">=</span> <span class="bp">None</span>  <span class="c"># for storing html header template</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">footer</span> <span class="o">=</span> <span class="bp">None</span>  <span class="c"># for storing html footer template</span>
+        <span class="c"># Set up the user interface from Designer.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setupUi</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setWindowTitle</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tr</span><span class="p">(</span>
+                            <span class="s">&#39;InaSAFE </span><span class="si">%s</span><span class="s"> Impact Functions Doc&#39;</span> <span class="o">%</span> <span class="n">__version__</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">no_filter</span> <span class="o">=</span> <span class="s">&#39;No Filter&#39;</span>
+        <span class="k">if</span> <span class="n">dict_filter</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">dict_filter</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;id&#39;</span><span class="p">:</span> <span class="p">[],</span>
+                           <span class="s">&#39;title&#39;</span><span class="p">:</span> <span class="p">[],</span>
+                           <span class="s">&#39;category&#39;</span><span class="p">:</span> <span class="p">[],</span>
+                           <span class="s">&#39;subcategory&#39;</span><span class="p">:</span> <span class="p">[],</span>
+                           <span class="s">&#39;layertype&#39;</span><span class="p">:</span> <span class="p">[],</span>
+                           <span class="s">&#39;datatype&#39;</span><span class="p">:</span> <span class="p">[],</span>
+                           <span class="s">&#39;unit&#39;</span><span class="p">:</span> <span class="p">[]}</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">dict_filter</span> <span class="o">=</span> <span class="n">dict_filter</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">if_table</span> <span class="o">=</span> <span class="bp">None</span>  <span class="c"># for storing impact functions table</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">showImpactFunctionsTable</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">combo_box_content</span> <span class="o">=</span> <span class="bp">None</span>  <span class="c"># for storing combo box content</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">populate_combo_box</span><span class="p">()</span>
+        <span class="n">resetButton</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">myButtonBox</span><span class="o">.</span><span class="n">button</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QDialogButtonBox</span><span class="o">.</span><span class="n">Reset</span><span class="p">)</span>
+        <span class="n">QtCore</span><span class="o">.</span><span class="n">QObject</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">resetButton</span><span class="p">,</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">SIGNAL</span><span class="p">(</span><span class="s">&#39;clicked()&#39;</span><span class="p">),</span>
+                                   <span class="bp">self</span><span class="o">.</span><span class="n">reset_button_clicked</span><span class="p">)</span>
+
+        <span class="c"># Set up help dialog showing logic.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">helpDialog</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="n">helpButton</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">myButtonBox</span><span class="o">.</span><span class="n">button</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QDialogButtonBox</span><span class="o">.</span><span class="n">Help</span><span class="p">)</span>
+        <span class="n">QtCore</span><span class="o">.</span><span class="n">QObject</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">helpButton</span><span class="p">,</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">SIGNAL</span><span class="p">(</span><span class="s">&#39;clicked()&#39;</span><span class="p">),</span>
+                               <span class="bp">self</span><span class="o">.</span><span class="n">showHelp</span><span class="p">)</span>
+        <span class="c"># Combo box change event</span>
+        <span class="n">QtCore</span><span class="o">.</span><span class="n">QObject</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">comboBox_id</span><span class="p">,</span>
+                               <span class="n">QtCore</span><span class="o">.</span><span class="n">SIGNAL</span><span class="p">(</span><span class="s">&#39;currentIndexChanged(int)&#39;</span><span class="p">),</span>
+                               <span class="bp">self</span><span class="o">.</span><span class="n">update_table</span><span class="p">)</span>
+        <span class="n">QtCore</span><span class="o">.</span><span class="n">QObject</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">comboBox_title</span><span class="p">,</span>
+                               <span class="n">QtCore</span><span class="o">.</span><span class="n">SIGNAL</span><span class="p">(</span><span class="s">&#39;currentIndexChanged(int)&#39;</span><span class="p">),</span>
+                               <span class="bp">self</span><span class="o">.</span><span class="n">update_table</span><span class="p">)</span>
+        <span class="n">QtCore</span><span class="o">.</span><span class="n">QObject</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">comboBox_category</span><span class="p">,</span>
+                               <span class="n">QtCore</span><span class="o">.</span><span class="n">SIGNAL</span><span class="p">(</span><span class="s">&#39;currentIndexChanged(int)&#39;</span><span class="p">),</span>
+                               <span class="bp">self</span><span class="o">.</span><span class="n">update_table</span><span class="p">)</span>
+        <span class="n">QtCore</span><span class="o">.</span><span class="n">QObject</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">comboBox_subcategory</span><span class="p">,</span>
+                               <span class="n">QtCore</span><span class="o">.</span><span class="n">SIGNAL</span><span class="p">(</span><span class="s">&#39;currentIndexChanged(int)&#39;</span><span class="p">),</span>
+                               <span class="bp">self</span><span class="o">.</span><span class="n">update_table</span><span class="p">)</span>
+        <span class="n">QtCore</span><span class="o">.</span><span class="n">QObject</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">comboBox_layertype</span><span class="p">,</span>
+                               <span class="n">QtCore</span><span class="o">.</span><span class="n">SIGNAL</span><span class="p">(</span><span class="s">&#39;currentIndexChanged(int)&#39;</span><span class="p">),</span>
+                               <span class="bp">self</span><span class="o">.</span><span class="n">update_table</span><span class="p">)</span>
+        <span class="n">QtCore</span><span class="o">.</span><span class="n">QObject</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">comboBox_datatype</span><span class="p">,</span>
+                               <span class="n">QtCore</span><span class="o">.</span><span class="n">SIGNAL</span><span class="p">(</span><span class="s">&#39;currentIndexChanged(int)&#39;</span><span class="p">),</span>
+                               <span class="bp">self</span><span class="o">.</span><span class="n">update_table</span><span class="p">)</span>
+        <span class="n">QtCore</span><span class="o">.</span><span class="n">QObject</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">comboBox_unit</span><span class="p">,</span>
+                               <span class="n">QtCore</span><span class="o">.</span><span class="n">SIGNAL</span><span class="p">(</span><span class="s">&#39;currentIndexChanged(int)&#39;</span><span class="p">),</span>
+                               <span class="bp">self</span><span class="o">.</span><span class="n">update_table</span><span class="p">)</span>
+
+<div class="viewcode-block" id="ImpactFunctionsDoc.showImpactFunctionsTable"><a class="viewcode-back" href="../../api-docs/safe_qgis/impact_functions_doc.html#safe_qgis.impact_functions_doc.ImpactFunctionsDoc.showImpactFunctionsTable">[docs]</a>    <span class="k">def</span> <span class="nf">showImpactFunctionsTable</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;Show table of impact functions.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">if_table</span> <span class="o">=</span> <span class="n">core</span><span class="o">.</span><span class="n">get_plugins_as_table</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dict_filter</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">webView</span><span class="o">.</span><span class="n">settings</span><span class="p">()</span><span class="o">.</span><span class="n">setAttribute</span><span class="p">(</span>
+            <span class="n">QtWebKit</span><span class="o">.</span><span class="n">QWebSettings</span><span class="o">.</span><span class="n">DeveloperExtrasEnabled</span><span class="p">,</span> <span class="bp">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">displayHtml</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">QString</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">if_table</span><span class="p">)))</span>
+</div>
+<div class="viewcode-block" id="ImpactFunctionsDoc.generate_combo_box_content"><a class="viewcode-back" href="../../api-docs/safe_qgis/impact_functions_doc.html#safe_qgis.impact_functions_doc.ImpactFunctionsDoc.generate_combo_box_content">[docs]</a>    <span class="k">def</span> <span class="nf">generate_combo_box_content</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;Generate list for each combo box&#39;s content.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">unique_values</span> <span class="o">=</span> <span class="n">get_unique_values</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">unique_values</span><span class="o">.</span><span class="n">itervalues</span><span class="p">():</span>
+            <span class="n">item</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">no_filter</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">unique_values</span>
+</div>
+<div class="viewcode-block" id="ImpactFunctionsDoc.populate_combo_box"><a class="viewcode-back" href="../../api-docs/safe_qgis/impact_functions_doc.html#safe_qgis.impact_functions_doc.ImpactFunctionsDoc.populate_combo_box">[docs]</a>    <span class="k">def</span> <span class="nf">populate_combo_box</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;Populate item in each combo box.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">combo_box_content</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">combo_box_content</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">generate_combo_box_content</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">comboBox_title</span><span class="o">.</span><span class="n">addItems</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">combo_box_content</span><span class="p">[</span><span class="s">&#39;title&#39;</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">comboBox_id</span><span class="o">.</span><span class="n">addItems</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">combo_box_content</span><span class="p">[</span><span class="s">&#39;id&#39;</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">comboBox_category</span><span class="o">.</span><span class="n">addItems</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">combo_box_content</span><span class="p">[</span><span class="s">&#39;category&#39;</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">comboBox_subcategory</span><span class="o">.</span><span class="n">addItems</span><span class="p">(</span>
+                                        <span class="bp">self</span><span class="o">.</span><span class="n">combo_box_content</span><span class="p">[</span><span class="s">&#39;subcategory&#39;</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">comboBox_layertype</span><span class="o">.</span><span class="n">addItems</span><span class="p">(</span>
+                                        <span class="bp">self</span><span class="o">.</span><span class="n">combo_box_content</span><span class="p">[</span><span class="s">&#39;layertype&#39;</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">comboBox_datatype</span><span class="o">.</span><span class="n">addItems</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">combo_box_content</span><span class="p">[</span><span class="s">&#39;datatype&#39;</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">comboBox_unit</span><span class="o">.</span><span class="n">addItems</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">combo_box_content</span><span class="p">[</span><span class="s">&#39;unit&#39;</span><span class="p">])</span>
+</div>
+<div class="viewcode-block" id="ImpactFunctionsDoc.update_table"><a class="viewcode-back" href="../../api-docs/safe_qgis/impact_functions_doc.html#safe_qgis.impact_functions_doc.ImpactFunctionsDoc.update_table">[docs]</a>    <span class="k">def</span> <span class="nf">update_table</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Updating table according to the filter.&quot;&quot;&quot;</span>
+        <span class="c"># get filter</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dict_filter</span><span class="p">[</span><span class="s">&#39;title&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">comboBox_title</span><span class="o">.</span><span class="n">currentText</span><span class="p">())]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dict_filter</span><span class="p">[</span><span class="s">&#39;id&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">comboBox_id</span><span class="o">.</span><span class="n">currentText</span><span class="p">())]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dict_filter</span><span class="p">[</span><span class="s">&#39;category&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+                                <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">comboBox_category</span><span class="o">.</span><span class="n">currentText</span><span class="p">())])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dict_filter</span><span class="p">[</span><span class="s">&#39;subcategory&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+                            <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">comboBox_subcategory</span><span class="o">.</span><span class="n">currentText</span><span class="p">())])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dict_filter</span><span class="p">[</span><span class="s">&#39;layertype&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+                            <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">comboBox_layertype</span><span class="o">.</span><span class="n">currentText</span><span class="p">())])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dict_filter</span><span class="p">[</span><span class="s">&#39;datatype&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+                                <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">comboBox_datatype</span><span class="o">.</span><span class="n">currentText</span><span class="p">())])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dict_filter</span><span class="p">[</span><span class="s">&#39;unit&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">comboBox_unit</span><span class="o">.</span><span class="n">currentText</span><span class="p">())]</span>
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">dict_filter</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
+            <span class="k">for</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">value</span><span class="p">:</span>
+                <span class="k">if</span> <span class="nb">str</span><span class="p">(</span><span class="n">val</span><span class="p">)</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">no_filter</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">dict_filter</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+                    <span class="k">break</span>
+        <span class="c"># update table</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">showImpactFunctionsTable</span><span class="p">()</span>
+</div>
+<div class="viewcode-block" id="ImpactFunctionsDoc.reset_button_clicked"><a class="viewcode-back" href="../../api-docs/safe_qgis/impact_functions_doc.html#safe_qgis.impact_functions_doc.ImpactFunctionsDoc.reset_button_clicked">[docs]</a>    <span class="k">def</span> <span class="nf">reset_button_clicked</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Function when reset button is clicked.</span>
+<span class="sd">            All combo box become No Filter.</span>
+<span class="sd">            Updating table according to the filter.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">comboBox_title</span><span class="o">.</span><span class="n">setCurrentIndex</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">comboBox_id</span><span class="o">.</span><span class="n">setCurrentIndex</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">comboBox_category</span><span class="o">.</span><span class="n">setCurrentIndex</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">comboBox_subcategory</span><span class="o">.</span><span class="n">setCurrentIndex</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">comboBox_layertype</span><span class="o">.</span><span class="n">setCurrentIndex</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">comboBox_datatype</span><span class="o">.</span><span class="n">setCurrentIndex</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">comboBox_unit</span><span class="o">.</span><span class="n">setCurrentIndex</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">update_table</span><span class="p">()</span>
+</div>
+<div class="viewcode-block" id="ImpactFunctionsDoc.showHelp"><a class="viewcode-back" href="../../api-docs/safe_qgis/impact_functions_doc.html#safe_qgis.impact_functions_doc.ImpactFunctionsDoc.showHelp">[docs]</a>    <span class="k">def</span> <span class="nf">showHelp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Load the help text for the keywords safe_qgis&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">helpDialog</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">helpDialog</span> <span class="o">=</span> <span class="n">Help</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s">&#39;impact_functions&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">helpDialog</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</div>
+<div class="viewcode-block" id="ImpactFunctionsDoc.htmlHeader"><a class="viewcode-back" href="../../api-docs/safe_qgis/impact_functions_doc.html#safe_qgis.impact_functions_doc.ImpactFunctionsDoc.htmlHeader">[docs]</a>    <span class="k">def</span> <span class="nf">htmlHeader</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get a standard html header for wrapping content in.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">header</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">header</span> <span class="o">=</span> <span class="n">htmlHeader</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">header</span>
+</div>
+<div class="viewcode-block" id="ImpactFunctionsDoc.htmlFooter"><a class="viewcode-back" href="../../api-docs/safe_qgis/impact_functions_doc.html#safe_qgis.impact_functions_doc.ImpactFunctionsDoc.htmlFooter">[docs]</a>    <span class="k">def</span> <span class="nf">htmlFooter</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get a standard html footer for wrapping content in.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">footer</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">footer</span> <span class="o">=</span> <span class="n">htmlFooter</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">footer</span>
+</div>
+<div class="viewcode-block" id="ImpactFunctionsDoc.displayHtml"><a class="viewcode-back" href="../../api-docs/safe_qgis/impact_functions_doc.html#safe_qgis.impact_functions_doc.ImpactFunctionsDoc.displayHtml">[docs]</a>    <span class="k">def</span> <span class="nf">displayHtml</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">theMessage</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Given an html snippet, wrap it in a page header and footer</span>
+<span class="sd">        and display it in the wvResults widget.&quot;&quot;&quot;</span>
+        <span class="n">myHtml</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">htmlHeader</span><span class="p">()</span> <span class="o">+</span> <span class="n">theMessage</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">htmlFooter</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">webView</span><span class="o">.</span><span class="n">setHtml</span><span class="p">(</span><span class="n">myHtml</span><span class="p">)</span></div></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+        <p class="logo"><a href="../../contents.html">
+          <img class="logo" src="../../_static/icon.png" alt="Logo"/>
+        </a></p>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" size="18" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="relbar-bottom">
+        
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> &nbsp; &nbsp;</li>
+    <li><a href="../../index.html">Home</a> &raquo;</li>
+    <li><a href="../../contents.html">Contents</a> &raquo;</li>
+
+          <li><a href="../index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    </div>
+
+    <div class="footer">
+        &copy; Copyright 2012, BNPB/AIFDR/GFDRR.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.1.
+    </div>
+    <!-- cloud_sptheme 1.3 -->
+  </body>
+</html>

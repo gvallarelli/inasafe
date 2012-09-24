@@ -1,0 +1,240 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>safe_qgis.test_impact_functions_doc &mdash; InaSAFE v0.5.0-alpha documentation</title>
+    <link rel="stylesheet" href="../../_static/cloud.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../http://fonts.googleapis.com/css?family=Noticia+Text|Droid+Sans+Mono" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.5.0-alpha',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../_static/jquery.cookie.js"></script>
+    <script type="text/javascript" src="../../_static/toggle_sections.js"></script>
+    <link rel="top" title="InaSAFE v0.5.0-alpha documentation" href="../../index.html" />
+    <link rel="up" title="Module code" href="../index.html" /> 
+  </head>
+  <body>
+    <div class="relbar-top">
+        
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> &nbsp; &nbsp;</li>
+    <li><a href="../../index.html">Home</a> &raquo;</li>
+    <li><a href="../../contents.html">Contents</a> &raquo;</li>
+
+          <li><a href="../index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    </div>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for safe_qgis.test_impact_functions_doc</h1><div class="highlight"><pre>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">InaSAFE Disaster risk assessment tool developed by AusAid and World Bank</span>
+<span class="sd">- **GUI Test Cases.**</span>
+
+<span class="sd">Contact : ole.moller.nielsen@gmail.com</span>
+
+<span class="sd">.. note:: This program is free software; you can redistribute it and/or modify</span>
+<span class="sd">     it under the terms of the GNU General Public License as published by</span>
+<span class="sd">     the Free Software Foundation; either version 2 of the License, or</span>
+<span class="sd">     (at your option) any later version.</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">PyQt4</span> <span class="kn">import</span> <span class="n">QtGui</span>
+
+<span class="n">__author__</span> <span class="o">=</span> <span class="s">&#39;ismailsunni@yahoo.co.id&#39;</span>
+<span class="n">__version__</span> <span class="o">=</span> <span class="s">&#39;0.5.0&#39;</span>
+<span class="n">__date__</span> <span class="o">=</span> <span class="s">&#39;14/09/2012&#39;</span>
+<span class="n">__copyright__</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;Copyright 2012, Australia Indonesia Facility for &#39;</span>
+                 <span class="s">&#39;Disaster Reduction&#39;</span><span class="p">)</span>
+<span class="kn">import</span> <span class="nn">unittest</span>
+<span class="kn">from</span> <span class="nn">impact_functions_doc</span> <span class="kn">import</span> <span class="n">ImpactFunctionsDoc</span>
+<span class="kn">from</span> <span class="nn">safe_qgis.utilities_test</span> <span class="kn">import</span> <span class="n">getQgisTestApp</span>
+<span class="kn">from</span> <span class="nn">PyQt4.QtTest</span> <span class="kn">import</span> <span class="n">QTest</span>
+<span class="kn">from</span> <span class="nn">PyQt4</span> <span class="kn">import</span> <span class="n">QtCore</span>
+
+<span class="n">QGISAPP</span><span class="p">,</span> <span class="n">CANVAS</span><span class="p">,</span> <span class="n">IFACE</span><span class="p">,</span> <span class="n">PARENT</span> <span class="o">=</span> <span class="n">getQgisTestApp</span><span class="p">()</span>
+
+
+<div class="viewcode-block" id="verifyColumn"><a class="viewcode-back" href="../../api-docs/safe_qgis_tests/test_impact_functions_doc.html#safe_qgis.test_impact_functions_doc.verifyColumn">[docs]</a><span class="k">def</span> <span class="nf">verifyColumn</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">col</span><span class="p">,</span> <span class="n">strFilter</span><span class="p">,</span> <span class="n">mode</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Helper function to verify the element in column.</span>
+<span class="sd">        Args:</span>
+<span class="sd">            * table = table to be verified</span>
+<span class="sd">            * col = (integer) column number</span>
+<span class="sd">            * strFilter = (string)</span>
+<span class="sd">            * mode = enum(only, included, excluded)</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            * bool = True or False about the verify</span>
+<span class="sd">            * string contains message</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">strFilter</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">strFilter</span><span class="p">)</span>  <span class="c"># make sure it is a string</span>
+    <span class="n">retval</span> <span class="o">=</span> <span class="bp">True</span>
+    <span class="n">msg</span> <span class="o">=</span> <span class="s">&#39;Verified&#39;</span>
+    <span class="n">elmt_col</span> <span class="o">=</span> <span class="n">table</span><span class="o">.</span><span class="n">column</span><span class="p">(</span><span class="n">col</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">mode</span> <span class="o">==</span> <span class="s">&#39;only&#39;</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">elmt</span> <span class="ow">in</span> <span class="n">elmt_col</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">elmt</span> <span class="o">!=</span> <span class="n">strFilter</span><span class="p">:</span>
+                <span class="n">retval</span> <span class="o">=</span> <span class="bp">False</span>
+                <span class="n">verb</span> <span class="o">=</span> <span class="s">&#39;to only has&#39;</span>
+                <span class="k">break</span>
+    <span class="k">elif</span> <span class="n">mode</span> <span class="o">==</span> <span class="s">&#39;included&#39;</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">elmt</span> <span class="ow">in</span> <span class="n">elmt_col</span><span class="p">:</span>
+            <span class="n">elmt_list</span> <span class="o">=</span> <span class="n">elmt</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39;, &#39;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">elmt_list</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="n">strFilter</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">retval</span> <span class="o">=</span> <span class="bp">False</span>
+                <span class="n">verb</span> <span class="o">=</span> <span class="s">&#39;to included&#39;</span>
+                <span class="k">break</span>
+    <span class="k">elif</span> <span class="n">mode</span> <span class="o">==</span> <span class="s">&#39;excluded&#39;</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">elmt</span> <span class="ow">in</span> <span class="n">elmt_col</span><span class="p">:</span>
+            <span class="n">elmt_list</span> <span class="o">=</span> <span class="n">elmt</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39;, &#39;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">elmt_list</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="n">strFilter</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">retval</span> <span class="o">=</span> <span class="bp">False</span>
+                <span class="n">verb</span> <span class="o">=</span> <span class="s">&#39;to excluded&#39;</span>
+                <span class="k">break</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">False</span><span class="p">,</span> <span class="s">&#39;Arg mode is not one of only, included, or excluded &#39;</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">retval</span><span class="p">:</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;Expected column </span><span class="si">%d</span><span class="s"> </span><span class="si">%s</span><span class="s"> </span><span class="si">%s</span><span class="s"> but found </span><span class="si">%s</span><span class="s">&#39;</span>
+                        <span class="o">%</span> <span class="p">(</span><span class="n">col</span><span class="p">,</span> <span class="n">verb</span><span class="p">,</span> <span class="n">strFilter</span><span class="p">,</span> <span class="n">elmt</span><span class="p">))</span>
+    <span class="k">assert</span> <span class="n">retval</span><span class="p">,</span> <span class="n">msg</span>
+
+</div>
+<span class="k">class</span> <span class="nc">ImpactFunctionsDocTest</span><span class="p">(</span><span class="n">unittest</span><span class="o">.</span><span class="n">TestCase</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">setUp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">pass</span>
+
+    <span class="k">def</span> <span class="nf">tearDown</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">pass</span>
+
+    <span class="k">def</span> <span class="nf">testInitShowTable</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Test for showing table in the first.&quot;&quot;&quot;</span>
+        <span class="n">myDialog</span> <span class="o">=</span> <span class="n">ImpactFunctionsDoc</span><span class="p">(</span><span class="n">PARENT</span><span class="p">)</span>
+        <span class="n">myStr</span> <span class="o">=</span> <span class="n">myDialog</span><span class="o">.</span><span class="n">if_table</span><span class="o">.</span><span class="n">toNewlineFreeString</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">myStr</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1000</span><span class="p">,</span> <span class="s">&quot;Please check.&quot;</span>
+
+    <span class="k">def</span> <span class="nf">testFilterTable</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Test for filter the content of the table.&quot;&quot;&quot;</span>
+        <span class="n">myDialog</span> <span class="o">=</span> <span class="n">ImpactFunctionsDoc</span><span class="p">(</span><span class="n">PARENT</span><span class="p">)</span>
+        <span class="n">list_category</span> <span class="o">=</span> <span class="n">myDialog</span><span class="o">.</span><span class="n">combo_box_content</span><span class="p">[</span><span class="s">&#39;category&#39;</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">list_category</span><span class="p">)):</span>
+            <span class="n">myDialog</span><span class="o">.</span><span class="n">comboBox_category</span><span class="o">.</span><span class="n">setCurrentIndex</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+            <span class="n">verifyColumn</span><span class="p">(</span><span class="n">myDialog</span><span class="o">.</span><span class="n">if_table</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">list_category</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="s">&#39;only&#39;</span><span class="p">)</span>
+
+        <span class="n">myDialog</span><span class="o">.</span><span class="n">comboBox_datatype</span><span class="o">.</span><span class="n">setCurrentIndex</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+        <span class="n">myDatatype</span> <span class="o">=</span> <span class="n">myDialog</span><span class="o">.</span><span class="n">comboBox_datatype</span><span class="o">.</span><span class="n">currentText</span><span class="p">()</span>
+        <span class="c"># datatype is the 5th column</span>
+        <span class="k">if</span> <span class="n">myDatatype</span> <span class="o">==</span> <span class="s">&#39;sigab&#39;</span><span class="p">:</span>
+            <span class="n">verifyColumn</span><span class="p">(</span><span class="n">myDialog</span><span class="o">.</span><span class="n">if_table</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="n">myDatatype</span><span class="p">,</span> <span class="s">&#39;included&#39;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">testRestButton</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Test when reset button is pressed.&quot;&quot;&quot;</span>
+        <span class="n">myDialog</span> <span class="o">=</span> <span class="n">ImpactFunctionsDoc</span><span class="p">(</span><span class="n">PARENT</span><span class="p">)</span>
+        <span class="n">expectedTable</span> <span class="o">=</span> <span class="n">myDialog</span><span class="o">.</span><span class="n">if_table</span><span class="o">.</span><span class="n">toNewlineFreeString</span><span class="p">()</span>
+        <span class="n">myDialog</span><span class="o">.</span><span class="n">comboBox_category</span><span class="o">.</span><span class="n">setCurrentIndex</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">myDialog</span><span class="o">.</span><span class="n">comboBox_subcategory</span><span class="o">.</span><span class="n">setCurrentIndex</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">realTableFilter</span> <span class="o">=</span> <span class="n">myDialog</span><span class="o">.</span><span class="n">if_table</span><span class="o">.</span><span class="n">toNewlineFreeString</span><span class="p">()</span>
+        <span class="n">resetButton</span> <span class="o">=</span> <span class="n">myDialog</span><span class="o">.</span><span class="n">myButtonBox</span><span class="o">.</span><span class="n">button</span><span class="p">(</span>
+                                            <span class="n">QtGui</span><span class="o">.</span><span class="n">QDialogButtonBox</span><span class="o">.</span><span class="n">Reset</span><span class="p">)</span>
+        <span class="n">QTest</span><span class="o">.</span><span class="n">mouseClick</span><span class="p">(</span><span class="n">resetButton</span><span class="p">,</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">LeftButton</span><span class="p">)</span>
+        <span class="n">realTableReset</span> <span class="o">=</span> <span class="n">myDialog</span><span class="o">.</span><span class="n">if_table</span><span class="o">.</span><span class="n">toNewlineFreeString</span><span class="p">()</span>
+        <span class="n">msgFilter</span> <span class="o">=</span> <span class="s">&quot;It should be different table because it&#39;s filtered.&quot;</span>
+        <span class="k">assert</span> <span class="n">expectedTable</span> <span class="o">!=</span> <span class="n">realTableFilter</span><span class="p">,</span> <span class="n">msgFilter</span>
+        <span class="n">msgReset</span> <span class="o">=</span> <span class="s">&quot;It should be the same table because reset button is</span><span class="se">\</span>
+<span class="s">pressed.&quot;</span>
+        <span class="k">assert</span> <span class="n">expectedTable</span> <span class="o">==</span> <span class="n">realTableReset</span><span class="p">,</span> <span class="n">msgReset</span>
+
+    <span class="k">def</span> <span class="nf">test_showHelp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Test that help button works&quot;&quot;&quot;</span>
+        <span class="n">myDialog</span> <span class="o">=</span> <span class="n">ImpactFunctionsDoc</span><span class="p">(</span><span class="n">PARENT</span><span class="p">)</span>
+        <span class="n">myButton</span> <span class="o">=</span> <span class="n">myDialog</span><span class="o">.</span><span class="n">myButtonBox</span><span class="o">.</span><span class="n">button</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QDialogButtonBox</span><span class="o">.</span><span class="n">Help</span><span class="p">)</span>
+        <span class="n">QTest</span><span class="o">.</span><span class="n">mouseClick</span><span class="p">(</span><span class="n">myButton</span><span class="p">,</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">LeftButton</span><span class="p">)</span>
+        <span class="n">myMessage</span> <span class="o">=</span> <span class="s">&#39;Help dialog was not created when help button pressed&#39;</span>
+        <span class="k">assert</span> <span class="n">myDialog</span><span class="o">.</span><span class="n">helpDialog</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">,</span> <span class="n">myMessage</span>
+
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">suite</span> <span class="o">=</span> <span class="n">unittest</span><span class="o">.</span><span class="n">makeSuite</span><span class="p">(</span><span class="n">ImpactFunctionsDocTest</span><span class="p">,</span> <span class="s">&#39;test&#39;</span><span class="p">)</span>
+    <span class="n">runner</span> <span class="o">=</span> <span class="n">unittest</span><span class="o">.</span><span class="n">TextTestRunner</span><span class="p">(</span><span class="n">verbosity</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">runner</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">suite</span><span class="p">)</span>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+        <p class="logo"><a href="../../contents.html">
+          <img class="logo" src="../../_static/icon.png" alt="Logo"/>
+        </a></p>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" size="18" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="relbar-bottom">
+        
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> &nbsp; &nbsp;</li>
+    <li><a href="../../index.html">Home</a> &raquo;</li>
+    <li><a href="../../contents.html">Contents</a> &raquo;</li>
+
+          <li><a href="../index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    </div>
+
+    <div class="footer">
+        &copy; Copyright 2012, BNPB/AIFDR/GFDRR.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.1.
+    </div>
+    <!-- cloud_sptheme 1.3 -->
+  </body>
+</html>

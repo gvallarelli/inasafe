@@ -4,17 +4,14 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
-
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>safe.engine.test_engine &mdash; InaSAFE 0.5.0-alpha documentation</title>
-    
+    <title>safe.engine.test_engine &mdash; InaSAFE v0.5.0-alpha documentation</title>
     <link rel="stylesheet" href="../../../_static/cloud.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
-    <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Noticia+Text|Droid+Sans+Mono" type="text/css" />
-    
+    <link rel="stylesheet" href="../../../http://fonts.googleapis.com/css?family=Noticia+Text|Droid+Sans+Mono" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../',
@@ -29,7 +26,7 @@
     <script type="text/javascript" src="../../../_static/doctools.js"></script>
     <script type="text/javascript" src="../../../_static/jquery.cookie.js"></script>
     <script type="text/javascript" src="../../../_static/toggle_sections.js"></script>
-    <link rel="top" title="InaSAFE 0.5.0-alpha documentation" href="../../../index.html" />
+    <link rel="top" title="InaSAFE v0.5.0-alpha documentation" href="../../../index.html" />
     <link rel="up" title="Module code" href="../../index.html" /> 
   </head>
   <body>
@@ -68,26 +65,22 @@
 
 <span class="c"># Import InaSAFE modules</span>
 <span class="kn">from</span> <span class="nn">safe.engine.core</span> <span class="kn">import</span> <span class="n">calculate_impact</span>
-<span class="kn">from</span> <span class="nn">safe.engine.interpolation</span> <span class="kn">import</span> <span class="n">interpolate_polygon_raster</span>
-<span class="kn">from</span> <span class="nn">safe.engine.interpolation</span> <span class="kn">import</span> <span class="n">interpolate_raster_vector_points</span>
-<span class="kn">from</span> <span class="nn">safe.engine.interpolation</span> <span class="kn">import</span> <span class="n">assign_hazard_values_to_exposure_data</span>
 
 <span class="kn">from</span> <span class="nn">safe.storage.core</span> <span class="kn">import</span> <span class="n">read_layer</span>
 <span class="kn">from</span> <span class="nn">safe.storage.core</span> <span class="kn">import</span> <span class="n">write_vector_data</span>
 <span class="kn">from</span> <span class="nn">safe.storage.core</span> <span class="kn">import</span> <span class="n">write_raster_data</span>
 <span class="kn">from</span> <span class="nn">safe.storage.vector</span> <span class="kn">import</span> <span class="n">Vector</span>
-<span class="kn">from</span> <span class="nn">safe.storage.utilities</span> <span class="kn">import</span> <span class="n">DEFAULT_ATTRIBUTE</span>
+<span class="kn">from</span> <span class="nn">safe.storage.utilities</span> <span class="kn">import</span> <span class="n">unique_filename</span><span class="p">,</span> <span class="n">DEFAULT_ATTRIBUTE</span>
 
 <span class="kn">from</span> <span class="nn">safe.common.polygon</span> <span class="kn">import</span> <span class="n">separate_points_by_polygon</span>
 <span class="kn">from</span> <span class="nn">safe.common.polygon</span> <span class="kn">import</span> <span class="n">is_inside_polygon</span>
 <span class="kn">from</span> <span class="nn">safe.common.polygon</span> <span class="kn">import</span> <span class="n">clip_lines_by_polygon</span><span class="p">,</span> <span class="n">clip_grid_by_polygons</span>
-<span class="kn">from</span> <span class="nn">safe.common.polygon</span> <span class="kn">import</span> <span class="n">line_dictionary_to_geometry</span>
 <span class="kn">from</span> <span class="nn">safe.common.interpolation2d</span> <span class="kn">import</span> <span class="n">interpolate_raster</span>
 <span class="kn">from</span> <span class="nn">safe.common.numerics</span> <span class="kn">import</span> <span class="n">normal_cdf</span><span class="p">,</span> <span class="n">lognormal_cdf</span><span class="p">,</span> <span class="n">erf</span><span class="p">,</span> <span class="n">ensure_numeric</span>
 <span class="kn">from</span> <span class="nn">safe.common.numerics</span> <span class="kn">import</span> <span class="n">nanallclose</span>
-<span class="kn">from</span> <span class="nn">safe.common.utilities</span> <span class="kn">import</span> <span class="n">VerificationError</span><span class="p">,</span> <span class="n">unique_filename</span>
-<span class="kn">from</span> <span class="nn">safe.common.testing</span> <span class="kn">import</span> <span class="n">TESTDATA</span><span class="p">,</span> <span class="n">HAZDATA</span><span class="p">,</span> <span class="n">EXPDATA</span>
-<span class="kn">from</span> <span class="nn">safe.common.exceptions</span> <span class="kn">import</span> <span class="n">InaSAFEError</span>
+<span class="kn">from</span> <span class="nn">safe.common.utilities</span> <span class="kn">import</span> <span class="n">VerificationError</span>
+<span class="kn">from</span> <span class="nn">safe.common.testing</span> <span class="kn">import</span> <span class="n">TESTDATA</span><span class="p">,</span> <span class="n">HAZDATA</span>
+
 <span class="kn">from</span> <span class="nn">safe.impact_functions</span> <span class="kn">import</span> <span class="n">get_plugins</span>
 
 <span class="c"># These imports are needed for impact function registration - dont remove</span>
@@ -240,7 +233,7 @@
         <span class="k">assert</span> <span class="n">numpy</span><span class="o">.</span><span class="n">alltrue</span><span class="p">(</span><span class="n">C</span> <span class="o">&lt;=</span> <span class="n">xmax</span><span class="p">)</span>
         <span class="k">assert</span> <span class="n">numpy</span><span class="o">.</span><span class="n">alltrue</span><span class="p">(</span><span class="n">C</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">)</span>
 
-    <span class="n">test_earthquake_fatality_estimation_allen</span><span class="o">.</span><span class="n">slow</span> <span class="o">=</span> <span class="bp">True</span>
+    <span class="n">test_earthquake_fatality_estimation_allen</span><span class="o">.</span><span class="n">slow</span> <span class="o">=</span> <span class="mi">1</span>
 
     <span class="k">def</span> <span class="nf">test_ITB_earthquake_fatality_estimation</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Fatalities from ground shaking can be computed correctly</span>
@@ -402,7 +395,7 @@
         <span class="c"># assert numpy.alltrue(C &lt;= xmax)</span>
         <span class="c"># assert numpy.alltrue(C &gt;= 0)</span>
 
-    <span class="n">test_earthquake_fatality_estimation_ghasemi</span><span class="o">.</span><span class="n">slow</span> <span class="o">=</span> <span class="bp">True</span>
+    <span class="n">test_earthquake_fatality_estimation_ghasemi</span><span class="o">.</span><span class="n">slow</span> <span class="o">=</span> <span class="mi">1</span>
 
     <span class="k">def</span> <span class="nf">test_earthquake_impact_on_women_example</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Earthquake impact on women example works</span>
@@ -437,7 +430,7 @@
         <span class="k">assert</span> <span class="s">&#39;women displaced&#39;</span> <span class="ow">in</span> <span class="n">impact_layer</span><span class="o">.</span><span class="n">get_impact_summary</span><span class="p">()</span>
         <span class="k">assert</span> <span class="s">&#39;pregnant&#39;</span> <span class="ow">in</span> <span class="n">impact_layer</span><span class="o">.</span><span class="n">get_impact_summary</span><span class="p">()</span>
 
-    <span class="n">test_earthquake_impact_on_women_example</span><span class="o">.</span><span class="n">slow</span> <span class="o">=</span> <span class="bp">True</span>
+    <span class="n">test_earthquake_impact_on_women_example</span><span class="o">.</span><span class="n">slow</span> <span class="o">=</span> <span class="mi">1</span>
 
     <span class="k">def</span> <span class="nf">test_jakarta_flood_study</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;HKV Jakarta flood study calculated correctly using aligned rasters</span>
@@ -535,9 +528,9 @@
 
             <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
 
-    <span class="n">test_jakarta_flood_study</span><span class="o">.</span><span class="n">slow</span> <span class="o">=</span> <span class="bp">True</span>
+    <span class="n">test_jakarta_flood_study</span><span class="o">.</span><span class="n">slow</span> <span class="o">=</span> <span class="mi">1</span>
 
-    <span class="k">def</span> <span class="nf">test_polygon_hazard_and_raster_exposure_big</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">Xtest_clip_grid_by_polygons_optimisation</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Rasters can be converted to points and clipped by polygons</span>
 
 <span class="sd">        This is a test for the basic machinery needed for issue #91</span>
@@ -548,10 +541,6 @@
 <span class="sd">        in https://github.com/AIFDR/inasafe/issues/222 it takes about 100</span>
 <span class="sd">        seconds on a good workstation while it takes over 2000 seconds</span>
 <span class="sd">        without it.</span>
-
-<span class="sd">        This test also runs the high level interpolation routine which assigns</span>
-<span class="sd">        attributes to the new point layer. The runtime is virtually the same as</span>
-<span class="sd">        the underlying function.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="c"># Name input files</span>
@@ -562,178 +551,37 @@
         <span class="n">H</span> <span class="o">=</span> <span class="n">read_layer</span><span class="p">(</span><span class="n">polyhazard</span><span class="p">)</span>
         <span class="n">E</span> <span class="o">=</span> <span class="n">read_layer</span><span class="p">(</span><span class="n">population</span><span class="p">)</span>
 
-        <span class="n">N</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">H</span><span class="p">)</span>
-        <span class="k">assert</span> <span class="n">N</span> <span class="o">==</span> <span class="mi">2704</span>
-
-        <span class="c"># Run and test the fundamental clipping routine</span>
-        <span class="c">#import time</span>
-        <span class="c">#t0 = time.time()</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">H</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2704</span>
         <span class="n">res</span> <span class="o">=</span> <span class="n">clip_grid_by_polygons</span><span class="p">(</span><span class="n">E</span><span class="o">.</span><span class="n">get_data</span><span class="p">(),</span>
                                     <span class="n">E</span><span class="o">.</span><span class="n">get_geotransform</span><span class="p">(),</span>
                                     <span class="n">H</span><span class="o">.</span><span class="n">get_geometry</span><span class="p">())</span>
-        <span class="c">#print &#39;Engine took %i seconds&#39; % (time.time() - t0)</span>
 
-        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">res</span><span class="p">)</span> <span class="o">==</span> <span class="n">N</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">res</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2704</span>
+        <span class="c"># FIXME (Ole): Not finished yet</span>
 
-        <span class="c"># Characterisation test</span>
-        <span class="k">assert</span> <span class="n">H</span><span class="o">.</span><span class="n">get_data</span><span class="p">()[</span><span class="mi">0</span><span class="p">][</span><span class="s">&#39;RW&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;RW 01&#39;</span>
-        <span class="k">assert</span> <span class="n">H</span><span class="o">.</span><span class="n">get_data</span><span class="p">()[</span><span class="mi">0</span><span class="p">][</span><span class="s">&#39;KAB_NAME&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;JAKARTA UTARA&#39;</span>
-        <span class="k">assert</span> <span class="n">H</span><span class="o">.</span><span class="n">get_data</span><span class="p">()[</span><span class="mi">0</span><span class="p">][</span><span class="s">&#39;KEC_NAME&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;TANJUNG PRIOK&#39;</span>
-        <span class="k">assert</span> <span class="n">H</span><span class="o">.</span><span class="n">get_data</span><span class="p">()[</span><span class="mi">0</span><span class="p">][</span><span class="s">&#39;KEL_NAME&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;KEBON BAWANG&#39;</span>
-
-        <span class="n">geom</span> <span class="o">=</span> <span class="n">res</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
-        <span class="n">vals</span> <span class="o">=</span> <span class="n">res</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
-        <span class="k">assert</span> <span class="n">numpy</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">vals</span><span class="p">[</span><span class="mi">17</span><span class="p">],</span> <span class="mf">1481.98</span><span class="p">)</span>
-        <span class="k">assert</span> <span class="n">numpy</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">geom</span><span class="p">[</span><span class="mi">17</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="mf">106.88746869</span><span class="p">)</span>  <span class="c"># LON</span>
-        <span class="k">assert</span> <span class="n">numpy</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">geom</span><span class="p">[</span><span class="mi">17</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span> <span class="o">-</span><span class="mf">6.11493812</span><span class="p">)</span>  <span class="c"># LAT</span>
-
-        <span class="c"># Then run and test the high level interpolation function</span>
-        <span class="c">#t0 = time.time()</span>
-        <span class="n">P</span> <span class="o">=</span> <span class="n">interpolate_polygon_raster</span><span class="p">(</span><span class="n">H</span><span class="p">,</span> <span class="n">E</span><span class="p">,</span>
-                                       <span class="n">layer_name</span><span class="o">=</span><span class="s">&#39;poly2raster_test&#39;</span><span class="p">,</span>
-                                       <span class="n">attribute_name</span><span class="o">=</span><span class="s">&#39;grid_value&#39;</span><span class="p">)</span>
-        <span class="c">#print &#39;High level function took %i seconds&#39; % (time.time() - t0)</span>
-        <span class="c">#P.write_to_file(&#39;polygon_raster_interpolation_example_big.shp&#39;)</span>
-
-        <span class="c"># Characterisation tests (values verified using QGIS)</span>
-        <span class="n">attributes</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">get_data</span><span class="p">()[</span><span class="mi">17</span><span class="p">]</span>
-        <span class="n">geometry</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">get_geometry</span><span class="p">()[</span><span class="mi">17</span><span class="p">]</span>
-
-        <span class="k">assert</span> <span class="n">attributes</span><span class="p">[</span><span class="s">&#39;RW&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;RW 01&#39;</span>
-        <span class="k">assert</span> <span class="n">attributes</span><span class="p">[</span><span class="s">&#39;KAB_NAME&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;JAKARTA UTARA&#39;</span>
-        <span class="k">assert</span> <span class="n">attributes</span><span class="p">[</span><span class="s">&#39;KEC_NAME&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;TANJUNG PRIOK&#39;</span>
-        <span class="k">assert</span> <span class="n">attributes</span><span class="p">[</span><span class="s">&#39;KEL_NAME&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;KEBON BAWANG&#39;</span>
-        <span class="k">assert</span> <span class="n">attributes</span><span class="p">[</span><span class="s">&#39;polygon_id&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span>
-        <span class="k">assert</span> <span class="n">numpy</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">attributes</span><span class="p">[</span><span class="s">&#39;grid_value&#39;</span><span class="p">],</span> <span class="mf">1481.984</span><span class="p">)</span>
-
-        <span class="k">assert</span> <span class="n">numpy</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">geometry</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mf">106.88746869</span><span class="p">)</span>  <span class="c"># LON</span>
-        <span class="k">assert</span> <span class="n">numpy</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">geometry</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="o">-</span><span class="mf">6.11493812</span><span class="p">)</span>  <span class="c"># LAT</span>
-
-        <span class="c"># A second characterisation test</span>
-        <span class="n">attributes</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">get_data</span><span class="p">()[</span><span class="mi">10000</span><span class="p">]</span>
-        <span class="n">geometry</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">get_geometry</span><span class="p">()[</span><span class="mi">10000</span><span class="p">]</span>
-
-        <span class="k">assert</span> <span class="n">attributes</span><span class="p">[</span><span class="s">&#39;RW&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;RW 06&#39;</span>
-        <span class="k">assert</span> <span class="n">attributes</span><span class="p">[</span><span class="s">&#39;KAB_NAME&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;JAKARTA UTARA&#39;</span>
-        <span class="k">assert</span> <span class="n">attributes</span><span class="p">[</span><span class="s">&#39;KEC_NAME&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;PENJARINGAN&#39;</span>
-        <span class="k">assert</span> <span class="n">attributes</span><span class="p">[</span><span class="s">&#39;KEL_NAME&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;KAMAL MUARA&#39;</span>
-        <span class="k">assert</span> <span class="n">attributes</span><span class="p">[</span><span class="s">&#39;polygon_id&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">93</span>
-        <span class="k">assert</span> <span class="n">numpy</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">attributes</span><span class="p">[</span><span class="s">&#39;grid_value&#39;</span><span class="p">],</span> <span class="mf">715.6508</span><span class="p">)</span>
-
-        <span class="k">assert</span> <span class="n">numpy</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">geometry</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mf">106.74092731</span><span class="p">)</span>  <span class="c"># LON</span>
-        <span class="k">assert</span> <span class="n">numpy</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">geometry</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="o">-</span><span class="mf">6.1081538</span><span class="p">)</span>  <span class="c"># LAT</span>
-
-        <span class="c"># A third characterisation test</span>
-        <span class="n">attributes</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">get_data</span><span class="p">()[</span><span class="mi">99000</span><span class="p">]</span>
-        <span class="n">geometry</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">get_geometry</span><span class="p">()[</span><span class="mi">99000</span><span class="p">]</span>
-
-        <span class="k">assert</span> <span class="n">attributes</span><span class="p">[</span><span class="s">&#39;RW&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;RW 08&#39;</span>
-        <span class="k">assert</span> <span class="n">attributes</span><span class="p">[</span><span class="s">&#39;KAB_NAME&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;JAKARTA TIMUR&#39;</span>
-        <span class="k">assert</span> <span class="n">attributes</span><span class="p">[</span><span class="s">&#39;KEC_NAME&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;CAKUNG&#39;</span>
-        <span class="k">assert</span> <span class="n">attributes</span><span class="p">[</span><span class="s">&#39;KEL_NAME&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;CAKUNG TIMUR&#39;</span>
-        <span class="k">assert</span> <span class="n">attributes</span><span class="p">[</span><span class="s">&#39;polygon_id&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">927</span>
-        <span class="k">assert</span> <span class="n">numpy</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">attributes</span><span class="p">[</span><span class="s">&#39;grid_value&#39;</span><span class="p">],</span> <span class="mf">770.7628</span><span class="p">)</span>
-
-        <span class="k">assert</span> <span class="n">numpy</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">geometry</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mf">106.9675237</span><span class="p">)</span>  <span class="c"># LON</span>
-        <span class="k">assert</span> <span class="n">numpy</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">geometry</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="o">-</span><span class="mf">6.16966499</span><span class="p">)</span>  <span class="c"># LAT</span>
-
-    <span class="n">test_polygon_hazard_and_raster_exposure_big</span><span class="o">.</span><span class="n">slow</span> <span class="o">=</span> <span class="bp">True</span>
-
-    <span class="k">def</span> <span class="nf">test_polygon_hazard_and_raster_exposure_small</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">test_polygon_hazard_and_raster_exposure</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Exposure rasters can be clipped by polygon exposure</span>
 
 <span class="sd">        This is a test for the basic machinery needed for issue #91</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="c"># Name input files</span>
-        <span class="n">polyhazard</span> <span class="o">=</span> <span class="n">join</span><span class="p">(</span><span class="n">TESTDATA</span><span class="p">,</span> <span class="s">&#39;test_polygon_on_test_grid.shp&#39;</span><span class="p">)</span>
-        <span class="n">population</span> <span class="o">=</span> <span class="n">join</span><span class="p">(</span><span class="n">TESTDATA</span><span class="p">,</span> <span class="s">&#39;test_grid.asc&#39;</span><span class="p">)</span>
+        <span class="n">polyhazard</span> <span class="o">=</span> <span class="n">join</span><span class="p">(</span><span class="n">TESTDATA</span><span class="p">,</span> <span class="s">&#39;rw_jakarta_singlepart.shp&#39;</span><span class="p">)</span>
+        <span class="n">population</span> <span class="o">=</span> <span class="n">join</span><span class="p">(</span><span class="n">TESTDATA</span><span class="p">,</span> <span class="s">&#39;Population_Jakarta_geographic.asc&#39;</span><span class="p">)</span>
 
         <span class="c"># Get layers using API</span>
         <span class="n">H</span> <span class="o">=</span> <span class="n">read_layer</span><span class="p">(</span><span class="n">polyhazard</span><span class="p">)</span>
         <span class="n">E</span> <span class="o">=</span> <span class="n">read_layer</span><span class="p">(</span><span class="n">population</span><span class="p">)</span>
 
-        <span class="n">N</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">H</span><span class="p">)</span>
-        <span class="k">assert</span> <span class="n">N</span> <span class="o">==</span> <span class="mi">4</span>
-
-        <span class="c"># Run underlying clipping routine</span>
-        <span class="n">res0</span> <span class="o">=</span> <span class="n">clip_grid_by_polygons</span><span class="p">(</span><span class="n">E</span><span class="o">.</span><span class="n">get_data</span><span class="p">(),</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">H</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2704</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="n">clip_grid_by_polygons</span><span class="p">(</span><span class="n">E</span><span class="o">.</span><span class="n">get_data</span><span class="p">(),</span>
                                     <span class="n">E</span><span class="o">.</span><span class="n">get_geotransform</span><span class="p">(),</span>
                                     <span class="n">H</span><span class="o">.</span><span class="n">get_geometry</span><span class="p">())</span>
-        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">res0</span><span class="p">)</span> <span class="o">==</span> <span class="n">N</span>
+        <span class="k">print</span> <span class="nb">len</span><span class="p">(</span><span class="n">res</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">res</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2704</span>
+        <span class="c"># FIXME (Ole): Not finished yet</span>
 
-        <span class="c"># Run higher level interpolation routine</span>
-        <span class="n">P</span> <span class="o">=</span> <span class="n">interpolate_polygon_raster</span><span class="p">(</span><span class="n">H</span><span class="p">,</span> <span class="n">E</span><span class="p">,</span>
-                                       <span class="n">layer_name</span><span class="o">=</span><span class="s">&#39;poly2raster_test&#39;</span><span class="p">,</span>
-                                       <span class="n">attribute_name</span><span class="o">=</span><span class="s">&#39;grid_value&#39;</span><span class="p">)</span>
-
-        <span class="c"># Verify result (numbers obtained from using QGIS)</span>
-        <span class="c">#P.write_to_file(&#39;poly2raster_test.shp&#39;)</span>
-        <span class="n">attributes</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">get_data</span><span class="p">()</span>
-        <span class="n">geometry</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">get_geometry</span><span class="p">()</span>
-
-        <span class="c"># Polygon 0</span>
-        <span class="k">assert</span> <span class="n">attributes</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s">&#39;id&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span>
-        <span class="k">assert</span> <span class="n">attributes</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s">&#39;name&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;A&#39;</span>
-        <span class="k">assert</span> <span class="n">numpy</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">attributes</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s">&#39;number&#39;</span><span class="p">],</span> <span class="mi">31415</span><span class="p">)</span>
-        <span class="k">assert</span> <span class="n">numpy</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">attributes</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s">&#39;grid_value&#39;</span><span class="p">],</span> <span class="mf">50.8147</span><span class="p">)</span>
-        <span class="k">assert</span> <span class="n">attributes</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s">&#39;polygon_id&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span>
-
-        <span class="k">assert</span> <span class="n">attributes</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="s">&#39;id&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span>
-        <span class="k">assert</span> <span class="n">attributes</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="s">&#39;name&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;A&#39;</span>
-        <span class="k">assert</span> <span class="n">numpy</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">geometry</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="mf">96.97137053</span><span class="p">)</span>  <span class="c"># Lon</span>
-        <span class="k">assert</span> <span class="n">numpy</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">geometry</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span> <span class="o">-</span><span class="mf">5.349657148</span><span class="p">)</span>  <span class="c"># Lat</span>
-        <span class="k">assert</span> <span class="n">numpy</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">attributes</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="s">&#39;number&#39;</span><span class="p">],</span> <span class="mi">31415</span><span class="p">)</span>
-        <span class="k">assert</span> <span class="n">numpy</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">attributes</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="s">&#39;grid_value&#39;</span><span class="p">],</span> <span class="mi">3</span><span class="p">)</span>
-        <span class="k">assert</span> <span class="n">attributes</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="s">&#39;polygon_id&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span>
-
-        <span class="k">assert</span> <span class="n">attributes</span><span class="p">[</span><span class="mi">3</span><span class="p">][</span><span class="s">&#39;id&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span>
-        <span class="k">assert</span> <span class="n">attributes</span><span class="p">[</span><span class="mi">3</span><span class="p">][</span><span class="s">&#39;name&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;A&#39;</span>
-        <span class="k">assert</span> <span class="n">numpy</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">attributes</span><span class="p">[</span><span class="mi">3</span><span class="p">][</span><span class="s">&#39;number&#39;</span><span class="p">],</span> <span class="mi">31415</span><span class="p">)</span>
-        <span class="k">assert</span> <span class="n">numpy</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">attributes</span><span class="p">[</span><span class="mi">3</span><span class="p">][</span><span class="s">&#39;grid_value&#39;</span><span class="p">],</span> <span class="mf">50.127</span><span class="p">)</span>
-        <span class="k">assert</span> <span class="n">attributes</span><span class="p">[</span><span class="mi">3</span><span class="p">][</span><span class="s">&#39;polygon_id&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span>
-
-        <span class="c"># Polygon 1</span>
-        <span class="k">assert</span> <span class="n">attributes</span><span class="p">[</span><span class="mi">6</span><span class="p">][</span><span class="s">&#39;id&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span>
-        <span class="k">assert</span> <span class="n">attributes</span><span class="p">[</span><span class="mi">6</span><span class="p">][</span><span class="s">&#39;name&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;B&#39;</span>
-        <span class="k">assert</span> <span class="n">numpy</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">attributes</span><span class="p">[</span><span class="mi">6</span><span class="p">][</span><span class="s">&#39;number&#39;</span><span class="p">],</span> <span class="mi">13</span><span class="p">)</span>
-        <span class="k">assert</span> <span class="n">numpy</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">attributes</span><span class="p">[</span><span class="mi">6</span><span class="p">][</span><span class="s">&#39;grid_value&#39;</span><span class="p">],</span> <span class="o">-</span><span class="mi">15</span><span class="p">)</span>
-        <span class="k">assert</span> <span class="n">attributes</span><span class="p">[</span><span class="mi">6</span><span class="p">][</span><span class="s">&#39;polygon_id&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span>
-
-        <span class="k">assert</span> <span class="n">attributes</span><span class="p">[</span><span class="mi">11</span><span class="p">][</span><span class="s">&#39;id&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span>
-        <span class="k">assert</span> <span class="n">attributes</span><span class="p">[</span><span class="mi">11</span><span class="p">][</span><span class="s">&#39;name&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;B&#39;</span>
-        <span class="k">assert</span> <span class="n">numpy</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">attributes</span><span class="p">[</span><span class="mi">11</span><span class="p">][</span><span class="s">&#39;number&#39;</span><span class="p">],</span> <span class="mi">13</span><span class="p">)</span>
-        <span class="k">assert</span> <span class="n">numpy</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">attributes</span><span class="p">[</span><span class="mi">11</span><span class="p">][</span><span class="s">&#39;grid_value&#39;</span><span class="p">])</span>
-        <span class="k">assert</span> <span class="n">attributes</span><span class="p">[</span><span class="mi">11</span><span class="p">][</span><span class="s">&#39;polygon_id&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span>
-
-        <span class="k">assert</span> <span class="n">attributes</span><span class="p">[</span><span class="mi">13</span><span class="p">][</span><span class="s">&#39;id&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span>
-        <span class="k">assert</span> <span class="n">attributes</span><span class="p">[</span><span class="mi">13</span><span class="p">][</span><span class="s">&#39;name&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;B&#39;</span>
-        <span class="k">assert</span> <span class="n">numpy</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">geometry</span><span class="p">[</span><span class="mi">13</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="mf">97.063559372</span><span class="p">)</span>  <span class="c"># Lon</span>
-        <span class="k">assert</span> <span class="n">numpy</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">geometry</span><span class="p">[</span><span class="mi">13</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span> <span class="o">-</span><span class="mf">5.472621404</span><span class="p">)</span>  <span class="c"># Lat</span>
-        <span class="k">assert</span> <span class="n">numpy</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">attributes</span><span class="p">[</span><span class="mi">13</span><span class="p">][</span><span class="s">&#39;number&#39;</span><span class="p">],</span> <span class="mi">13</span><span class="p">)</span>
-        <span class="k">assert</span> <span class="n">numpy</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">attributes</span><span class="p">[</span><span class="mi">13</span><span class="p">][</span><span class="s">&#39;grid_value&#39;</span><span class="p">],</span> <span class="mf">50.8258</span><span class="p">)</span>
-        <span class="k">assert</span> <span class="n">attributes</span><span class="p">[</span><span class="mi">13</span><span class="p">][</span><span class="s">&#39;polygon_id&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span>
-
-        <span class="c"># Polygon 2 (overlapping)</span>
-        <span class="k">assert</span> <span class="n">attributes</span><span class="p">[</span><span class="mi">16</span><span class="p">][</span><span class="s">&#39;id&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">2</span>
-        <span class="k">assert</span> <span class="n">attributes</span><span class="p">[</span><span class="mi">16</span><span class="p">][</span><span class="s">&#39;name&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;Intersecting&#39;</span>
-        <span class="k">assert</span> <span class="n">numpy</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">attributes</span><span class="p">[</span><span class="mi">16</span><span class="p">][</span><span class="s">&#39;number&#39;</span><span class="p">],</span> <span class="mi">100</span><span class="p">)</span>
-        <span class="k">assert</span> <span class="n">numpy</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">attributes</span><span class="p">[</span><span class="mi">16</span><span class="p">][</span><span class="s">&#39;grid_value&#39;</span><span class="p">],</span> <span class="mf">50.9574</span><span class="p">)</span>
-        <span class="k">assert</span> <span class="n">attributes</span><span class="p">[</span><span class="mi">16</span><span class="p">][</span><span class="s">&#39;polygon_id&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">2</span>
-
-        <span class="k">assert</span> <span class="n">attributes</span><span class="p">[</span><span class="mi">21</span><span class="p">][</span><span class="s">&#39;id&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">2</span>
-        <span class="k">assert</span> <span class="n">attributes</span><span class="p">[</span><span class="mi">21</span><span class="p">][</span><span class="s">&#39;name&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;Intersecting&#39;</span>
-        <span class="k">assert</span> <span class="n">numpy</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">attributes</span><span class="p">[</span><span class="mi">21</span><span class="p">][</span><span class="s">&#39;number&#39;</span><span class="p">],</span> <span class="mi">100</span><span class="p">)</span>
-        <span class="k">assert</span> <span class="n">numpy</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">attributes</span><span class="p">[</span><span class="mi">21</span><span class="p">][</span><span class="s">&#39;grid_value&#39;</span><span class="p">],</span> <span class="mf">50.2238</span><span class="p">)</span>
-
-        <span class="c"># Polygon 3</span>
-        <span class="k">assert</span> <span class="n">attributes</span><span class="p">[</span><span class="mi">23</span><span class="p">][</span><span class="s">&#39;id&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">3</span>
-        <span class="k">assert</span> <span class="n">attributes</span><span class="p">[</span><span class="mi">23</span><span class="p">][</span><span class="s">&#39;name&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;D&#39;</span>
-        <span class="k">assert</span> <span class="n">numpy</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">geometry</span><span class="p">[</span><span class="mi">23</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="mf">97.0021116</span><span class="p">)</span>  <span class="c"># Lon</span>
-        <span class="k">assert</span> <span class="n">numpy</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">geometry</span><span class="p">[</span><span class="mi">23</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span> <span class="o">-</span><span class="mf">5.503362468</span><span class="p">)</span>  <span class="c"># Lat</span>
-        <span class="k">assert</span> <span class="n">numpy</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">attributes</span><span class="p">[</span><span class="mi">23</span><span class="p">][</span><span class="s">&#39;number&#39;</span><span class="p">],</span> <span class="o">-</span><span class="mi">50</span><span class="p">)</span>
-        <span class="k">assert</span> <span class="n">numpy</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">attributes</span><span class="p">[</span><span class="mi">23</span><span class="p">][</span><span class="s">&#39;grid_value&#39;</span><span class="p">],</span> <span class="mf">50.0377</span><span class="p">)</span>
-        <span class="k">assert</span> <span class="n">attributes</span><span class="p">[</span><span class="mi">23</span><span class="p">][</span><span class="s">&#39;polygon_id&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">3</span>
+    <span class="n">test_polygon_hazard_and_raster_exposure</span><span class="o">.</span><span class="n">slow</span> <span class="o">=</span> <span class="mi">1</span>
 
     <span class="k">def</span> <span class="nf">test_flood_building_impact_function</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Flood building impact function works</span>
@@ -774,7 +622,7 @@
 
             <span class="c"># FIXME (Ole): check more numbers</span>
 
-    <span class="n">test_flood_building_impact_function</span><span class="o">.</span><span class="n">slow</span> <span class="o">=</span> <span class="bp">True</span>
+    <span class="n">test_flood_building_impact_function</span><span class="o">.</span><span class="n">slow</span> <span class="o">=</span> <span class="mi">1</span>
 
     <span class="k">def</span> <span class="nf">test_earthquake_damage_schools</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Lembang building damage from ground shaking works</span>
@@ -902,7 +750,7 @@
             <span class="c">#print &#39;Extrema&#39;, mmi_filename, min_damage, max_damage</span>
             <span class="c">#print len(MMI)</span>
 
-    <span class="n">test_earthquake_damage_schools</span><span class="o">.</span><span class="n">slow</span> <span class="o">=</span> <span class="bp">True</span>
+    <span class="n">test_earthquake_damage_schools</span><span class="o">.</span><span class="n">slow</span> <span class="o">=</span> <span class="mi">1</span>
 
     <span class="k">def</span> <span class="nf">test_earthquake_impact_OSM_data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Earthquake layer interpolation to OSM building data works</span>
@@ -961,7 +809,7 @@
                 <span class="n">calculated_dam</span> <span class="o">=</span> <span class="n">iattributes</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="s">&#39;DMGLEVEL&#39;</span><span class="p">]</span>
                 <span class="k">assert</span> <span class="n">calculated_dam</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]</span>
 
-    <span class="n">test_earthquake_impact_OSM_data</span><span class="o">.</span><span class="n">slow</span> <span class="o">=</span> <span class="bp">True</span>
+    <span class="n">test_earthquake_impact_OSM_data</span><span class="o">.</span><span class="n">slow</span> <span class="o">=</span> <span class="mi">1</span>
 
     <span class="k">def</span> <span class="nf">test_tsunami_loss_use_case</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Building loss from tsunami use case works</span>
@@ -983,34 +831,6 @@
         <span class="n">H</span> <span class="o">=</span> <span class="n">read_layer</span><span class="p">(</span><span class="n">hazard_filename</span><span class="p">)</span>
         <span class="n">E</span> <span class="o">=</span> <span class="n">read_layer</span><span class="p">(</span><span class="n">exposure_filename</span><span class="p">)</span>
 
-        <span class="c"># Check hazard data</span>
-        <span class="n">A</span> <span class="o">=</span> <span class="n">H</span><span class="o">.</span><span class="n">get_data</span><span class="p">()</span>
-        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">H</span><span class="p">)</span> <span class="o">==</span> <span class="mi">20855</span>
-        <span class="k">assert</span> <span class="n">numpy</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">A</span><span class="p">))</span> <span class="o">==</span> <span class="mi">8547</span>
-
-        <span class="c"># Do interpolation using underlying library</span>
-        <span class="c"># This was to debug this test failing under Windows</span>
-        <span class="n">I</span> <span class="o">=</span> <span class="n">interpolate_raster_vector_points</span><span class="p">(</span><span class="n">H</span><span class="p">,</span> <span class="n">E</span><span class="p">)</span>
-        <span class="k">for</span> <span class="n">feature</span> <span class="ow">in</span> <span class="n">I</span><span class="o">.</span><span class="n">get_data</span><span class="p">():</span>
-            <span class="k">if</span> <span class="p">(</span><span class="n">feature</span><span class="p">[</span><span class="s">&#39;LONGITUDE&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mf">150.1787</span> <span class="ow">and</span>
-                <span class="n">feature</span><span class="p">[</span><span class="s">&#39;LATITUDE&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="o">-</span><span class="mf">35.70413</span><span class="p">):</span>
-                <span class="k">assert</span> <span class="n">numpy</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">feature</span><span class="p">[</span><span class="s">&#39;Tsunami Max Inundation Geo&#39;</span><span class="p">])</span>
-            <span class="k">elif</span> <span class="p">(</span><span class="n">feature</span><span class="p">[</span><span class="s">&#39;LONGITUDE&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mf">150.1793</span> <span class="ow">and</span>
-                  <span class="n">feature</span><span class="p">[</span><span class="s">&#39;LATITUDE&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="o">-</span><span class="mf">35.70632</span><span class="p">):</span>
-                <span class="k">assert</span> <span class="n">numpy</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">feature</span><span class="p">[</span><span class="s">&#39;Tsunami Max Inundation Geo&#39;</span><span class="p">])</span>
-            <span class="k">elif</span> <span class="p">(</span><span class="n">feature</span><span class="p">[</span><span class="s">&#39;LONGITUDE&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mf">150.18208</span> <span class="ow">and</span>
-                  <span class="n">feature</span><span class="p">[</span><span class="s">&#39;LATITUDE&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="o">-</span><span class="mf">35.70996</span><span class="p">):</span>
-                <span class="k">assert</span> <span class="n">numpy</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">feature</span><span class="p">[</span><span class="s">&#39;Tsunami Max Inundation Geo&#39;</span><span class="p">])</span>
-            <span class="k">elif</span> <span class="p">(</span><span class="n">feature</span><span class="p">[</span><span class="s">&#39;LONGITUDE&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mf">150.18664</span> <span class="ow">and</span>
-                  <span class="n">feature</span><span class="p">[</span><span class="s">&#39;LATITUDE&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="o">-</span><span class="mf">35.70253</span><span class="p">):</span>
-                <span class="k">assert</span> <span class="n">numpy</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">feature</span><span class="p">[</span><span class="s">&#39;Tsunami Max Inundation Geo&#39;</span><span class="p">])</span>
-            <span class="k">elif</span> <span class="p">(</span><span class="n">feature</span><span class="p">[</span><span class="s">&#39;LONGITUDE&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mf">150.18487</span> <span class="ow">and</span>
-                  <span class="n">feature</span><span class="p">[</span><span class="s">&#39;LATITUDE&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="o">-</span><span class="mf">35.70561</span><span class="p">):</span>
-                <span class="k">assert</span> <span class="n">numpy</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">feature</span><span class="p">[</span><span class="s">&#39;Tsunami Max Inundation Geo&#39;</span><span class="p">])</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="k">assert</span> <span class="ow">not</span> <span class="n">numpy</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">feature</span><span class="p">[</span><span class="s">&#39;Tsunami Max Inundation Geo&#39;</span><span class="p">])</span>
-
-        <span class="c"># Run main test</span>
         <span class="n">plugin_name</span> <span class="o">=</span> <span class="s">&#39;Tsunami Building Loss Function&#39;</span>
         <span class="n">plugin_list</span> <span class="o">=</span> <span class="n">get_plugins</span><span class="p">(</span><span class="n">plugin_name</span><span class="p">)</span>
         <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">plugin_list</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span>
@@ -1021,10 +841,9 @@
                                          <span class="n">impact_fcn</span><span class="o">=</span><span class="n">IF</span><span class="p">)</span>
         <span class="n">impact_filename</span> <span class="o">=</span> <span class="n">impact_vector</span><span class="o">.</span><span class="n">get_filename</span><span class="p">()</span>
         <span class="c"># Read calculated result</span>
-        <span class="c"># Read to have truncation</span>
-        <span class="n">my_impact_vector</span> <span class="o">=</span> <span class="n">read_layer</span><span class="p">(</span><span class="n">impact_filename</span><span class="p">)</span>
-        <span class="n">icoordinates</span> <span class="o">=</span> <span class="n">my_impact_vector</span><span class="o">.</span><span class="n">get_geometry</span><span class="p">()</span>
-        <span class="n">iattributes</span> <span class="o">=</span> <span class="n">my_impact_vector</span><span class="o">.</span><span class="n">get_data</span><span class="p">()</span>
+        <span class="n">impact_vector</span> <span class="o">=</span> <span class="n">read_layer</span><span class="p">(</span><span class="n">impact_filename</span><span class="p">)</span>  <span class="c"># Read to have truncation</span>
+        <span class="n">icoordinates</span> <span class="o">=</span> <span class="n">impact_vector</span><span class="o">.</span><span class="n">get_geometry</span><span class="p">()</span>
+        <span class="n">iattributes</span> <span class="o">=</span> <span class="n">impact_vector</span><span class="o">.</span><span class="n">get_data</span><span class="p">()</span>
         <span class="n">N</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">icoordinates</span><span class="p">)</span>
 
         <span class="c"># Ensure that calculated point locations coincide with</span>
@@ -1106,27 +925,6 @@
             <span class="c"># to different damage curves and should therefore be different</span>
             <span class="k">if</span> <span class="n">depth</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">contents_damage</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
                 <span class="k">assert</span> <span class="n">contents_damage</span> <span class="o">!=</span> <span class="n">structural_damage</span>
-
-    <span class="k">def</span> <span class="nf">test_raster_vector_interpolation_exception</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Exceptions are caught by interpolate_raster_points</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-
-        <span class="n">hazard_filename</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;</span><span class="si">%s</span><span class="s">/tsunami_max_inundation_depth_4326.tif&#39;</span>
-                            <span class="o">%</span> <span class="n">TESTDATA</span><span class="p">)</span>
-        <span class="n">exposure_filename</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;</span><span class="si">%s</span><span class="s">/tsunami_building_exposure.shp&#39;</span> <span class="o">%</span> <span class="n">TESTDATA</span><span class="p">)</span>
-
-        <span class="c"># Calculate impact using API</span>
-        <span class="n">H</span> <span class="o">=</span> <span class="n">read_layer</span><span class="p">(</span><span class="n">hazard_filename</span><span class="p">)</span>
-        <span class="n">E</span> <span class="o">=</span> <span class="n">read_layer</span><span class="p">(</span><span class="n">exposure_filename</span><span class="p">)</span>
-
-        <span class="k">try</span><span class="p">:</span>
-            <span class="n">interpolate_raster_vector_points</span><span class="p">(</span><span class="n">H</span><span class="p">,</span> <span class="n">E</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s">&#39;oexoeua&#39;</span><span class="p">)</span>
-        <span class="k">except</span> <span class="n">InaSAFEError</span><span class="p">:</span>
-            <span class="k">pass</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">msg</span> <span class="o">=</span> <span class="s">&#39;Should have raised InaSAFEError&#39;</span>
-            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
-        <span class="c"># FIXME (Ole): Try some other error conditions</span>
 
     <span class="k">def</span> <span class="nf">test_tephra_load_impact</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Hypothetical tephra load scenario can be computed</span>
@@ -1253,7 +1051,7 @@
                                       <span class="n">linear_function</span><span class="p">(</span><span class="n">xi</span><span class="p">,</span> <span class="n">eta</span><span class="p">),</span>
                                       <span class="n">rtol</span><span class="o">=</span><span class="mf">1e-12</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1e-12</span><span class="p">)</span>
 
-    <span class="n">test_interpolation_wrapper</span><span class="o">.</span><span class="n">slow</span> <span class="o">=</span> <span class="bp">True</span>
+    <span class="n">test_interpolation_wrapper</span><span class="o">.</span><span class="n">slow</span> <span class="o">=</span> <span class="mi">1</span>
 
     <span class="k">def</span> <span class="nf">test_interpolation_functions</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Interpolation using Raster and Vector objects</span>
@@ -1329,13 +1127,11 @@
         <span class="n">msg</span> <span class="o">=</span> <span class="s">&#39;Raster data was </span><span class="si">%s</span><span class="s">, should have been </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">AA</span><span class="p">,</span> <span class="n">A</span><span class="p">)</span>
         <span class="k">assert</span> <span class="n">numpy</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">AA</span><span class="p">,</span> <span class="n">A</span><span class="p">),</span> <span class="n">msg</span>
 
-        <span class="c"># Test interpolation function with default layer_name</span>
-        <span class="c">#I = R.interpolate(V, attribute_name=&#39;value&#39;)</span>
-        <span class="n">I</span> <span class="o">=</span> <span class="n">assign_hazard_values_to_exposure_data</span><span class="p">(</span><span class="n">R</span><span class="p">,</span> <span class="n">V</span><span class="p">,</span> <span class="n">attribute_name</span><span class="o">=</span><span class="s">&#39;value&#39;</span><span class="p">)</span>
-        <span class="k">assert</span> <span class="n">V</span><span class="o">.</span><span class="n">get_name</span><span class="p">()</span> <span class="o">==</span> <span class="n">I</span><span class="o">.</span><span class="n">get_name</span><span class="p">()</span>
-
+        <span class="c"># Test interpolation function</span>
+        <span class="n">I</span> <span class="o">=</span> <span class="n">R</span><span class="o">.</span><span class="n">interpolate</span><span class="p">(</span><span class="n">V</span><span class="p">,</span> <span class="n">attribute_name</span><span class="o">=</span><span class="s">&#39;value&#39;</span><span class="p">)</span>
         <span class="n">Icoordinates</span> <span class="o">=</span> <span class="n">I</span><span class="o">.</span><span class="n">get_geometry</span><span class="p">()</span>
         <span class="n">Iattributes</span> <span class="o">=</span> <span class="n">I</span><span class="o">.</span><span class="n">get_data</span><span class="p">()</span>
+
         <span class="k">assert</span> <span class="n">numpy</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">Icoordinates</span><span class="p">,</span> <span class="n">coordinates</span><span class="p">)</span>
 
         <span class="c"># Test that interpolated points are correct</span>
@@ -1370,11 +1166,8 @@
         <span class="n">attributes</span> <span class="o">=</span> <span class="n">exposure_vector</span><span class="o">.</span><span class="n">get_data</span><span class="p">()</span>
 
         <span class="c"># Test interpolation function</span>
-        <span class="c">#I = hazard_raster.interpolate(exposure_vector,</span>
-        <span class="c">#                              attribute_name=&#39;MMI&#39;)</span>
-        <span class="n">I</span> <span class="o">=</span> <span class="n">assign_hazard_values_to_exposure_data</span><span class="p">(</span><span class="n">hazard_raster</span><span class="p">,</span>
-                                                  <span class="n">exposure_vector</span><span class="p">,</span>
-                                                  <span class="n">attribute_name</span><span class="o">=</span><span class="s">&#39;MMI&#39;</span><span class="p">)</span>
+        <span class="n">I</span> <span class="o">=</span> <span class="n">hazard_raster</span><span class="o">.</span><span class="n">interpolate</span><span class="p">(</span><span class="n">exposure_vector</span><span class="p">,</span>
+                                      <span class="n">attribute_name</span><span class="o">=</span><span class="s">&#39;MMI&#39;</span><span class="p">)</span>
         <span class="n">Icoordinates</span> <span class="o">=</span> <span class="n">I</span><span class="o">.</span><span class="n">get_geometry</span><span class="p">()</span>
         <span class="n">Iattributes</span> <span class="o">=</span> <span class="n">I</span><span class="o">.</span><span class="n">get_data</span><span class="p">()</span>
         <span class="k">assert</span> <span class="n">numpy</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">Icoordinates</span><span class="p">,</span> <span class="n">coordinates</span><span class="p">)</span>
@@ -1422,7 +1215,7 @@
                        <span class="s">&#39;expected value </span><span class="si">%s</span><span class="s">. I got </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">val</span><span class="p">,</span> <span class="n">Ival</span><span class="p">))</span>
                 <span class="k">assert</span> <span class="n">Ival</span> <span class="o">==</span> <span class="n">val</span><span class="p">,</span> <span class="n">msg</span>
 
-    <span class="n">test_interpolation_lembang</span><span class="o">.</span><span class="n">slow</span> <span class="o">=</span> <span class="bp">True</span>
+    <span class="n">test_interpolation_lembang</span><span class="o">.</span><span class="n">slow</span> <span class="o">=</span> <span class="mi">1</span>
 
     <span class="k">def</span> <span class="nf">test_interpolation_tsunami</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Interpolation using tsunami data set works</span>
@@ -1431,7 +1224,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="c"># Name file names for hazard level, exposure and expected fatalities</span>
-        <span class="n">hazard_filename</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;</span><span class="si">%s</span><span class="s">/tsunami_max_inundation_depth_4326.tif&#39;</span>
+        <span class="n">hazard_filename</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;</span><span class="si">%s</span><span class="s">/tsunami_max_inundation_depth_utm56s.tif&#39;</span>
                             <span class="o">%</span> <span class="n">TESTDATA</span><span class="p">)</span>
         <span class="n">exposure_filename</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;</span><span class="si">%s</span><span class="s">/tsunami_building_exposure.shp&#39;</span> <span class="o">%</span> <span class="n">TESTDATA</span><span class="p">)</span>
 
@@ -1443,11 +1236,8 @@
         <span class="n">coordinates</span> <span class="o">=</span> <span class="n">exposure_vector</span><span class="o">.</span><span class="n">get_geometry</span><span class="p">()</span>
 
         <span class="c"># Test interpolation function</span>
-        <span class="c">#I = hazard_raster.interpolate(exposure_vector,</span>
-        <span class="c">#                              attribute_name=&#39;depth&#39;)</span>
-        <span class="n">I</span> <span class="o">=</span> <span class="n">assign_hazard_values_to_exposure_data</span><span class="p">(</span><span class="n">hazard_raster</span><span class="p">,</span>
-                                                  <span class="n">exposure_vector</span><span class="p">,</span>
-                                                  <span class="n">attribute_name</span><span class="o">=</span><span class="s">&#39;depth&#39;</span><span class="p">)</span>
+        <span class="n">I</span> <span class="o">=</span> <span class="n">hazard_raster</span><span class="o">.</span><span class="n">interpolate</span><span class="p">(</span><span class="n">exposure_vector</span><span class="p">,</span>
+                                      <span class="n">attribute_name</span><span class="o">=</span><span class="s">&#39;depth&#39;</span><span class="p">)</span>
         <span class="n">Icoordinates</span> <span class="o">=</span> <span class="n">I</span><span class="o">.</span><span class="n">get_geometry</span><span class="p">()</span>
         <span class="n">Iattributes</span> <span class="o">=</span> <span class="n">I</span><span class="o">.</span><span class="n">get_data</span><span class="p">()</span>
         <span class="k">assert</span> <span class="n">numpy</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">Icoordinates</span><span class="p">,</span> <span class="n">coordinates</span><span class="p">)</span>
@@ -1488,8 +1278,7 @@
         <span class="n">attributes</span> <span class="o">=</span> <span class="n">E</span><span class="o">.</span><span class="n">get_data</span><span class="p">()</span>
 
         <span class="c"># Test the interpolation function</span>
-        <span class="c">#I = H.interpolate(E, attribute_name=&#39;depth&#39;)</span>
-        <span class="n">I</span> <span class="o">=</span> <span class="n">assign_hazard_values_to_exposure_data</span><span class="p">(</span><span class="n">H</span><span class="p">,</span> <span class="n">E</span><span class="p">,</span> <span class="n">attribute_name</span><span class="o">=</span><span class="s">&#39;depth&#39;</span><span class="p">)</span>
+        <span class="n">I</span> <span class="o">=</span> <span class="n">H</span><span class="o">.</span><span class="n">interpolate</span><span class="p">(</span><span class="n">E</span><span class="p">,</span> <span class="n">attribute_name</span><span class="o">=</span><span class="s">&#39;depth&#39;</span><span class="p">)</span>
         <span class="n">Icoordinates</span> <span class="o">=</span> <span class="n">I</span><span class="o">.</span><span class="n">get_geometry</span><span class="p">()</span>
         <span class="n">Iattributes</span> <span class="o">=</span> <span class="n">I</span><span class="o">.</span><span class="n">get_data</span><span class="p">()</span>
         <span class="k">assert</span> <span class="n">numpy</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">Icoordinates</span><span class="p">,</span> <span class="n">coordinates</span><span class="p">)</span>
@@ -1542,7 +1331,7 @@
             <span class="k">if</span> <span class="ow">not</span> <span class="n">numpy</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">interpolated_depth</span><span class="p">):</span>
                 <span class="k">assert</span> <span class="n">depth_min</span> <span class="o">&lt;=</span> <span class="n">interpolated_depth</span> <span class="o">&lt;=</span> <span class="n">depth_max</span><span class="p">,</span> <span class="n">msg</span>
 
-    <span class="n">test_interpolation_tsunami_maumere</span><span class="o">.</span><span class="n">slow</span> <span class="o">=</span> <span class="bp">True</span>
+    <span class="n">test_interpolation_tsunami_maumere</span><span class="o">.</span><span class="n">slow</span> <span class="o">=</span> <span class="mi">1</span>
 
     <span class="k">def</span> <span class="nf">test_polygon_clipping</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Clipping using real polygon and point data from Maumere</span>
@@ -1588,7 +1377,7 @@
             <span class="n">pts_outside</span> <span class="o">=</span> <span class="n">points</span><span class="p">[</span><span class="n">outside</span><span class="p">]</span>
             <span class="n">Vector</span><span class="p">(</span><span class="n">geometry</span><span class="o">=</span><span class="n">pts_outside</span><span class="p">)</span><span class="o">.</span><span class="n">write_to_file</span><span class="p">(</span><span class="s">&#39;test_points_out.shp&#39;</span><span class="p">)</span>
 
-    <span class="n">test_polygon_clipping</span><span class="o">.</span><span class="n">slow</span> <span class="o">=</span> <span class="bp">True</span>
+    <span class="n">test_polygon_clipping</span><span class="o">.</span><span class="n">slow</span> <span class="o">=</span> <span class="mi">1</span>
 
     <span class="k">def</span> <span class="nf">test_interpolation_from_polygons_one_poly</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Point interpolation using one polygon from Maumere works</span>
@@ -1616,15 +1405,10 @@
         <span class="n">E_attributes</span> <span class="o">=</span> <span class="n">E</span><span class="o">.</span><span class="n">get_data</span><span class="p">()</span>
 
         <span class="c"># Test interpolation function</span>
-        <span class="c">#I = H.interpolate(E, layer_name=&#39;depth&#39;,</span>
-        <span class="c">#                  attribute_name=None)  # Take all attributes across</span>
-        <span class="n">I</span> <span class="o">=</span> <span class="n">assign_hazard_values_to_exposure_data</span><span class="p">(</span><span class="n">H</span><span class="p">,</span> <span class="n">E</span><span class="p">,</span>
-                                                  <span class="n">layer_name</span><span class="o">=</span><span class="s">&#39;depth&#39;</span><span class="p">,</span>
-                                                  <span class="c"># Take all attributes across</span>
-                                                  <span class="n">attribute_name</span><span class="o">=</span><span class="bp">None</span><span class="p">)</span>
+        <span class="n">I</span> <span class="o">=</span> <span class="n">H</span><span class="o">.</span><span class="n">interpolate</span><span class="p">(</span><span class="n">E</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s">&#39;depth&#39;</span><span class="p">,</span>
+                          <span class="n">attribute_name</span><span class="o">=</span><span class="bp">None</span><span class="p">)</span>  <span class="c"># Take all attributes across</span>
 
         <span class="n">I_attributes</span> <span class="o">=</span> <span class="n">I</span><span class="o">.</span><span class="n">get_data</span><span class="p">()</span>
-        <span class="k">assert</span> <span class="n">I</span><span class="o">.</span><span class="n">get_name</span><span class="p">()</span> <span class="o">==</span> <span class="s">&#39;depth&#39;</span>
 
         <span class="n">N</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">I_attributes</span><span class="p">)</span>
         <span class="k">assert</span> <span class="n">N</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">E_attributes</span><span class="p">)</span>
@@ -1652,7 +1436,7 @@
                <span class="s">&#39;but got only </span><span class="si">%i</span><span class="s">&#39;</span> <span class="o">%</span> <span class="n">count</span><span class="p">)</span>
         <span class="k">assert</span> <span class="n">count</span> <span class="o">==</span> <span class="mi">458</span><span class="p">,</span> <span class="n">msg</span>
 
-    <span class="n">test_interpolation_from_polygons_one_poly</span><span class="o">.</span><span class="n">slow</span> <span class="o">=</span> <span class="bp">True</span>
+    <span class="n">test_interpolation_from_polygons_one_poly</span><span class="o">.</span><span class="n">slow</span> <span class="o">=</span> <span class="mi">1</span>
 
     <span class="k">def</span> <span class="nf">test_interpolation_from_polygons_multiple</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Point interpolation using multiple polygons from Maumere works</span>
@@ -1681,13 +1465,8 @@
         <span class="n">E_attributes</span> <span class="o">=</span> <span class="n">E</span><span class="o">.</span><span class="n">get_data</span><span class="p">()</span>
 
         <span class="c"># Test interpolation function</span>
-        <span class="c">#I = H.interpolate(E, layer_name=&#39;depth&#39;,</span>
-        <span class="c">#                  attribute_name=None)  # Take all attributes across</span>
-        <span class="n">I</span> <span class="o">=</span> <span class="n">assign_hazard_values_to_exposure_data</span><span class="p">(</span><span class="n">H</span><span class="p">,</span> <span class="n">E</span><span class="p">,</span>
-                                                  <span class="n">layer_name</span><span class="o">=</span><span class="s">&#39;depth&#39;</span><span class="p">,</span>
-                                                  <span class="c"># Take all attributes across</span>
-                                                  <span class="n">attribute_name</span><span class="o">=</span><span class="bp">None</span><span class="p">)</span>
-
+        <span class="n">I</span> <span class="o">=</span> <span class="n">H</span><span class="o">.</span><span class="n">interpolate</span><span class="p">(</span><span class="n">E</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s">&#39;depth&#39;</span><span class="p">,</span>
+                          <span class="n">attribute_name</span><span class="o">=</span><span class="bp">None</span><span class="p">)</span>  <span class="c"># Take all attributes across</span>
         <span class="n">I_attributes</span> <span class="o">=</span> <span class="n">I</span><span class="o">.</span><span class="n">get_data</span><span class="p">()</span>
 
         <span class="n">N</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">I_attributes</span><span class="p">)</span>
@@ -1779,7 +1558,7 @@
         <span class="c">#for key in counts:</span>
         <span class="c">#    print key, counts[key]</span>
 
-    <span class="n">test_interpolation_from_polygons_multiple</span><span class="o">.</span><span class="n">slow</span> <span class="o">=</span> <span class="bp">True</span>
+    <span class="n">test_interpolation_from_polygons_multiple</span><span class="o">.</span><span class="n">slow</span> <span class="o">=</span> <span class="mi">1</span>
 
     <span class="k">def</span> <span class="nf">Xtest_point_interpolation_from_polygons_one_attribute</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Point interpolation from multiple polygons works with attribute</span>
@@ -1810,18 +1589,13 @@
         <span class="n">E_attributes</span> <span class="o">=</span> <span class="n">E</span><span class="o">.</span><span class="n">get_data</span><span class="p">()</span>
 
         <span class="c"># Test interpolation function</span>
-        <span class="c">#I = H.interpolate(E, layer_name=&#39;depth&#39;,</span>
-        <span class="c">#                  # Spelling is as in test data</span>
-        <span class="c">#                  attribute_name=&#39;Catergory&#39;)</span>
-        <span class="n">I</span> <span class="o">=</span> <span class="n">assign_hazard_values_to_exposure_data</span><span class="p">(</span><span class="n">H</span><span class="p">,</span> <span class="n">E</span><span class="p">,</span>
-                                                  <span class="n">layer_name</span><span class="o">=</span><span class="s">&#39;depth&#39;</span><span class="p">,</span>
-                                                  <span class="c"># Spelling is as in test data</span>
-                                                  <span class="n">attribute_name</span><span class="o">=</span><span class="s">&#39;Catergory&#39;</span><span class="p">)</span>
-
+        <span class="n">I</span> <span class="o">=</span> <span class="n">H</span><span class="o">.</span><span class="n">interpolate</span><span class="p">(</span><span class="n">E</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s">&#39;depth&#39;</span><span class="p">,</span>
+                          <span class="c"># Spelling is as in test data</span>
+                          <span class="n">attribute_name</span><span class="o">=</span><span class="s">&#39;Catergory&#39;</span><span class="p">)</span>
         <span class="c">#I.write_to_file(&#39;MM_res.shp&#39;)</span>
 
         <span class="n">I_attributes</span> <span class="o">=</span> <span class="n">I</span><span class="o">.</span><span class="n">get_data</span><span class="p">()</span>
-        <span class="k">assert</span> <span class="n">I</span><span class="o">.</span><span class="n">get_name</span><span class="p">()</span> <span class="o">==</span> <span class="s">&#39;depth&#39;</span>
+
         <span class="n">N</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">I_attributes</span><span class="p">)</span>
         <span class="k">assert</span> <span class="n">N</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">E_attributes</span><span class="p">)</span>
 
@@ -1873,17 +1647,16 @@
 
         <span class="c"># Check projection mismatch is caught</span>
         <span class="k">try</span><span class="p">:</span>
-            <span class="c">#H.interpolate(E)</span>
-            <span class="n">assign_hazard_values_to_exposure_data</span><span class="p">(</span><span class="n">H</span><span class="p">,</span> <span class="n">E</span><span class="p">)</span>
+            <span class="n">H</span><span class="o">.</span><span class="n">interpolate</span><span class="p">(</span><span class="n">E</span><span class="p">)</span>
         <span class="k">except</span> <span class="n">VerificationError</span><span class="p">,</span> <span class="n">e</span><span class="p">:</span>
-            <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;Projection mismatch should have been caught: </span><span class="si">%s</span><span class="s">&#39;</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;Projection mismatch shoud have been caught: </span><span class="si">%s</span><span class="s">&#39;</span>
                    <span class="o">%</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
             <span class="k">assert</span> <span class="s">&#39;Projections&#39;</span> <span class="ow">in</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">),</span> <span class="n">msg</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">msg</span> <span class="o">=</span> <span class="s">&#39;Should have raised error about projection mismatch&#39;</span>
             <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
-    <span class="n">test_interpolation_from_polygons_error_handling</span><span class="o">.</span><span class="n">slow</span> <span class="o">=</span> <span class="bp">True</span>
+    <span class="n">test_interpolation_from_polygons_error_handling</span><span class="o">.</span><span class="n">slow</span> <span class="o">=</span> <span class="mi">1</span>
 
     <span class="k">def</span> <span class="nf">test_line_clipping_by_polygon</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Multiple lines are clipped correctly by complex polygon</span>
@@ -1909,48 +1682,54 @@
         <span class="n">fid</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 
         <span class="c"># Clip</span>
-        <span class="n">inside_lines</span><span class="p">,</span> <span class="n">outside_lines</span> <span class="o">=</span> <span class="n">clip_lines_by_polygon</span><span class="p">(</span><span class="n">test_lines</span><span class="p">,</span>
-                                                            <span class="n">test_polygon</span><span class="p">)</span>
+        <span class="c">#for i in range(len(lines)):</span>
+        <span class="c">#    inside_line_segments, outside_line_segments = \</span>
+        <span class="c">#        clip_lines_by_polygon([lines[i]], polygon)</span>
+        <span class="c">#</span>
+        <span class="c">#    if len(inside_line_segments) &gt; 0:</span>
+        <span class="c">#        print</span>
+        <span class="c">#        print &#39;Found&#39;, i, len(lines[i]), len(outside_line_segments)</span>
+        <span class="c">#</span>
+        <span class="c">#        print</span>
+        <span class="c">#        print &#39;Line&#39;</span>
+        <span class="c">#        for j in range(lines[i].shape[0]):</span>
+        <span class="c">#            print &#39;[%f, %f], &#39; % (lines[i][j, 0], lines[i][j, 1])</span>
+        <span class="c">#        print</span>
 
-        <span class="c"># Convert dictionaries to lists of lines (to fit test)</span>
-        <span class="n">inside_line_geometry</span> <span class="o">=</span> <span class="n">line_dictionary_to_geometry</span><span class="p">(</span><span class="n">inside_lines</span><span class="p">)</span>
-        <span class="n">outside_line_geometry</span> <span class="o">=</span> <span class="n">line_dictionary_to_geometry</span><span class="p">(</span><span class="n">outside_lines</span><span class="p">)</span>
+        <span class="c"># Clip</span>
+        <span class="n">inside_line_segments</span><span class="p">,</span> <span class="n">outside_line_segments</span> <span class="o">=</span> \
+            <span class="n">clip_lines_by_polygon</span><span class="p">(</span><span class="n">test_lines</span><span class="p">,</span> <span class="n">test_polygon</span><span class="p">)</span>
 
         <span class="c"># These lines have compontes both inside and outside</span>
-        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">inside_line_geometry</span><span class="p">)</span> <span class="o">==</span> <span class="mi">14</span>
-        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">outside_line_geometry</span><span class="p">)</span> <span class="o">==</span> <span class="mi">167</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">inside_line_segments</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">outside_line_segments</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span>
 
         <span class="c"># Check that midpoints of each segment are correctly placed</span>
         <span class="n">inside_centroids</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">inside_line_geometry</span><span class="p">:</span>
-            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">line</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):</span>
-                <span class="n">seg0</span> <span class="o">=</span> <span class="n">line</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
-                <span class="n">seg1</span> <span class="o">=</span> <span class="n">line</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
-                <span class="n">midpoint</span> <span class="o">=</span> <span class="p">(</span><span class="n">seg0</span> <span class="o">+</span> <span class="n">seg1</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span>
-                <span class="n">inside_centroids</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">midpoint</span><span class="p">)</span>
-                <span class="k">assert</span> <span class="n">is_inside_polygon</span><span class="p">(</span><span class="n">midpoint</span><span class="p">,</span> <span class="n">test_polygon</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">seg</span> <span class="ow">in</span> <span class="n">inside_line_segments</span><span class="p">:</span>
+            <span class="n">midpoint</span> <span class="o">=</span> <span class="p">(</span><span class="n">seg</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">seg</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">/</span> <span class="mi">2</span>
+            <span class="n">inside_centroids</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">midpoint</span><span class="p">)</span>
+            <span class="k">assert</span> <span class="n">is_inside_polygon</span><span class="p">(</span><span class="n">midpoint</span><span class="p">,</span> <span class="n">test_polygon</span><span class="p">)</span>
 
         <span class="n">outside_centroids</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">outside_line_geometry</span><span class="p">:</span>
-            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">line</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):</span>
-                <span class="n">seg0</span> <span class="o">=</span> <span class="n">line</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
-                <span class="n">seg1</span> <span class="o">=</span> <span class="n">line</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
-                <span class="n">midpoint</span> <span class="o">=</span> <span class="p">(</span><span class="n">seg0</span> <span class="o">+</span> <span class="n">seg1</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span>
-                <span class="n">outside_centroids</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">midpoint</span><span class="p">)</span>
-                <span class="k">assert</span> <span class="ow">not</span> <span class="n">is_inside_polygon</span><span class="p">(</span><span class="n">midpoint</span><span class="p">,</span> <span class="n">test_polygon</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">seg</span> <span class="ow">in</span> <span class="n">outside_line_segments</span><span class="p">:</span>
+            <span class="n">midpoint</span> <span class="o">=</span> <span class="p">(</span><span class="n">seg</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">seg</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">/</span> <span class="mi">2</span>
+            <span class="n">outside_centroids</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">midpoint</span><span class="p">)</span>
+            <span class="k">assert</span> <span class="ow">not</span> <span class="n">is_inside_polygon</span><span class="p">(</span><span class="n">midpoint</span><span class="p">,</span> <span class="n">test_polygon</span><span class="p">)</span>
 
         <span class="c"># Possibly generate files for visual inspection with e.g. QGis</span>
-        <span class="k">if</span> <span class="bp">True</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">False</span><span class="p">:</span>
+            <span class="c"># Store as shape files for visual inspection e.g. by QGis</span>
             <span class="n">P</span> <span class="o">=</span> <span class="n">Vector</span><span class="p">(</span><span class="n">geometry</span><span class="o">=</span><span class="p">[</span><span class="n">test_polygon</span><span class="p">])</span>
             <span class="n">P</span><span class="o">.</span><span class="n">write_to_file</span><span class="p">(</span><span class="s">&#39;test_polygon.shp&#39;</span><span class="p">)</span>
 
             <span class="n">L</span> <span class="o">=</span> <span class="n">Vector</span><span class="p">(</span><span class="n">geometry</span><span class="o">=</span><span class="n">test_lines</span><span class="p">,</span> <span class="n">geometry_type</span><span class="o">=</span><span class="s">&#39;line&#39;</span><span class="p">)</span>
             <span class="n">L</span><span class="o">.</span><span class="n">write_to_file</span><span class="p">(</span><span class="s">&#39;test_lines.shp&#39;</span><span class="p">)</span>
 
-            <span class="n">L</span> <span class="o">=</span> <span class="n">Vector</span><span class="p">(</span><span class="n">geometry</span><span class="o">=</span><span class="n">inside_line_geometry</span><span class="p">,</span> <span class="n">geometry_type</span><span class="o">=</span><span class="s">&#39;line&#39;</span><span class="p">)</span>
+            <span class="n">L</span> <span class="o">=</span> <span class="n">Vector</span><span class="p">(</span><span class="n">geometry</span><span class="o">=</span><span class="n">inside_line_segments</span><span class="p">,</span> <span class="n">geometry_type</span><span class="o">=</span><span class="s">&#39;line&#39;</span><span class="p">)</span>
             <span class="n">L</span><span class="o">.</span><span class="n">write_to_file</span><span class="p">(</span><span class="s">&#39;inside_lines.shp&#39;</span><span class="p">)</span>
 
-            <span class="n">L</span> <span class="o">=</span> <span class="n">Vector</span><span class="p">(</span><span class="n">geometry</span><span class="o">=</span><span class="n">outside_line_geometry</span><span class="p">,</span> <span class="n">geometry_type</span><span class="o">=</span><span class="s">&#39;line&#39;</span><span class="p">)</span>
+            <span class="n">L</span> <span class="o">=</span> <span class="n">Vector</span><span class="p">(</span><span class="n">geometry</span><span class="o">=</span><span class="n">outside_line_segments</span><span class="p">,</span> <span class="n">geometry_type</span><span class="o">=</span><span class="s">&#39;line&#39;</span><span class="p">)</span>
             <span class="n">L</span><span class="o">.</span><span class="n">write_to_file</span><span class="p">(</span><span class="s">&#39;outside_lines.shp&#39;</span><span class="p">)</span>
 
             <span class="n">L</span> <span class="o">=</span> <span class="n">Vector</span><span class="p">(</span><span class="n">geometry</span><span class="o">=</span><span class="n">inside_centroids</span><span class="p">,</span> <span class="n">geometry_type</span><span class="o">=</span><span class="s">&#39;point&#39;</span><span class="p">)</span>
@@ -1960,15 +1739,18 @@
             <span class="n">L</span><span class="o">.</span><span class="n">write_to_file</span><span class="p">(</span><span class="s">&#39;outside_centroids.shp&#39;</span><span class="p">)</span>
 
         <span class="c"># Characterisation test based on against visual inspection with QGIS</span>
-        <span class="c">#print inside_line_geometry[6]</span>
-        <span class="k">assert</span> <span class="n">numpy</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">inside_line_geometry</span><span class="p">[</span><span class="mi">6</span><span class="p">],</span>
-                              <span class="p">[[</span><span class="mf">122.23438722</span><span class="p">,</span> <span class="o">-</span><span class="mf">8.6277337</span><span class="p">],</span>
-                               <span class="p">[</span><span class="mf">122.23316953</span><span class="p">,</span> <span class="o">-</span><span class="mf">8.62733247</span><span class="p">],</span>
-                               <span class="p">[</span><span class="mf">122.23162128</span><span class="p">,</span> <span class="o">-</span><span class="mf">8.62683715</span><span class="p">],</span>
-                               <span class="p">[</span><span class="mf">122.23156661</span><span class="p">,</span> <span class="o">-</span><span class="mf">8.62681168</span><span class="p">]])</span>
+        <span class="c">#print inside_line_segments[10]</span>
+        <span class="c">#print outside_line_segments[5]</span>
+        <span class="k">assert</span> <span class="n">numpy</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">inside_line_segments</span><span class="p">[</span><span class="mi">10</span><span class="p">],</span>
+                              <span class="p">[[</span><span class="mf">122.24672045</span><span class="p">,</span> <span class="o">-</span><span class="mf">8.63255444</span><span class="p">],</span>
+                               <span class="p">[</span><span class="mf">122.24699685</span><span class="p">,</span> <span class="o">-</span><span class="mf">8.63265486</span><span class="p">],</span>
+                               <span class="p">[</span><span class="mf">122.24793801</span><span class="p">,</span> <span class="o">-</span><span class="mf">8.63292556</span><span class="p">],</span>
+                               <span class="p">[</span><span class="mf">122.24829356</span><span class="p">,</span> <span class="o">-</span><span class="mf">8.63304013</span><span class="p">],</span>
+                               <span class="p">[</span><span class="mf">122.25118524</span><span class="p">,</span> <span class="o">-</span><span class="mf">8.63364424</span><span class="p">],</span>
+                               <span class="p">[</span><span class="mf">122.25520475</span><span class="p">,</span> <span class="o">-</span><span class="mf">8.63433717</span><span class="p">],</span>
+                               <span class="p">[</span><span class="mf">122.25695448</span><span class="p">,</span> <span class="o">-</span><span class="mf">8.63469273</span><span class="p">]])</span>
 
-        <span class="c">#print outside_line_geometry[5]</span>
-        <span class="k">assert</span> <span class="n">numpy</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">outside_line_geometry</span><span class="p">[</span><span class="mi">5</span><span class="p">],</span>
+        <span class="k">assert</span> <span class="n">numpy</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">outside_line_segments</span><span class="p">[</span><span class="mi">5</span><span class="p">],</span>
                               <span class="p">[[</span><span class="mf">122.18321143</span><span class="p">,</span> <span class="o">-</span><span class="mf">8.58901526</span><span class="p">],</span>
                                <span class="p">[</span><span class="mf">122.18353015</span><span class="p">,</span> <span class="o">-</span><span class="mf">8.58890024</span><span class="p">],</span>
                                <span class="p">[</span><span class="mf">122.18370883</span><span class="p">,</span> <span class="o">-</span><span class="mf">8.58884135</span><span class="p">],</span>
@@ -1985,7 +1767,7 @@
                                <span class="p">[</span><span class="mf">122.18457453</span><span class="p">,</span> <span class="o">-</span><span class="mf">8.58798668</span><span class="p">],</span>
                                <span class="p">[</span><span class="mf">122.18466284</span><span class="p">,</span> <span class="o">-</span><span class="mf">8.5878697</span><span class="p">]])</span>
 
-    <span class="n">test_line_clipping_by_polygon</span><span class="o">.</span><span class="n">slow</span> <span class="o">=</span> <span class="bp">True</span>
+    <span class="n">test_line_clipping_by_polygon</span><span class="o">.</span><span class="n">slow</span> <span class="o">=</span> <span class="mi">1</span>
 
     <span class="k">def</span> <span class="nf">test_line_interpolation_from_polygons_one_poly</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Line clipping and interpolation using one polygon works</span>
@@ -2011,42 +1793,33 @@
         <span class="n">E</span> <span class="o">=</span> <span class="n">read_layer</span><span class="p">(</span><span class="n">exposure_filename</span><span class="p">)</span>
 
         <span class="c"># Test interpolation function</span>
-        <span class="n">I</span> <span class="o">=</span> <span class="n">assign_hazard_values_to_exposure_data</span><span class="p">(</span><span class="n">H</span><span class="p">,</span> <span class="n">E</span><span class="p">,</span>
-                                                  <span class="n">layer_name</span><span class="o">=</span><span class="s">&#39;depth&#39;</span><span class="p">,</span>
-                                                  <span class="c"># Take all attributes across</span>
-                                                  <span class="n">attribute_name</span><span class="o">=</span><span class="bp">None</span><span class="p">)</span>
-
+        <span class="n">I</span> <span class="o">=</span> <span class="n">H</span><span class="o">.</span><span class="n">interpolate</span><span class="p">(</span><span class="n">E</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s">&#39;depth&#39;</span><span class="p">,</span>
+                          <span class="n">attribute_name</span><span class="o">=</span><span class="bp">None</span><span class="p">)</span>  <span class="c"># Take all attributes across</span>
         <span class="n">I_geometry</span> <span class="o">=</span> <span class="n">I</span><span class="o">.</span><span class="n">get_geometry</span><span class="p">()</span>
         <span class="n">I_attributes</span> <span class="o">=</span> <span class="n">I</span><span class="o">.</span><span class="n">get_data</span><span class="p">()</span>
-        <span class="k">assert</span> <span class="n">I</span><span class="o">.</span><span class="n">get_name</span><span class="p">()</span> <span class="o">==</span> <span class="s">&#39;depth&#39;</span>
 
         <span class="n">N</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">I_attributes</span><span class="p">)</span>
 
         <span class="c"># Possibly generate files for visual inspection with e.g. QGis</span>
-        <span class="k">if</span> <span class="bp">False</span><span class="p">:</span>
-            <span class="n">H</span><span class="o">.</span><span class="n">write_to_file</span><span class="p">(</span><span class="s">&#39;test_polygon.shp&#39;</span><span class="p">)</span>
-            <span class="n">E</span><span class="o">.</span><span class="n">write_to_file</span><span class="p">(</span><span class="s">&#39;test_lines.shp&#39;</span><span class="p">)</span>
-            <span class="n">I</span><span class="o">.</span><span class="n">write_to_file</span><span class="p">(</span><span class="s">&#39;interpolated_lines.shp&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">False</span><span class="p">:</span>  <span class="c"># True:</span>
+            <span class="n">L</span> <span class="o">=</span> <span class="n">Vector</span><span class="p">(</span><span class="n">geometry</span><span class="o">=</span><span class="n">H_geometry</span><span class="p">,</span> <span class="n">geometry_type</span><span class="o">=</span><span class="s">&#39;polygon&#39;</span><span class="p">,</span>
+                       <span class="n">data</span><span class="o">=</span><span class="n">H_attributes</span><span class="p">)</span>
+            <span class="n">L</span><span class="o">.</span><span class="n">write_to_file</span><span class="p">(</span><span class="s">&#39;test_polygon.shp&#39;</span><span class="p">)</span>
 
-        <span class="c"># Assert that all expected attribute names exist</span>
+            <span class="n">L</span> <span class="o">=</span> <span class="n">Vector</span><span class="p">(</span><span class="n">geometry</span><span class="o">=</span><span class="n">I_geometry</span><span class="p">,</span> <span class="n">geometry_type</span><span class="o">=</span><span class="s">&#39;line&#39;</span><span class="p">,</span>
+                       <span class="n">data</span><span class="o">=</span><span class="n">I_attributes</span><span class="p">)</span>
+            <span class="n">L</span><span class="o">.</span><span class="n">write_to_file</span><span class="p">(</span><span class="s">&#39;interpolated_lines.shp&#39;</span><span class="p">)</span>
+
+        <span class="c"># Assert that expected attribute names exist</span>
         <span class="n">I_names</span> <span class="o">=</span> <span class="n">I</span><span class="o">.</span><span class="n">get_attribute_names</span><span class="p">()</span>
         <span class="n">H_names</span> <span class="o">=</span> <span class="n">H</span><span class="o">.</span><span class="n">get_attribute_names</span><span class="p">()</span>
         <span class="n">E_names</span> <span class="o">=</span> <span class="n">E</span><span class="o">.</span><span class="n">get_attribute_names</span><span class="p">()</span>
-
-        <span class="c"># Attributes from polygons</span>
         <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">H_names</span><span class="p">:</span>
             <span class="n">msg</span> <span class="o">=</span> <span class="s">&#39;Did not find hazard name &quot;</span><span class="si">%s</span><span class="s">&quot; in </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">I_names</span><span class="p">)</span>
             <span class="k">assert</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">I_names</span><span class="p">,</span> <span class="n">msg</span>
 
-        <span class="c"># Attributes from original lines</span>
         <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">E_names</span><span class="p">:</span>
             <span class="n">msg</span> <span class="o">=</span> <span class="s">&#39;Did not find exposure name &quot;</span><span class="si">%s</span><span class="s">&quot; in </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">I_names</span><span class="p">)</span>
-            <span class="k">assert</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">I_names</span><span class="p">,</span> <span class="n">msg</span>
-
-        <span class="c"># New attributes</span>
-        <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="p">[</span><span class="n">DEFAULT_ATTRIBUTE</span><span class="p">,</span> <span class="s">&#39;polygon_id&#39;</span><span class="p">,</span> <span class="s">&#39;parent_line_id&#39;</span><span class="p">]:</span>
-            <span class="n">msg</span> <span class="o">=</span> <span class="s">&#39;Did not find new attribute name &quot;</span><span class="si">%s</span><span class="s">&quot; in </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">name</span><span class="p">,</span>
-                                                                  <span class="n">I_names</span><span class="p">)</span>
             <span class="k">assert</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">I_names</span><span class="p">,</span> <span class="n">msg</span>
 
         <span class="c"># Verify interpolated values with test result</span>
@@ -2076,10 +1849,14 @@
                 <span class="k">assert</span> <span class="n">category</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="p">[</span><span class="s">&#39;high&#39;</span><span class="p">,</span> <span class="s">&#39;very high&#39;</span><span class="p">]</span>
                 <span class="n">count</span> <span class="o">+=</span> <span class="mi">1</span>
 
-        <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;Expected 14 lines tagged with category, &#39;</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;Expected 14 points tagged with category, &#39;</span>
                <span class="s">&#39;but got only </span><span class="si">%i</span><span class="s">&#39;</span> <span class="o">%</span> <span class="n">count</span><span class="p">)</span>
         <span class="k">assert</span> <span class="n">count</span> <span class="o">==</span> <span class="mi">14</span><span class="p">,</span> <span class="n">msg</span>
-        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">I_geometry</span><span class="p">)</span> <span class="o">==</span> <span class="mi">14</span>
+
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">I_geometry</span><span class="p">)</span> <span class="o">==</span> <span class="mi">181</span>
+
+        <span class="k">assert</span> <span class="n">I_attributes</span><span class="p">[</span><span class="mi">129</span><span class="p">][</span><span class="s">&#39;Catergory&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;Very High&#39;</span>
+        <span class="k">assert</span> <span class="n">I_attributes</span><span class="p">[</span><span class="mi">135</span><span class="p">][</span><span class="s">&#39;Catergory&#39;</span><span class="p">]</span> <span class="ow">is</span> <span class="bp">None</span>
 
         <span class="c"># Check default attribute too</span>
         <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;Expected 14 segments tagged with default attribute &#39;</span>
@@ -2088,213 +1865,17 @@
                                     <span class="n">counts</span><span class="p">[</span><span class="n">DEFAULT_ATTRIBUTE</span><span class="p">]))</span>
         <span class="k">assert</span> <span class="n">counts</span><span class="p">[</span><span class="n">DEFAULT_ATTRIBUTE</span><span class="p">]</span> <span class="o">==</span> <span class="mi">14</span><span class="p">,</span> <span class="n">msg</span>
 
-        <span class="c"># Check against correctness verified in QGIS</span>
-        <span class="k">assert</span> <span class="n">I_attributes</span><span class="p">[</span><span class="mi">13</span><span class="p">][</span><span class="s">&#39;highway&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;road&#39;</span>
-        <span class="k">assert</span> <span class="n">I_attributes</span><span class="p">[</span><span class="mi">13</span><span class="p">][</span><span class="s">&#39;osm_id&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">69372744</span>
-        <span class="k">assert</span> <span class="n">I_attributes</span><span class="p">[</span><span class="mi">13</span><span class="p">][</span><span class="s">&#39;polygon_id&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span>
-        <span class="k">assert</span> <span class="n">I_attributes</span><span class="p">[</span><span class="mi">13</span><span class="p">][</span><span class="s">&#39;parent_line_id&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">131</span>
-
-    <span class="n">test_line_interpolation_from_polygons_one_poly</span><span class="o">.</span><span class="n">slow</span> <span class="o">=</span> <span class="bp">True</span>
-
-    <span class="k">def</span> <span class="nf">test_line_interpolation_from_multiple_polygons</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Line interpolation using multiple polygons works</span>
-
-<span class="sd">        This is a test for road interpolation (issue #55)</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-
-        <span class="c"># TODO!!!!!!!!!!!!!!</span>
-
-        <span class="c"># Name file names for hazard level and exposure</span>
-        <span class="n">hazard_filename</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;</span><span class="si">%s</span><span class="s">/tsunami_polygon_WGS84.shp&#39;</span> <span class="o">%</span> <span class="n">TESTDATA</span><span class="p">)</span>
-        <span class="n">exposure_filename</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;</span><span class="si">%s</span><span class="s">/roads_Maumere.shp&#39;</span> <span class="o">%</span> <span class="n">TESTDATA</span><span class="p">)</span>
-
-        <span class="c"># Read input data</span>
-        <span class="n">H</span> <span class="o">=</span> <span class="n">read_layer</span><span class="p">(</span><span class="n">hazard_filename</span><span class="p">)</span>
-        <span class="n">H_attributes</span> <span class="o">=</span> <span class="n">H</span><span class="o">.</span><span class="n">get_data</span><span class="p">()</span>
-        <span class="n">H_geometry</span> <span class="o">=</span> <span class="n">H</span><span class="o">.</span><span class="n">get_geometry</span><span class="p">()</span>
-
-        <span class="c"># Cut down to 500 polygons</span>
-        <span class="c"># (some e.g. #657 have thousands of vertices, others just a few)</span>
-        <span class="n">H</span> <span class="o">=</span> <span class="n">Vector</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">H_attributes</span><span class="p">[</span><span class="mi">300</span><span class="p">:</span><span class="mi">657</span><span class="p">]</span> <span class="o">+</span> <span class="n">H_attributes</span><span class="p">[</span><span class="mi">658</span><span class="p">:</span><span class="mi">800</span><span class="p">],</span>
-                   <span class="n">geometry</span><span class="o">=</span><span class="n">H_geometry</span><span class="p">[</span><span class="mi">300</span><span class="p">:</span><span class="mi">657</span><span class="p">]</span> <span class="o">+</span> <span class="n">H_geometry</span><span class="p">[</span><span class="mi">658</span><span class="p">:</span><span class="mi">800</span><span class="p">],</span>
-                   <span class="n">projection</span><span class="o">=</span><span class="n">H</span><span class="o">.</span><span class="n">get_projection</span><span class="p">())</span>
-        <span class="n">H_attributes</span> <span class="o">=</span> <span class="n">H</span><span class="o">.</span><span class="n">get_data</span><span class="p">()</span>
-        <span class="n">H_geometry</span> <span class="o">=</span> <span class="n">H</span><span class="o">.</span><span class="n">get_geometry</span><span class="p">()</span>
-        <span class="n">E</span> <span class="o">=</span> <span class="n">read_layer</span><span class="p">(</span><span class="n">exposure_filename</span><span class="p">)</span>
-
-        <span class="c"># Test interpolation function</span>
-        <span class="c">#import time</span>
-        <span class="c">#t0 = time.time()</span>
-        <span class="n">I</span> <span class="o">=</span> <span class="n">assign_hazard_values_to_exposure_data</span><span class="p">(</span><span class="n">H</span><span class="p">,</span> <span class="n">E</span><span class="p">,</span>
-                                                  <span class="n">layer_name</span><span class="o">=</span><span class="s">&#39;depth&#39;</span><span class="p">,</span>
-                                                  <span class="c"># Take all attributes across</span>
-                                                  <span class="n">attribute_name</span><span class="o">=</span><span class="bp">None</span><span class="p">)</span>
-        <span class="c">#print &#39;This took&#39;, time.time() - t0</span>
-
-        <span class="n">I_geometry</span> <span class="o">=</span> <span class="n">I</span><span class="o">.</span><span class="n">get_geometry</span><span class="p">()</span>
-        <span class="n">I_attributes</span> <span class="o">=</span> <span class="n">I</span><span class="o">.</span><span class="n">get_data</span><span class="p">()</span>
-        <span class="k">assert</span> <span class="n">I</span><span class="o">.</span><span class="n">get_name</span><span class="p">()</span> <span class="o">==</span> <span class="s">&#39;depth&#39;</span>
-
-        <span class="n">N</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">I_attributes</span><span class="p">)</span>
-
-        <span class="c"># Possibly generate files for visual inspection with e.g. QGis</span>
-        <span class="k">if</span> <span class="bp">False</span><span class="p">:</span>  <span class="c"># True:</span>
-            <span class="n">H</span><span class="o">.</span><span class="n">write_to_file</span><span class="p">(</span><span class="s">&#39;test_polygon.shp&#39;</span><span class="p">)</span>
-            <span class="n">E</span><span class="o">.</span><span class="n">write_to_file</span><span class="p">(</span><span class="s">&#39;test_lines.shp&#39;</span><span class="p">)</span>
-            <span class="n">I</span><span class="o">.</span><span class="n">write_to_file</span><span class="p">(</span><span class="s">&#39;interpolated_lines.shp&#39;</span><span class="p">)</span>
-
-        <span class="c"># Assert that all expected attribute names exist</span>
-        <span class="n">I_names</span> <span class="o">=</span> <span class="n">I</span><span class="o">.</span><span class="n">get_attribute_names</span><span class="p">()</span>
-        <span class="n">H_names</span> <span class="o">=</span> <span class="n">H</span><span class="o">.</span><span class="n">get_attribute_names</span><span class="p">()</span>
-        <span class="n">E_names</span> <span class="o">=</span> <span class="n">E</span><span class="o">.</span><span class="n">get_attribute_names</span><span class="p">()</span>
-
-        <span class="c"># Attributes from polygons</span>
-        <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">H_names</span><span class="p">:</span>
-            <span class="n">msg</span> <span class="o">=</span> <span class="s">&#39;Did not find hazard name &quot;</span><span class="si">%s</span><span class="s">&quot; in </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">I_names</span><span class="p">)</span>
-            <span class="k">assert</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">I_names</span><span class="p">,</span> <span class="n">msg</span>
-
-        <span class="c"># Attributes from original lines</span>
-        <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">E_names</span><span class="p">:</span>
-            <span class="n">msg</span> <span class="o">=</span> <span class="s">&#39;Did not find exposure name &quot;</span><span class="si">%s</span><span class="s">&quot; in </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">I_names</span><span class="p">)</span>
-            <span class="k">assert</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">I_names</span><span class="p">,</span> <span class="n">msg</span>
-
-        <span class="c"># New attributes</span>
-        <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="p">[</span><span class="n">DEFAULT_ATTRIBUTE</span><span class="p">,</span> <span class="s">&#39;polygon_id&#39;</span><span class="p">,</span> <span class="s">&#39;parent_line_id&#39;</span><span class="p">]:</span>
-            <span class="n">msg</span> <span class="o">=</span> <span class="s">&#39;Did not find new attribute name &quot;</span><span class="si">%s</span><span class="s">&quot; in </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">name</span><span class="p">,</span>
-                                                                  <span class="n">I_names</span><span class="p">)</span>
-            <span class="k">assert</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">I_names</span><span class="p">,</span> <span class="n">msg</span>
-
-        <span class="c"># Verify interpolated values with test result</span>
-        <span class="n">count</span> <span class="o">=</span> <span class="mi">0</span>
-        <span class="n">counts</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">N</span><span class="p">):</span>
-
-            <span class="c"># Check that default attribute is present</span>
-            <span class="n">attrs</span> <span class="o">=</span> <span class="n">I_attributes</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
-            <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;Did not find default attribute </span><span class="si">%s</span><span class="s"> in </span><span class="si">%s</span><span class="s">&#39;</span>
-                   <span class="o">%</span> <span class="p">(</span><span class="n">DEFAULT_ATTRIBUTE</span><span class="p">,</span> <span class="n">attrs</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span>
-            <span class="k">assert</span> <span class="n">DEFAULT_ATTRIBUTE</span> <span class="ow">in</span> <span class="n">attrs</span><span class="p">,</span> <span class="n">msg</span>
-
-            <span class="c"># Count items using default attribute</span>
-            <span class="k">if</span> <span class="n">DEFAULT_ATTRIBUTE</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">counts</span><span class="p">:</span>
-                <span class="n">counts</span><span class="p">[</span><span class="n">DEFAULT_ATTRIBUTE</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
-                <span class="n">counts</span><span class="p">[</span><span class="s">&#39;Not &#39;</span> <span class="o">+</span> <span class="n">DEFAULT_ATTRIBUTE</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
-
-            <span class="k">if</span> <span class="n">attrs</span><span class="p">[</span><span class="n">DEFAULT_ATTRIBUTE</span><span class="p">]</span> <span class="ow">is</span> <span class="bp">True</span><span class="p">:</span>
-                <span class="n">counts</span><span class="p">[</span><span class="n">DEFAULT_ATTRIBUTE</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">counts</span><span class="p">[</span><span class="s">&#39;Not &#39;</span> <span class="o">+</span> <span class="n">DEFAULT_ATTRIBUTE</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
-
-            <span class="c"># Check specific attribute</span>
-            <span class="n">category</span> <span class="o">=</span> <span class="n">I_attributes</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="s">&#39;Catergory&#39;</span><span class="p">]</span>  <span class="c"># The typo is as the data</span>
-            <span class="k">if</span> <span class="n">category</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
-                <span class="n">msg</span> <span class="o">=</span> <span class="s">&#39;category = </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="n">category</span>
-                <span class="k">assert</span> <span class="n">category</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="p">[</span><span class="s">&#39;low&#39;</span><span class="p">,</span> <span class="s">&#39;medium&#39;</span><span class="p">,</span>
-                                            <span class="s">&#39;high&#39;</span><span class="p">,</span> <span class="s">&#39;very high&#39;</span><span class="p">],</span> <span class="n">msg</span>
-                <span class="n">count</span> <span class="o">+=</span> <span class="mi">1</span>
-
-        <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;Expected 103 lines tagged with category, &#39;</span>
-               <span class="s">&#39;but got only </span><span class="si">%i</span><span class="s">&#39;</span> <span class="o">%</span> <span class="n">count</span><span class="p">)</span>
-        <span class="k">assert</span> <span class="n">count</span> <span class="o">==</span> <span class="mi">103</span><span class="p">,</span> <span class="n">msg</span>
-        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">I_geometry</span><span class="p">)</span> <span class="o">==</span> <span class="mi">103</span>
-
-        <span class="c"># Check default attribute too</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;Expected 103 segments tagged with default attribute &#39;</span>
-               <span class="s">&#39;&quot;</span><span class="si">%s</span><span class="s"> = True&quot;, &#39;</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;Expected 167 points tagged with default attribute &#39;</span>
+               <span class="s">&#39;&quot;</span><span class="si">%s</span><span class="s"> = False&quot;, &#39;</span>
                <span class="s">&#39;but got only </span><span class="si">%i</span><span class="s">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">DEFAULT_ATTRIBUTE</span><span class="p">,</span>
-                                    <span class="n">counts</span><span class="p">[</span><span class="n">DEFAULT_ATTRIBUTE</span><span class="p">]))</span>
-        <span class="k">assert</span> <span class="n">counts</span><span class="p">[</span><span class="n">DEFAULT_ATTRIBUTE</span><span class="p">]</span> <span class="o">==</span> <span class="mi">103</span><span class="p">,</span> <span class="n">msg</span>
+                                    <span class="n">counts</span><span class="p">[</span><span class="s">&#39;Not &#39;</span> <span class="o">+</span> <span class="n">DEFAULT_ATTRIBUTE</span><span class="p">]))</span>
+        <span class="k">assert</span> <span class="n">counts</span><span class="p">[</span><span class="s">&#39;Not &#39;</span> <span class="o">+</span> <span class="n">DEFAULT_ATTRIBUTE</span><span class="p">]</span> <span class="o">==</span> <span class="mi">167</span><span class="p">,</span> <span class="n">msg</span>
 
-        <span class="c"># Check against correctness verified in QGIS</span>
-        <span class="k">assert</span> <span class="n">I_attributes</span><span class="p">[</span><span class="mi">40</span><span class="p">][</span><span class="s">&#39;highway&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;residential&#39;</span>
-        <span class="k">assert</span> <span class="n">I_attributes</span><span class="p">[</span><span class="mi">40</span><span class="p">][</span><span class="s">&#39;osm_id&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">69373107</span>
-        <span class="k">assert</span> <span class="n">I_attributes</span><span class="p">[</span><span class="mi">40</span><span class="p">][</span><span class="s">&#39;polygon_id&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">111</span>
-        <span class="k">assert</span> <span class="n">I_attributes</span><span class="p">[</span><span class="mi">40</span><span class="p">][</span><span class="s">&#39;parent_line_id&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">54</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s">&#39;Affected and not affected does not add up&#39;</span>
+        <span class="k">assert</span> <span class="p">(</span><span class="n">counts</span><span class="p">[</span><span class="n">DEFAULT_ATTRIBUTE</span><span class="p">]</span> <span class="o">+</span>
+                <span class="n">counts</span><span class="p">[</span><span class="s">&#39;Not &#39;</span> <span class="o">+</span> <span class="n">DEFAULT_ATTRIBUTE</span><span class="p">])</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">I</span><span class="p">),</span> <span class="n">msg</span>
 
-        <span class="k">assert</span> <span class="n">I_attributes</span><span class="p">[</span><span class="mi">76</span><span class="p">][</span><span class="s">&#39;highway&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;secondary&#39;</span>
-        <span class="k">assert</span> <span class="n">I_attributes</span><span class="p">[</span><span class="mi">76</span><span class="p">][</span><span class="s">&#39;Catergory&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;High&#39;</span>
-        <span class="k">assert</span> <span class="n">I_attributes</span><span class="p">[</span><span class="mi">76</span><span class="p">][</span><span class="s">&#39;osm_id&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">69370718</span>
-        <span class="k">assert</span> <span class="n">I_attributes</span><span class="p">[</span><span class="mi">76</span><span class="p">][</span><span class="s">&#39;polygon_id&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">374</span>
-        <span class="k">assert</span> <span class="n">I_attributes</span><span class="p">[</span><span class="mi">76</span><span class="p">][</span><span class="s">&#39;parent_line_id&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span>
-
-        <span class="k">assert</span> <span class="n">I_attributes</span><span class="p">[</span><span class="mi">85</span><span class="p">][</span><span class="s">&#39;highway&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;secondary&#39;</span>
-        <span class="k">assert</span> <span class="n">I_attributes</span><span class="p">[</span><span class="mi">85</span><span class="p">][</span><span class="s">&#39;Catergory&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;Very High&#39;</span>
-        <span class="k">assert</span> <span class="n">I_attributes</span><span class="p">[</span><span class="mi">85</span><span class="p">][</span><span class="s">&#39;osm_id&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">69371482</span>
-        <span class="k">assert</span> <span class="n">I_attributes</span><span class="p">[</span><span class="mi">85</span><span class="p">][</span><span class="s">&#39;polygon_id&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">453</span>
-        <span class="k">assert</span> <span class="n">I_attributes</span><span class="p">[</span><span class="mi">85</span><span class="p">][</span><span class="s">&#39;parent_line_id&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">133</span>
-
-    <span class="n">test_line_interpolation_from_multiple_polygons</span><span class="o">.</span><span class="n">slow</span> <span class="o">=</span> <span class="bp">True</span>
-
-    <span class="c"># FIXME (Ole): This test shows that current polygon-line interpolation</span>
-    <span class="c"># functionality is unacceptably slow.</span>
-    <span class="c"># For the moment, it has been cut down to a few polygons</span>
-    <span class="k">def</span> <span class="nf">Xtest_polygon_to_roads_interpolation_flood_example</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Roads can be tagged with values from flood polygons</span>
-
-<span class="sd">        This is a test for road interpolation (issue #55)</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-
-        <span class="c"># Name file names for hazard level and exposure</span>
-        <span class="n">hazard_filename</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;</span><span class="si">%s</span><span class="s">/rw_jakarta_singlepart.shp&#39;</span> <span class="o">%</span> <span class="n">TESTDATA</span><span class="p">)</span>
-        <span class="n">exposure_filename</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;</span><span class="si">%s</span><span class="s">/indonesia_highway.shp&#39;</span> <span class="o">%</span> <span class="n">EXPDATA</span><span class="p">)</span>
-
-        <span class="c"># Read all input data</span>
-        <span class="n">H</span> <span class="o">=</span> <span class="n">read_layer</span><span class="p">(</span><span class="n">hazard_filename</span><span class="p">)</span>
-        <span class="n">H_attributes</span> <span class="o">=</span> <span class="n">H</span><span class="o">.</span><span class="n">get_data</span><span class="p">()</span>
-        <span class="n">H_geometry</span> <span class="o">=</span> <span class="n">H</span><span class="o">.</span><span class="n">get_geometry</span><span class="p">()</span>
-        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">H</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2704</span>
-
-        <span class="n">E</span> <span class="o">=</span> <span class="n">read_layer</span><span class="p">(</span><span class="n">exposure_filename</span><span class="p">)</span>  <span class="c"># This is slow to read</span>
-        <span class="n">E_geometry</span> <span class="o">=</span> <span class="n">E</span><span class="o">.</span><span class="n">get_geometry</span><span class="p">()</span>
-        <span class="n">E_attributes</span> <span class="o">=</span> <span class="n">E</span><span class="o">.</span><span class="n">get_data</span><span class="p">()</span>
-        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">E</span><span class="p">)</span> <span class="o">==</span> <span class="mi">108082</span>
-
-        <span class="c"># Cut number of features down</span>
-        <span class="n">H</span> <span class="o">=</span> <span class="n">Vector</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">H_attributes</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">:</span><span class="mi">100</span><span class="p">],</span>
-                   <span class="n">geometry</span><span class="o">=</span><span class="n">H_geometry</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">:</span><span class="mi">100</span><span class="p">],</span>
-                   <span class="n">projection</span><span class="o">=</span><span class="n">H</span><span class="o">.</span><span class="n">get_projection</span><span class="p">())</span>
-
-        <span class="n">E</span> <span class="o">=</span> <span class="n">Vector</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">E_attributes</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">:</span><span class="mi">100</span><span class="p">],</span>
-                   <span class="n">geometry</span><span class="o">=</span><span class="n">E_geometry</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">:</span><span class="mi">100</span><span class="p">],</span>
-                   <span class="n">projection</span><span class="o">=</span><span class="n">E</span><span class="o">.</span><span class="n">get_projection</span><span class="p">(),</span>
-                   <span class="n">geometry_type</span><span class="o">=</span><span class="n">E</span><span class="o">.</span><span class="n">geometry_type</span><span class="p">)</span>
-
-        <span class="c"># Test interpolation function</span>
-        <span class="n">I</span> <span class="o">=</span> <span class="n">assign_hazard_values_to_exposure_data</span><span class="p">(</span><span class="n">H</span><span class="p">,</span> <span class="n">E</span><span class="p">,</span>
-                                                  <span class="n">layer_name</span><span class="o">=</span><span class="s">&#39;depth&#39;</span><span class="p">,</span>
-                                                  <span class="c"># Take all attributes across</span>
-                                                  <span class="n">attribute_name</span><span class="o">=</span><span class="bp">None</span><span class="p">)</span>
-        <span class="n">I_geometry</span> <span class="o">=</span> <span class="n">I</span><span class="o">.</span><span class="n">get_geometry</span><span class="p">()</span>
-        <span class="n">I_attributes</span> <span class="o">=</span> <span class="n">I</span><span class="o">.</span><span class="n">get_data</span><span class="p">()</span>
-
-        <span class="c"># Possibly generate files for visual inspection with e.g. QGis</span>
-        <span class="k">if</span> <span class="bp">False</span><span class="p">:</span>
-            <span class="n">L</span> <span class="o">=</span> <span class="n">Vector</span><span class="p">(</span><span class="n">geometry</span><span class="o">=</span><span class="n">H_geometry</span><span class="p">,</span> <span class="n">geometry_type</span><span class="o">=</span><span class="s">&#39;polygon&#39;</span><span class="p">,</span>
-                       <span class="n">data</span><span class="o">=</span><span class="n">H_attributes</span><span class="p">)</span>
-            <span class="n">L</span><span class="o">.</span><span class="n">write_to_file</span><span class="p">(</span><span class="s">&#39;flood_polygon.shp&#39;</span><span class="p">)</span>
-
-            <span class="n">L</span> <span class="o">=</span> <span class="n">Vector</span><span class="p">(</span><span class="n">geometry</span><span class="o">=</span><span class="n">I_geometry</span><span class="p">,</span> <span class="n">geometry_type</span><span class="o">=</span><span class="s">&#39;line&#39;</span><span class="p">,</span>
-                       <span class="n">data</span><span class="o">=</span><span class="n">I_attributes</span><span class="p">)</span>
-            <span class="n">L</span><span class="o">.</span><span class="n">write_to_file</span><span class="p">(</span><span class="s">&#39;flooded_roads.shp&#39;</span><span class="p">)</span>
-
-        <span class="c"># Assert that expected attribute names exist</span>
-        <span class="n">I_names</span> <span class="o">=</span> <span class="n">I</span><span class="o">.</span><span class="n">get_attribute_names</span><span class="p">()</span>
-        <span class="n">H_names</span> <span class="o">=</span> <span class="n">H</span><span class="o">.</span><span class="n">get_attribute_names</span><span class="p">()</span>
-        <span class="n">E_names</span> <span class="o">=</span> <span class="n">E</span><span class="o">.</span><span class="n">get_attribute_names</span><span class="p">()</span>
-        <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">H_names</span><span class="p">:</span>
-            <span class="n">msg</span> <span class="o">=</span> <span class="s">&#39;Did not find hazard name &quot;</span><span class="si">%s</span><span class="s">&quot; in </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">I_names</span><span class="p">)</span>
-            <span class="k">assert</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">I_names</span><span class="p">,</span> <span class="n">msg</span>
-
-        <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">E_names</span><span class="p">:</span>
-            <span class="n">msg</span> <span class="o">=</span> <span class="s">&#39;Did not find exposure name &quot;</span><span class="si">%s</span><span class="s">&quot; in </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">I_names</span><span class="p">)</span>
-            <span class="k">assert</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">I_names</span><span class="p">,</span> <span class="n">msg</span>
-
-        <span class="c"># Check that attributes have been carried through</span>
-        <span class="c">#for i, attr in enumerate(I_attributes):</span>
-        <span class="c">#    pass</span>
-        <span class="c">#    # TODO</span>
-
-    <span class="n">Xtest_polygon_to_roads_interpolation_flood_example</span><span class="o">.</span><span class="n">slow</span> <span class="o">=</span> <span class="bp">True</span>
+    <span class="n">test_line_interpolation_from_polygons_one_poly</span><span class="o">.</span><span class="n">slow</span> <span class="o">=</span> <span class="mi">1</span>
 
     <span class="k">def</span> <span class="nf">Xtest_line_interpolation_from_polygons_one_attribute</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Line interpolation using one polygon works with attribute</span>
@@ -2304,8 +1885,6 @@
 
         <span class="c"># FIXME: test passes, but functionality is not really there.</span>
         <span class="c"># Do we need it?</span>
-
-        <span class="c"># RETIRE</span>
 
         <span class="c"># Name file names for hazard level and exposure</span>
         <span class="n">hazard_filename</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;</span><span class="si">%s</span><span class="s">/tsunami_polygon_WGS84.shp&#39;</span> <span class="o">%</span> <span class="n">TESTDATA</span><span class="p">)</span>
@@ -2325,14 +1904,9 @@
         <span class="n">E</span> <span class="o">=</span> <span class="n">read_layer</span><span class="p">(</span><span class="n">exposure_filename</span><span class="p">)</span>
 
         <span class="c"># Test interpolation function</span>
-        <span class="c">#I = H.interpolate(E, layer_name=&#39;depth&#39;,</span>
-        <span class="c">#                  # Spelling is as in test data</span>
-        <span class="c">#                  attribute_name=&#39;Catergory&#39;)</span>
-        <span class="n">I</span> <span class="o">=</span> <span class="n">assign_hazard_values_to_exposure_data</span><span class="p">(</span><span class="n">H</span><span class="p">,</span> <span class="n">E</span><span class="p">,</span>
-                                                  <span class="n">layer_name</span><span class="o">=</span><span class="s">&#39;depth&#39;</span><span class="p">,</span>
-                                                  <span class="c"># Spelling is as in test data</span>
-                                                  <span class="n">attribute_name</span><span class="o">=</span><span class="s">&#39;Catergory&#39;</span><span class="p">)</span>
-
+        <span class="n">I</span> <span class="o">=</span> <span class="n">H</span><span class="o">.</span><span class="n">interpolate</span><span class="p">(</span><span class="n">E</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s">&#39;depth&#39;</span><span class="p">,</span>
+                          <span class="c"># Spelling is as in test data</span>
+                          <span class="n">attribute_name</span><span class="o">=</span><span class="s">&#39;Catergory&#39;</span><span class="p">)</span>
         <span class="n">I_geometry</span> <span class="o">=</span> <span class="n">I</span><span class="o">.</span><span class="n">get_geometry</span><span class="p">()</span>
         <span class="n">I_attributes</span> <span class="o">=</span> <span class="n">I</span><span class="o">.</span><span class="n">get_data</span><span class="p">()</span>
 
@@ -2383,8 +1957,6 @@
 
         <span class="c"># NOT YET FULLY DONE</span>
 
-        <span class="c"># RETIRE</span>
-
         <span class="c"># Name file names for hazard level and exposure</span>
         <span class="n">hazard_filename</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;</span><span class="si">%s</span><span class="s">/tsunami_polygon_WGS84.shp&#39;</span> <span class="o">%</span> <span class="n">TESTDATA</span><span class="p">)</span>
         <span class="n">exposure_filename</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;</span><span class="si">%s</span><span class="s">/roads_Maumere.shp&#39;</span> <span class="o">%</span> <span class="n">TESTDATA</span><span class="p">)</span>
@@ -2403,16 +1975,11 @@
         <span class="n">E</span> <span class="o">=</span> <span class="n">read_layer</span><span class="p">(</span><span class="n">exposure_filename</span><span class="p">)</span>
 
         <span class="c"># Test interpolation function</span>
-        <span class="c">#I = H.interpolate(E, layer_name=&#39;depth&#39;,</span>
-        <span class="c">#                  attribute_name=None)  # Take all attributes across</span>
-        <span class="n">I</span> <span class="o">=</span> <span class="n">assign_hazard_values_to_exposure_data</span><span class="p">(</span><span class="n">H</span><span class="p">,</span> <span class="n">E</span><span class="p">,</span>
-                                                  <span class="n">layer_name</span><span class="o">=</span><span class="s">&#39;depth&#39;</span><span class="p">,</span>
-                                                  <span class="c"># Take all attributes across</span>
-                                                  <span class="n">attribute_name</span><span class="o">=</span><span class="bp">None</span><span class="p">)</span>
-
+        <span class="n">I</span> <span class="o">=</span> <span class="n">H</span><span class="o">.</span><span class="n">interpolate</span><span class="p">(</span><span class="n">E</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s">&#39;depth&#39;</span><span class="p">,</span>
+                          <span class="n">attribute_name</span><span class="o">=</span><span class="bp">None</span><span class="p">)</span>  <span class="c"># Take all attributes across</span>
         <span class="n">I_geometry</span> <span class="o">=</span> <span class="n">I</span><span class="o">.</span><span class="n">get_geometry</span><span class="p">()</span>
         <span class="n">I_attributes</span> <span class="o">=</span> <span class="n">I</span><span class="o">.</span><span class="n">get_data</span><span class="p">()</span>
-        <span class="k">assert</span> <span class="n">I</span><span class="o">.</span><span class="n">get_name</span><span class="p">()</span> <span class="o">==</span> <span class="s">&#39;depth&#39;</span>
+
         <span class="n">N</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">I_attributes</span><span class="p">)</span>
 
         <span class="c"># Possibly generate files for visual inspection with e.g. QGis</span>
@@ -2551,7 +2118,7 @@
                 <span class="n">msg</span> <span class="o">=</span> <span class="s">&#39;Missing keyword should have raised exception&#39;</span>
                 <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
-    <span class="n">test_layer_integrity_raises_exception</span><span class="o">.</span><span class="n">slow</span> <span class="o">=</span> <span class="bp">True</span>
+    <span class="n">test_layer_integrity_raises_exception</span><span class="o">.</span><span class="n">slow</span> <span class="o">=</span> <span class="mi">1</span>
 
     <span class="k">def</span> <span class="nf">test_padang_building_examples</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Padang building impact calculation works through the API</span>
@@ -2634,7 +2201,7 @@
             <span class="n">msg</span> <span class="o">=</span> <span class="s">&#39;Number buildings was not 3896.&#39;</span>
             <span class="k">assert</span> <span class="n">count</span> <span class="o">==</span> <span class="mi">3896</span><span class="p">,</span> <span class="n">msg</span>
 
-    <span class="n">test_padang_building_examples</span><span class="o">.</span><span class="n">slow</span> <span class="o">=</span> <span class="bp">True</span>
+    <span class="n">test_padang_building_examples</span><span class="o">.</span><span class="n">slow</span> <span class="o">=</span> <span class="mi">1</span>
 
     <span class="k">def</span> <span class="nf">test_itb_building_function</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Damage ratio (estimated repair cost relative to replacement cost)</span>
@@ -2695,10 +2262,10 @@
 <span class="c">#        print keywords</span>
 <span class="c">#        print calculated_damage</span>
 
-    <span class="n">test_itb_building_function</span><span class="o">.</span><span class="n">slow</span> <span class="o">=</span> <span class="bp">True</span>
+    <span class="n">test_itb_building_function</span><span class="o">.</span><span class="n">slow</span> <span class="o">=</span> <span class="mi">1</span>
 
     <span class="k">def</span> <span class="nf">test_flood_on_roads</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Jakarta flood (raster) impact on roads calculated correctly</span>
+        <span class="sd">&quot;&quot;&quot;Jakarta flood impact on roads calculated correctly</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">floods</span> <span class="o">=</span> <span class="s">&#39;Flood_Current_Depth_Jakarta_geographic.asc&#39;</span>
         <span class="n">roads</span> <span class="o">=</span> <span class="s">&#39;indonesia_highway_sample.shp&#39;</span>
@@ -2718,7 +2285,7 @@
                              <span class="n">impact_fcn</span><span class="o">=</span><span class="n">IF</span><span class="p">)</span>
         <span class="c"># FIXME (Ole): To do when road functionality is done</span>
 
-    <span class="n">test_flood_on_roads</span><span class="o">.</span><span class="n">slow</span> <span class="o">=</span> <span class="bp">True</span>
+    <span class="n">test_flood_on_roads</span><span class="o">.</span><span class="n">slow</span> <span class="o">=</span> <span class="mi">1</span>
 
     <span class="k">def</span> <span class="nf">test_erf</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Test ERF approximation</span>
@@ -2862,7 +2429,7 @@
 <div id="searchbox" style="display: none">
   <h3>Quick search</h3>
     <form class="search" action="../../../search.html" method="get">
-      <input type="text" name="q" />
+      <input type="text" name="q" size="18" />
       <input type="submit" value="Go" />
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
@@ -2897,7 +2464,7 @@
 
     <div class="footer">
         &copy; Copyright 2012, BNPB/AIFDR/GFDRR.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.1.
     </div>
     <!-- cloud_sptheme 1.3 -->
   </body>

@@ -4,17 +4,14 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
-
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>safe.impact_functions.inundation.flood_OSM_building_impact &mdash; InaSAFE 0.5.0-alpha documentation</title>
-    
+    <title>safe.impact_functions.inundation.flood_OSM_building_impact &mdash; InaSAFE v0.5.0-alpha documentation</title>
     <link rel="stylesheet" href="../../../../_static/cloud.css" type="text/css" />
     <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
-    <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Noticia+Text|Droid+Sans+Mono" type="text/css" />
-    
+    <link rel="stylesheet" href="../../../../http://fonts.googleapis.com/css?family=Noticia+Text|Droid+Sans+Mono" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../../',
@@ -29,7 +26,7 @@
     <script type="text/javascript" src="../../../../_static/doctools.js"></script>
     <script type="text/javascript" src="../../../../_static/jquery.cookie.js"></script>
     <script type="text/javascript" src="../../../../_static/toggle_sections.js"></script>
-    <link rel="top" title="InaSAFE 0.5.0-alpha documentation" href="../../../../index.html" />
+    <link rel="top" title="InaSAFE v0.5.0-alpha documentation" href="../../../../index.html" />
     <link rel="up" title="Module code" href="../../../index.html" /> 
   </head>
   <body>
@@ -66,7 +63,6 @@
 <span class="kn">from</span> <span class="nn">safe.common.utilities</span> <span class="kn">import</span> <span class="n">ugettext</span> <span class="k">as</span> <span class="n">_</span>
 <span class="kn">from</span> <span class="nn">safe.common.tables</span> <span class="kn">import</span> <span class="n">Table</span><span class="p">,</span> <span class="n">TableRow</span>
 <span class="kn">from</span> <span class="nn">safe.common.dynamic_translations</span> <span class="kn">import</span> <span class="n">names</span> <span class="k">as</span> <span class="n">internationalised_values</span>
-<span class="kn">from</span> <span class="nn">safe.engine.interpolation</span> <span class="kn">import</span> <span class="n">assign_hazard_values_to_exposure_data</span>
 
 
 <div class="viewcode-block" id="FloodBuildingImpactFunction"><a class="viewcode-back" href="../../../../api-docs/safe/impact_functions/inundation/flood_OSM_building_impact.html#safe.impact_functions.inundation.flood_OSM_building_impact.FloodBuildingImpactFunction">[docs]</a><span class="k">class</span> <span class="nc">FloodBuildingImpactFunction</span><span class="p">(</span><span class="n">FunctionProvider</span><span class="p">):</span>
@@ -97,15 +93,13 @@
                                 <span class="n">E</span><span class="o">.</span><span class="n">get_name</span><span class="p">(),</span>
                                 <span class="bp">self</span><span class="p">)</span>
 
-        <span class="c"># Determine attribute name for hazard levels</span>
-        <span class="k">if</span> <span class="n">H</span><span class="o">.</span><span class="n">is_raster</span><span class="p">:</span>
-            <span class="n">hazard_attribute</span> <span class="o">=</span> <span class="s">&#39;depth&#39;</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">hazard_attribute</span> <span class="o">=</span> <span class="s">&#39;FLOODPRONE&#39;</span>
-
         <span class="c"># Interpolate hazard level to building locations</span>
-        <span class="n">I</span> <span class="o">=</span> <span class="n">assign_hazard_values_to_exposure_data</span><span class="p">(</span><span class="n">H</span><span class="p">,</span> <span class="n">E</span><span class="p">,</span>
-                                             <span class="n">attribute_name</span><span class="o">=</span><span class="n">hazard_attribute</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">H</span><span class="o">.</span><span class="n">is_raster</span><span class="p">:</span>
+            <span class="n">I</span> <span class="o">=</span> <span class="n">H</span><span class="o">.</span><span class="n">interpolate</span><span class="p">(</span><span class="n">E</span><span class="p">,</span> <span class="n">attribute_name</span><span class="o">=</span><span class="s">&#39;depth&#39;</span><span class="p">)</span>
+            <span class="n">hazard_type</span> <span class="o">=</span> <span class="s">&#39;depth&#39;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">I</span> <span class="o">=</span> <span class="n">H</span><span class="o">.</span><span class="n">interpolate</span><span class="p">(</span><span class="n">E</span><span class="p">)</span>
+            <span class="n">hazard_type</span> <span class="o">=</span> <span class="s">&#39;floodprone&#39;</span>
 
         <span class="c"># Extract relevant exposure data</span>
         <span class="n">attribute_names</span> <span class="o">=</span> <span class="n">I</span><span class="o">.</span><span class="n">get_attribute_names</span><span class="p">()</span>
@@ -117,11 +111,11 @@
         <span class="n">buildings</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="n">affected_buildings</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">N</span><span class="p">):</span>
-            <span class="k">if</span> <span class="n">hazard_attribute</span> <span class="o">==</span> <span class="s">&#39;depth&#39;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">hazard_type</span> <span class="o">==</span> <span class="s">&#39;depth&#39;</span><span class="p">:</span>
                 <span class="c"># Get the interpolated depth</span>
                 <span class="n">x</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">attributes</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="s">&#39;depth&#39;</span><span class="p">])</span>
                 <span class="n">x</span> <span class="o">=</span> <span class="n">x</span> <span class="o">&gt;</span> <span class="n">threshold</span>
-            <span class="k">elif</span> <span class="n">hazard_attribute</span> <span class="o">==</span> <span class="s">&#39;FLOODPRONE&#39;</span><span class="p">:</span>
+            <span class="k">elif</span> <span class="n">hazard_type</span> <span class="o">==</span> <span class="s">&#39;floodprone&#39;</span><span class="p">:</span>
                 <span class="c"># Use interpolated polygon attribute</span>
                 <span class="n">atts</span> <span class="o">=</span> <span class="n">attributes</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
 
@@ -143,7 +137,7 @@
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="n">_</span><span class="p">(</span><span class="s">&#39;Unknown hazard type </span><span class="si">%s</span><span class="s">. &#39;</span>
                          <span class="s">&#39;Must be either &quot;depth&quot; or &quot;floodprone&quot;&#39;</span><span class="p">)</span>
-                       <span class="o">%</span> <span class="n">hazard_attribute</span><span class="p">)</span>
+                       <span class="o">%</span> <span class="n">hazard_type</span><span class="p">)</span>
                 <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
             <span class="c"># Count affected buildings by usage type if available</span>
@@ -244,9 +238,9 @@
         <span class="n">table_body</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">TableRow</span><span class="p">(</span><span class="n">_</span><span class="p">(</span><span class="s">&#39;Are the critical facilities still &#39;</span>
                                      <span class="s">&#39;open?&#39;</span><span class="p">)))</span>
 
-        <span class="n">table_body</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">TableRow</span><span class="p">(</span><span class="n">_</span><span class="p">(</span><span class="s">&#39;Notes&#39;</span><span class="p">),</span> <span class="n">header</span><span class="o">=</span><span class="bp">True</span><span class="p">))</span>
+        <span class="n">table_body</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">TableRow</span><span class="p">(</span><span class="n">_</span><span class="p">(</span><span class="s">&#39;Notes:&#39;</span><span class="p">),</span> <span class="n">header</span><span class="o">=</span><span class="bp">True</span><span class="p">))</span>
         <span class="n">assumption</span> <span class="o">=</span> <span class="n">_</span><span class="p">(</span><span class="s">&#39;Buildings are said to be flooded when &#39;</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">hazard_attribute</span> <span class="o">==</span> <span class="s">&#39;depth&#39;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">hazard_type</span> <span class="o">==</span> <span class="s">&#39;depth&#39;</span><span class="p">:</span>
             <span class="n">assumption</span> <span class="o">+=</span> <span class="n">_</span><span class="p">(</span><span class="s">&#39;flood levels exceed </span><span class="si">%.1f</span><span class="s"> m&#39;</span><span class="p">)</span> <span class="o">%</span> <span class="n">threshold</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">assumption</span> <span class="o">+=</span> <span class="n">_</span><span class="p">(</span><span class="s">&#39;in areas marked as flood prone&#39;</span><span class="p">)</span>
@@ -287,7 +281,7 @@
 <div id="searchbox" style="display: none">
   <h3>Quick search</h3>
     <form class="search" action="../../../../search.html" method="get">
-      <input type="text" name="q" />
+      <input type="text" name="q" size="18" />
       <input type="submit" value="Go" />
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
@@ -322,7 +316,7 @@
 
     <div class="footer">
         &copy; Copyright 2012, BNPB/AIFDR/GFDRR.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.1.
     </div>
     <!-- cloud_sptheme 1.3 -->
   </body>

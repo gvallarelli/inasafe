@@ -4,17 +4,14 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
-
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>safe.storage.raster &mdash; InaSAFE 0.5.0-alpha documentation</title>
-    
+    <title>safe.storage.raster &mdash; InaSAFE v0.5.0-alpha documentation</title>
     <link rel="stylesheet" href="../../../_static/cloud.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
-    <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Noticia+Text|Droid+Sans+Mono" type="text/css" />
-    
+    <link rel="stylesheet" href="../../../http://fonts.googleapis.com/css?family=Noticia+Text|Droid+Sans+Mono" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../',
@@ -29,7 +26,7 @@
     <script type="text/javascript" src="../../../_static/doctools.js"></script>
     <script type="text/javascript" src="../../../_static/jquery.cookie.js"></script>
     <script type="text/javascript" src="../../../_static/toggle_sections.js"></script>
-    <link rel="top" title="InaSAFE 0.5.0-alpha documentation" href="../../../index.html" />
+    <link rel="top" title="InaSAFE v0.5.0-alpha documentation" href="../../../index.html" />
     <link rel="up" title="Module code" href="../../index.html" /> 
   </head>
   <body>
@@ -59,7 +56,7 @@
           <div class="body">
             
   <h1>Source code for safe.storage.raster</h1><div class="highlight"><pre>
-<span class="sd">&quot;&quot;&quot;**Class Raster**</span>
+<span class="sd">&quot;&quot;&quot;Class Raster</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
 <span class="kn">import</span> <span class="nn">os</span>
@@ -70,12 +67,11 @@
 <span class="kn">from</span> <span class="nn">safe.common.utilities</span> <span class="kn">import</span> <span class="n">verify</span>
 <span class="kn">from</span> <span class="nn">safe.common.numerics</span> <span class="kn">import</span> <span class="n">nanallclose</span><span class="p">,</span> <span class="n">geotransform2axes</span><span class="p">,</span> <span class="n">grid2points</span>
 <span class="kn">from</span> <span class="nn">safe.common.dynamic_translations</span> <span class="kn">import</span> <span class="n">names</span> <span class="k">as</span> <span class="n">internationalised_titles</span>
-<span class="kn">from</span> <span class="nn">safe.common.exceptions</span> <span class="kn">import</span> <span class="n">ReadLayerError</span><span class="p">,</span> <span class="n">WriteLayerError</span>
-<span class="kn">from</span> <span class="nn">safe.common.exceptions</span> <span class="kn">import</span> <span class="n">GetDataError</span><span class="p">,</span> <span class="n">InaSAFEError</span>
 
 <span class="kn">from</span> <span class="nn">layer</span> <span class="kn">import</span> <span class="n">Layer</span>
 <span class="kn">from</span> <span class="nn">vector</span> <span class="kn">import</span> <span class="n">Vector</span>
 <span class="kn">from</span> <span class="nn">projection</span> <span class="kn">import</span> <span class="n">Projection</span>
+<span class="kn">from</span> <span class="nn">interpolation</span> <span class="kn">import</span> <span class="n">interpolate_raster_vector</span>
 
 <span class="kn">from</span> <span class="nn">utilities</span> <span class="kn">import</span> <span class="n">DRIVER_MAP</span>
 <span class="kn">from</span> <span class="nn">utilities</span> <span class="kn">import</span> <span class="n">read_keywords</span>
@@ -91,35 +87,34 @@
                  <span class="n">name</span><span class="o">=</span><span class="s">&#39;&#39;</span><span class="p">,</span> <span class="n">keywords</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">style_info</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Initialise object with either data or filename</span>
 
-<span class="sd">        Args:</span>
-<span class="sd">            * data: Can be either</span>
-<span class="sd">                  * a filename of a raster file format known to GDAL</span>
-<span class="sd">                  * an MxN array of raster data</span>
-<span class="sd">                  * None (FIXME (Ole): Remove this option)</span>
-<span class="sd">            * projection: Geospatial reference in WKT format.</span>
+<span class="sd">        Input</span>
+<span class="sd">            data: Can be either</span>
+<span class="sd">                * a filename of a raster file format known to GDAL</span>
+<span class="sd">                * an MxN array of raster data</span>
+<span class="sd">                * None (FIXME (Ole): Remove this option)</span>
+<span class="sd">            projection: Geospatial reference in WKT format.</span>
+<span class="sd">                        Only used if data is provide as a numeric array,</span>
+<span class="sd">                        if None, WGS84 geographic is assumed</span>
+<span class="sd">            geotransform: GDAL geotransform (6-tuple).</span>
+<span class="sd">                          (top left x, w-e pixel resolution, rotation,</span>
+<span class="sd">                           top left y, rotation, n-s pixel resolution).</span>
+<span class="sd">                          See e.g. http://www.gdal.org/gdal_tutorial.html</span>
 <span class="sd">                          Only used if data is provide as a numeric array,</span>
-<span class="sd">                          if None, WGS84 geographic is assumed</span>
-<span class="sd">            * geotransform: GDAL geotransform (6-tuple).</span>
-<span class="sd">                            (top left x, w-e pixel resolution, rotation,</span>
-<span class="sd">                             top left y, rotation, n-s pixel resolution).</span>
-<span class="sd">                            See e.g. http://www.gdal.org/gdal_tutorial.html</span>
-<span class="sd">                            Only used if data is provide as a numeric array,</span>
-<span class="sd">            * name: Optional name for layer.</span>
-<span class="sd">                    Only used if data is provide as a numeric array,</span>
-<span class="sd">            * keywords: Optional dictionary with keywords that describe the</span>
-<span class="sd">                        layer. When the layer is stored, these keywords will</span>
-<span class="sd">                        be written into an associated file with extension</span>
-<span class="sd">                        .keywords.</span>
+<span class="sd">            name: Optional name for layer.</span>
+<span class="sd">                  Only used if data is provide as a numeric array,</span>
+<span class="sd">            keywords: Optional dictionary with keywords that describe the</span>
+<span class="sd">                      layer. When the layer is stored, these keywords will</span>
+<span class="sd">                      be written into an associated file with extension</span>
+<span class="sd">                      .keywords.</span>
 
-<span class="sd">                        Keywords can for example be used to display text</span>
-<span class="sd">                        about the layer in a web application.</span>
-<span class="sd">            * style_info: Dictionary with information about how this layer</span>
-<span class="sd">                          should be styled. See impact_functions/styles.py</span>
-<span class="sd">                          for examples.</span>
+<span class="sd">                      Keywords can for example be used to display text</span>
+<span class="sd">                      about the layer in a web application.</span>
+<span class="sd">            style_info: Dictionary with information about how this layer</span>
+<span class="sd">                        should be styled. See impact_functions/styles.py</span>
+<span class="sd">                        for examples.</span>
 
-<span class="sd">        Note:</span>
-<span class="sd">            If data is a filename, all other arguments are ignored</span>
-<span class="sd">            as they will be inferred from the file.</span>
+<span class="sd">        Note that if data is a filename, all other arguments are ignored</span>
+<span class="sd">        as they will be inferred from the file.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="c"># Invoke common layer constructor</span>
@@ -165,10 +160,10 @@
     <span class="k">def</span> <span class="nf">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">,</span> <span class="n">rtol</span><span class="o">=</span><span class="mf">1.0e-5</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1.0e-8</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Override &#39;==&#39; to allow comparison with other raster objecs</span>
 
-<span class="sd">        Args:</span>
-<span class="sd">           * other: Raster instance to compare to</span>
-<span class="sd">           * rtol, atol: Relative and absolute tolerance.</span>
-<span class="sd">                         See numpy.allclose for details</span>
+<span class="sd">        Input</span>
+<span class="sd">           other: Raster instance to compare to</span>
+<span class="sd">           rtol, atol: Relative and absolute tolerance.</span>
+<span class="sd">                       See numpy.allclose for details</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="c"># Check type</span>
@@ -214,7 +209,7 @@
                 <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;File </span><span class="si">%s</span><span class="s"> exists, but could not be read. &#39;</span>
                        <span class="s">&#39;Please check if the file can be opened with &#39;</span>
                        <span class="s">&#39;e.g. qgis or gdalinfo&#39;</span> <span class="o">%</span> <span class="n">filename</span><span class="p">)</span>
-            <span class="k">raise</span> <span class="n">ReadLayerError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
         <span class="c"># Record raster metadata from file</span>
         <span class="n">basename</span><span class="p">,</span> <span class="n">ext</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
@@ -228,7 +223,7 @@
             <span class="k">except</span> <span class="ne">IOError</span><span class="p">:</span>
                 <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;Projection file not found for </span><span class="si">%s</span><span class="s">. You must supply &#39;</span>
                        <span class="s">&#39;a projection file with extension .prj&#39;</span> <span class="o">%</span> <span class="n">filename</span><span class="p">)</span>
-                <span class="k">raise</span> <span class="n">ReadLayerError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
         <span class="c"># Look for any keywords</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">keywords</span> <span class="o">=</span> <span class="n">read_keywords</span><span class="p">(</span><span class="n">basename</span> <span class="o">+</span> <span class="s">&#39;.keywords&#39;</span><span class="p">)</span>
@@ -262,19 +257,19 @@
                    <span class="s">&#39;Only the first band will currently be &#39;</span>
                    <span class="s">&#39;used.&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">number_of_bands</span><span class="p">))</span>
             <span class="c"># FIXME(Ole): Let us use python warnings here</span>
-            <span class="k">raise</span> <span class="n">ReadLayerError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
         <span class="c"># Get first band.</span>
         <span class="n">band</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">band</span> <span class="o">=</span> <span class="n">fid</span><span class="o">.</span><span class="n">GetRasterBand</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">band</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
             <span class="n">msg</span> <span class="o">=</span> <span class="s">&#39;Could not read raster band from </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="n">filename</span>
-            <span class="k">raise</span> <span class="n">ReadLayerError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 </div>
 <div class="viewcode-block" id="Raster.write_to_file"><a class="viewcode-back" href="../../../api-docs/safe/storage/raster.html#safe.storage.raster.Raster.write_to_file">[docs]</a>    <span class="k">def</span> <span class="nf">write_to_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Save raster data to file</span>
 
-<span class="sd">        Args:</span>
-<span class="sd">            * filename: filename with extension .tif</span>
+<span class="sd">        Input</span>
+<span class="sd">            filename: filename with extension .tif</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="c"># Check file format</span>
@@ -300,7 +295,7 @@
         <span class="k">if</span> <span class="n">fid</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
             <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;Gdal could not create filename </span><span class="si">%s</span><span class="s"> using &#39;</span>
                    <span class="s">&#39;format </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">file_format</span><span class="p">))</span>
-            <span class="k">raise</span> <span class="n">WriteLayerError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
         <span class="c"># Write metada</span>
         <span class="n">fid</span><span class="o">.</span><span class="n">SetProjection</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">projection</span><span class="p">))</span>
@@ -312,37 +307,68 @@
         <span class="c"># Write keywords if any</span>
         <span class="n">write_keywords</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">keywords</span><span class="p">,</span> <span class="n">basename</span> <span class="o">+</span> <span class="s">&#39;.keywords&#39;</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="Raster.get_data"><a class="viewcode-back" href="../../../api-docs/safe/storage/raster.html#safe.storage.raster.Raster.get_data">[docs]</a>    <span class="k">def</span> <span class="nf">get_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nan</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">scaling</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">copy</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span>
-                 <span class="n">rtol</span><span class="o">=</span><span class="mf">1.0e-2</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1.0e-6</span><span class="p">):</span>
+<div class="viewcode-block" id="Raster.interpolate"><a class="viewcode-back" href="../../../api-docs/safe/storage/raster.html#safe.storage.raster.Raster.interpolate">[docs]</a>    <span class="k">def</span> <span class="nf">interpolate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">attribute_name</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Interpolate values of this raster layer to other layer</span>
+
+<span class="sd">        Input</span>
+<span class="sd">            X: Layer object defining target</span>
+<span class="sd">            attribute_name: Optional name of interpolated layer.</span>
+<span class="sd">                            If attribute_name is None,</span>
+<span class="sd">                            the name of self is used.</span>
+
+<span class="sd">        Output</span>
+<span class="sd">            Y: Layer object with values of this raster layer interpolated to</span>
+<span class="sd">               geometry of input layer X</span>
+
+<span class="sd">        Note: If target geometry is polygon, data will be interpolated to</span>
+<span class="sd">        its centroids and the output is a point data set.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="n">X</span><span class="o">.</span><span class="n">is_raster</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_geotransform</span><span class="p">()</span> <span class="o">!=</span> <span class="n">X</span><span class="o">.</span><span class="n">get_geotransform</span><span class="p">():</span>
+                <span class="c"># Need interpolation between grids</span>
+                <span class="n">msg</span> <span class="o">=</span> <span class="s">&#39;Intergrid interpolation not yet implemented&#39;</span>
+                <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c"># Rasters are aligned, no need to interpolate</span>
+                <span class="k">return</span> <span class="bp">self</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c"># Interpolate this raster layer to geometry of X</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;Name must be either a string or None. I got </span><span class="si">%s</span><span class="s">&#39;</span>
+                   <span class="o">%</span> <span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">X</span><span class="p">)))[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+            <span class="n">verify</span><span class="p">(</span><span class="n">attribute_name</span> <span class="ow">is</span> <span class="bp">None</span>
+                   <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">attribute_name</span><span class="p">,</span> <span class="nb">basestring</span><span class="p">),</span> <span class="n">msg</span><span class="p">)</span>
+
+            <span class="k">return</span> <span class="n">interpolate_raster_vector</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span>
+                                             <span class="n">attribute_name</span><span class="o">=</span><span class="n">attribute_name</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="Raster.get_data"><a class="viewcode-back" href="../../../api-docs/safe/storage/raster.html#safe.storage.raster.Raster.get_data">[docs]</a>    <span class="k">def</span> <span class="nf">get_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nan</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">scaling</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">copy</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Get raster data as numeric array</span>
 
-<span class="sd">        Args:</span>
-<span class="sd">            * nan: Optional flag controlling handling of missing values.</span>
-<span class="sd">                   If nan is True (default), nodata values will be replaced</span>
-<span class="sd">                   with numpy.nan</span>
-<span class="sd">                   If keyword nan has a numeric value, nodata values will</span>
-<span class="sd">                   be replaced by that value. E.g. to set missing values to 0,</span>
-<span class="sd">                   do get_data(nan=0.0)</span>
-<span class="sd">            * scaling: Optional flag controlling if data is to be scaled</span>
-<span class="sd">                       if it has been resampled. Admissible values are</span>
-<span class="sd">                       False: data is retrieved without modification.</span>
-<span class="sd">                       True: Data is rescaled based on the squared ratio</span>
-<span class="sd">                             between its current and native resolution. This</span>
-<span class="sd">                             is typically required if raster data represents a</span>
-<span class="sd">                             density such as population per km^2</span>
-<span class="sd">                       None: The behaviour will depend on the keyword</span>
-<span class="sd">                             &quot;population&quot; associated with the layer. If</span>
-<span class="sd">                             it is &quot;density&quot;, scaling will be applied</span>
-<span class="sd">                             otherwise not. This is the default.</span>
-<span class="sd">                       scalar value: If scaling takes a numerical scalar value,</span>
-<span class="sd">                                     that will be use to scale the data</span>
-<span class="sd">        * copy (optional): If present and True return copy</span>
-<span class="sd">        * rtol, atol: Tolerances as to how much difference is accepted</span>
-<span class="sd">                    between dx and dy when scaling is True.</span>
+<span class="sd">        Input</span>
+<span class="sd">            nan: Optional flag controlling handling of missing values.</span>
+<span class="sd">                 If nan is True (default), nodata values will be replaced</span>
+<span class="sd">                 with numpy.nan</span>
+<span class="sd">                 If keyword nan has a numeric value, nodata values will</span>
+<span class="sd">                 be replaced by that value. E.g. to set missing values to 0,</span>
+<span class="sd">                 do get_data(nan=0.0)</span>
+<span class="sd">            scaling: Optional flag controlling if data is to be scaled</span>
+<span class="sd">                     if it has been resampled. Admissible values are</span>
+<span class="sd">                     False: data is retrieved without modification.</span>
+<span class="sd">                     True: Data is rescaled based on the squared ratio between</span>
+<span class="sd">                           its current and native resolution. This is typically</span>
+<span class="sd">                           required if raster data represents a density</span>
+<span class="sd">                           such as population per km^2</span>
+<span class="sd">                     None: The behaviour will depend on the keyword</span>
+<span class="sd">                           &quot;population&quot; associated with the layer. If</span>
+<span class="sd">                           it is &quot;density&quot;, scaling will be applied</span>
+<span class="sd">                           otherwise not. This is the default.</span>
+<span class="sd">                     scalar value: If scaling takes a numerical scalar value,</span>
+<span class="sd">                                   that will be use to scale the data</span>
+<span class="sd">        copy (optional): If present and True return copy</span>
 
-<span class="sd">        Note:</span>
-<span class="sd">            Scaling does not currently work with projected layers.</span>
-<span class="sd">            See issue #123</span>
+<span class="sd">        NOTE: Scaling does not currently work with projected layers.</span>
+<span class="sd">        See issue #123</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s">&#39;data&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
@@ -372,7 +398,6 @@
             <span class="k">if</span> <span class="n">nan</span> <span class="ow">is</span> <span class="bp">True</span><span class="p">:</span>
                 <span class="n">NAN</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">nan</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="c"># E.g. if nan is a number</span>
                 <span class="n">NAN</span> <span class="o">=</span> <span class="n">nan</span>
 
             <span class="c"># Replace NODATA_VALUE with NaN</span>
@@ -395,10 +420,8 @@
         <span class="k">elif</span> <span class="n">scaling</span> <span class="ow">is</span> <span class="bp">True</span><span class="p">:</span>
             <span class="c"># Calculate scaling based on resolution change</span>
 
-            <span class="n">actual_res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_resolution</span><span class="p">(</span><span class="n">isotropic</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
-                                             <span class="n">rtol</span><span class="o">=</span><span class="n">rtol</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="n">atol</span><span class="p">)</span>
-            <span class="n">native_res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_resolution</span><span class="p">(</span><span class="n">isotropic</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
-                                             <span class="n">rtol</span><span class="o">=</span><span class="n">rtol</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="n">atol</span><span class="p">,</span> <span class="n">native</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+            <span class="n">actual_res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_resolution</span><span class="p">(</span><span class="n">isotropic</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+            <span class="n">native_res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_resolution</span><span class="p">(</span><span class="n">isotropic</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">native</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
             <span class="c">#print</span>
             <span class="c">#print &#39;Actual res&#39;, actual_res</span>
             <span class="c">#print &#39;Native res&#39;, native_res</span>
@@ -408,11 +431,11 @@
             <span class="c"># See if scaling can work as a scalar value</span>
             <span class="k">try</span><span class="p">:</span>
                 <span class="n">sigma</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">scaling</span><span class="p">)</span>
-            <span class="k">except</span> <span class="ne">ValueError</span><span class="p">,</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">except</span> <span class="ne">Exception</span><span class="p">,</span> <span class="n">e</span><span class="p">:</span>
                 <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;Keyword scaling &quot;</span><span class="si">%s</span><span class="s">&quot; could not be converted to a &#39;</span>
                        <span class="s">&#39;number. It must be either True, False, None or a &#39;</span>
                        <span class="s">&#39;number: </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">scaling</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)))</span>
-                <span class="k">raise</span> <span class="n">GetDataError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
         <span class="c"># Return possibly scaled data</span>
         <span class="k">return</span> <span class="n">sigma</span> <span class="o">*</span> <span class="n">A</span>
@@ -420,13 +443,13 @@
 <div class="viewcode-block" id="Raster.get_geotransform"><a class="viewcode-back" href="../../../api-docs/safe/storage/raster.html#safe.storage.raster.Raster.get_geotransform">[docs]</a>    <span class="k">def</span> <span class="nf">get_geotransform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">copy</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Return geotransform for this raster layer</span>
 
-<span class="sd">        Returns:</span>
-<span class="sd">        * geotransform: 6 digit vector</span>
-<span class="sd">                        (top left x, w-e pixel resolution, rotation,</span>
-<span class="sd">                         top left y, rotation, n-s pixel resolution).</span>
+<span class="sd">        Output</span>
+<span class="sd">        geotransform: 6 digit vector</span>
+<span class="sd">                      (top left x, w-e pixel resolution, rotation,</span>
+<span class="sd">                       top left y, rotation, n-s pixel resolution).</span>
 
-<span class="sd">                         See e.g. http://www.gdal.org/gdal_tutorial.html</span>
-<span class="sd">        * copy (optional): If present and True return copy</span>
+<span class="sd">                       See e.g. http://www.gdal.org/gdal_tutorial.html</span>
+<span class="sd">        copy (optional): If present and True return copy</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">if</span> <span class="n">copy</span><span class="p">:</span>
@@ -437,17 +460,16 @@
 <div class="viewcode-block" id="Raster.get_geometry"><a class="viewcode-back" href="../../../api-docs/safe/storage/raster.html#safe.storage.raster.Raster.get_geometry">[docs]</a>    <span class="k">def</span> <span class="nf">get_geometry</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Return longitudes and latitudes (the axes) for grid.</span>
 
-<span class="sd">        Note:</span>
-<span class="sd">            Return two vectors (longitudes and latitudes) corresponding to</span>
-<span class="sd">            grid. The values are offset by half a pixel size to correspond to</span>
-<span class="sd">            pixel registration.</span>
+<span class="sd">        Return two vectors (longitudes and latitudes) corresponding to</span>
+<span class="sd">        grid. The values are offset by half a pixel size to correspond to</span>
+<span class="sd">        pixel registration.</span>
 
-<span class="sd">            I.e. If the grid origin (top left corner) is (105, 10) and the</span>
-<span class="sd">            resolution is 1 degrees in each direction, then the vectors will</span>
-<span class="sd">            take the form</span>
+<span class="sd">        I.e. If the grid origin (top left corner) is (105, 10) and the</span>
+<span class="sd">        resolution is 1 degrees in each direction, then the vectors will</span>
+<span class="sd">        take the form</span>
 
-<span class="sd">            longitudes = [100.5, 101.5, ..., 109.5]</span>
-<span class="sd">            latitudes = [0.5, 1.5, ..., 9.5]</span>
+<span class="sd">        longitudes = [100.5, 101.5, ..., 109.5]</span>
+<span class="sd">        latitudes = [0.5, 1.5, ..., 9.5]</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="c"># Get parameters for axes</span>
@@ -480,11 +502,9 @@
 
 <div class="viewcode-block" id="Raster.get_extrema"><a class="viewcode-back" href="../../../api-docs/safe/storage/raster.html#safe.storage.raster.Raster.get_extrema">[docs]</a>    <span class="k">def</span> <span class="nf">get_extrema</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Get min and max from raster</span>
-<span class="sd">        Note:</span>
-<span class="sd">            If raster has a nominated no_data value, this is ignored.</span>
+<span class="sd">        If raster has a nominated no_data value, this is ignored.</span>
 
-<span class="sd">        Returns:</span>
-<span class="sd">            min, max</span>
+<span class="sd">        Return min, max</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="n">A</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_data</span><span class="p">(</span><span class="n">nan</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
@@ -496,8 +516,7 @@
 <div class="viewcode-block" id="Raster.get_nodata_value"><a class="viewcode-back" href="../../../api-docs/safe/storage/raster.html#safe.storage.raster.Raster.get_nodata_value">[docs]</a>    <span class="k">def</span> <span class="nf">get_nodata_value</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Get the internal representation of NODATA</span>
 
-<span class="sd">        Note:</span>
-<span class="sd">            If the internal value is None, the standard -9999 is assumed</span>
+<span class="sd">        If the internal value is None, the standard -9999 is assumed</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s">&#39;band&#39;</span><span class="p">):</span>
@@ -554,8 +573,7 @@
 <div class="viewcode-block" id="Raster.get_bounding_box"><a class="viewcode-back" href="../../../api-docs/safe/storage/raster.html#safe.storage.raster.Raster.get_bounding_box">[docs]</a>    <span class="k">def</span> <span class="nf">get_bounding_box</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Get bounding box coordinates for raster layer</span>
 
-<span class="sd">        Note:</span>
-<span class="sd">            Format is [West, South, East, North]</span>
+<span class="sd">        Format is [West, South, East, North]</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">return</span> <span class="n">geotransform2bbox</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">geotransform</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">columns</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">rows</span><span class="p">)</span>
@@ -564,13 +582,13 @@
                        <span class="n">rtol</span><span class="o">=</span><span class="mf">1.0e-4</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1.0e-8</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Get raster resolution as a 2-tuple (resx, resy)</span>
 
-<span class="sd">        Args:</span>
-<span class="sd">            * isotropic: If True, verify that dx == dy and return dx</span>
-<span class="sd">                         If False return 2-tuple (dx, dy)</span>
-<span class="sd">            * native: Optional flag. If True, return native resolution if</span>
-<span class="sd">                                     available. Otherwise return actual.</span>
-<span class="sd">            * rtol, atol: Tolerances as to how much difference is accepted</span>
-<span class="sd">                          between dx and dy if isotropic is True.</span>
+<span class="sd">        Input</span>
+<span class="sd">            isotropic: If True, verify that dx == dy and return dx</span>
+<span class="sd">                       If False return 2-tuple (dx, dy)</span>
+<span class="sd">            native: Optional flag. If True, return native resolution if</span>
+<span class="sd">                                   available. Otherwise return actual.</span>
+<span class="sd">            rtol, atol: Tolerances as to how much difference is accepted</span>
+<span class="sd">                        between dx and dy if isotropic is True.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="c"># Get actual resolution first</span>
@@ -581,7 +599,7 @@
         <span class="k">except</span> <span class="ne">Exception</span><span class="p">,</span> <span class="n">e</span><span class="p">:</span>
             <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;Resolution for layer </span><span class="si">%s</span><span class="s"> could not be obtained: </span><span class="si">%s</span><span class="s"> &#39;</span>
                    <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_name</span><span class="p">(),</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)))</span>
-            <span class="k">raise</span> <span class="n">InaSAFEError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">native</span><span class="p">:</span>
             <span class="n">keywords</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_keywords</span><span class="p">()</span>
@@ -621,9 +639,9 @@
 <div class="viewcode-block" id="Raster.to_vector_points"><a class="viewcode-back" href="../../../api-docs/safe/storage/raster.html#safe.storage.raster.Raster.to_vector_points">[docs]</a>    <span class="k">def</span> <span class="nf">to_vector_points</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Convert raster grid to vector point data</span>
 
-<span class="sd">        Returns:</span>
-<span class="sd">           * coordinates: Nx2 array of x, y (lon, lat) coordinates</span>
-<span class="sd">           * values: N array of corresponding grid values</span>
+<span class="sd">        Output</span>
+<span class="sd">           coordinates: Nx2 array of x, y (lon, lat) coordinates</span>
+<span class="sd">           values: N array of corresponding grid values</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="c"># Convert grid data to point data</span>
@@ -636,10 +654,9 @@
 <div class="viewcode-block" id="Raster.to_vector_layer"><a class="viewcode-back" href="../../../api-docs/safe/storage/raster.html#safe.storage.raster.Raster.to_vector_layer">[docs]</a>    <span class="k">def</span> <span class="nf">to_vector_layer</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Convert raster grid to vector point data</span>
 
-<span class="sd">        Returns:</span>
-<span class="sd">            a vector layer object with data points corresponding to</span>
-<span class="sd">            grid points. The order is row-major which means that the</span>
-<span class="sd">            x (longitude) direction is varying the fastest.</span>
+<span class="sd">        Return a vector layer object with data points corresponding to</span>
+<span class="sd">        grid points. The order is row-major which means that the</span>
+<span class="sd">        x (longitude) direction is varying the fastest.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="c"># Get vector data</span>
@@ -666,7 +683,7 @@
 <div id="searchbox" style="display: none">
   <h3>Quick search</h3>
     <form class="search" action="../../../search.html" method="get">
-      <input type="text" name="q" />
+      <input type="text" name="q" size="18" />
       <input type="submit" value="Go" />
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
@@ -701,7 +718,7 @@
 
     <div class="footer">
         &copy; Copyright 2012, BNPB/AIFDR/GFDRR.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.1.
     </div>
     <!-- cloud_sptheme 1.3 -->
   </body>

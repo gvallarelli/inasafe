@@ -4,17 +4,14 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
-
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>safe.storage.clipping &mdash; InaSAFE 0.5.0-alpha documentation</title>
-    
+    <title>safe.storage.clipping &mdash; InaSAFE v0.5.0-alpha documentation</title>
     <link rel="stylesheet" href="../../../_static/cloud.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
-    <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Noticia+Text|Droid+Sans+Mono" type="text/css" />
-    
+    <link rel="stylesheet" href="../../../http://fonts.googleapis.com/css?family=Noticia+Text|Droid+Sans+Mono" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../',
@@ -29,7 +26,7 @@
     <script type="text/javascript" src="../../../_static/doctools.js"></script>
     <script type="text/javascript" src="../../../_static/jquery.cookie.js"></script>
     <script type="text/javascript" src="../../../_static/toggle_sections.js"></script>
-    <link rel="top" title="InaSAFE 0.5.0-alpha documentation" href="../../../index.html" />
+    <link rel="top" title="InaSAFE v0.5.0-alpha documentation" href="../../../index.html" />
     <link rel="up" title="Module code" href="../../index.html" /> 
   </head>
   <body>
@@ -66,27 +63,21 @@
 <span class="c">#from safe.common.polygon import clip_lines_by_polygon</span>
 
 
-<span class="c"># FIXME (Ole): Order should be reversed and this should move into</span>
-<span class="c"># interpolation module.</span>
-<span class="c"># Then retire this one</span>
-<span class="c"># I THINK WE CAN RETIRE THIS NOW (3/9/12)</span>
 <div class="viewcode-block" id="clip_raster_by_polygons"><a class="viewcode-back" href="../../../api-docs/safe/storage/clipping.html#safe.storage.clipping.clip_raster_by_polygons">[docs]</a><span class="k">def</span> <span class="nf">clip_raster_by_polygons</span><span class="p">(</span><span class="n">R</span><span class="p">,</span> <span class="n">P</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Separate raster grid points by polygons</span>
 
-<span class="sd">    Args:</span>
-<span class="sd">        * R: Raster layer</span>
-<span class="sd">        * P: Polygon layer</span>
+<span class="sd">    Input</span>
+<span class="sd">        R: Raster layer</span>
+<span class="sd">        P: Polygon layer</span>
 
-<span class="sd">    Returns:</span>
-<span class="sd">        * L: List of point vectors and their associated grid values.</span>
-<span class="sd">             One item for each polygon</span>
+<span class="sd">    Output</span>
+<span class="sd">        L: List of point vectors and their associated grid values.</span>
+<span class="sd">           One item for each polygon</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">res</span> <span class="o">=</span> <span class="n">clip_grid_by_polygons</span><span class="p">(</span><span class="n">R</span><span class="o">.</span><span class="n">get_data</span><span class="p">(),</span>
                                 <span class="n">R</span><span class="o">.</span><span class="n">get_geotransform</span><span class="p">(),</span>
                                 <span class="n">P</span><span class="o">.</span><span class="n">get_geometry</span><span class="p">())</span>
-
-    <span class="c"># Return</span>
     <span class="k">return</span> <span class="n">res</span></div>
 </pre></div>
 
@@ -101,7 +92,7 @@
 <div id="searchbox" style="display: none">
   <h3>Quick search</h3>
     <form class="search" action="../../../search.html" method="get">
-      <input type="text" name="q" />
+      <input type="text" name="q" size="18" />
       <input type="submit" value="Go" />
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
@@ -136,7 +127,7 @@
 
     <div class="footer">
         &copy; Copyright 2012, BNPB/AIFDR/GFDRR.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.1.
     </div>
     <!-- cloud_sptheme 1.3 -->
   </body>

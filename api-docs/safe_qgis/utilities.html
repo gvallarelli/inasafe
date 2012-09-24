@@ -4,17 +4,14 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
-
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Module: safe_qgis.utilities &mdash; InaSAFE 0.5.0-alpha documentation</title>
-    
+    <title>Module: safe_qgis.utilities &mdash; InaSAFE v0.5.0-alpha documentation</title>
     <link rel="stylesheet" href="../../_static/cloud.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-    <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Noticia+Text|Droid+Sans+Mono" type="text/css" />
-    
+    <link rel="stylesheet" href="../../http://fonts.googleapis.com/css?family=Noticia+Text|Droid+Sans+Mono" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
@@ -29,10 +26,10 @@
     <script type="text/javascript" src="../../_static/doctools.js"></script>
     <script type="text/javascript" src="../../_static/jquery.cookie.js"></script>
     <script type="text/javascript" src="../../_static/toggle_sections.js"></script>
-    <link rel="top" title="InaSAFE 0.5.0-alpha documentation" href="../../index.html" />
+    <link rel="top" title="InaSAFE v0.5.0-alpha documentation" href="../../index.html" />
     <link rel="up" title="Package::safe_qgis" href="../safe_qgis.html" />
-    <link rel="next" title="Module: safe_qgis.qgis_interface" href="qgis_interface.html" />
-    <link rel="prev" title="Module: safe_qgis.options_dialog" href="options_dialog.html" /> 
+    <link rel="next" title="Module: safe_qgis.options_dialog_base" href="options_dialog_base.html" />
+    <link rel="prev" title="Module: safe_qgis.impact_functions_doc_base" href="impact_functions_doc_base.html" /> 
   </head>
   <body>
     <div class="relbar-top">
@@ -47,10 +44,10 @@
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
         <li class="right" >
-          <a href="qgis_interface.html" title="Module: safe_qgis.qgis_interface"
+          <a href="options_dialog_base.html" title="Module: safe_qgis.options_dialog_base"
              accesskey="N">next</a> &nbsp; &nbsp;</li>
         <li class="right" >
-          <a href="options_dialog.html" title="Module: safe_qgis.options_dialog"
+          <a href="impact_functions_doc_base.html" title="Module: safe_qgis.impact_functions_doc_base"
              accesskey="P">previous</a> &nbsp; &nbsp;</li>
     <li><a href="../../index.html">Home</a> &raquo;</li>
     <li><a href="../../contents.html">Contents</a> &raquo;</li>
@@ -127,13 +124,15 @@ If not, work it out based on EPSG:4326 representations of its extent</p>
 <dd><p>Get the version of QGIS
 Args:</p>
 <blockquote>
-<div>None</div></blockquote>
+<blockquote>
+None</blockquote>
 <dl class="docutils">
 <dt>Returns:</dt>
 <dd>QGIS Version where 10700 represents QGIS 1.7 etc.</dd>
 <dt>Raises:</dt>
 <dd>None</dd>
 </dl>
+</blockquote>
 </dd></dl>
 
 <dl class="function">
@@ -142,34 +141,23 @@ Args:</p>
 <dd><p>Set QGIS raster style based on InaSAFE style dictionary.</p>
 <p>This function will set both the colour map and the transparency
 for the passed in layer.</p>
-<div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">There is currently a limitation in QGIS in that
-pixel transparency values can not be specified in ranges and
-consequently the opacity is of limited value and seems to
-only work effectively with integer values.</p>
-</div>
-<div class="admonition-todo admonition" id="index-0">
-<p class="first admonition-title">Todo</p>
-<p class="last">Get Tim to implement range based transparency in
-the core QGIS library.</p>
-</div>
 <dl class="docutils">
-<dt>Input</dt>
+<dt>Args:</dt>
 <dd><p class="first">theQgsRasterLayer: Qgis layer
 style: Dictionary of the form as in the example below
 style_classes = [dict(colour=&#8217;#38A800&#8217;, quantity=2, transparency=0),</p>
 <blockquote class="last">
-<div>dict(colour=&#8217;#38A800&#8217;, quantity=5, transparency=1),
+dict(colour=&#8217;#38A800&#8217;, quantity=5, transparency=1),
 dict(colour=&#8217;#79C900&#8217;, quantity=10, transparency=1),
 dict(colour=&#8217;#CEED00&#8217;, quantity=20, transparency=1),
 dict(colour=&#8217;#FFCC00&#8217;, quantity=50, transparency=1),
 dict(colour=&#8217;#FF6600&#8217;, quantity=100, transparency=1),
 dict(colour=&#8217;#FF0000&#8217;, quantity=200, transparency=1),
-dict(colour=&#8217;#7A0000&#8217;, quantity=300, transparency=1)]</div></blockquote>
+dict(colour=&#8217;#7A0000&#8217;, quantity=300, transparency=1)]</blockquote>
 </dd>
-<dt>Output</dt>
-<dd>Sets and saves style for theQgsRasterLayer</dd>
+<dt>Returns:</dt>
+<dd>list: RangeList
+list: TransparencyList</dd>
 </dl>
 </dd></dl>
 
@@ -185,7 +173,7 @@ theStyle: Dictionary of the form as in the example below</p>
 &#8216;style_classes&#8217;:
 [{&#8216;opacity&#8217;: 1, &#8216;max&#8217;: 1.5, &#8216;colour&#8217;: &#8216;#fecc5c&#8217;,</p>
 <blockquote>
-<div>&#8216;min&#8217;: 0.5, &#8216;label&#8217;: &#8216;Low damage&#8217;, &#8216;size&#8217; : 1},</div></blockquote>
+&#8216;min&#8217;: 0.5, &#8216;label&#8217;: &#8216;Low damage&#8217;, &#8216;size&#8217; : 1},</blockquote>
 <dl class="docutils">
 <dt>{&#8216;opacity&#8217;: 1, &#8216;max&#8217;: 2.5, &#8216;colour&#8217;: &#8216;#fd8d3c&#8217;,</dt>
 <dd>&#8216;min&#8217;: 1.5, &#8216;label&#8217;: &#8216;Medium damage&#8217;, &#8216;size&#8217; : 1},</dd>
@@ -211,7 +199,7 @@ is not a class and does not inherit from QObject.
 .. note:: see <a class="reference external" href="http://tinyurl.com/pyqt-differences">http://tinyurl.com/pyqt-differences</a>
 Args:</p>
 <blockquote>
-<div>theText - string to be translated</div></blockquote>
+theText - string to be translated</blockquote>
 <dl class="docutils">
 <dt>Returns:</dt>
 <dd>Translated version of the given string if available, otherwise
@@ -232,11 +220,11 @@ the original string.</dd>
           <img class="logo" src="../../_static/icon.png" alt="Logo"/>
         </a></p>
   <h4>Previous topic</h4>
-  <p class="topless"><a href="options_dialog.html"
-                        title="previous chapter">Module:  safe_qgis.options_dialog</a></p>
+  <p class="topless"><a href="impact_functions_doc_base.html"
+                        title="previous chapter">Module:  safe_qgis.impact_functions_doc_base</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="qgis_interface.html"
-                        title="next chapter">Module:  safe_qgis.qgis_interface</a></p>
+  <p class="topless"><a href="options_dialog_base.html"
+                        title="next chapter">Module:  safe_qgis.options_dialog_base</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="../../_sources/api-docs/safe_qgis/utilities.txt"
@@ -245,7 +233,7 @@ the original string.</dd>
 <div id="searchbox" style="display: none">
   <h3>Quick search</h3>
     <form class="search" action="../../search.html" method="get">
-      <input type="text" name="q" />
+      <input type="text" name="q" size="18" />
       <input type="submit" value="Go" />
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
@@ -271,10 +259,10 @@ the original string.</dd>
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
         <li class="right" >
-          <a href="qgis_interface.html" title="Module: safe_qgis.qgis_interface"
+          <a href="options_dialog_base.html" title="Module: safe_qgis.options_dialog_base"
              >next</a> &nbsp; &nbsp;</li>
         <li class="right" >
-          <a href="options_dialog.html" title="Module: safe_qgis.options_dialog"
+          <a href="impact_functions_doc_base.html" title="Module: safe_qgis.impact_functions_doc_base"
              >previous</a> &nbsp; &nbsp;</li>
     <li><a href="../../index.html">Home</a> &raquo;</li>
     <li><a href="../../contents.html">Contents</a> &raquo;</li>
@@ -287,7 +275,7 @@ the original string.</dd>
 
     <div class="footer">
         &copy; Copyright 2012, BNPB/AIFDR/GFDRR.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.1.
     </div>
     <!-- cloud_sptheme 1.3 -->
   </body>
