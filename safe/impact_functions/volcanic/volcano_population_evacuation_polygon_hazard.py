@@ -8,8 +8,8 @@ from safe.common.tables import Table, TableRow
 from safe.engine.interpolation import assign_hazard_values_to_exposure_data
 
 
-class VolcanoFunctionVectorHazard(FunctionProvider):
-    """Risk plugin for flood evacuation
+class VolcanoPopulationImpactFunction(FunctionProvider):
+    """Impact plugin for volcanic hazards on population  
 
     :author AIFDR
     :rating 4
@@ -20,31 +20,31 @@ class VolcanoFunctionVectorHazard(FunctionProvider):
     :param requires category=='exposure' and \
                     subcategory=='population' and \
                     layertype=='raster' and \
-                    datatype=='density'
+                    
     """
 
-    title = _('be affected')
-    target_field = 'population'
+    title = _('be affected') # To be seen in the Might drop down
+    target_field = 'population' 
 
     def run(self, layers):
-        """Risk plugin for flood population evacuation
+        """Impact plugin for volcanic hazards on population 
 
         Input
           layers: List of layers expected to contain
-              H: Raster layer of volcano depth
-              P: Raster layer of population data on the same grid as H
+              H: Polygon of volcanic hazard zones
+              P: Raster layer of population data 
 
-        Counts number of people exposed to flood levels exceeding
-        specified threshold.
+        Counts number of people exposed to the specific volcanic
+        hazard zones.
 
         Return
-          Map of population exposed to flood levels exceeding the threshold
-          Table with number of people evacuated and supplies required
+          Map of population exposed to each Volcanic Hazard zone
+          Table with number of people affected by each Volcanic Hazard zone
         """
 
         # Identify hazard and exposure layers
-        H = get_hazard_layer(layers)  # Flood inundation
-        E = get_exposure_layer(layers)
+        H = get_hazard_layer(layers)  # Polygon Volcanic Hazard Zone
+        E = get_exposure_layer(layers) # Population density
 
         question = get_question(H.get_name(),
                                 E.get_name(),
@@ -63,13 +63,12 @@ class VolcanoFunctionVectorHazard(FunctionProvider):
             raise Exception(msg)
 
         # Run interpolation function for polygon2raster
-        P = assign_hazard_values_to_exposure_data(H, E,
-                                             attribute_name='population')
+        I = assign_hazard_values_to_exposure_data(H, E)
 
         # Initialise attributes of output dataset with all attributes
         # from input polygon and a population count of zero
         new_attributes = H.get_data()
-        category_title = 'Category'
+        category_title = 'hazard_zone'
         categories = {}
         for attr in new_attributes:
             attr[self.target_field] = 0
@@ -78,7 +77,7 @@ class VolcanoFunctionVectorHazard(FunctionProvider):
 
         # Count affected population per polygon and total
         evacuated = 0
-        for attr in P.get_data():
+        for attr in I.get_data():
             # Get population at this location
             pop = float(attr['population'])
 
@@ -110,12 +109,12 @@ class VolcanoFunctionVectorHazard(FunctionProvider):
 ##        family_kits = evacuated / 5
 ##        toilets = evacuated / 20
 
-        # Generate impact report for the pdf map
+        # Generate impact report for the pdf map  and on-screen display
         table_body = [question,
                       TableRow([_('People needing evacuation'),
                                 '%i' % evacuated],
                                header=True),
-                      TableRow([_('Category'), _('Total')],
+                      TableRow([_('Hazard Zone'), _('Total')],
                                header=True)]
         for name, pop in categories.iteritems():
             table_body.append(TableRow([name, int(pop)]))

@@ -106,7 +106,7 @@ class CategorisedHazardBuildingImpactFunction(FunctionProvider):
         impact_table = impact_summary
         map_title = _('Categorised hazard impact on buildings')
 
-        #FIXME it would be great to do categorized rather than grduated
+        #FIXME it would be great to do categorized rather than graduated
         # Create style
         style_classes = [dict(label=_('Low'), min=1, max=1,
                               colour='#1EFC7C', transparency=0, size=1),
