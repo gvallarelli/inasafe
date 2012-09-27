@@ -21,7 +21,7 @@ class VolcanoBuildingImpactFunction(FunctionProvider):
     """
 
     title = _('Be affected') # To be seen in the Might drop down
-    target_field = 'hazard_zone' # Output attribute field name
+    target_field = 'alert_level' # Output attribute field name
     
 
     def run(self, layers):
@@ -73,12 +73,12 @@ class VolcanoBuildingImpactFunction(FunctionProvider):
         # Initialise attributes of output dataset with all attributes
         # from input polygon and a building count of zero
         new_attributes = H.get_data()
-        hazard_zone = self.target_field # hazard attribute name
-        alert_zone = 'alert_zone'
+       
+        aggregate_attribute_name = self.target_field # hazard attribute name
         categories = {}
         for attr in new_attributes:
             attr[self.target_field] = 0
-            alert = attr[hazard_zone]
+            alert = attr[aggregate_attribute_name]
             categories[alert] = 0
 
         # Count affected buildings per polygon and per category in alert zone
@@ -89,44 +89,39 @@ class VolcanoBuildingImpactFunction(FunctionProvider):
             new_attributes[poly_id][self.target_field] += 1
 
             # Total building count for each category
-            cat = new_attributes[poly_id][category_title]
+            alert = new_attributes[poly_id][aggregate_attribute_name]
             categories[alert] += 1
-
-        # Count affected buildings per polygon and per category in hazard zone
-        for attr in I.get_data():
             
-            # Count buildings in each category per polygon
-            poly_id = attr['polygon_id']
-            new_attributes[poly_id][self.target_field] += 1
-
-            # Total building count for each category
-            cat = new_attributes[poly_id][category_title]
-            categories[zone] += 1
-
-           
+          
         # Generate impact report for the pdf map and on-screen display
         table_body = [question,
-                      TableRow([_('Hazard Zone'),
+                      TableRow([_('Alert Level'),
                                 _('Total')],header=True)]
         for name, count in categories.iteritems():
             table_body.append(TableRow([name, int(count)]))
 
         table_body.append(TableRow(_('Map shows buildings affected in '
-                                     'each of volcano hazard polygons.')))
+                                     'each of volcano hazard alert levels.')))
         impact_table = Table(table_body).toNewlineFreeString()
 
         # Extend impact report for on-screen display
         table_body.extend([TableRow(_('Notes'), header=True),
-                           _('Total buildings %i in view port') % total])
+                           _('Total buildings %i in view port') % total,
+                           _('Alert levels refer to:')])
+        #FIXME need to be able to grab from the attribute table and show
+        #alert_level vs hazard_desc
+
         impact_summary = Table(table_body).toNewlineFreeString()
         map_title = _('Buildings affected by volcanic hazard zone')
 
-        # FIXME Help field is not a number
+     
         # Create style
-        style_classes = [dict(label=_('Not Flooded'), min=0, max=0,
+        style_classes = [dict(label=_('4'), min=4, max=4,
                               colour='#1EFC7C', transparency=0, size=1),
-                         dict(label=_('Flooded'), min=1, max=1,
-                              colour='#F31A1C', transparency=0, size=1)]
+                         dict(label=_('3'), min=3, max=3,
+                              colour='#1EFC2FC', transparency=0, size=1),
+                         dict(label=_('2'), min=2, max=2,
+                              colour='#1E1E7C', transparency=0, size=1)]
         style_info = dict(target_field=self.target_field,
                           style_classes=style_classes)
 
