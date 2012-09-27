@@ -61,7 +61,8 @@ def tr(theText):
     return QCoreApplication.translate(myContext, theText)
 
 
-def clipLayer(theLayer, theExtent, theCellSize=None, theExtraKeywords=None):
+def clipLayer(theLayer, theExtent, theCellSize=None, theExtraKeywords=None,
+              explodeMultipart=True):
     """Clip a Hazard or Exposure layer to the extents provided.
 
     .. note:: Will delegate to clipVectorLayer or clipRasterLayer as needed.
@@ -90,14 +91,15 @@ def clipLayer(theLayer, theExtent, theCellSize=None, theExtraKeywords=None):
     """
     if theLayer.type() == QgsMapLayer.VectorLayer:
         return _clipVectorLayer(theLayer, theExtent,
-                                theExtraKeywords=theExtraKeywords)
+                                theExtraKeywords=theExtraKeywords,
+                                explodeMultipart=explodeMultipart)
     else:
         return _clipRasterLayer(theLayer, theExtent, theCellSize,
                                 theExtraKeywords=theExtraKeywords)
 
 
 def _clipVectorLayer(theLayer, theExtent,
-                     theExtraKeywords=None):
+                     theExtraKeywords=None, explodeMultipart=True):
     """Clip a Hazard or Exposure layer to the
     extents of the current view frame. The layer must be a
     vector layer or an exception will be thrown.
@@ -192,8 +194,12 @@ def _clipVectorLayer(theLayer, theExtent,
     while myProvider.nextFeature(myFeature):
         myGeometry = myFeature.geometry()
         # Loop through the parts adding them to the output file
-        # we ALWAYS write out single part features
-        myGeometryList = explodeMultiPartGeometry(myGeometry)
+        # we write out single part features unless explodeMultipart is False
+        if explodeMultipart:
+            myGeometryList = explodeMultiPartGeometry(myGeometry)
+        else:
+            myGeometryList = [myGeometry]
+            
         for myPart in myGeometryList:
             myPart.transform(myXForm)
             myFeature.setGeometry(myPart)
