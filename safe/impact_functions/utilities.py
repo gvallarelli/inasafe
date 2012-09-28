@@ -46,7 +46,7 @@ def admissible_plugins_to_str(plugin_list):
     Raises: None
     """
     result = '\n------------ Admissible Plugins ------------------------\n'
-    for plugin, func in  plugin_list.iteritems():
+    for plugin, func in plugin_list.iteritems():
         result += 'ID: %s\n' % plugin
         if hasattr(func, 'title'):
             result += 'Title: %s\n' % func.title
@@ -79,3 +79,29 @@ def keywords_to_str(keywords):
             for item, value in list_item.iteritems():
                 result += 'Key: %s Value: %s\n' % (item, value)
     return result
+
+
+def pretty_string(myArg):
+    """ A helper function that return a pretty string according to the args
+    Args:
+        * myArs = string or list
+    Returns:
+        * if myArgs is string return myArgs
+            if myArgs is list return each element as string separated by ','
+    """
+    if type(myArg) == type(str()):
+        return myArg
+    elif type(myArg) == type(list()):
+        return ', '.join(myArg)
+    else:
+        return str(myArg)
+
+
+def remove_double_spaces(myStr):
+    '''Remove double spaces from a string. Return the string without any
+        dobule spaces
+    '''
+    while myStr.find('  ') != -1:
+        myStr = myStr.replace('  ', ' ')
+
+    return myStr

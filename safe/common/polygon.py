@@ -35,6 +35,7 @@ LOGGER = logging.getLogger('InaSAFE')
 
 
 def separate_points_by_polygon(points, polygon,
+                               polygon_bbox=None,
                                closed=True,
                                check_input=True,
                                use_numpy=True):
@@ -43,9 +44,13 @@ def separate_points_by_polygon(points, polygon,
     Args:
         * points: Tuple of (x, y) coordinates, or list of tuples
         * polygon: list or Nx2 array of polygon vertices
+        * polygon_bbox: (optional) bounding box for polygon
         * closed: (optional) determine whether points on boundary should be
               regarded as belonging to the polygon (closed = True)
-              or not (closed = False)
+              or not (closed = False). If None, boundary is left undefined,
+              i.e. some points on boundary may be deemed to be inside while
+              others may be deemed to be outside. This options makes
+              the code faster.
         * check_input: Allows faster execution if set to False
         * use_numpy: Use the fast numpy implementation
 
@@ -78,8 +83,8 @@ def separate_points_by_polygon(points, polygon,
 
     if check_input:
         # Input checks
-        msg = 'Keyword argument "closed" must be boolean'
-        if not isinstance(closed, bool):
+        msg = 'Keyword argument "closed" must be boolean or None'
+        if not (isinstance(closed, bool) or closed is None):
             raise PolygonInputError(msg)
 
         try:
@@ -127,11 +132,19 @@ def separate_points_by_polygon(points, polygon,
         if points.shape[1] != 2:
             raise PolygonInputError(msg)
 
-    # Exclude points that outside polygon bounding box
-    minpx = min(polygon[:, 0])
-    maxpx = max(polygon[:, 0])
-    minpy = min(polygon[:, 1])
-    maxpy = max(polygon[:, 1])
+    # Get polygon extents to rule out segments that
+    # are outside its bounding box
+    if polygon_bbox is None:
+        minpx = min(polygon[:, 0])
+        maxpx = max(polygon[:, 0])
+        minpy = min(polygon[:, 1])
+        maxpy = max(polygon[:, 1])
+        polygon_bbox = [minpx, maxpx, minpy, maxpy]
+    else:
+        minpx = polygon_bbox[0]
+        maxpx = polygon_bbox[1]
+        minpy = polygon_bbox[2]
+        maxpy = polygon_bbox[3]
 
     x = points[:, 0]
     y = points[:, 1]
@@ -173,7 +186,7 @@ def _separate_points_by_polygon(points, polygon,
        polygon - Nx2 array of polygon vertices
        closed - (optional) determine whether points on boundary should be
        regarded as belonging to the polygon (closed = True)
-       or not (closed = False)
+       or not (closed = False). Close can also be None.
        rtol, atol: Tolerances for when a point is considered to coincide with
                    a line. Default 0.0.
 
@@ -214,7 +227,7 @@ def _separate_points_by_polygon(points, polygon,
         px_i, py_i = polygon[i, :]
         px_j, py_j = polygon[j, :]
 
-        # Intersection formula
+        # Edge crossing formula
         sigma = (y - py_i) / (py_j - py_i) * (px_j - px_i)
         seg_i = (py_i < y) * (py_j >= y)
         seg_j = (py_j < y) * (py_i >= y)
@@ -225,19 +238,20 @@ def _separate_points_by_polygon(points, polygon,
     # Restore numpy warnings
     numpy.seterr(**original_numpy_settings)
 
-    # Find points on polygon boundary
-    for i in range(N):
-        # Loop through polygon edges
-        j = (i + 1) % N
-        edge = [polygon[i, :], polygon[j, :]]
+    if closed is not None:
+        # Find points on polygon boundary
+        for i in range(N):
+            # Loop through polygon edges
+            j = (i + 1) % N
+            edge = [polygon[i, :], polygon[j, :]]
 
-        # Select those that are on the boundary
-        boundary_points = point_on_line(points, edge, rtol, atol)
+            # Select those that are on the boundary
+            boundary_points = point_on_line(points, edge, rtol, atol)
 
-        if closed:
-            inside[boundary_points] = 1
-        else:
-            inside[boundary_points] = 0
+            if closed:
+                inside[boundary_points] = 1
+            else:
+                inside[boundary_points] = 0
 
     # Record point as either inside or outside
     inside_index = numpy.sum(inside)  # How many points are inside
@@ -546,6 +560,9 @@ def clip_lines_by_polygon(lines, polygon,
        closed: (optional) determine whether points on boundary should be
                regarded as belonging to the polygon (closed = True)
                or not (closed = False) - False is not recommended here
+               This parameter can also be None in which case it is undefined
+               whether a line on the boundary will fall inside or outside.
+               This will make the algorithm about 20% faster.
        check_input: Allows faster execution if set to False
 
     Output
@@ -597,21 +614,49 @@ def clip_lines_by_polygon(lines, polygon,
         if not polygon.shape[1] == 2:
             raise RuntimeError(msg)
 
-    M = len(lines)  # Number of lines
-
-    inside_line_segments = {}
-    outside_line_segments = {}
-
     # Get polygon extents to quickly rule out lines where all segments
     # are outside and on the same side of its bounding box
     minpx = min(polygon[:, 0])
     maxpx = max(polygon[:, 0])
     minpy = min(polygon[:, 1])
     maxpy = max(polygon[:, 1])
+    polygon_bbox = [minpx, maxpx, minpy, maxpy]
+
+    # Get polygon_segments
+    polygon_segments = polygon2segments(polygon)
+
+    # Call underlying function
+    return _clip_lines_by_polygon(lines,
+                                  polygon,
+                                  polygon_segments,
+                                  polygon_bbox,
+                                  closed=closed)
+
+
+def _clip_lines_by_polygon(lines,
+                           polygon,
+                           polygon_segments,
+                           polygon_bbox,
+                           closed=True):
+    """Clip multiple lines by polygon
+
+    Underlying function.
+    - see clip_lines_by_polygon for details
+    """
+
+    # Get bounding box
+    minpx = polygon_bbox[0]
+    maxpx = polygon_bbox[1]
+    minpy = polygon_bbox[2]
+    maxpy = polygon_bbox[3]
+
+    inside_line_segments = {}
+    outside_line_segments = {}
 
     # Loop through lines
+    M = len(lines)
     for k in range(M):
-        line = numpy.array(lines[k])
+        line = lines[k]
 
         # Exclude lines that are fully outside polygon bounding box
         if (max(line[:, 0]) < minpx or  # Everything is to the west
@@ -624,11 +669,11 @@ def clip_lines_by_polygon(lines, polygon,
             continue
 
         # Call underlying function for one line and one polygon
-        inside, outside = clip_line_by_polygon(line, polygon,
-                                               closed=closed,
-                                               polygon_bbox=[minpx, maxpx,
-                                                             minpy, maxpy],
-                                               check_input=False)
+        inside, outside = _clip_line_by_polygon(line,
+                                                polygon,
+                                                polygon_segments,
+                                                polygon_bbox,
+                                                closed=closed)
 
         # Record clipped line segments from line k
         inside_line_segments[k] = inside
@@ -727,14 +772,35 @@ def clip_line_by_polygon(line, polygon,
         maxpx = max(polygon[:, 0])
         minpy = min(polygon[:, 1])
         maxpy = max(polygon[:, 1])
+        polygon_bbox = [minpx, maxpx, minpy, maxpy]
     else:
         minpx = polygon_bbox[0]
         maxpx = polygon_bbox[1]
         minpy = polygon_bbox[2]
         maxpy = polygon_bbox[3]
 
-    N = polygon.shape[0]  # Number of vertices in polygon
-    M = line.shape[0]  # Number of segments
+    # Convert polygon to segments
+    polygon_segments = polygon2segments(polygon)
+
+    return _clip_line_by_polygon(line,
+                                 polygon,
+                                 polygon_segments,
+                                 polygon_bbox,
+                                 closed=closed)
+
+
+# FIXME (Ole, 14 sep 2012): Will clean this up soon, promise
+# pylint: disable=W0613
+def _clip_line_by_polygon(line,
+                          polygon,
+                          polygon_segments,
+                          polygon_bbox,
+                          closed=True):
+    """Clip line segments by polygon
+
+    This is the underlying function
+    - see public clip_line_by_polygon() for details
+    """
 
     # Algorithm
     #
@@ -750,10 +816,18 @@ def clip_line_by_polygon(line, polygon,
     #     fully inside or outside polygon
     # 5
 
-    # Loop through line segments
+    # Get bounding box
+    minpx = polygon_bbox[0]
+    maxpx = polygon_bbox[1]
+    minpy = polygon_bbox[2]
+    maxpy = polygon_bbox[3]
+
+    # Lists collecting clipped line segments
     inside_line_segments = []
     outside_line_segments = []
 
+    # Loop through line segments
+    M = line.shape[0]
     for k in range(M - 1):
         p0 = line[k, :]
         p1 = line[k + 1, :]
@@ -797,8 +871,7 @@ def clip_line_by_polygon(line, polygon,
                                        [minpx, minpy]])
                 for i in range(4):
                     edge = [corners[i, :], corners[i + 1, :]]
-                    status, value = intersection(segment, edge,
-                                                 fast=True)
+                    value = intersection(segment, edge)
                     if value is not None:
                         # Segment intersects polygon bounding box
                         segment_is_outside_bbox = False
@@ -812,48 +885,74 @@ def clip_line_by_polygon(line, polygon,
             outside_line_segments.append(segment)
         else:
             # Intersect segment with all polygon edges
-            # and decide for each sub-segment
-            intersections = list(segment)  # Initialise with end points
-            for i in range(N):
-                # Loop through polygon edges
-                j = (i + 1) % N
-                edge = [polygon[i, :], polygon[j, :]]
+            # and decide for each sub-segment whether in or out
+            values = intersection(segment, polygon_segments)
+            mask = -numpy.isnan(values[:, 0])
+            V = values[mask]
 
-                status, value = intersection(segment, edge,
-                                             fast=True)
-                if status == 2:
-                    # Collinear overlapping lines found
-                    # Use midpoint of common segment
-                    # FIXME (Ole): Maybe better to use
-                    #              common segment directly
-                    value = (segment[0] + segment[1]) / 2
-                if value is not None:
-                    # Record intersection point found
-                    intersections.append(value)
-                else:
-                    pass
+            # Array for intersections
+            intersections = numpy.zeros((len(V) + 2, 2))
 
+            # Include end points
+            intersections[0, :] = p0
+            intersections[1, :] = p1
+
+            # Add internal intersections
+            intersections[2:, :] = V
+
+            # For each intersection, computer distance from first end point
+            V = intersections - p0
+            distances = (V * V).sum(axis=1)
+
+            # Sort intersections by distance
+            idx = numpy.argsort(distances)
+            distances = distances[idx]
+            intersections = intersections[idx]
+
+            # Remove duplicate points
+            duplicates = numpy.zeros(len(distances), dtype=bool)
+            duplicates[1:] = distances[1:] - distances[:-1] == 0
+            intersections = intersections[-duplicates, :]
+
+            # FIXME (Ole): Next candidate for vectorisation (11/9/2012) below
             # Loop through intersections for this line segment
-            distances = {}
-            for i in range(len(intersections)):
-                v = segment[0] - intersections[i]
-                d = numpy.dot(v, v)
-                distances[d] = intersections[i]  # Don't record duplicates
+            #distances = {}
+            #for i in range(len(intersections)):
+            #    v = p0 - intersections[i]
+            #    d = numpy.dot(v, v)
+            #    if d in distances:
+            #        print i, d, distances[d], intersections[i]
+            #        import sys; sys.exit()
+            #    distances[d] = intersections[i]  # Don't record duplicates
 
             # Sort intersections by distance using Schwarzian transform
-            A = zip(distances.keys(), distances.values())
-            A.sort()
-            _, intersections = zip(*A)
+            #A = zip(distances.keys(), distances.values())
+            #A.sort()
+            #_, intersections = zip(*A)
 
-            # Separate segments according to polygon
-            for i in range(len(intersections) - 1):
-                segment = [intersections[i], intersections[i + 1]]
-                midpoint = (segment[0] + segment[1]) / 2
+            # Separate segment midpoints according to polygon
+            # Deliberately ignore boundary as midpoints by definition
+            # are fully inside or fully outside.
+            intersections = numpy.array(intersections)
+            midpoints = (intersections[:-1] + intersections[1:]) / 2
+            inside, outside = separate_points_by_polygon(midpoints,
+                                                         polygon,
+                                                         polygon_bbox,
+                                                         check_input=False,
+                                                         closed=closed)
 
-                if is_inside_polygon(midpoint, polygon, closed=closed):
-                    inside_line_segments.append(segment)
-                else:
-                    outside_line_segments.append(segment)
+            # Form segments and add to the right lists
+            for i, idx in enumerate([inside, outside]):
+                if len(idx) > 0:
+                    segments = numpy.concatenate((intersections[idx, :],
+                                                  intersections[idx + 1, :]),
+                                                 axis=1)
+                    m, n = segments.shape
+                    segments = numpy.reshape(segments, (m, n / 2, 2))
+                    if i == 0:
+                        inside_line_segments.extend(segments.tolist())
+                    else:
+                        outside_line_segments.extend(segments.tolist())
 
     # Rejoin adjacent segments and add to result lines
     inside_lines = join_line_segments(inside_line_segments)
@@ -909,7 +1008,7 @@ def line_dictionary_to_geometry(D):
 
     lines = []
 
-    # Ensure reproducibility (needed?)
+    # Ensure reproducibility (FIXME: is this needed?)
     #keys = D.keys()
     #keys.sort()
 
@@ -984,31 +1083,51 @@ def populate_polygon(polygon, number_of_points, seed=None, exclude=None):
 # Functionality for line intersection
 #------------------------------------
 
-def intersection(line0, line1, rtol=1.0e-12, atol=1.0e-12,
-                 fast=False):
+def intersection(line0, line1):
     """Returns intersecting point between two line segments.
 
-    However, if parallel lines coincide partly (i.e. share a common segment),
-    the line segment where lines coincide is returned
+    If the lines are parallel or coincide partly (i.e. share a common segment),
+    they are considered to not intersect.
 
     Inputs:
-        line0, line1: Each defined by two end points as in:
-                      [[x0, y0], [x1, y1]]
-                      A line can also be a 2x2 numpy array with each row
-                      corresponding to a point.
-        rtol, atol: Tolerances passed onto numpy.allclose
-        fast: Default False. If True collinear return values are simplified
+        line0: A simple line segment defined by two end points:
+              [[x0, y0], [x1, y1]]
+
+        line1: A collection of line segments vectorised following the format
+               line[0, 0, :] = x2
+               line[0, 1, :] = y2
+               line[1, 0, :] = x3
+               line[1, 1, :] = y3
 
     Output:
-        status, value - where status and value is interpreted as follows:
-        status == 0: no intersection, value set to None.
-        status == 1: intersection point found and returned in value as [x,y].
-        status == 2: Collinear overlapping lines found.
-                     Value takes the form [[x0,y0], [x1,y1]] which is the
-                     segment common to both lines. If argument fast is True
-                     we return 2, x, y on the common segment
-        status == 3: Collinear non-overlapping lines. Value set to None.
-        status == 4: Lines are parallel. Value set to None.
+        intersections: Nx2 array with intersection points or nan
+                       (in case of no intersection)
+                       If line1 consisted of just one line,
+                       None is returned for backwards compatibility
+
+
+    Notes
+
+    A vectorised input line can be constructed either as list:
+    line1 = [[[0, 24, 0, 15],    # x2
+              [12, 0, 24, 0]],   # y2
+             [[24, 0, 0, 5],     # x3
+              [0, 12, 12, 15]]]  # y3
+
+    or as an array
+
+    line1 = numpy.zeros(16).reshape(2, 2, 4)  # Four segments
+    line1[0, 0, :] = [0, 24, 0, 15]   # x2
+    line1[0, 1, :] = [12, 0, 24, 0]   # y2
+    line1[1, 0, :] = [24, 0, 0, 5]    # x3
+    line1[1, 1, :] = [0, 12, 12, 15]  # y3
+
+
+    To select array of intersections from result, use the following idiom:
+
+    value = intersection(line0, line1)
+    mask = -numpy.isnan(value[:, 0])
+    v = value[mask]
     """
 
     line0 = ensure_numeric(line0, numpy.float)
@@ -1017,113 +1136,61 @@ def intersection(line0, line1, rtol=1.0e-12, atol=1.0e-12,
     x0, y0 = line0[0, :]
     x1, y1 = line0[1, :]
 
-    x2, y2 = line1[0, :]
-    x3, y3 = line1[1, :]
-
-    denom = (y3 - y2) * (x1 - x0) - (x3 - x2) * (y1 - y0)
-    u0 = (x3 - x2) * (y0 - y2) - (y3 - y2) * (x0 - x2)
-    u1 = (x2 - x0) * (y1 - y0) - (y2 - y0) * (x1 - x0)
-
-    if numpy.allclose(denom, 0.0, rtol=rtol, atol=atol):
-        # Lines are parallel - check if they are collinear
-        if numpy.allclose([u0, u1], 0.0, rtol=rtol, atol=atol):
-            # We now know that the lines are collinear
-            if fast:
-                # Just return one of the points
-                return 2, numpy.array([x0, y0])
-            else:
-                # FIXME (Ole): It would make sense to maybe return mid point
-                #              of the smallest common segments
-                state = (point_on_line([x0, y0], line1, rtol=rtol, atol=atol),
-                         point_on_line([x1, y1], line1, rtol=rtol, atol=atol),
-                         point_on_line([x2, y2], line0, rtol=rtol, atol=atol),
-                         point_on_line([x3, y3], line0, rtol=rtol, atol=atol))
-                return collinearmap[state]([x0, y0], [x1, y1],
-                                           [x2, y2], [x3, y3])
-        else:
-            # Lines are parallel but aren't collinear
-            return 4, None
+    # Special treatment of return value if line1 was non vectorised
+    if len(line1.shape) == 2:
+        one_point = True
+        # Broadcast to vectorised version
+        line1 = line1.reshape(2, 2, 1)
     else:
-        # Lines are not parallel, check if they intersect
-        u0 = u0 / denom
-        u1 = u1 / denom
+        one_point = False
 
-        x = x0 + u0 * (x1 - x0)
-        y = y0 + u0 * (y1 - y0)
+    # Extract vectorised coordinates
+    x2 = line1[0, 0, :]
+    y2 = line1[0, 1, :]
+    x3 = line1[1, 0, :]
+    y3 = line1[1, 1, :]
 
-        # Sanity check - can be removed to speed up if needed
-        #if not numpy.allclose(x, x2 + u1 * (x3 - x2), rtol=rtol, atol=atol):
-        #    raise Exception
-        #if not numpy.allclose(y, y2 + u1 * (y3 - y2), rtol=rtol, atol=atol):
-        #    raise Exception
+    # Calculate denominator (lines are parallel if it is 0)
+    y3y2 = y3 - y2
+    x3x2 = x3 - x2
+    x1x0 = x1 - x0
+    y1y0 = y1 - y0
+    x2x0 = x2 - x0
+    y2y0 = y2 - y0
+    denominator = y3y2 * x1x0 - x3x2 * y1y0
 
-        # Check if point found lies within given line segments
-        if 0.0 <= u0 <= 1.0 and 0.0 <= u1 <= 1.0:
-            # We have intersection
-            return 1, numpy.array([x, y])
+    # Suppress numpy warnings (as we'll be dividing by zero)
+    original_numpy_settings = numpy.seterr(invalid='ignore', divide='ignore')
+
+    u0 = (y3y2 * x2x0 - x3x2 * y2y0) / denominator
+    u1 = (x2x0 * y1y0 - y2y0 * x1x0) / denominator
+
+    # Restore numpy warnings
+    numpy.seterr(**original_numpy_settings)
+
+     # Only points that lie within given line segments are true intersections
+    mask = (0.0 <= u0) * (u0 <= 1.0) * (0.0 <= u1) * (u1 <= 1.0)
+
+    # Calculate intersection points
+    x = x0 + u0[mask] * x1x0
+    y = y0 + u0[mask] * y1y0
+
+    # Return intersection points as N x 2 array
+    N = line1.shape[2]
+    result = numpy.zeros((N, 2)) * numpy.nan
+    result[mask, 0] = x
+    result[mask, 1] = y
+
+    # Special treatment of return value if line1 was non vectorised
+    if one_point:
+        result = result.reshape(2)
+        if numpy.any(numpy.isnan(result)):
+            return None
         else:
-            # No intersection
-            return 0, None
+            return result
 
-
-# Result functions used in intersection() below for possible states
-# of collinear lines
-# (p0,p1) defines line 0, (p2,p3) defines line 1.
-
-def lines_dont_coincide(_p0, _p1, _p2, _p3):
-    return 3, None
-
-
-def lines_0_fully_included_in_1(_p0, _p1, _p2, _p3):
-    return 2, numpy.array([_p0, _p1])
-
-
-def lines_1_fully_included_in_0(_p0, _p1, _p2, _p3):
-    return 2, numpy.array([_p2, _p3])
-
-
-def lines_overlap_same_direction(_p0, _p1, _p2, _p3):
-    return 2, numpy.array([_p0, _p3])
-
-
-def lines_overlap_same_direction2(_p0, _p1, _p2, _p3):
-    return 2, numpy.array([_p2, _p1])
-
-
-def lines_overlap_opposite_direction(_p0, _p1, _p2, _p3):
-    return 2, numpy.array([_p0, _p2])
-
-
-def lines_overlap_opposite_direction2(_p0, _p1, _p2, _p3):
-    return 2, numpy.array([_p3, _p1])
-
-
-# This function called when an impossible state is found
-def lines_error(p1, p2, p3, p4):
-    msg = ('Impossible state: p1=%s, p2=%s, p3=%s, p4=%s'
-           % (str(p1), str(p2), str(p3), str(p4)))
-    raise RuntimeError(msg)
-
-# Mapping to possible states for line intersection
-#
-#                 0s1    0e1    1s0    1e0   # line 0 starts on 1, 0 ends 1,
-#                                                   1 starts 0, 1 ends 0
-collinearmap = {(False, False, False, False): lines_dont_coincide,
-                (False, False, False, True): lines_error,
-                (False, False, True, False): lines_error,
-                (False, False, True, True): lines_1_fully_included_in_0,
-                (False, True, False, False): lines_error,
-                (False, True, False, True): lines_overlap_opposite_direction2,
-                (False, True, True, False): lines_overlap_same_direction2,
-                (False, True, True, True): lines_1_fully_included_in_0,
-                (True, False, False, False): lines_error,
-                (True, False, False, True): lines_overlap_same_direction,
-                (True, False, True, False): lines_overlap_opposite_direction,
-                (True, False, True, True): lines_1_fully_included_in_0,
-                (True, True, False, False): lines_0_fully_included_in_1,
-                (True, True, False, True): lines_0_fully_included_in_1,
-                (True, True, True, False): lines_0_fully_included_in_1,
-                (True, True, True, True): lines_0_fully_included_in_1}
+    # Normal return of Nx2 array of intersections (or nan)
+    return result
 
 
 # Main functions for polygon clipping
@@ -1181,13 +1248,20 @@ def clip_grid_by_polygons(A, geotransform, polygons):
     return points_covered
 
 
-def clip_lines_by_polygons(lines, polygons, check_input=True):
+def clip_lines_by_polygons(lines, polygons, check_input=True, closed=True):
     """Clip multiple lines by multiple polygons
 
     Args:
         lines: Sequence of polylines: [[p0, p1, ...], [q0, q1, ...], ...]
                where pi and qi are point coordinates (x, y).
         polygons: list of polygons, each an array of vertices
+        closed: optional parameter to determine whether lines that fall on
+                an polygon boundary should be considered to be inside
+                (closed=True), outside (closed=False) or
+                undetermined (closed=None). The latter case will speed the
+                algorithm up but lines on boundaries may or may not be
+                deemed to fall inside the polygon and so will be
+                indeterministic
 
     Returns:
         lines_covered: List of polylines inside a polygon
@@ -1229,7 +1303,6 @@ def clip_lines_by_polygons(lines, polygons, check_input=True):
         #       '%i lines' % (i, len(polygon),
         #                     len(polygons),
         #                     len(remaining_lines)))
-
         inside_lines, _ = clip_lines_by_polygon(remaining_lines,
                                                 polygon,
                                                 check_input=False)
@@ -1247,3 +1320,48 @@ def clip_lines_by_polygons(lines, polygons, check_input=True):
         #remaining_lines = outside_lines
 
     return lines_covered
+
+
+def polygon2segments(polygon):
+    """Convert polygon to segments structure suitable for use in intersection
+
+    Args:
+        polygon: Nx2 array of polygon vertices
+
+    Returns:
+        A collection of line segments (x0, y0) -> (x1, y1) vectorised
+        following the format
+               line[0, 0, :] = x0
+               line[0, 1, :] = y0
+               line[1, 0, :] = x1
+               line[1, 1, :] = y1
+
+    """
+
+    try:
+        polygon = ensure_numeric(polygon, numpy.float)
+    except Exception, e:
+        msg = ('Polygon could not be converted to numeric array: %s'
+               % str(e))
+        raise Exception(msg)
+
+    N = polygon.shape[0]  # Number of vertices in polygon
+
+    segments = numpy.zeros(N * 4).reshape(2, 2, N)
+    x3 = numpy.zeros(N)
+    y3 = numpy.zeros(N)
+
+    x2 = polygon[:, 0]
+    y2 = polygon[:, 1]
+
+    x3[:-1] = x2[1:]
+    x3[-1] = x2[0]
+    y3[:-1] = y2[1:]
+    y3[-1] = y2[0]
+
+    segments[0, 0, :] = x2
+    segments[0, 1, :] = y2
+    segments[1, 0, :] = x3
+    segments[1, 1, :] = y3
+
+    return segments

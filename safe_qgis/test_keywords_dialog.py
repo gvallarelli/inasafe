@@ -20,6 +20,8 @@ __copyright__ = ('Copyright 2012, Australia Indonesia Facility for '
 import unittest
 import sys
 import os
+import shutil
+from safe.engine.core import unique_filename
 
 # Add PARENT directory to path to make test aware of other modules
 pardir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
@@ -53,6 +55,35 @@ def makePadangLayer():
     myLayer = QgsRasterLayer(myPath, myTitle)
     QgsMapLayerRegistry.instance().addMapLayer(myLayer)
     return myLayer
+
+
+def copyMakePadangLayer():
+    """Helper function that copies padang keyword for testing and return it."""
+    mySourceFileName = 'Shakemap_Padang_2009'
+    myExts = ['.asc', '.asc.aux.xml', '.keywords',
+              '.lic', '.prj', '.qml', '.sld']
+    myFileName = unique_filename()
+    # copy to temp file
+    for ext in myExts:
+        mySourcePath = os.path.join(HAZDATA, mySourceFileName + ext)
+        myDestPath = os.path.join(HAZDATA, myFileName + ext)
+        shutil.copy2(mySourcePath, myDestPath)
+    # return a single predefined layer
+    myFile = myFileName + '.asc'
+    myPath = os.path.join(HAZDATA, myFile)
+    myTitle = readKeywordsFromFile(myPath, 'title')
+    myLayer = QgsRasterLayer(myPath, myTitle)
+    QgsMapLayerRegistry.instance().addMapLayer(myLayer)
+    return myLayer, myFileName
+
+
+def removeTempFile(myFileName='temp_Shakemap_Padang_2009'):
+    """Helper function that removes temp file that created during test"""
+    #myFileName = 'temp_Shakemap_Padang_2009'
+    myExts = ['.asc', '.asc.aux.xml', '.keywords',
+              '.lic', '.prj', '.qml', '.sld']
+    for ext in myExts:
+        os.remove(os.path.join(HAZDATA, myFileName + ext))
 
 
 def makeKeywordlessLayer():
@@ -370,10 +401,9 @@ class KeywordsDialogTest(unittest.TestCase):
 
     def test_addKeywordWhenPressOkButton(self):
         """Test add keyword when ok button is pressed."""
+        #_, myFile = copyMakePadangLayer()
+        copyMakePadangLayer()
         myDialog = KeywordsDialog(PARENT, IFACE)
-        myLayer = makePadangLayer()
-        myDialog.layer = myLayer
-        myDialog.loadStateFromKeywords()
 
         myDialog.radUserDefined.setChecked(True)
         myDialog.leKey.setText('foo')
@@ -381,14 +411,14 @@ class KeywordsDialogTest(unittest.TestCase):
         okButton = myDialog.buttonBox.button(QtGui.QDialogButtonBox.Ok)
         QTest.mouseClick(okButton, QtCore.Qt.LeftButton)
 
+        # delete temp file
+        # removeTempFile(myFile)
+
         myExpectedResult = 'bar'
         myResult = myDialog.getValueForKey('foo')
         myMessage = ('\nGot: %s\nExpected: %s\n' %
                      (myResult, myExpectedResult))
         assert myExpectedResult == myResult, myMessage
-        # delete the added key so that the data test doesn't change
-        myDialog.removeItemByKey('foo')
-        QTest.mouseClick(okButton, QtCore.Qt.LeftButton)
 
 if __name__ == '__main__':
     suite = unittest.makeSuite(KeywordsDialogTest, 'test')

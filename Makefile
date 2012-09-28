@@ -17,7 +17,7 @@
 # ***************************************************************************/
 
 # Makefile for InaSAFE - QGIS
-
+SHELL := /bin/bash
 NONGUI := safe
 GUI := gui
 ALL := $(NONGUI) $(GUI)  # Would like to turn this into comma separated list using e.g. $(subst,...) or $(ALL, Wstr) but None of that works as described in the various posts
@@ -43,13 +43,8 @@ docs: compile
 
 #Qt .ts file updates - run to register new strings for translation in safe_qgis
 update-translation-strings: compile
-	@echo "Collecting strings requiring translations. Please provide translations by editing the translation files below:"
-	@# Gettext translation stuff
-	@# apply same xgettext command for each supported locale. TS
-	@$(foreach LOCALE, $(LOCALES), scripts/update-strings.sh $(LOCALE) $(POFILES);)
-	@# Qt translation stuff
-	@cd safe_qgis; pylupdate4 -noobsolete inasafe.pro; cd ..
-	@$(foreach LOCALE, $(LOCALES), echo "safe_qgis/i18n/inasafe_$(LOCALE).ts";)
+	@echo "Checking current translation."
+	@scripts/update-strings.sh $(LOCALES)
 
 #Qt .qm file updates - run to create binary representation of translated strings for translation in safe_qgis
 compile-translation-strings: compile
@@ -68,7 +63,7 @@ test-translations:
 translation-stats:
 	@echo
 	@echo "----------------------"
-	@echo "Translation statistics - for more info see http://inasafe.readthedocs.org/en/latest/developer-docs/i18n.html"
+	@echo "Translation statistics - for more info see http://inasafe.org/developer-docs/i18n.html"
 	@echo "----------------------"
 	@echo
 	@echo "Gettext translations (*.po):"
@@ -87,12 +82,6 @@ lines-of-code:
 	@git log | head -3
 	@sloccount safe_qgis safe safe_api.py realtime | grep '^[0-9]'
 
-quiet-qgis:
-	# Make qgis console output quiet
-	@export QGIS_DEBUG=0
-	@export QGIS_LOG_FILE=/dev/null
-	@export QGIS_DEBUG_FILE=/dev/null
-
 clean:
 	@# FIXME (Ole): Use normal Makefile rules instead
 	@# Preceding dash means that make will continue in case of errors
@@ -105,36 +94,31 @@ clean:
 	@-/bin/rm .coverage 2>/dev/null || true
 
 # Run the test suite followed by style checking
-test: quiet-qgis docs test_suite pep8 pylint dependency_test unwanted_strings run_data_audit test-translations
+test: docs test_suite pep8 pylint dependency_test unwanted_strings run_data_audit testdata_errorcheck test-translations
 
 # Run the test suite for gui only
-guitest: gui_test_suite pep8 disabled_tests dependency_test unwanted_strings
-
-set_python:
-	@-export PYTHONPATH=`pwd`:$(PYTHONPATH)
+guitest: gui_test_suite pep8 disabled_tests dependency_test unwanted_strings testdata_errorcheck
 
 quicktest: test_suite_quick pep8 pylint dependency_test unwanted_strings run_data_audit test-translations
 
 test_suite_quick:
-	nosetests -A 'not slow' -v safe --stop
-
-it:
-	@-export PYTHONPATH=`pwd`:$(PYTHONPATH); nosetests -A 'not slow' safe --stop
+	@-export PYTHONPATH=`pwd`:$(PYTHONPATH); nosetests -A 'not slow' -v safe --stop
 
 # Run pep8 style checking
+#http://pypi.python.org/pypi/pep8
 pep8:
 	@echo
 	@echo "-----------"
 	@echo "PEP8 issues"
 	@echo "-----------"
-	@pep8 --repeat --ignore=E203 --exclude docs,odict.py,keywords_dialog_base.py,dock_base.py,options_dialog_base.py,resources.py,resources_rc.py,help_base.py,xml_tools.py,system_tools.py,data_audit.py,data_audit_wrapper.py . || true
+	@pep8 --repeat --ignore=E203,E121,E122,E123,E124,E125,E126,E127,E128 --exclude docs,odict.py,keywords_dialog_base.py,dock_base.py,options_dialog_base.py,resources.py,resources_rc.py,help_base.py,xml_tools.py,system_tools.py,data_audit.py,data_audit_wrapper.py,impact_functions_doc_base.py . || true
 
 # Run entire test suite
 test_suite: compile testdata
 	@echo
-	@echo "----------------------"
-	@echo "Regresssion Test Suite"
-	@echo "----------------------"
+	@echo "---------------------"
+	@echo "Regression Test Suite"
+	@echo "---------------------"
 	@-export PYTHONPATH=`pwd`:$(PYTHONPATH);export QGIS_DEBUG=0;export QGIS_LOG_FILE=/dev/null;export QGIS_DEBUG_FILE=/dev/null;nosetests -v --with-id --with-coverage --cover-package=safe,safe_qgis 3>&1 1>&2 2>&3 3>&- | grep -v "^Object::" || true
 
 	@# FIXME (Ole) - to get of the remaining junk I tried to use
@@ -168,7 +152,15 @@ testdata:
 	@echo "Updating inasafe_data - public test and demo data repository"
 	@echo "You should update the hash to check out a specific data version"
 	@echo "-----------------------------------------------------------"
-	@scripts/update-test-data.sh 7181ff2048031de71eed85decdda77736de2587c
+	@scripts/update-test-data.sh 8a6551776845ba052a1cc855c1b3348cc280a18e 2>&1 | tee tmp_warnings.txt; [ $${PIPESTATUS[0]} -eq 0 ] && rm -f tmp_warnings.txt || echo "Stored update warnings in tmp_warnings.txt";
+
+#check and show if there was an error retrieving the test data
+testdata_errorcheck:
+	@echo
+	@echo "---------------------"
+	@echo "Inasafe_data problems"
+	@echo "---------------------"
+	@[ -f tmp_warnings.txt ] && more tmp_warnings.txt || true; rm -f tmp_warnings.txt
 
 disabled_tests:
 	@echo
@@ -208,9 +200,9 @@ dependency_test:
 
 list_gpackages:
 	@echo
-	@echo "---------------------------------------"
-	@echo "List of QGis related packages installed"
-	@echo "---------------------------------------"
+	@echo "----------------------------------------"
+	@echo "List of QGis related packages installed."
+	@echo "----------------------------------------"
 	@dpkg -l | grep qgis || true
 	@dpkg -l | grep gdal || true
 	@dpkg -l | grep geos || true
@@ -219,32 +211,39 @@ data_audit: testdata run_data_audit
 
 run_data_audit:
 	@echo
-	@echo "---------------------------------------"
-	@echo "Audit of IP status for bundled data    "
-	@echo "---------------------------------------"
-	@python scripts/data_IP_audit.py
+	@echo "-----------------------------------"
+	@echo "Audit of IP status for bundled data"
+	@echo "-----------------------------------"
+	@-export PYTHONPATH=`pwd`:$(PYTHONPATH); python scripts/data_IP_audit.py
+
+pylint-count:
+	@echo
+	@echo "---------------------------"
+	@echo "Number of pylint violations"
+	@echo "For details run make pylint"
+	@echo "---------------------------"
+	@pylint --output-format=parseable --reports=n --rcfile=pylintrc -i y safe safe_qgis | wc -l
 
 pylint:
 	@echo
-	@echo "---------------------------------------"
-	@echo "Pylint violations.                     "
-	@echo "---------------------------------------"
-	@pylint --output-format=parseable --reports=n --rcfile=pylintrc -i y safe safe_qgis | wc -l
-
-pylint-details:
-	@echo
-	@echo "---------------------------------------"
-	@echo "Pylint violations. For details run     "
-	@echo "make pylint-details                    "
-	@echo "---------------------------------------"
+	@echo "-----------------"
+	@echo "Pylint violations"
+	@echo "-----------------"
 	@pylint --output-format=parseable --reports=n --rcfile=pylintrc -i y safe safe_qgis || true
 
 profile:
 	@echo
-	@echo "---------------------------------------"
-	@echo "Profiling engine                       "
-	@echo "---------------------------------------"
-	python -m cProfile safe/engine/test_engine.py -s cumulative
+	@echo "----------------"
+	@echo "Profiling engine"
+	@echo "----------------"
+	python -m cProfile safe/engine/test_engine.py -s time
+
+pyflakes:
+	@echo
+	@echo "---------------"
+	@echo "PyFlakes issues"
+	@echo "---------------"
+	@-export PYTHONPATH=`pwd`:$(PYTHONPATH); pyflakes safe safe_qgis | wc -l
 
 ##########################################################
 #
@@ -257,9 +256,7 @@ jenkins-test: testdata
 	@echo "----------------------------------"
 	@echo "Regresssion Test Suite for Jenkins"
 	@echo "----------------------------------"
-	# xvfb-run --server-args="-screen 0, 1024x768x24" make check
-	@-export PYTHONPATH=`pwd`:$(PYTHONPATH); xvfb-run --server-args="-screen 0, 1024x768x24" \
-		nosetests -v --with-id --with-xcoverage --with-xunit --verbose --cover-package=safe,safe_qgis || :
+	@-export PYTHONPATH=`pwd`:$(PYTHONPATH); nosetests -v --with-id --with-xcoverage --with-xunit --verbose --cover-package=safe,safe_qgis || :
 
 jenkins-pyflakes:
 	@echo
@@ -294,4 +291,4 @@ jenkins-pep8:
 	@echo "-----------------------------"
 	@echo "PEP8 issue check for Jenkins"
 	@echo "-----------------------------"
-	@pep8 --repeat --ignore=E203 --exclude docs,odict.py,keywords_dialog_base.py,dock_base.py,options_dialog_base.py,resources.py,resources_rc.py,help_base.py,xml_tools.py,system_tools.py,data_audit.py,data_audit_wrapper.py . > pep8.log || :
+	@pep8 --repeat --ignore=E203 --exclude docs,odict.py,keywords_dialog_base.py,dock_base.py,options_dialog_base.py,resources.py,resources_rc.py,help_base.py,xml_tools.py,system_tools.py,data_audit.py,data_audit_wrapper.py,impact_functions_doc_base.py . > pep8.log || :

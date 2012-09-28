@@ -65,6 +65,9 @@ __author__ = 'Philippe Lagadec'
 # 2012-06-22 SAFE fork - refactored to use more modern table semantics and
 #                        various other additions / changes to support SAFE
 #                        Tim Sutton
+# 2012-09-14 Add func: - add new function, column(int) for retrieve all element
+#                        in the specific column
+#                        Ismail Sunni
 
 #------------------------------------------------------------------------------
 #TODO:
@@ -135,7 +138,7 @@ class TableCell (object):
         self.cell_class = cell_class
         self.row_span = row_span
         self.col_span = col_span
-        if attribs == None:
+        if attribs is None:
             self.attribs = {}
 
     def __str__(self):
@@ -209,22 +212,22 @@ class TableRow (object):
         self.col_charoff = col_charoff
         self.col_styles = col_styles
         self.attribs = attribs
-        if attribs == None:
+        if attribs is None:
             self.attribs = {}
 
     def apply_properties(self, cell, col):
         """Apply properties to the row"""
         # apply column alignment if specified:
-        if self.col_align and cell.align == None:
+        if self.col_align and cell.align is None:
             cell.align = self.col_align[col]
-        if self.col_char and cell.char == None:
+        if self.col_char and cell.char is None:
             cell.char = self.col_char[col]
-        if self.col_charoff and cell.charoff == None:
+        if self.col_charoff and cell.charoff is None:
             cell.charoff = self.col_charoff[col]
-        if self.col_valign and cell.valign == None:
+        if self.col_valign and cell.valign is None:
             # apply column style if specified:
             cell.valign = self.col_valign[col]
-        if self.col_styles and cell.style == None:
+        if self.col_styles and cell.style is None:
             cell.style = self.col_styles[col]
 
     def column_count(self):
@@ -301,9 +304,9 @@ class Table(object):
         self.border = border
         self.style = style
         # style for thin borders by default
-        if style == None:
+        if style is None:
             self.style = TABLE_STYLE_THINBORDER
-        if table_class == None:
+        if table_class is None:
             self.table_class = DEFAULT_TABLE_CLASS
         self.caption = caption
         self.caption_at_bottom = caption_at_bottom
@@ -407,6 +410,28 @@ class Table(object):
            this.
         """
         return self.__str__().replace('\n', '')
+
+    def column(self, col, header=False):
+        """Return a list contains all element in col-th column
+            Args:
+                * col = number columnn
+                * header = if False, doesn't include the header
+            Returns:
+                * list of string represent each element
+            Note:
+                If there is not column number col in a row, it will be
+                represent as empty string ''
+        """
+        retval = []
+        for myRow in self.rows:
+            if myRow.header and not header:
+                continue
+            if col < myRow.column_count():
+                retval.append(myRow.cells[col])
+            else:
+                retval.append('')
+
+        return retval
 
 
 class List (object):

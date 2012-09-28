@@ -12,6 +12,7 @@ import keyword as python_keywords
 from safe.common.polygon import inside_polygon
 from safe.common.utilities import ugettext as _
 from safe.common.tables import Table, TableCell, TableRow
+from utilities import pretty_string, remove_double_spaces
 
 LOGGER = logging.getLogger('InaSAFE')
 
@@ -360,8 +361,8 @@ def get_thresholds(layer):
     """
 
     if 'thresholds' in layer.keywords:
-        s = layer.keywords['thresholds']
-        thresholds = [float(x) for x in s.split(',')]
+        t_list = layer.keywords['thresholds']
+        thresholds = [float(x) for x in t_list]
         thresholds.sort()
     else:
         thresholds = []
@@ -522,53 +523,237 @@ def get_admissible_plugins(keywords=None):  # , name=None):
     return admissible_plugins
 
 
-def get_plugins_as_table(name=None):
+def parse_single_requirement(requirement):
+    '''Parse single requirement from impact function's doc to category,
+        subcategory, layertype, datatype, unit, and disabled.'''
+    retval = {}
+    parts = requirement.split(' and ')
+    for part in parts:
+        if part.find('==') != -1:
+            myKey = part.split('==')[0]
+            myValue = part.split('==')[1]
+            retval[myKey] = myValue[1:-1]  # Removing single quote
+        elif part.find(' in ') != -1:
+            myKey = part.split(' in ')[0]
+            myListString = part.split(' in ')[1][1:-1]  # Removing '['
+            elmtList = myListString.split(', ')
+            myList = []
+            for elmt in elmtList:
+                myList.append(elmt[1:-1])  # Removing single quote
+            retval[myKey] = myList
+        elif part.find('.startswith') != -1:
+            pass  # Not yet implemented
+        else:
+            pass
+
+    return retval
+
+
+def get_plugins_as_table(dict_filter=None):
     """Retrieve a table listing all plugins and their requirements.
 
        Or just a single plugin if name is passed.
 
-       Args: name str optional name of a specific plugin.
+       Args:
+           * dict_filter = dictionary that contains filters
+               - id = list_id
+               - title = list_title
+               - category : list_category
+               - subcategory : list_subcategory
+               - layertype : list_layertype
+               - datatype : list_datatype
+               - unit: list_unit
+               - disabled : list_disabled # not included
 
-       Returns: table instance containing plugin descriptive data
+       Returns:
+           * table contains plugins match with dict_filter
 
        Raises: None
     """
 
+    if dict_filter is None:
+        dict_filter = {'id': [],
+                       'title': [],
+                       'category': [],
+                       'subcategory': [],
+                       'layertype': [],
+                       'datatype': [],
+                       'unit': []}
+
     table_body = []
-    header = TableRow([_('Title'), _('ID'), _('Requirements')], header=True)
+    # use this list for avoiding wrong order in dict
+    atts = ['category', 'subcategory', 'layertype',
+                           'datatype', 'unit']
+    header = TableRow([_('Title'), _('ID'), _('Category'),
+                       _('Sub Category'), _('Layer type'), _('Data type'),
+                       _('Unit')],
+                      header=True)
     table_body.append(header)
 
     plugins_dict = dict([(pretty_function_name(p), p)
                          for p in FunctionProvider.plugins])
 
-    if name is not None:
-        if isinstance(name, basestring):
-            # Add the names
-            plugins_dict.update(dict([(p.__name__, p)
-                                      for p in FunctionProvider.plugins]))
-
-            msg = ('No plugin named "%s" was found. '
-                   'List of available plugins is: %s'
-                   % (name, ', '.join(plugins_dict.keys())))
-            if name not in plugins_dict:
-                raise RuntimeError(msg)
-
-            plugins_dict = {name: plugins_dict[name]}
-        else:
-            msg = ('get_plugins expects either no parameters or a string '
-                   'with the name of the plugin, you passed: '
-                   '%s which is a %s' % (name, type(name)))
-            raise Exception(msg)
-    # Now loop through the plugins adding them to the table
+    not_found_value = 'N/A'
     for key, func in plugins_dict.iteritems():
         for requirement in requirements_collect(func):
-            row = []
-            row.append(TableCell(get_function_title(func), header=True))
-            row.append(key)
-            row.append(requirement)
-            table_body.append(TableRow(row))
+            dict_found = {'title': False,
+                          'id': False,
+                          'category': False,
+                          'subcategory': False,
+                          'layertype': False,
+                          'datatype': False,
+                          'unit': False}
 
-    table = Table(table_body)
+            dict_req = parse_single_requirement(str(requirement))
+
+            for myKey in dict_found.iterkeys():
+                myFilter = dict_filter.get(myKey, [])
+                if myKey == 'title':
+                    myValue = str(get_function_title(func))
+                elif myKey == 'id':
+                    myValue = str(key)
+                else:
+                    myValue = dict_req.get(myKey, not_found_value)
+
+                if myFilter != []:
+                    for myKeyword in myFilter:
+                        if type(myValue) == type(str()):
+                            if myValue == myKeyword:
+                                dict_found[myKey] = True
+                                break
+                        elif type(myValue) == type(list()):
+                            if myKeyword in myValue:
+                                dict_found[myKey] = True
+                                break
+                        else:
+                            if myValue.find(str(myKeyword)) != -1:
+                                dict_found[myKey] = True
+                                break
+                else:
+                    dict_found[myKey] = True
+
+            add_row = True
+            for found_value in dict_found.itervalues():
+                if not found_value:
+                    add_row = False
+                    break
+
+            if add_row:
+                row = []
+                row.append(TableCell(get_function_title(func), header=True))
+                row.append(key)
+                for myKey in atts:
+                    myValue = pretty_string(dict_req.get(myKey,
+                                                not_found_value))
+                    row.append(myValue)
+                table_body.append(TableRow(row))
+
+    cw = 100 / 7
+    table_col_width = [str(cw) + '%', str(cw) + '%', str(cw) + '%',
+                       str(cw) + '%', str(cw) + '%', str(cw) + '%',
+                       str(cw) + '%']
+    table = Table(table_body, col_width=table_col_width)
     table.caption = _('Available Impact Functions')
 
     return table
+
+
+def get_unique_values():
+    """Get unique possible value for each column in impact functions doc
+        table.
+
+        Args: None
+
+        Returns:
+            * Dictionary contains list unique value for each column
+        """
+    atts = ['category', 'subcategory', 'layertype', 'datatype', 'unit']
+    dict_retval = {'category': set(),
+                   'subcategory': set(),
+                   'layertype': set(),
+                   'datatype': set(),
+                   'unit': set(),
+                   'id': set(),
+                   'title': set()}
+
+    plugins_dict = dict([(pretty_function_name(p), p)
+                         for p in FunctionProvider.plugins])
+    for key, func in plugins_dict.iteritems():
+        dict_retval['title'].add(get_function_title(func))
+        dict_retval['id'].add(key)
+        for requirement in requirements_collect(func):
+            dict_req = parse_single_requirement(str(requirement))
+            for key in dict_req.iterkeys():
+                if key not in atts:
+                    break
+                if type(dict_req[key]) == type(str()):
+                    dict_retval[key].add(dict_req[key])
+                elif type(dict_req[key]) == type(list()):
+                    dict_retval[key] |= set(dict_req[key])
+
+    # convert to list
+    for key in dict_retval.iterkeys():
+        dict_retval[key] = list(dict_retval[key])
+    return dict_retval
+
+
+def get_dict_doc_func(func):
+    """Collect all doc string of func and return a beatiuful format of them
+    in a dictionary format.
+
+        Args:
+            * func : name of function
+        Returns:
+            * Dictionary contains:
+                synopsis : string (first line)
+                author : string (identified by :author)
+                rating : integer (identified by :rating)
+                param_req : list of param (identified by :param requires)
+                detail : detail description (identified by :detail)
+                citation : list of citation in string (identified by :citation)
+                limitation : string (identified by :limitation)
+    """
+    retval = {'synopsis': '',
+              'author': '',
+              'rating': '',
+              'param_req': [],
+              'detail': '',
+              'citation': [],
+              'limitaion': ''}
+
+    plugins_dict = dict([(pretty_function_name(p), p)
+                         for p in FunctionProvider.plugins])
+    if func not in plugins_dict.keys():
+        return retval
+    else:
+        func = plugins_dict[func]
+
+    author_tag = ':author'
+    rating_tag = ':rating'
+    param_req_tag = ':param requires'
+    detail_tag = ':detail'
+    citation_tag = ':citation'
+    limitation_tag = ':limitation'
+
+    if hasattr(func, '__doc__') and func.__doc__:
+        doc_str = func.__doc__
+        for line in doc_str.split('\n'):
+            doc_line = remove_double_spaces(line)
+            doc_line = doc_line.strip()
+
+            if doc_line.startswith(author_tag):
+                retval['author'] = doc_line[len(author_tag) + 1:]
+            elif doc_line.startswith(rating_tag):
+                retval['rating'] = int(doc_line[len(rating_tag) + 1:])
+            elif doc_line.startswith(detail_tag):
+                retval['detail'] = doc_line[len(detail_tag) + 1:]
+            elif doc_line.startswith(limitation_tag):
+                retval['limitation'] = doc_line[len(limitation_tag) + 1:]
+            elif doc_line.startswith(param_req_tag):
+                retval['param_req'].append(doc_line[len(param_req_tag) + 1:])
+            elif doc_line.startswith(citation_tag):
+                retval['citation'].append(doc_line[len(citation_tag) + 1:])
+
+        retval['synopsis'] = remove_double_spaces(doc_str.split('\n')[0])
+
+    return retval

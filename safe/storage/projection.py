@@ -38,13 +38,28 @@ class Projection:
                             srs.ImportFromWkt,
                             srs.ImportFromEPSG,
                             srs.ImportFromESRI,
-                            srs.ImportFromMICoordSys,
+                            # FIXME (Ole): This one emits the warning:
+                            # Warning 5: Failed parsing CoordSys:
+                            # 'Indonesia TM-3 zone 48.2'
+                            #srs.ImportFromMICoordSys,
                             srs.ImportFromPCI,
                             srs.ImportFromXML,
                             srs.ImportFromUSGS,
                             srs.ImportFromUrl]:
 
-            res = import_func(p)
+            try:
+                res = import_func(p)
+            except TypeError:
+                # FIXME: NetCDF raster layer gives SRS error
+                # Occasionally we get things like
+                #   File "/usr/lib/python2.7/dist-packages/osgeo/osr.py",
+                #   line 639, in ImportFromEPSG
+                #   return _osr.SpatialReference_ImportFromEPSG(self, *args)
+                #   TypeError: in method 'SpatialReference_ImportFromEPSG',
+                #   argument 2 of type 'int'
+                # e.g. when using NetCDF multiband data. Why?
+                pass
+
             if res == 0:
                 input_OK = True
                 break
