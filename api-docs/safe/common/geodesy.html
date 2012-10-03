@@ -1,0 +1,226 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Module: safe.common.geodesy &mdash; InaSAFE 0.5.0-alpha documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/cloud.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Noticia+Text|Droid+Sans+Mono" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '0.5.0-alpha',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../../_static/jquery.cookie.js"></script>
+    <script type="text/javascript" src="../../../_static/toggle_sections.js"></script>
+    <link rel="top" title="InaSAFE 0.5.0-alpha documentation" href="../../../index.html" />
+    <link rel="up" title="Package::safe.common" href="../common.html" />
+    <link rel="next" title="Module: safe.common.tables" href="tables.html" />
+    <link rel="prev" title="Package::safe.common" href="../common.html" /> 
+  </head>
+  <body>
+    <div class="relbar-top">
+        
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> &nbsp; &nbsp;</li>
+        <li class="right" >
+          <a href="tables.html" title="Module: safe.common.tables"
+             accesskey="N">next</a> &nbsp; &nbsp;</li>
+        <li class="right" >
+          <a href="../common.html" title="Package::safe.common"
+             accesskey="P">previous</a> &nbsp; &nbsp;</li>
+    <li><a href="../../../index.html">Home</a> &raquo;</li>
+    <li><a href="../../../contents.html">Contents</a> &raquo;</li>
+
+          <li><a href="../../index.html" >InaSAFE&#8217;s API documentation</a> &raquo;</li>
+          <li><a href="../../safe.html" >Package::safe</a> &raquo;</li>
+          <li><a href="../common.html" accesskey="U">Package::safe.common</a> &raquo;</li> 
+      </ul>
+    </div>
+    </div>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="module-safe.common.geodesy">
+<span id="module-safe-common-geodesy"></span><h1>Module:  safe.common.geodesy<a class="headerlink" href="#module-safe.common.geodesy" title="Permalink to this headline">¶</a></h1>
+<p>point.py - Represents a generic point on a sphere as a Python object.</p>
+<p>See documentation of class Point for details.
+Ole Nielsen, ANU 2002</p>
+<dl class="class">
+<dt id="safe.common.geodesy.Point">
+<em class="property">class </em><tt class="descclassname">safe.common.geodesy.</tt><tt class="descname">Point</tt><big>(</big><em>latitude=None</em>, <em>longitude=None</em><big>)</big><a class="reference internal" href="../../../_modules/safe/common/geodesy.html#Point"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe.common.geodesy.Point" title="Permalink to this definition">¶</a></dt>
+<dd><p>Definition of a generic point on the sphere.</p>
+<p>Defines a point in terms of latitude and longitude
+and computes distances to other points on the sphere.</p>
+<dl class="docutils">
+<dt>Initialise as</dt>
+<dd>Point(lat, lon), where lat and lon are in decimal degrees (dd.dddd)</dd>
+<dt>Public Methods:</dt>
+<dd>distance_to(P)
+bearing_to(P)
+dist(P)</dd>
+</dl>
+<p>Author: Ole Nielsen, ANU 2002</p>
+<dl class="method">
+<dt id="safe.common.geodesy.Point.AZ">
+<tt class="descname">AZ</tt><big>(</big><em>P</em><big>)</big><a class="reference internal" href="../../../_modules/safe/common/geodesy.html#Point.AZ"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe.common.geodesy.Point.AZ" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute Azimuth bearing (AZ) from current point to P</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="safe.common.geodesy.Point.GCA">
+<tt class="descname">GCA</tt><big>(</big><em>P</em><big>)</big><a class="reference internal" href="../../../_modules/safe/common/geodesy.html#Point.GCA"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe.common.geodesy.Point.GCA" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute the Creat Circle Angle (GCA) between current point and P</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="safe.common.geodesy.Point.approximate_distance_to">
+<tt class="descname">approximate_distance_to</tt><big>(</big><em>P</em><big>)</big><a class="reference internal" href="../../../_modules/safe/common/geodesy.html#Point.approximate_distance_to"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe.common.geodesy.Point.approximate_distance_to" title="Permalink to this definition">¶</a></dt>
+<dd><p>Very cheap and rough approximation to distance</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="safe.common.geodesy.Point.bearing_to">
+<tt class="descname">bearing_to</tt><big>(</big><em>P</em><big>)</big><a class="reference internal" href="../../../_modules/safe/common/geodesy.html#Point.bearing_to"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe.common.geodesy.Point.bearing_to" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bearing (in degrees) to point P</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="safe.common.geodesy.Point.distance_to">
+<tt class="descname">distance_to</tt><big>(</big><em>P</em><big>)</big><a class="reference internal" href="../../../_modules/safe/common/geodesy.html#Point.distance_to"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe.common.geodesy.Point.distance_to" title="Permalink to this definition">¶</a></dt>
+<dd><p>Distance to point P</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="safe.common.geodesy.Point.generate_circle">
+<tt class="descname">generate_circle</tt><big>(</big><em>radius</em>, <em>resolution=1</em><big>)</big><a class="reference internal" href="../../../_modules/safe/common/geodesy.html#Point.generate_circle"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe.common.geodesy.Point.generate_circle" title="Permalink to this definition">¶</a></dt>
+<dd><p>Make circle about this point</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><p class="first">radius: The desired cirle radius [m]
+resolution (optional): Radial distance (degrees) between</p>
+<blockquote class="last">
+<div>points on circle. Default is 1 making the circle consist
+of 360 points</div></blockquote>
+</dd>
+<dt>Returns:</dt>
+<dd>list of lon, lat coordinates defining the circle</dd>
+<dt>Note:</dt>
+<dd>The circle is defined in geographic coordinates so
+the distance in meters will be greater than the specified radius
+in the north south direction.</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="safe.common.geodesy.acos">
+<tt class="descclassname">safe.common.geodesy.</tt><tt class="descname">acos</tt><big>(</big><em>c</em><big>)</big><a class="reference internal" href="../../../_modules/safe/common/geodesy.html#acos"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe.common.geodesy.acos" title="Permalink to this definition">¶</a></dt>
+<dd><p>acos -  Safe inverse cosine</p>
+<p>Input argument c is shrunk to admissible interval
+to avoid case where a small rounding error causes
+a math domain error.</p>
+</dd></dl>
+
+<p>This module forms part of the <a class="reference external" href="http://inasafe.org">InaSAFE</a> tool.</p>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+        <p class="logo"><a href="../../../contents.html">
+          <img class="logo" src="../../../_static/icon.png" alt="Logo"/>
+        </a></p>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="../common.html"
+                        title="previous chapter">Package::safe.common</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="tables.html"
+                        title="next chapter">Module:  safe.common.tables</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../../../_sources/api-docs/safe/common/geodesy.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="relbar-bottom">
+        
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> &nbsp; &nbsp;</li>
+        <li class="right" >
+          <a href="tables.html" title="Module: safe.common.tables"
+             >next</a> &nbsp; &nbsp;</li>
+        <li class="right" >
+          <a href="../common.html" title="Package::safe.common"
+             >previous</a> &nbsp; &nbsp;</li>
+    <li><a href="../../../index.html">Home</a> &raquo;</li>
+    <li><a href="../../../contents.html">Contents</a> &raquo;</li>
+
+          <li><a href="../../index.html" >InaSAFE&#8217;s API documentation</a> &raquo;</li>
+          <li><a href="../../safe.html" >Package::safe</a> &raquo;</li>
+          <li><a href="../common.html" >Package::safe.common</a> &raquo;</li> 
+      </ul>
+    </div>
+    </div>
+
+    <div class="footer">
+        &copy; Copyright 2012, BNPB/AIFDR/GFDRR.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+    <!-- cloud_sptheme 1.3 -->
+  </body>
+</html>

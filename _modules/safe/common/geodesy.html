@@ -1,0 +1,318 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>safe.common.geodesy &mdash; InaSAFE 0.5.0-alpha documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/cloud.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Noticia+Text|Droid+Sans+Mono" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '0.5.0-alpha',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../../_static/jquery.cookie.js"></script>
+    <script type="text/javascript" src="../../../_static/toggle_sections.js"></script>
+    <link rel="top" title="InaSAFE 0.5.0-alpha documentation" href="../../../index.html" />
+    <link rel="up" title="Module code" href="../../index.html" /> 
+  </head>
+  <body>
+    <div class="relbar-top">
+        
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> &nbsp; &nbsp;</li>
+    <li><a href="../../../index.html">Home</a> &raquo;</li>
+    <li><a href="../../../contents.html">Contents</a> &raquo;</li>
+
+          <li><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    </div>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for safe.common.geodesy</h1><div class="highlight"><pre>
+<span class="sd">&quot;&quot;&quot;point.py - Represents a generic point on a sphere as a Python object.</span>
+
+<span class="sd">   See documentation of class Point for details.</span>
+<span class="sd">   Ole Nielsen, ANU 2002</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+
+<span class="kn">from</span> <span class="nn">math</span> <span class="kn">import</span> <span class="n">cos</span><span class="p">,</span> <span class="n">sin</span><span class="p">,</span> <span class="n">pi</span>
+<span class="kn">import</span> <span class="nn">numpy</span>
+
+
+<div class="viewcode-block" id="acos"><a class="viewcode-back" href="../../../api-docs/safe/common/geodesy.html#safe.common.geodesy.acos">[docs]</a><span class="k">def</span> <span class="nf">acos</span><span class="p">(</span><span class="n">c</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;acos -  Safe inverse cosine</span>
+
+<span class="sd">       Input argument c is shrunk to admissible interval</span>
+<span class="sd">       to avoid case where a small rounding error causes</span>
+<span class="sd">       a math domain error.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">from</span> <span class="nn">math</span> <span class="kn">import</span> <span class="n">acos</span> <span class="k">as</span> <span class="n">_acos</span>
+
+    <span class="k">if</span> <span class="n">c</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">c</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="k">if</span> <span class="n">c</span> <span class="o">&lt;</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+        <span class="n">c</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+
+    <span class="k">return</span> <span class="n">_acos</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
+
+</div>
+<div class="viewcode-block" id="Point"><a class="viewcode-back" href="../../../api-docs/safe/common/geodesy.html#safe.common.geodesy.Point">[docs]</a><span class="k">class</span> <span class="nc">Point</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Definition of a generic point on the sphere.</span>
+
+<span class="sd">    Defines a point in terms of latitude and longitude</span>
+<span class="sd">    and computes distances to other points on the sphere.</span>
+
+<span class="sd">    Initialise as</span>
+<span class="sd">      Point(lat, lon), where lat and lon are in decimal degrees (dd.dddd)</span>
+
+<span class="sd">    Public Methods:</span>
+<span class="sd">        distance_to(P)</span>
+<span class="sd">        bearing_to(P)</span>
+<span class="sd">        dist(P)</span>
+
+<span class="sd">    Author: Ole Nielsen, ANU 2002</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c"># class constants</span>
+    <span class="n">R</span> <span class="o">=</span> <span class="mi">6372000</span>  <span class="c"># Approximate radius of Earth (m)</span>
+    <span class="n">degrees2radians</span> <span class="o">=</span> <span class="n">pi</span> <span class="o">/</span> <span class="mf">180.0</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">latitude</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">longitude</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+
+        <span class="k">if</span> <span class="n">latitude</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s">&#39;Argument latitude must be specified to Point constructor&#39;</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">longitude</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s">&#39;Argument longitude must be specified to Point constructor&#39;</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+        <span class="n">msg</span> <span class="o">=</span> <span class="s">&#39;Specified latitude </span><span class="si">%f</span><span class="s"> was out of bounds&#39;</span> <span class="o">%</span> <span class="n">latitude</span>
+        <span class="k">assert</span><span class="p">(</span><span class="n">latitude</span> <span class="o">&gt;=</span> <span class="o">-</span><span class="mi">90</span> <span class="ow">and</span> <span class="n">latitude</span> <span class="o">&lt;=</span> <span class="mf">90.0</span><span class="p">),</span> <span class="n">msg</span>
+
+        <span class="n">msg</span> <span class="o">=</span> <span class="s">&#39;Specified longitude </span><span class="si">%f</span><span class="s"> was out of bounds&#39;</span> <span class="o">%</span> <span class="n">longitude</span>
+        <span class="k">assert</span><span class="p">(</span><span class="n">longitude</span> <span class="o">&gt;=</span> <span class="o">-</span><span class="mi">180</span> <span class="ow">and</span> <span class="n">longitude</span> <span class="o">&lt;=</span> <span class="mf">180.0</span><span class="p">),</span> <span class="n">msg</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">latitude</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">latitude</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">longitude</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">longitude</span><span class="p">)</span>
+
+        <span class="n">lat</span> <span class="o">=</span> <span class="n">latitude</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">degrees2radians</span>    <span class="c"># Converted to radians</span>
+        <span class="n">lon</span> <span class="o">=</span> <span class="n">longitude</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">degrees2radians</span>   <span class="c"># Converted to radians</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">coslat</span> <span class="o">=</span> <span class="n">cos</span><span class="p">(</span><span class="n">lat</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">coslon</span> <span class="o">=</span> <span class="n">cos</span><span class="p">(</span><span class="n">lon</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sinlat</span> <span class="o">=</span> <span class="n">sin</span><span class="p">(</span><span class="n">lat</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sinlon</span> <span class="o">=</span> <span class="n">sin</span><span class="p">(</span><span class="n">lon</span><span class="p">)</span>
+
+    <span class="c">#---------------</span>
+    <span class="c"># Public methods</span>
+    <span class="c">#---------------</span>
+<div class="viewcode-block" id="Point.bearing_to"><a class="viewcode-back" href="../../../api-docs/safe/common/geodesy.html#safe.common.geodesy.Point.bearing_to">[docs]</a>    <span class="k">def</span> <span class="nf">bearing_to</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">P</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Bearing (in degrees) to point P&quot;&quot;&quot;</span>
+        <span class="n">AZ</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">AZ</span><span class="p">(</span><span class="n">P</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">AZ</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">degrees2radians</span><span class="p">))</span>
+</div>
+<div class="viewcode-block" id="Point.distance_to"><a class="viewcode-back" href="../../../api-docs/safe/common/geodesy.html#safe.common.geodesy.Point.distance_to">[docs]</a>    <span class="k">def</span> <span class="nf">distance_to</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">P</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Distance to point P&quot;&quot;&quot;</span>
+        <span class="n">GCA</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">GCA</span><span class="p">(</span><span class="n">P</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">R</span> <span class="o">*</span> <span class="n">GCA</span>
+</div>
+<div class="viewcode-block" id="Point.approximate_distance_to"><a class="viewcode-back" href="../../../api-docs/safe/common/geodesy.html#safe.common.geodesy.Point.approximate_distance_to">[docs]</a>    <span class="k">def</span> <span class="nf">approximate_distance_to</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">P</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Very cheap and rough approximation to distance&quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="nb">max</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">latitude</span> <span class="o">-</span> <span class="n">P</span><span class="o">.</span><span class="n">latitude</span><span class="p">),</span>
+                   <span class="nb">abs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">longitude</span> <span class="o">-</span> <span class="n">P</span><span class="o">.</span><span class="n">longitude</span><span class="p">))</span>
+
+    <span class="c">#-----------------</span>
+    <span class="c"># Internal methods</span>
+    <span class="c">#-----------------</span></div>
+    <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Readable representation of point</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">d</span> <span class="o">=</span> <span class="mi">2</span>
+        <span class="n">lat</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">latitude</span><span class="p">,</span> <span class="n">d</span><span class="p">)</span>
+        <span class="n">lon</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">longitude</span><span class="p">,</span> <span class="n">d</span><span class="p">)</span>
+        <span class="k">return</span> <span class="s">&#39; (&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">lat</span><span class="p">)</span> <span class="o">+</span> <span class="s">&#39;, &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">lon</span><span class="p">)</span> <span class="o">+</span> <span class="s">&#39;)&#39;</span>
+
+<div class="viewcode-block" id="Point.GCA"><a class="viewcode-back" href="../../../api-docs/safe/common/geodesy.html#safe.common.geodesy.Point.GCA">[docs]</a>    <span class="k">def</span> <span class="nf">GCA</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">P</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Compute the Creat Circle Angle (GCA) between current point and P</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">alpha</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">coslon</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">coslon</span> <span class="o">+</span> <span class="n">P</span><span class="o">.</span><span class="n">sinlon</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">sinlon</span>
+        <span class="c"># The original formula is alpha = cos(self.lon - P.lon)</span>
+        <span class="c"># but rewriting lets us make us of precomputed trigonometric values.</span>
+
+        <span class="n">x</span> <span class="o">=</span> <span class="n">alpha</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">coslat</span> <span class="o">*</span> <span class="n">P</span><span class="o">.</span><span class="n">coslat</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">sinlat</span> <span class="o">*</span> <span class="n">P</span><span class="o">.</span><span class="n">sinlat</span>
+        <span class="k">return</span> <span class="n">acos</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="Point.AZ"><a class="viewcode-back" href="../../../api-docs/safe/common/geodesy.html#safe.common.geodesy.Point.AZ">[docs]</a>    <span class="k">def</span> <span class="nf">AZ</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">P</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Compute Azimuth bearing (AZ) from current point to P</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c"># Compute cosine(AZ), where AZ is the azimuth angle</span>
+        <span class="n">GCA</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">GCA</span><span class="p">(</span><span class="n">P</span><span class="p">)</span>
+        <span class="n">c</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">sinlat</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">sinlat</span> <span class="o">*</span> <span class="n">cos</span><span class="p">(</span><span class="n">GCA</span><span class="p">)</span>
+        <span class="n">c</span> <span class="o">=</span> <span class="n">c</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">coslat</span> <span class="o">/</span> <span class="n">sin</span><span class="p">(</span><span class="n">GCA</span><span class="p">)</span>
+
+        <span class="n">AZ</span> <span class="o">=</span> <span class="n">acos</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
+
+        <span class="c"># Reverse direction if bearing is westward,</span>
+        <span class="c"># i.e. sin(self.lon - P.lon) &gt; 0</span>
+        <span class="c"># Without this correction the bearing due west, say, will be 90 degrees</span>
+        <span class="c"># because the formulas work in the positive direction which is east.</span>
+        <span class="c">#</span>
+        <span class="c"># Precomputed trigonometric values are used to rewrite the formula:</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">sinlon</span> <span class="o">*</span> <span class="n">P</span><span class="o">.</span><span class="n">coslon</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">coslon</span> <span class="o">*</span> <span class="n">P</span><span class="o">.</span><span class="n">sinlon</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">AZ</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">pi</span> <span class="o">-</span> <span class="n">AZ</span>
+
+        <span class="k">return</span> <span class="n">AZ</span>
+</div>
+<div class="viewcode-block" id="Point.generate_circle"><a class="viewcode-back" href="../../../api-docs/safe/common/geodesy.html#safe.common.geodesy.Point.generate_circle">[docs]</a>    <span class="k">def</span> <span class="nf">generate_circle</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">radius</span><span class="p">,</span> <span class="n">resolution</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Make circle about this point</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            radius: The desired cirle radius [m]</span>
+<span class="sd">            resolution (optional): Radial distance (degrees) between</span>
+<span class="sd">                points on circle. Default is 1 making the circle consist</span>
+<span class="sd">                of 360 points</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            list of lon, lat coordinates defining the circle</span>
+
+
+<span class="sd">        Note:</span>
+<span class="sd">            The circle is defined in geographic coordinates so</span>
+<span class="sd">            the distance in meters will be greater than the specified radius</span>
+<span class="sd">            in the north south direction.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c"># Find first point in circle to the east of the center by bisecting</span>
+        <span class="c"># until desired radius is achieved</span>
+
+        <span class="c"># Go north until distance is greater than desired</span>
+        <span class="n">step</span> <span class="o">=</span> <span class="mf">0.001</span>
+        <span class="n">d</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">while</span> <span class="n">d</span> <span class="o">&lt;</span> <span class="n">radius</span><span class="p">:</span>
+            <span class="n">stepmin</span> <span class="o">=</span> <span class="n">step</span>
+            <span class="n">step</span> <span class="o">*=</span> <span class="mi">2</span>
+            <span class="n">p</span> <span class="o">=</span> <span class="n">Point</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">latitude</span> <span class="o">+</span> <span class="n">step</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">longitude</span><span class="p">)</span>
+            <span class="n">d</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">distance_to</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+
+        <span class="c"># Then bisect until the correct distance is found in degrees</span>
+        <span class="n">stepmax</span> <span class="o">=</span> <span class="n">step</span>
+        <span class="k">while</span> <span class="ow">not</span> <span class="n">numpy</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">radius</span><span class="p">,</span> <span class="n">rtol</span><span class="o">=</span><span class="mf">1.0e-6</span><span class="p">):</span>
+            <span class="n">step</span> <span class="o">=</span> <span class="p">(</span><span class="n">stepmax</span> <span class="o">+</span> <span class="n">stepmin</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span>
+            <span class="n">p</span> <span class="o">=</span> <span class="n">Point</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">latitude</span> <span class="o">+</span> <span class="n">step</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">longitude</span><span class="p">)</span>
+            <span class="n">d</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">distance_to</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">d</span> <span class="o">&gt;</span> <span class="n">radius</span><span class="p">:</span>
+                <span class="n">stepmax</span> <span class="o">=</span> <span class="n">step</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">stepmin</span> <span class="o">=</span> <span class="n">step</span>
+
+        <span class="c">#print</span>
+        <span class="c">#print (&#39;Found geographical distance %f degrees yielding radius %f m&#39;</span>
+        <span class="c">#       % (step, d))</span>
+        <span class="n">r</span> <span class="o">=</span> <span class="n">step</span>
+
+        <span class="c"># Generate circle with geographic radius = step (degrees)</span>
+        <span class="n">P</span> <span class="o">=</span> <span class="p">[[</span><span class="n">p</span><span class="o">.</span><span class="n">longitude</span><span class="p">,</span> <span class="n">p</span><span class="o">.</span><span class="n">latitude</span><span class="p">]]</span>
+
+        <span class="n">angle</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">while</span> <span class="n">angle</span> <span class="o">&lt;</span> <span class="mi">360</span><span class="p">:</span>
+            <span class="n">theta</span> <span class="o">=</span> <span class="n">angle</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">degrees2radians</span>
+            <span class="c">#print angle, theta, self.bearing_to(p), self.distance_to(p)</span>
+
+            <span class="c"># Generate new point on circle</span>
+            <span class="n">lat</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">latitude</span> <span class="o">+</span> <span class="n">r</span> <span class="o">*</span> <span class="n">cos</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span>
+            <span class="n">lon</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">longitude</span> <span class="o">+</span> <span class="n">r</span> <span class="o">*</span> <span class="n">sin</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span>
+
+            <span class="n">p</span> <span class="o">=</span> <span class="n">Point</span><span class="p">(</span><span class="n">latitude</span><span class="o">=</span><span class="n">lat</span><span class="p">,</span> <span class="n">longitude</span><span class="o">=</span><span class="n">lon</span><span class="p">)</span>
+            <span class="n">angle</span> <span class="o">+=</span> <span class="n">resolution</span>
+
+            <span class="n">P</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">p</span><span class="o">.</span><span class="n">longitude</span><span class="p">,</span> <span class="n">p</span><span class="o">.</span><span class="n">latitude</span><span class="p">])</span>
+
+        <span class="k">return</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">P</span><span class="p">)</span></div></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+        <p class="logo"><a href="../../../contents.html">
+          <img class="logo" src="../../../_static/icon.png" alt="Logo"/>
+        </a></p>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="relbar-bottom">
+        
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> &nbsp; &nbsp;</li>
+    <li><a href="../../../index.html">Home</a> &raquo;</li>
+    <li><a href="../../../contents.html">Contents</a> &raquo;</li>
+
+          <li><a href="../../index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    </div>
+
+    <div class="footer">
+        &copy; Copyright 2012, BNPB/AIFDR/GFDRR.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+    <!-- cloud_sptheme 1.3 -->
+  </body>
+</html>

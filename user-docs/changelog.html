@@ -4,14 +4,17 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
+
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Whats new? &mdash; InaSAFE v0.5.0-alpha documentation</title>
+    <title>Whats new? &mdash; InaSAFE 0.5.0-alpha documentation</title>
+    
     <link rel="stylesheet" href="../_static/cloud.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <link rel="stylesheet" href="../http://fonts.googleapis.com/css?family=Noticia+Text|Droid+Sans+Mono" type="text/css" />
+    <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Noticia+Text|Droid+Sans+Mono" type="text/css" />
+    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
@@ -26,7 +29,7 @@
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <script type="text/javascript" src="../_static/jquery.cookie.js"></script>
     <script type="text/javascript" src="../_static/toggle_sections.js"></script>
-    <link rel="top" title="InaSAFE v0.5.0-alpha documentation" href="../index.html" />
+    <link rel="top" title="InaSAFE 0.5.0-alpha documentation" href="../index.html" />
     <link rel="up" title="InaSAFE user documentation" href="index.html" />
     <link rel="next" title="InaSAFE developer documentation" href="../developer-docs/index.html" />
     <link rel="prev" title="Known Issues" href="known_issues.html" /> 
@@ -65,8 +68,29 @@
             
   <div class="section" id="whats-new">
 <h1>Whats new?<a class="headerlink" href="#whats-new" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="changelog-for-version-0-5-0">
+<h2>Changelog for version 0.5.0<a class="headerlink" href="#changelog-for-version-0-5-0" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>Better documentation. See <a class="reference external" href="http://inasafe.org/contents.html">http://inasafe.org/contents.html</a></li>
+<li>Ability to combine polygon hazard  (such as flood prone areas) with
+population density (see attached screenshot).</li>
+<li>Option to use entire intersection of hazard and exposure instead of clipping
+to the somewhat arbitrary viewport (the training revealed that this was a bit
+confusing)</li>
+<li>Aggregation of raster impact layers by arbitrary polygon layers (such as
+kelurahan boundaries)</li>
+<li>Limited support for runtime configuration of impact functions (e.g. by
+changing thresholds). This is an interim measure while the team is working on
+a GUI to manipulate impact functions more generally.</li>
+<li>More DRR actions added to impact function reports (such as how will warnings
+be disseminated, how will we reach stranded people etc.)</li>
+<li>Volcanic (zonal hazard) impact assessments on building and population</li>
+<li>New function table view that lists all the available impact functions and allows
+them to be filtered by different criteria.</li>
+<li>Lots of small improvements to error reporting, GUI, translations and code quality.</li>
+</ul>
 <div class="section" id="changelog-for-version-0-4-1">
-<h2>Changelog for version 0.4.1<a class="headerlink" href="#changelog-for-version-0-4-1" title="Permalink to this headline">¶</a></h2>
+<h3>Changelog for version 0.4.1<a class="headerlink" href="#changelog-for-version-0-4-1" title="Permalink to this headline">¶</a></h3>
 <ul class="simple">
 <li>This is a minor bugfix release with packaging and documentation related
 changes only so that InaSAFE can be deployed via the official QGIS repository.</li>
@@ -74,30 +98,30 @@ changes only so that InaSAFE can be deployed via the official QGIS repository.</
 </ul>
 </div>
 <div class="section" id="changelog-for-version-0-4-0">
-<h2>Changelog for version 0.4.0<a class="headerlink" href="#changelog-for-version-0-4-0" title="Permalink to this headline">¶</a></h2>
+<h3>Changelog for version 0.4.0<a class="headerlink" href="#changelog-for-version-0-4-0" title="Permalink to this headline">¶</a></h3>
 <ul class="simple">
 <li>Ability to automatically handle multipart vector data: <a class="reference external" href="https://github.com/AIFDR/inasafe/issues/160">https://github.com/AIFDR/inasafe/issues/160</a></li>
 <li>Better error reporting:</li>
 </ul>
 <blockquote>
-<ul class="simple">
+<div><ul class="simple">
 <li><a class="reference external" href="https://github.com/AIFDR/inasafe/issues/170">https://github.com/AIFDR/inasafe/issues/170</a></li>
 <li><a class="reference external" href="https://github.com/AIFDR/inasafe/issues/161">https://github.com/AIFDR/inasafe/issues/161</a></li>
 <li><a class="reference external" href="https://github.com/AIFDR/inasafe/issues/157">https://github.com/AIFDR/inasafe/issues/157</a></li>
 </ul>
-</blockquote>
+</div></blockquote>
 <ul class="simple">
 <li>Bug fixing:</li>
 </ul>
 <blockquote>
-<ul class="simple">
+<div><ul class="simple">
 <li><a class="reference external" href="https://github.com/AIFDR/inasafe/issues/159">https://github.com/AIFDR/inasafe/issues/159</a></li>
 <li><a class="reference external" href="https://github.com/AIFDR/inasafe/issues/156">https://github.com/AIFDR/inasafe/issues/156</a></li>
 <li><a class="reference external" href="https://github.com/AIFDR/inasafe/issues/173">https://github.com/AIFDR/inasafe/issues/173</a></li>
 <li><a class="reference external" href="https://github.com/AIFDR/inasafe/issues/166">https://github.com/AIFDR/inasafe/issues/166</a></li>
 <li><a class="reference external" href="https://github.com/AIFDR/inasafe/issues/162">https://github.com/AIFDR/inasafe/issues/162</a></li>
 </ul>
-</blockquote>
+</div></blockquote>
 <ul class="simple">
 <li>InaSAFE APIs better defined: <a class="reference external" href="https://github.com/AIFDR/inasafe/issues/134">https://github.com/AIFDR/inasafe/issues/134</a></li>
 <li>Release procedure developed: <a class="reference external" href="https://github.com/AIFDR/inasafe/issues/109">https://github.com/AIFDR/inasafe/issues/109</a></li>
@@ -109,7 +133,7 @@ changes only so that InaSAFE can be deployed via the official QGIS repository.</
 </ul>
 </div>
 <div class="section" id="changelog-for-version-0-3-0">
-<h2>Changelog for version 0.3.0<a class="headerlink" href="#changelog-for-version-0-3-0" title="Permalink to this headline">¶</a></h2>
+<h3>Changelog for version 0.3.0<a class="headerlink" href="#changelog-for-version-0-3-0" title="Permalink to this headline">¶</a></h3>
 <ul class="simple">
 <li>Documentation updates - extended guides for using the InaSAFE dock and
 keyword editors.</li>
@@ -130,7 +154,7 @@ removing layers.</li>
 </ul>
 </div>
 <div class="section" id="changelog-for-version-0-2-1">
-<h2>Changelog for version 0.2.1:<a class="headerlink" href="#changelog-for-version-0-2-1" title="Permalink to this headline">¶</a></h2>
+<h3>Changelog for version 0.2.1:<a class="headerlink" href="#changelog-for-version-0-2-1" title="Permalink to this headline">¶</a></h3>
 <ul class="simple">
 <li>Correct translation of &#8216;run&#8217; in indonesian. Closes #128</li>
 <li>Updated so that version number is shown in dock</li>
@@ -147,7 +171,7 @@ Note that OSX users should upgrade to GDAL 1.9 available here:
 </ul>
 </div>
 <div class="section" id="id1">
-<h2>Changelog for version 0.2.1:<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
+<h3>Changelog for version 0.2.1:<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h3>
 <ul class="simple">
 <li>Map printing support</li>
 <li>Improved translation support and Indonesian translation updates</li>
@@ -159,7 +183,7 @@ Note that OSX users should upgrade to GDAL 1.9 available here:
 </ul>
 </div>
 <div class="section" id="changelog-for-version-0-1-0">
-<h2>Changelog for version 0.1.0:<a class="headerlink" href="#changelog-for-version-0-1-0" title="Permalink to this headline">¶</a></h2>
+<h3>Changelog for version 0.1.0:<a class="headerlink" href="#changelog-for-version-0-1-0" title="Permalink to this headline">¶</a></h3>
 <ul class="simple">
 <li>First QGIS plugin implementation of InaSAFE.</li>
 <li>Migrated calculation engine from Risiko project.</li>
@@ -172,6 +196,7 @@ Note that OSX users should upgrade to GDAL 1.9 available here:
 <li>Support for internationalisation.</li>
 <li>Comprehensive documentation system.</li>
 </ul>
+</div>
 </div>
 </div>
 
@@ -187,12 +212,15 @@ Note that OSX users should upgrade to GDAL 1.9 available here:
   <h3><a href="../contents.html">Table Of Contents</a></h3>
   <ul>
 <li><a class="reference internal" href="#">Whats new?</a><ul>
+<li><a class="reference internal" href="#changelog-for-version-0-5-0">Changelog for version 0.5.0</a><ul>
 <li><a class="reference internal" href="#changelog-for-version-0-4-1">Changelog for version 0.4.1</a></li>
 <li><a class="reference internal" href="#changelog-for-version-0-4-0">Changelog for version 0.4.0</a></li>
 <li><a class="reference internal" href="#changelog-for-version-0-3-0">Changelog for version 0.3.0</a></li>
 <li><a class="reference internal" href="#changelog-for-version-0-2-1">Changelog for version 0.2.1:</a></li>
 <li><a class="reference internal" href="#id1">Changelog for version 0.2.1:</a></li>
 <li><a class="reference internal" href="#changelog-for-version-0-1-0">Changelog for version 0.1.0:</a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -211,7 +239,7 @@ Note that OSX users should upgrade to GDAL 1.9 available here:
 <div id="searchbox" style="display: none">
   <h3>Quick search</h3>
     <form class="search" action="../search.html" method="get">
-      <input type="text" name="q" size="18" />
+      <input type="text" name="q" />
       <input type="submit" value="Go" />
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
@@ -252,7 +280,7 @@ Note that OSX users should upgrade to GDAL 1.9 available here:
 
     <div class="footer">
         &copy; Copyright 2012, BNPB/AIFDR/GFDRR.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.1.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
     </div>
     <!-- cloud_sptheme 1.3 -->
   </body>

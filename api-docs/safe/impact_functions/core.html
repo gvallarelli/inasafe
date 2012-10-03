@@ -4,14 +4,17 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
+
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Module: safe.impact_functions.core &mdash; InaSAFE v0.5.0-alpha documentation</title>
+    <title>Module: safe.impact_functions.core &mdash; InaSAFE 0.5.0-alpha documentation</title>
+    
     <link rel="stylesheet" href="../../../_static/cloud.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
-    <link rel="stylesheet" href="../../../http://fonts.googleapis.com/css?family=Noticia+Text|Droid+Sans+Mono" type="text/css" />
+    <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Noticia+Text|Droid+Sans+Mono" type="text/css" />
+    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../',
@@ -26,10 +29,10 @@
     <script type="text/javascript" src="../../../_static/doctools.js"></script>
     <script type="text/javascript" src="../../../_static/jquery.cookie.js"></script>
     <script type="text/javascript" src="../../../_static/toggle_sections.js"></script>
-    <link rel="top" title="InaSAFE v0.5.0-alpha documentation" href="../../../index.html" />
+    <link rel="top" title="InaSAFE 0.5.0-alpha documentation" href="../../../index.html" />
     <link rel="up" title="Package::safe.impact_functions" href="../impact_functions.html" />
-    <link rel="next" title="Module: safe.impact_functions.test_plugin_core" href="test_plugin_core.html" />
-    <link rel="prev" title="Module: safe.impact_functions.styles" href="styles.html" /> 
+    <link rel="next" title="Package::safe.impact_functions.tephra" href="tephra.html" />
+    <link rel="prev" title="Module: safe.impact_functions.test_plugins" href="test_plugins.html" /> 
   </head>
   <body>
     <div class="relbar-top">
@@ -44,10 +47,10 @@
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
         <li class="right" >
-          <a href="test_plugin_core.html" title="Module: safe.impact_functions.test_plugin_core"
+          <a href="tephra.html" title="Package::safe.impact_functions.tephra"
              accesskey="N">next</a> &nbsp; &nbsp;</li>
         <li class="right" >
-          <a href="styles.html" title="Module: safe.impact_functions.styles"
+          <a href="test_plugins.html" title="Module: safe.impact_functions.test_plugins"
              accesskey="P">previous</a> &nbsp; &nbsp;</li>
     <li><a href="../../../index.html">Home</a> &raquo;</li>
     <li><a href="../../../contents.html">Contents</a> &raquo;</li>
@@ -83,10 +86,10 @@ using it.</p>
 <col width="63%" />
 </colgroup>
 <tbody valign="top">
-<tr><td>layers</td>
+<tr class="row-odd"><td>layers</td>
 <td>A list of layers</td>
 </tr>
-<tr><td>result</td>
+<tr class="row-even"><td>result</td>
 <td>A list of layers</td>
 </tr>
 </tbody>
@@ -103,7 +106,7 @@ using it.</p>
 boundaries: Polygon dataset
 attribute_name: Name of attribute to aggrate over.</p>
 <blockquote>
-This is only applicable for vector data</blockquote>
+<div>This is only applicable for vector data</div></blockquote>
 <p class="last">aggregation_function: Function to apply (&#8216;count&#8217; or &#8216;sum&#8217;)</p>
 </dd>
 <dt>Output</dt>
@@ -128,7 +131,7 @@ aggregation_function: Function to apply (&#8216;count&#8217; or &#8216;sum&#8217
 &#8216;sum&#8217;: Sum of values for attribute_name
 &#8216;count&#8217;: Dictionary with counts of occurences of each value</p>
 <blockquote class="last">
-of attribute_name</blockquote>
+<div>of attribute_name</div></blockquote>
 </dd>
 </dl>
 </dd></dl>
@@ -157,7 +160,7 @@ layer_descriptor: Layer names and meta data (keywords, type, etc)</dd>
 <tt class="descclassname">safe.impact_functions.core.</tt><tt class="descname">get_admissible_plugins</tt><big>(</big><em>keywords=None</em><big>)</big><a class="reference internal" href="../../../_modules/safe/impact_functions/core.html#get_admissible_plugins"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe.impact_functions.core.get_admissible_plugins" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get plugins that match specified keywords</p>
 <blockquote>
-<dl class="docutils">
+<div><dl class="docutils">
 <dt>Input</dt>
 <dd><dl class="first last docutils">
 <dt>keywords: Either dictionary or list of dictionaries containing</dt>
@@ -168,16 +171,46 @@ layer_descriptor: Layer names and meta data (keywords, type, etc)</dd>
 </dl>
 </dd>
 </dl>
-</blockquote>
+</div></blockquote>
 <p>#        name: Optional impact function name (or part of function name)
 #              used to further filter the result.
 #              If None all names are considered to match</p>
 <blockquote>
-<dl class="docutils">
+<div><dl class="docutils">
 <dt>Output</dt>
 <dd>Dictionary of impact functions ({name: class})</dd>
 </dl>
-</blockquote>
+</div></blockquote>
+</dd></dl>
+
+<dl class="function">
+<dt id="safe.impact_functions.core.get_dict_doc_func">
+<tt class="descclassname">safe.impact_functions.core.</tt><tt class="descname">get_dict_doc_func</tt><big>(</big><em>func</em><big>)</big><a class="headerlink" href="#safe.impact_functions.core.get_dict_doc_func" title="Permalink to this definition">¶</a></dt>
+<dd><p>Collect all doc string of func and return a beatiuful format of them
+in a dictionary format.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><ul class="first last simple">
+<li>func : name of function</li>
+</ul>
+</dd>
+<dt>Returns:</dt>
+<dd><ul class="first last">
+<li><dl class="first docutils">
+<dt>Dictionary contains:</dt>
+<dd><p class="first last">synopsis : string (first line)
+author : string (identified by :author)
+rating : integer (identified by :rating)
+param_req : list of param (identified by :param requires)
+detail : detail description (identified by :detail)
+citation : list of citation in string (identified by :citation)
+limitation : string (identified by :limitation)</p>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="function">
@@ -286,7 +319,7 @@ func: impact function class</dd>
 
 <dl class="function">
 <dt id="safe.impact_functions.core.get_thresholds">
-<tt class="descclassname">safe.impact_functions.core.</tt><tt class="descname">get_thresholds</tt><big>(</big><em>layer</em><big>)</big><a class="headerlink" href="#safe.impact_functions.core.get_thresholds" title="Permalink to this definition">¶</a></dt>
+<tt class="descclassname">safe.impact_functions.core.</tt><tt class="descname">get_thresholds</tt><big>(</big><em>layer</em><big>)</big><a class="reference internal" href="../../../_modules/safe/impact_functions/core.html#get_thresholds"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe.impact_functions.core.get_thresholds" title="Permalink to this definition">¶</a></dt>
 <dd><p>Extract thresholds form layer keywords if present</p>
 </dd></dl>
 
@@ -369,11 +402,11 @@ False: if it has requirements and none of them are met.</dd>
           <img class="logo" src="../../../_static/icon.png" alt="Logo"/>
         </a></p>
   <h4>Previous topic</h4>
-  <p class="topless"><a href="styles.html"
-                        title="previous chapter">Module:  safe.impact_functions.styles</a></p>
+  <p class="topless"><a href="test_plugins.html"
+                        title="previous chapter">Module:  safe.impact_functions.test_plugins</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="test_plugin_core.html"
-                        title="next chapter">Module:  safe.impact_functions.test_plugin_core</a></p>
+  <p class="topless"><a href="tephra.html"
+                        title="next chapter">Package::safe.impact_functions.tephra</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="../../../_sources/api-docs/safe/impact_functions/core.txt"
@@ -382,7 +415,7 @@ False: if it has requirements and none of them are met.</dd>
 <div id="searchbox" style="display: none">
   <h3>Quick search</h3>
     <form class="search" action="../../../search.html" method="get">
-      <input type="text" name="q" size="18" />
+      <input type="text" name="q" />
       <input type="submit" value="Go" />
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
@@ -408,10 +441,10 @@ False: if it has requirements and none of them are met.</dd>
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
         <li class="right" >
-          <a href="test_plugin_core.html" title="Module: safe.impact_functions.test_plugin_core"
+          <a href="tephra.html" title="Package::safe.impact_functions.tephra"
              >next</a> &nbsp; &nbsp;</li>
         <li class="right" >
-          <a href="styles.html" title="Module: safe.impact_functions.styles"
+          <a href="test_plugins.html" title="Module: safe.impact_functions.test_plugins"
              >previous</a> &nbsp; &nbsp;</li>
     <li><a href="../../../index.html">Home</a> &raquo;</li>
     <li><a href="../../../contents.html">Contents</a> &raquo;</li>
@@ -425,7 +458,7 @@ False: if it has requirements and none of them are met.</dd>
 
     <div class="footer">
         &copy; Copyright 2012, BNPB/AIFDR/GFDRR.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.1.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
     </div>
     <!-- cloud_sptheme 1.3 -->
   </body>

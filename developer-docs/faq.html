@@ -4,14 +4,17 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
+
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Frequently Asked Questions &mdash; InaSAFE v0.5.0-alpha documentation</title>
+    <title>Frequently Asked Questions &mdash; InaSAFE 0.5.0-alpha documentation</title>
+    
     <link rel="stylesheet" href="../_static/cloud.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <link rel="stylesheet" href="../http://fonts.googleapis.com/css?family=Noticia+Text|Droid+Sans+Mono" type="text/css" />
+    <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Noticia+Text|Droid+Sans+Mono" type="text/css" />
+    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
@@ -26,7 +29,7 @@
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <script type="text/javascript" src="../_static/jquery.cookie.js"></script>
     <script type="text/javascript" src="../_static/toggle_sections.js"></script>
-    <link rel="top" title="InaSAFE v0.5.0-alpha documentation" href="../index.html" />
+    <link rel="top" title="InaSAFE 0.5.0-alpha documentation" href="../index.html" />
     <link rel="up" title="InaSAFE developer documentation" href="index.html" />
     <link rel="next" title="Todo List" href="todo.html" />
     <link rel="prev" title="IRC Notes for InaSAFE" href="irc.html" /> 
@@ -135,9 +138,9 @@ __revision__ = 'a515345e43b25d065e1ae0d73687c13531ea4c9c'</pre>
 </div>
 <p>The deployment of version tagged files is automated by using the
 <tt class="file docutils literal"><span class="pre">scriptsrelease.sh</span></tt> script.</p>
+</div>
 <div class="section" id="how-do-you-profile-code">
-<h3>How do you profile code?<a class="headerlink" href="#how-do-you-profile-code" title="Permalink to this headline">¶</a></h3>
-<hr class="docutils" />
+<h2>How do you profile code?<a class="headerlink" href="#how-do-you-profile-code" title="Permalink to this headline">¶</a></h2>
 <p>sudo apt-get install python-profiler
 python -m cProfile -s time safe/common/test_polygon.py</p>
 <p>and</p>
@@ -146,6 +149,19 @@ sudo apt-get install graphviz
 pycallgraph safe/common/test_polygon.py</p>
 <p>See also
 <a class="reference external" href="http://stackoverflow.com/questions/582336/how-can-you-profile-a-python-script">http://stackoverflow.com/questions/582336/how-can-you-profile-a-python-script</a></p>
+</div>
+<div class="section" id="why-do-i-got-1e-24-or-another-big-number-instead-of-nan-when-i-saved-vector-files">
+<h2>Why do I got 1e+24 (or another big number) instead of NaN when I saved vector files?<a class="headerlink" href="#why-do-i-got-1e-24-or-another-big-number-instead-of-nan-when-i-saved-vector-files" title="Permalink to this headline">¶</a></h2>
+<p>InaSAFE needs to convert NaN to 1e+24 or more specifically 24 digits of 9
+because NaN is not intepreted correclty on Windows. You can read more
+information about it on <a class="reference external" href="http://trac.osgeo.org/gdal/ticket/4799">http://trac.osgeo.org/gdal/ticket/4799</a> or in Github
+issue <a class="reference external" href="https://github.com/AIFDR/inasafe/issues/269">#269</a>.</p>
+<p>But don&#8217;t worry, when InaSAFE read vector file, it will convert the 1e+24 back
+to NaN. So, any computation inside InaSAFE will treat NaN as NaN in numpy.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">You&#8217;ll need to convert the 1e+24 to NaN value manually if you want to use
+it without InaSAFE.</p>
 </div>
 </div>
 </div>
@@ -164,10 +180,9 @@ pycallgraph safe/common/test_polygon.py</p>
 <li><a class="reference internal" href="#">Frequently Asked Questions</a><ul>
 <li><a class="reference internal" href="#how-does-the-documentation-work">How does the documentation work?</a></li>
 <li><a class="reference internal" href="#how-do-i-replace-a-string-across-multiple-files">How do I replace a string across multiple files</a></li>
-<li><a class="reference internal" href="#how-did-you-embed-the-git-version-sha1-into-each-py-file">How did you embed the git version SHA1 into each .py file?</a><ul>
+<li><a class="reference internal" href="#how-did-you-embed-the-git-version-sha1-into-each-py-file">How did you embed the git version SHA1 into each .py file?</a></li>
 <li><a class="reference internal" href="#how-do-you-profile-code">How do you profile code?</a></li>
-</ul>
-</li>
+<li><a class="reference internal" href="#why-do-i-got-1e-24-or-another-big-number-instead-of-nan-when-i-saved-vector-files">Why do I got 1e+24 (or another big number) instead of NaN when I saved vector files?</a></li>
 </ul>
 </li>
 </ul>
@@ -186,7 +201,7 @@ pycallgraph safe/common/test_polygon.py</p>
 <div id="searchbox" style="display: none">
   <h3>Quick search</h3>
     <form class="search" action="../search.html" method="get">
-      <input type="text" name="q" size="18" />
+      <input type="text" name="q" />
       <input type="submit" value="Go" />
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
@@ -227,7 +242,7 @@ pycallgraph safe/common/test_polygon.py</p>
 
     <div class="footer">
         &copy; Copyright 2012, BNPB/AIFDR/GFDRR.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.1.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
     </div>
     <!-- cloud_sptheme 1.3 -->
   </body>

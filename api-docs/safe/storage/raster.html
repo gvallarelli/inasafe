@@ -4,14 +4,17 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
+
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Module: safe.storage.raster &mdash; InaSAFE v0.5.0-alpha documentation</title>
+    <title>Module: safe.storage.raster &mdash; InaSAFE 0.5.0-alpha documentation</title>
+    
     <link rel="stylesheet" href="../../../_static/cloud.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
-    <link rel="stylesheet" href="../../../http://fonts.googleapis.com/css?family=Noticia+Text|Droid+Sans+Mono" type="text/css" />
+    <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Noticia+Text|Droid+Sans+Mono" type="text/css" />
+    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../',
@@ -26,10 +29,10 @@
     <script type="text/javascript" src="../../../_static/doctools.js"></script>
     <script type="text/javascript" src="../../../_static/jquery.cookie.js"></script>
     <script type="text/javascript" src="../../../_static/toggle_sections.js"></script>
-    <link rel="top" title="InaSAFE v0.5.0-alpha documentation" href="../../../index.html" />
+    <link rel="top" title="InaSAFE 0.5.0-alpha documentation" href="../../../index.html" />
     <link rel="up" title="Package::safe.storage" href="../storage.html" />
-    <link rel="next" title="Module: safe.storage.test_clipping" href="test_clipping.html" />
-    <link rel="prev" title="Module: safe.storage.utilities" href="utilities.html" /> 
+    <link rel="next" title="Module: safe.storage.utilities" href="utilities.html" />
+    <link rel="prev" title="Module: safe.storage.test_utilities" href="test_utilities.html" /> 
   </head>
   <body>
     <div class="relbar-top">
@@ -44,10 +47,10 @@
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
         <li class="right" >
-          <a href="test_clipping.html" title="Module: safe.storage.test_clipping"
+          <a href="utilities.html" title="Module: safe.storage.utilities"
              accesskey="N">next</a> &nbsp; &nbsp;</li>
         <li class="right" >
-          <a href="utilities.html" title="Module: safe.storage.utilities"
+          <a href="test_utilities.html" title="Module: safe.storage.test_utilities"
              accesskey="P">previous</a> &nbsp; &nbsp;</li>
     <li><a href="../../../index.html">Home</a> &raquo;</li>
     <li><a href="../../../contents.html">Contents</a> &raquo;</li>
@@ -101,7 +104,7 @@ If quantiles is False, they represent equidistant interval boundaries.</p>
 
 <dl class="method">
 <dt id="safe.storage.raster.Raster.get_data">
-<tt class="descname">get_data</tt><big>(</big><em>nan=True</em>, <em>scaling=None</em>, <em>copy=False</em>, <em>rtol=0.01</em>, <em>atol=1e-06</em><big>)</big><a class="reference internal" href="../../../_modules/safe/storage/raster.html#Raster.get_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe.storage.raster.Raster.get_data" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">get_data</tt><big>(</big><em>nan=True</em>, <em>scaling=None</em>, <em>copy=False</em><big>)</big><a class="reference internal" href="../../../_modules/safe/storage/raster.html#Raster.get_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe.storage.raster.Raster.get_data" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get raster data as numeric array</p>
 <dl class="docutils">
 <dt>Args:</dt>
@@ -122,10 +125,10 @@ do get_data(nan=0.0)</p>
 False: data is retrieved without modification.
 True: Data is rescaled based on the squared ratio</p>
 <blockquote>
-<p>between its current and native resolution. This
+<div><p>between its current and native resolution. This
 is typically required if raster data represents a
 density such as population per km^2</p>
-</blockquote>
+</div></blockquote>
 <dl class="last docutils">
 <dt>None: The behaviour will depend on the keyword</dt>
 <dd><p class="first last">&#8220;population&#8221; associated with the layer. If
@@ -142,15 +145,8 @@ otherwise not. This is the default.</p>
 </ul>
 </dd>
 </dl>
-<ul>
-<li><p class="first">copy (optional): If present and True return copy</p>
-</li>
-<li><dl class="first docutils">
-<dt>rtol, atol: Tolerances as to how much difference is accepted</dt>
-<dd><p class="first last">between dx and dy when scaling is True.</p>
-</dd>
-</dl>
-</li>
+<ul class="simple">
+<li>copy (optional): If present and True return copy</li>
 </ul>
 <dl class="docutils">
 <dt>Note:</dt>
@@ -165,7 +161,7 @@ See issue #123</dd>
 <dd><p>Get min and max from raster
 Note:</p>
 <blockquote>
-If raster has a nominated no_data value, this is ignored.</blockquote>
+<div>If raster has a nominated no_data value, this is ignored.</div></blockquote>
 <dl class="docutils">
 <dt>Returns:</dt>
 <dd>min, max</dd>
@@ -197,13 +193,13 @@ latitudes = [0.5, 1.5, ..., 9.5]</p>
 <p>Returns:
 * geotransform: 6 digit vector</p>
 <blockquote>
-<dl class="docutils">
+<div><dl class="docutils">
 <dt>(top left x, w-e pixel resolution, rotation,</dt>
 <dd><p class="first">top left y, rotation, n-s pixel resolution).</p>
 <p class="last">See e.g. <a class="reference external" href="http://www.gdal.org/gdal_tutorial.html">http://www.gdal.org/gdal_tutorial.html</a></p>
 </dd>
 </dl>
-</blockquote>
+</div></blockquote>
 <ul class="simple">
 <li>copy (optional): If present and True return copy</li>
 </ul>
@@ -221,7 +217,7 @@ latitudes = [0.5, 1.5, ..., 9.5]</p>
 
 <dl class="method">
 <dt id="safe.storage.raster.Raster.get_resolution">
-<tt class="descname">get_resolution</tt><big>(</big><em>isotropic=False</em>, <em>native=False</em>, <em>rtol=0.0001</em>, <em>atol=1e-08</em><big>)</big><a class="reference internal" href="../../../_modules/safe/storage/raster.html#Raster.get_resolution"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe.storage.raster.Raster.get_resolution" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">get_resolution</tt><big>(</big><em>isotropic=False</em>, <em>native=False</em><big>)</big><a class="reference internal" href="../../../_modules/safe/storage/raster.html#Raster.get_resolution"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe.storage.raster.Raster.get_resolution" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get raster resolution as a 2-tuple (resx, resy)</p>
 <dl class="docutils">
 <dt>Args:</dt>
@@ -235,12 +231,6 @@ latitudes = [0.5, 1.5, ..., 9.5]</p>
 <li><dl class="first docutils">
 <dt>native: Optional flag. If True, return native resolution if</dt>
 <dd><p class="first last">available. Otherwise return actual.</p>
-</dd>
-</dl>
-</li>
-<li><dl class="first docutils">
-<dt>rtol, atol: Tolerances as to how much difference is accepted</dt>
-<dd><p class="first last">between dx and dy if isotropic is True.</p>
 </dd>
 </dl>
 </li>
@@ -292,6 +282,7 @@ x (longitude) direction is varying the fastest.</dd>
 </ul>
 </dd>
 </dl>
+<p>Gdal documentation at: <a class="reference external" href="http://www.gdal.org/classGDALRasterBand.html">http://www.gdal.org/classGDALRasterBand.html</a></p>
 </dd></dl>
 
 </dd></dl>
@@ -309,11 +300,11 @@ x (longitude) direction is varying the fastest.</dd>
           <img class="logo" src="../../../_static/icon.png" alt="Logo"/>
         </a></p>
   <h4>Previous topic</h4>
-  <p class="topless"><a href="utilities.html"
-                        title="previous chapter">Module:  safe.storage.utilities</a></p>
+  <p class="topless"><a href="test_utilities.html"
+                        title="previous chapter">Module:  safe.storage.test_utilities</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="test_clipping.html"
-                        title="next chapter">Module:  safe.storage.test_clipping</a></p>
+  <p class="topless"><a href="utilities.html"
+                        title="next chapter">Module:  safe.storage.utilities</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="../../../_sources/api-docs/safe/storage/raster.txt"
@@ -322,7 +313,7 @@ x (longitude) direction is varying the fastest.</dd>
 <div id="searchbox" style="display: none">
   <h3>Quick search</h3>
     <form class="search" action="../../../search.html" method="get">
-      <input type="text" name="q" size="18" />
+      <input type="text" name="q" />
       <input type="submit" value="Go" />
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
@@ -348,10 +339,10 @@ x (longitude) direction is varying the fastest.</dd>
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
         <li class="right" >
-          <a href="test_clipping.html" title="Module: safe.storage.test_clipping"
+          <a href="utilities.html" title="Module: safe.storage.utilities"
              >next</a> &nbsp; &nbsp;</li>
         <li class="right" >
-          <a href="utilities.html" title="Module: safe.storage.utilities"
+          <a href="test_utilities.html" title="Module: safe.storage.test_utilities"
              >previous</a> &nbsp; &nbsp;</li>
     <li><a href="../../../index.html">Home</a> &raquo;</li>
     <li><a href="../../../contents.html">Contents</a> &raquo;</li>
@@ -365,7 +356,7 @@ x (longitude) direction is varying the fastest.</dd>
 
     <div class="footer">
         &copy; Copyright 2012, BNPB/AIFDR/GFDRR.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.1.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
     </div>
     <!-- cloud_sptheme 1.3 -->
   </body>

@@ -4,14 +4,17 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
+
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Module: safe.storage.test_io &mdash; InaSAFE v0.5.0-alpha documentation</title>
+    <title>Module: safe.storage.test_io &mdash; InaSAFE 0.5.0-alpha documentation</title>
+    
     <link rel="stylesheet" href="../../../_static/cloud.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
-    <link rel="stylesheet" href="../../../http://fonts.googleapis.com/css?family=Noticia+Text|Droid+Sans+Mono" type="text/css" />
+    <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Noticia+Text|Droid+Sans+Mono" type="text/css" />
+    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../',
@@ -26,10 +29,10 @@
     <script type="text/javascript" src="../../../_static/doctools.js"></script>
     <script type="text/javascript" src="../../../_static/jquery.cookie.js"></script>
     <script type="text/javascript" src="../../../_static/toggle_sections.js"></script>
-    <link rel="top" title="InaSAFE v0.5.0-alpha documentation" href="../../../index.html" />
+    <link rel="top" title="InaSAFE 0.5.0-alpha documentation" href="../../../index.html" />
     <link rel="up" title="Package::safe.storage" href="../storage.html" />
-    <link rel="next" title="Module: safe.storage.utilities_test" href="utilities_test.html" />
-    <link rel="prev" title="Module: safe.storage.layer" href="layer.html" /> 
+    <link rel="next" title="Module: safe.storage.test_clipping" href="test_clipping.html" />
+    <link rel="prev" title="Module: safe.storage.projection" href="projection.html" /> 
   </head>
   <body>
     <div class="relbar-top">
@@ -44,10 +47,10 @@
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
         <li class="right" >
-          <a href="utilities_test.html" title="Module: safe.storage.utilities_test"
+          <a href="test_clipping.html" title="Module: safe.storage.test_clipping"
              accesskey="N">next</a> &nbsp; &nbsp;</li>
         <li class="right" >
-          <a href="layer.html" title="Module: safe.storage.layer"
+          <a href="projection.html" title="Module: safe.storage.projection"
              accesskey="P">previous</a> &nbsp; &nbsp;</li>
     <li><a href="../../../index.html">Home</a> &raquo;</li>
     <li><a href="../../../contents.html">Contents</a> &raquo;</li>
@@ -75,6 +78,12 @@
 <dt id="safe.storage.test_io.Test_IO.Xtest_reading_and_writing_of_multiband_rasters">
 <tt class="descname">Xtest_reading_and_writing_of_multiband_rasters</tt><big>(</big><big>)</big><a class="headerlink" href="#safe.storage.test_io.Test_IO.Xtest_reading_and_writing_of_multiband_rasters" title="Permalink to this definition">¶</a></dt>
 <dd><p>Multiband rasters can be read and written correctly</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="safe.storage.test_io.Test_IO.Xtest_reading_and_writing_of_sqlite_vector_data">
+<tt class="descname">Xtest_reading_and_writing_of_sqlite_vector_data</tt><big>(</big><big>)</big><a class="headerlink" href="#safe.storage.test_io.Test_IO.Xtest_reading_and_writing_of_sqlite_vector_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>SQLite vector data can be read and written correctly</p>
 </dd></dl>
 
 <dl class="method">
@@ -167,7 +176,7 @@ Size is 345, 263
 Coordinate System is:
 GEOGCS[&#8220;WGS 84&#8221;,</p>
 <blockquote>
-<dl class="docutils">
+<div><dl class="docutils">
 <dt>DATUM[&#8220;WGS_1984&#8221;,</dt>
 <dd><dl class="first docutils">
 <dt>SPHEROID[&#8220;WGS 84&#8221;,6378137,298.2572235630016,</dt>
@@ -179,15 +188,15 @@ GEOGCS[&#8220;WGS 84&#8221;,</p>
 <p>PRIMEM[&#8220;Greenwich&#8221;,0],
 UNIT[&#8220;degree&#8221;,0.0174532925199433],
 AUTHORITY[&#8220;EPSG&#8221;,&#8221;4326&#8221;]]</p>
-</blockquote>
+</div></blockquote>
 <p>Origin = (99.364169565217395,-0.004180608365019)
 Pixel Size = (0.008339130434783,-0.008361216730038)
 Metadata:</p>
 <blockquote>
-AREA_OR_POINT=Point
+<div>AREA_OR_POINT=Point
 TIFFTAG_XRESOLUTION=1
 TIFFTAG_YRESOLUTION=1
-TIFFTAG_RESOLUTIONUNIT=1 (unitless)</blockquote>
+TIFFTAG_RESOLUTIONUNIT=1 (unitless)</div></blockquote>
 <dl class="docutils">
 <dt>Image Structure Metadata:</dt>
 <dd>COMPRESSION=LZW
@@ -268,7 +277,7 @@ translatable strings.
 <dl class="method">
 <dt id="safe.storage.test_io.Test_IO.test_nodata_value">
 <tt class="descname">test_nodata_value</tt><big>(</big><big>)</big><a class="reference internal" href="../../../_modules/safe/storage/test_io.html#Test_IO.test_nodata_value"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe.storage.test_io.Test_IO.test_nodata_value" title="Permalink to this definition">¶</a></dt>
-<dd><p>NODATA value is correctly recorded in GDAL</p>
+<dd><p>NODATA value is correctly handled for GDAL layers</p>
 </dd></dl>
 
 <dl class="method">
@@ -383,11 +392,11 @@ translatable strings.
           <img class="logo" src="../../../_static/icon.png" alt="Logo"/>
         </a></p>
   <h4>Previous topic</h4>
-  <p class="topless"><a href="layer.html"
-                        title="previous chapter">Module:  safe.storage.layer</a></p>
+  <p class="topless"><a href="projection.html"
+                        title="previous chapter">Module:  safe.storage.projection</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="utilities_test.html"
-                        title="next chapter">Module:  safe.storage.utilities_test</a></p>
+  <p class="topless"><a href="test_clipping.html"
+                        title="next chapter">Module:  safe.storage.test_clipping</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="../../../_sources/api-docs/safe/storage/test_io.txt"
@@ -396,7 +405,7 @@ translatable strings.
 <div id="searchbox" style="display: none">
   <h3>Quick search</h3>
     <form class="search" action="../../../search.html" method="get">
-      <input type="text" name="q" size="18" />
+      <input type="text" name="q" />
       <input type="submit" value="Go" />
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
@@ -422,10 +431,10 @@ translatable strings.
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
         <li class="right" >
-          <a href="utilities_test.html" title="Module: safe.storage.utilities_test"
+          <a href="test_clipping.html" title="Module: safe.storage.test_clipping"
              >next</a> &nbsp; &nbsp;</li>
         <li class="right" >
-          <a href="layer.html" title="Module: safe.storage.layer"
+          <a href="projection.html" title="Module: safe.storage.projection"
              >previous</a> &nbsp; &nbsp;</li>
     <li><a href="../../../index.html">Home</a> &raquo;</li>
     <li><a href="../../../contents.html">Contents</a> &raquo;</li>
@@ -439,7 +448,7 @@ translatable strings.
 
     <div class="footer">
         &copy; Copyright 2012, BNPB/AIFDR/GFDRR.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.1.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
     </div>
     <!-- cloud_sptheme 1.3 -->
   </body>

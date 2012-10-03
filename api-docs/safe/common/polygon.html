@@ -4,14 +4,17 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
+
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Module: safe.common.polygon &mdash; InaSAFE v0.5.0-alpha documentation</title>
+    <title>Module: safe.common.polygon &mdash; InaSAFE 0.5.0-alpha documentation</title>
+    
     <link rel="stylesheet" href="../../../_static/cloud.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
-    <link rel="stylesheet" href="../../../http://fonts.googleapis.com/css?family=Noticia+Text|Droid+Sans+Mono" type="text/css" />
+    <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Noticia+Text|Droid+Sans+Mono" type="text/css" />
+    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../',
@@ -26,10 +29,10 @@
     <script type="text/javascript" src="../../../_static/doctools.js"></script>
     <script type="text/javascript" src="../../../_static/jquery.cookie.js"></script>
     <script type="text/javascript" src="../../../_static/toggle_sections.js"></script>
-    <link rel="top" title="InaSAFE v0.5.0-alpha documentation" href="../../../index.html" />
+    <link rel="top" title="InaSAFE 0.5.0-alpha documentation" href="../../../index.html" />
     <link rel="up" title="Package::safe.common" href="../common.html" />
-    <link rel="next" title="Module: safe.common.testing" href="testing.html" />
-    <link rel="prev" title="Module: safe.common.exceptions" href="exceptions.html" /> 
+    <link rel="next" title="Module: safe.common.test_tables" href="test_tables.html" />
+    <link rel="prev" title="Module: safe.common.testing" href="testing.html" /> 
   </head>
   <body>
     <div class="relbar-top">
@@ -44,10 +47,10 @@
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
         <li class="right" >
-          <a href="testing.html" title="Module: safe.common.testing"
+          <a href="test_tables.html" title="Module: safe.common.test_tables"
              accesskey="N">next</a> &nbsp; &nbsp;</li>
         <li class="right" >
-          <a href="exceptions.html" title="Module: safe.common.exceptions"
+          <a href="testing.html" title="Module: safe.common.testing"
              accesskey="P">previous</a> &nbsp; &nbsp;</li>
     <li><a href="../../../index.html">Home</a> &raquo;</li>
     <li><a href="../../../contents.html">Contents</a> &raquo;</li>
@@ -91,11 +94,11 @@ point_on_line</dd>
 <dd><p class="first">A: MxN array of grid points
 geotransform: 6-tuple used to locate A geographically</p>
 <blockquote>
-<dl class="docutils">
+<div><dl class="docutils">
 <dt>(top left x, w-e pixel resolution, rotation,</dt>
 <dd>top left y, rotation, n-s pixel resolution)</dd>
 </dl>
-</blockquote>
+</div></blockquote>
 <p class="last">polygons: list of polygons, each an array of vertices</p>
 </dd>
 <dt>Output</dt>
@@ -129,7 +132,7 @@ regarded as belonging to the polygon (closed = True)
 or not (closed = False) - False is not recommended here
 polygon_bbox: Provide bounding box around polygon if known.</p>
 <blockquote>
-This is a small optimisation</blockquote>
+<div>This is a small optimisation</div></blockquote>
 <p class="last">check_input: Allows faster execution if set to False</p>
 </dd>
 <dt>Outputs</dt>
@@ -141,7 +144,7 @@ i.e. each line is an array of multiple segments</p>
 </dl>
 <p>Example:</p>
 <blockquote>
-<p>U = [[0,0], [1,0], [1,1], [0,1]]  # Unit square</p>
+<div><p>U = [[0,0], [1,0], [1,1], [0,1]]  # Unit square</p>
 <p># Simple horizontal fully intersecting line
 line = [[-1, 0.5], [2, 0.5]]</p>
 <p>inside_line_segments, outside_line_segments =             clip_line_by_polygon(line, polygon)</p>
@@ -155,7 +158,7 @@ line = [[-1, 0.5], [2, 0.5]]</p>
 </dl>
 </dd>
 </dl>
-</blockquote>
+</div></blockquote>
 <dl class="docutils">
 <dt>Remarks:</dt>
 <dd><p class="first">The assumptions listed in separate_points_by_polygon apply</p>
@@ -177,11 +180,11 @@ line = [[-1, 0.5], [2, 0.5]]</p>
 <p>polygon: list or Nx2 array of polygon vertices
 closed: (optional) determine whether points on boundary should be</p>
 <blockquote>
-regarded as belonging to the polygon (closed = True)
+<div>regarded as belonging to the polygon (closed = True)
 or not (closed = False) - False is not recommended here
 This parameter can also be None in which case it is undefined
 whether a line on the boundary will fall inside or outside.
-This will make the algorithm about 20% faster.</blockquote>
+This will make the algorithm about 20% faster.</div></blockquote>
 <p class="last">check_input: Allows faster execution if set to False</p>
 </dd>
 <dt>Output</dt>
@@ -200,7 +203,7 @@ to clipped lines.</p>
 
 <dl class="function">
 <dt id="safe.common.polygon.clip_lines_by_polygons">
-<tt class="descclassname">safe.common.polygon.</tt><tt class="descname">clip_lines_by_polygons</tt><big>(</big><em>lines</em>, <em>polygons</em>, <em>check_input=True</em>, <em>closed=True</em><big>)</big><a class="headerlink" href="#safe.common.polygon.clip_lines_by_polygons" title="Permalink to this definition">¶</a></dt>
+<tt class="descclassname">safe.common.polygon.</tt><tt class="descname">clip_lines_by_polygons</tt><big>(</big><em>lines</em>, <em>polygons</em>, <em>check_input=True</em>, <em>closed=True</em><big>)</big><a class="reference internal" href="../../../_modules/safe/common/polygon.html#clip_lines_by_polygons"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe.common.polygon.clip_lines_by_polygons" title="Permalink to this definition">¶</a></dt>
 <dd><p>Clip multiple lines by multiple polygons</p>
 <dl class="docutils">
 <dt>Args:</dt>
@@ -211,12 +214,12 @@ to clipped lines.</p>
 <p>polygons: list of polygons, each an array of vertices
 closed: optional parameter to determine whether lines that fall on</p>
 <blockquote class="last">
-an polygon boundary should be considered to be inside
+<div>an polygon boundary should be considered to be inside
 (closed=True), outside (closed=False) or
 undetermined (closed=None). The latter case will speed the
 algorithm up but lines on boundaries may or may not be
 deemed to fall inside the polygon and so will be
-indeterministic</blockquote>
+indeterministic</div></blockquote>
 </dd>
 <dt>Returns:</dt>
 <dd><dl class="first last docutils">
@@ -241,7 +244,7 @@ indeterministic</blockquote>
 polygon: list or Nx2 array of polygon vertices
 closed: Set to True if points on boundary are considered</p>
 <blockquote class="last">
-to be &#8216;inside&#8217; polygon</blockquote>
+<div>to be &#8216;inside&#8217; polygon</div></blockquote>
 </dd>
 <dt>Output</dt>
 <dd>inside: Array of points inside the polygon
@@ -293,13 +296,13 @@ None is returned for backwards compatibility</dd>
 <p>A vectorised input line can be constructed either as list:
 line1 = [[[0, 24, 0, 15],    # x2</p>
 <blockquote>
-<blockquote>
-[12, 0, 24, 0]],   # y2</blockquote>
+<div><blockquote>
+<div>[12, 0, 24, 0]],   # y2</div></blockquote>
 <dl class="docutils">
 <dt>[[24, 0, 0, 5],     # x3</dt>
 <dd>[0, 12, 12, 15]]]  # y3</dd>
 </dl>
-</blockquote>
+</div></blockquote>
 <p>or as an array</p>
 <p>line1 = numpy.zeros(16).reshape(2, 2, 4)  # Four segments
 line1[0, 0, :] = [0, 24, 0, 15]   # x2
@@ -342,7 +345,7 @@ formed from consecutive segments</dd>
 
 <dl class="function">
 <dt id="safe.common.polygon.line_dictionary_to_geometry">
-<tt class="descclassname">safe.common.polygon.</tt><tt class="descname">line_dictionary_to_geometry</tt><big>(</big><em>D</em><big>)</big><a class="headerlink" href="#safe.common.polygon.line_dictionary_to_geometry" title="Permalink to this definition">¶</a></dt>
+<tt class="descclassname">safe.common.polygon.</tt><tt class="descname">line_dictionary_to_geometry</tt><big>(</big><em>D</em><big>)</big><a class="reference internal" href="../../../_modules/safe/common/polygon.html#line_dictionary_to_geometry"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe.common.polygon.line_dictionary_to_geometry" title="Permalink to this definition">¶</a></dt>
 <dd><p>Convert dictionary of lines to list of Nx2 arrays</p>
 <dl class="docutils">
 <dt>Input</dt>
@@ -402,10 +405,10 @@ points from non-coinciding.</p>
 <dd><p class="first">A collection of line segments (x0, y0) -&gt; (x1, y1) vectorised
 following the format</p>
 <blockquote class="last">
-line[0, 0, :] = x0
+<div>line[0, 0, :] = x0
 line[0, 1, :] = y0
 line[1, 0, :] = x1
-line[1, 1, :] = y1</blockquote>
+line[1, 1, :] = y1</div></blockquote>
 </dd>
 </dl>
 </dd></dl>
@@ -421,7 +424,7 @@ number_of_points - (optional) number of points
 seed - seed for random number generator (default=None)
 exclude - list of polygons (inside main polygon) from where points</p>
 <blockquote class="last">
-should be excluded</blockquote>
+<div>should be excluded</div></blockquote>
 </dd>
 <dt>Output:</dt>
 <dd>points - list of points inside polygon</dd>
@@ -480,11 +483,11 @@ the code faster.</p>
 <p>Raises: A generic Exception is raised for unexpected input.</p>
 <p>Example:</p>
 <blockquote>
-<p>U = [[0,0], [1,0], [1,1], [0,1]]  # Unit square
+<div><p>U = [[0,0], [1,0], [1,1], [0,1]]  # Unit square
 separate_points_by_polygon( [[0.5, 0.5], [1, -0.5], [0.3, 0.2]], U)</p>
 <p>will return the indices [0, 2, 1] and count == 2 as only the first
 and the last point are inside the unit square</p>
-</blockquote>
+</div></blockquote>
 <dl class="docutils">
 <dt>Remarks:</dt>
 <dd>The vertices may be listed clockwise or counterclockwise and
@@ -510,11 +513,11 @@ regarded as being outside the polygon.</dd>
           <img class="logo" src="../../../_static/icon.png" alt="Logo"/>
         </a></p>
   <h4>Previous topic</h4>
-  <p class="topless"><a href="exceptions.html"
-                        title="previous chapter">Module:  safe.common.exceptions</a></p>
-  <h4>Next topic</h4>
   <p class="topless"><a href="testing.html"
-                        title="next chapter">Module:  safe.common.testing</a></p>
+                        title="previous chapter">Module:  safe.common.testing</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="test_tables.html"
+                        title="next chapter">Module:  safe.common.test_tables</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="../../../_sources/api-docs/safe/common/polygon.txt"
@@ -523,7 +526,7 @@ regarded as being outside the polygon.</dd>
 <div id="searchbox" style="display: none">
   <h3>Quick search</h3>
     <form class="search" action="../../../search.html" method="get">
-      <input type="text" name="q" size="18" />
+      <input type="text" name="q" />
       <input type="submit" value="Go" />
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
@@ -549,10 +552,10 @@ regarded as being outside the polygon.</dd>
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
         <li class="right" >
-          <a href="testing.html" title="Module: safe.common.testing"
+          <a href="test_tables.html" title="Module: safe.common.test_tables"
              >next</a> &nbsp; &nbsp;</li>
         <li class="right" >
-          <a href="exceptions.html" title="Module: safe.common.exceptions"
+          <a href="testing.html" title="Module: safe.common.testing"
              >previous</a> &nbsp; &nbsp;</li>
     <li><a href="../../../index.html">Home</a> &raquo;</li>
     <li><a href="../../../contents.html">Contents</a> &raquo;</li>
@@ -566,7 +569,7 @@ regarded as being outside the polygon.</dd>
 
     <div class="footer">
         &copy; Copyright 2012, BNPB/AIFDR/GFDRR.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.1.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
     </div>
     <!-- cloud_sptheme 1.3 -->
   </body>

@@ -4,14 +4,17 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
+
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>safe.common.interpolation1d &mdash; InaSAFE v0.5.0-alpha documentation</title>
+    <title>safe.common.interpolation1d &mdash; InaSAFE 0.5.0-alpha documentation</title>
+    
     <link rel="stylesheet" href="../../../_static/cloud.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
-    <link rel="stylesheet" href="../../../http://fonts.googleapis.com/css?family=Noticia+Text|Droid+Sans+Mono" type="text/css" />
+    <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Noticia+Text|Droid+Sans+Mono" type="text/css" />
+    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../',
@@ -26,7 +29,7 @@
     <script type="text/javascript" src="../../../_static/doctools.js"></script>
     <script type="text/javascript" src="../../../_static/jquery.cookie.js"></script>
     <script type="text/javascript" src="../../../_static/toggle_sections.js"></script>
-    <link rel="top" title="InaSAFE v0.5.0-alpha documentation" href="../../../index.html" />
+    <link rel="top" title="InaSAFE 0.5.0-alpha documentation" href="../../../index.html" />
     <link rel="up" title="Module code" href="../../index.html" /> 
   </head>
   <body>
@@ -56,9 +59,10 @@
           <div class="body">
             
   <h1>Source code for safe.common.interpolation1d</h1><div class="highlight"><pre>
-<span class="sd">&quot;&quot;&quot;Module for 1D interpolation</span>
+<span class="sd">&quot;&quot;&quot;**Module for 1D interpolation**</span>
 
-<span class="sd">This module</span>
+<span class="sd">This module:</span>
+
 <span class="sd">* provides piecewise constant (nearest neighbour) and bilinear interpolation</span>
 <span class="sd">* is fast (based on numpy vector operations)</span>
 <span class="sd">* depends only on numpy</span>
@@ -76,22 +80,22 @@
 <div class="viewcode-block" id="interpolate1d"><a class="viewcode-back" href="../../../api-docs/safe/common/interpolation1d.html#safe.common.interpolation1d.interpolate1d">[docs]</a><span class="k">def</span> <span class="nf">interpolate1d</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">points</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s">&#39;linear&#39;</span><span class="p">,</span> <span class="n">bounds_error</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Fundamental 2D interpolation routine</span>
 
-<span class="sd">    Input</span>
-<span class="sd">        x: 1D array of x-coordinates on which to interpolate</span>
-<span class="sd">        z: 1D array of values for each x</span>
-<span class="sd">        points: 1D array of coordinates where interpolated values are sought</span>
-<span class="sd">        mode: Determines the interpolation order. Options are</span>
-<span class="sd">              &#39;constant&#39; - piecewise constant nearest neighbour interpolation</span>
-<span class="sd">              &#39;linear&#39; - bilinear interpolation using the two</span>
-<span class="sd">                         nearest neighbours (default)</span>
-<span class="sd">        bounds_error: Boolean flag. If True (default) an exception will</span>
-<span class="sd">                      be raised when interpolated values are requested</span>
-<span class="sd">                      outside the domain of the input data. If False, nan</span>
-<span class="sd">                      is returned for those values</span>
-<span class="sd">    Output</span>
-<span class="sd">        1D array with same length as points with interpolated values</span>
+<span class="sd">    Args:</span>
+<span class="sd">        * x: 1D array of x-coordinates on which to interpolate</span>
+<span class="sd">        * z: 1D array of values for each x</span>
+<span class="sd">        * points: 1D array of coordinates where interpolated values are sought</span>
+<span class="sd">        * mode: Determines the interpolation order. Options are</span>
+<span class="sd">                &#39;constant&#39; - piecewise constant nearest neighbour interpolation</span>
+<span class="sd">                &#39;linear&#39; - bilinear interpolation using the two</span>
+<span class="sd">                           nearest neighbours (default)</span>
+<span class="sd">        * bounds_error: Boolean flag. If True (default) an exception will</span>
+<span class="sd">                        be raised when interpolated values are requested</span>
+<span class="sd">                        outside the domain of the input data. If False, nan</span>
+<span class="sd">                        is returned for those values</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        * 1D array with same length as points with interpolated values</span>
 
-<span class="sd">    Notes</span>
+<span class="sd">    Note:</span>
 <span class="sd">        Input coordinates x are assumed to be monotonically increasing,</span>
 <span class="sd">        but need not be equidistantly spaced.</span>
 
@@ -262,7 +266,7 @@
 <div id="searchbox" style="display: none">
   <h3>Quick search</h3>
     <form class="search" action="../../../search.html" method="get">
-      <input type="text" name="q" size="18" />
+      <input type="text" name="q" />
       <input type="submit" value="Go" />
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
@@ -297,7 +301,7 @@
 
     <div class="footer">
         &copy; Copyright 2012, BNPB/AIFDR/GFDRR.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.1.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
     </div>
     <!-- cloud_sptheme 1.3 -->
   </body>

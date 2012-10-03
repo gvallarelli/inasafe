@@ -4,14 +4,17 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
+
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>safe.storage.test_io &mdash; InaSAFE v0.5.0-alpha documentation</title>
+    <title>safe.storage.test_io &mdash; InaSAFE 0.5.0-alpha documentation</title>
+    
     <link rel="stylesheet" href="../../../_static/cloud.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
-    <link rel="stylesheet" href="../../../http://fonts.googleapis.com/css?family=Noticia+Text|Droid+Sans+Mono" type="text/css" />
+    <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Noticia+Text|Droid+Sans+Mono" type="text/css" />
+    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../',
@@ -26,7 +29,7 @@
     <script type="text/javascript" src="../../../_static/doctools.js"></script>
     <script type="text/javascript" src="../../../_static/jquery.cookie.js"></script>
     <script type="text/javascript" src="../../../_static/toggle_sections.js"></script>
-    <link rel="top" title="InaSAFE v0.5.0-alpha documentation" href="../../../index.html" />
+    <link rel="top" title="InaSAFE 0.5.0-alpha documentation" href="../../../index.html" />
     <link rel="up" title="Module code" href="../../index.html" /> 
   </head>
   <body>
@@ -70,7 +73,6 @@
 <span class="kn">from</span> <span class="nn">projection</span> <span class="kn">import</span> <span class="n">DEFAULT_PROJECTION</span>
 <span class="kn">from</span> <span class="nn">core</span> <span class="kn">import</span> <span class="n">read_layer</span>
 <span class="kn">from</span> <span class="nn">core</span> <span class="kn">import</span> <span class="n">write_raster_data</span>
-<span class="kn">from</span> <span class="nn">utilities</span> <span class="kn">import</span> <span class="n">unique_filename</span>
 <span class="kn">from</span> <span class="nn">utilities</span> <span class="kn">import</span> <span class="n">write_keywords</span>
 <span class="kn">from</span> <span class="nn">utilities</span> <span class="kn">import</span> <span class="n">read_keywords</span>
 <span class="kn">from</span> <span class="nn">utilities</span> <span class="kn">import</span> <span class="n">bbox_intersection</span>
@@ -91,10 +93,10 @@
 <span class="kn">from</span> <span class="nn">safe.common.testing</span> <span class="kn">import</span> <span class="n">TESTDATA</span><span class="p">,</span> <span class="n">HAZDATA</span><span class="p">,</span> <span class="n">EXPDATA</span><span class="p">,</span> <span class="n">DATADIR</span>
 <span class="kn">from</span> <span class="nn">safe.common.testing</span> <span class="kn">import</span> <span class="n">FEATURE_COUNTS</span>
 <span class="kn">from</span> <span class="nn">safe.common.testing</span> <span class="kn">import</span> <span class="n">GEOTRANSFORMS</span>
-<span class="kn">from</span> <span class="nn">safe.common.utilities</span> <span class="kn">import</span> <span class="n">ugettext</span> <span class="k">as</span> <span class="n">_</span>
-<span class="kn">from</span> <span class="nn">safe.common.utilities</span> <span class="kn">import</span> <span class="n">VerificationError</span>
+<span class="kn">from</span> <span class="nn">safe.common.utilities</span> <span class="kn">import</span> <span class="n">ugettext</span> <span class="k">as</span> <span class="n">_</span><span class="p">,</span> <span class="n">unique_filename</span>
 <span class="kn">from</span> <span class="nn">safe.common.polygon</span> <span class="kn">import</span> <span class="n">is_inside_polygon</span>
-<span class="kn">from</span> <span class="nn">safe.common.exceptions</span> <span class="kn">import</span> <span class="n">BoundingBoxError</span>
+<span class="kn">from</span> <span class="nn">safe.common.exceptions</span> <span class="kn">import</span> <span class="n">BoundingBoxError</span><span class="p">,</span> <span class="n">ReadLayerError</span>
+<span class="kn">from</span> <span class="nn">safe.common.exceptions</span> <span class="kn">import</span> <span class="n">VerificationError</span>
 
 
 <span class="c"># Auxiliary function for raster test</span>
@@ -151,7 +153,7 @@
             <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">attributes</span><span class="p">)</span> <span class="o">==</span> <span class="n">N</span>
             <span class="k">assert</span> <span class="n">FEATURE_COUNTS</span><span class="p">[</span><span class="n">vectorname</span><span class="p">]</span> <span class="o">==</span> <span class="n">N</span>
 </div>
-    <span class="n">test_vector_feature_count</span><span class="o">.</span><span class="n">slow</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">test_vector_feature_count</span><span class="o">.</span><span class="n">slow</span> <span class="o">=</span> <span class="bp">True</span>
 
 <div class="viewcode-block" id="Test_IO.test_reading_and_writing_of_vector_point_data"><a class="viewcode-back" href="../../../api-docs/safe/storage/test_io.html#safe.storage.test_io.Test_IO.test_reading_and_writing_of_vector_point_data">[docs]</a>    <span class="k">def</span> <span class="nf">test_reading_and_writing_of_vector_point_data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Vector point data can be read and written correctly</span>
@@ -161,7 +163,7 @@
         <span class="n">filename</span> <span class="o">=</span> <span class="n">unique_filename</span><span class="p">(</span><span class="n">suffix</span><span class="o">=</span><span class="s">&#39;nshoe66u&#39;</span><span class="p">)</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">read_layer</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
-        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+        <span class="k">except</span> <span class="n">ReadLayerError</span><span class="p">:</span>
             <span class="k">pass</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">msg</span> <span class="o">=</span> <span class="s">&#39;Exception for unknown extension should have been raised&#39;</span>
@@ -170,7 +172,7 @@
         <span class="n">filename</span> <span class="o">=</span> <span class="n">unique_filename</span><span class="p">(</span><span class="n">suffix</span><span class="o">=</span><span class="s">&#39;.gml&#39;</span><span class="p">)</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">read_layer</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
-        <span class="k">except</span> <span class="ne">IOError</span><span class="p">:</span>
+        <span class="k">except</span> <span class="n">ReadLayerError</span><span class="p">:</span>
             <span class="k">pass</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">msg</span> <span class="o">=</span> <span class="s">&#39;Exception for non-existing file should have been raised&#39;</span>
@@ -179,12 +181,19 @@
         <span class="c"># Read and verify test data</span>
         <span class="k">for</span> <span class="n">vectorname</span> <span class="ow">in</span> <span class="p">[</span><span class="s">&#39;test_buildings.shp&#39;</span><span class="p">,</span>
                            <span class="s">&#39;tsunami_building_exposure.shp&#39;</span><span class="p">,</span>
-                           <span class="s">&#39;Padang_WGS84.shp&#39;</span><span class="p">]:</span>
+                           <span class="s">&#39;Padang_WGS84.shp&#39;</span><span class="p">,</span>
+                           <span class="s">&#39;nan_here.shp&#39;</span><span class="p">]:</span>
 
             <span class="n">filename</span> <span class="o">=</span> <span class="s">&#39;</span><span class="si">%s</span><span class="s">/</span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">TESTDATA</span><span class="p">,</span> <span class="n">vectorname</span><span class="p">)</span>
             <span class="n">layer</span> <span class="o">=</span> <span class="n">read_layer</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
             <span class="n">coords</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">layer</span><span class="o">.</span><span class="n">get_geometry</span><span class="p">())</span>
             <span class="n">attributes</span> <span class="o">=</span> <span class="n">layer</span><span class="o">.</span><span class="n">get_data</span><span class="p">()</span>
+
+            <span class="c"># Check NaN is read as NaN</span>
+            <span class="k">if</span> <span class="n">vectorname</span> <span class="o">==</span> <span class="s">&#39;nan_here.shp&#39;</span><span class="p">:</span>
+                <span class="n">msg</span> <span class="o">=</span> <span class="s">&#39;It should be NaN but found </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="n">attributes</span><span class="p">[</span><span class="mo">00</span><span class="p">][</span><span class="s">&#39;DEPTH&#39;</span><span class="p">]</span>
+                <span class="k">assert</span> <span class="n">numpy</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">attributes</span><span class="p">[</span><span class="mo">00</span><span class="p">][</span><span class="s">&#39;DEPTH&#39;</span><span class="p">]),</span> <span class="n">msg</span>
+                <span class="k">continue</span>
 
             <span class="c"># Check basic data integrity</span>
             <span class="n">N</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">layer</span><span class="p">)</span>
@@ -274,7 +283,7 @@
             <span class="n">lon</span> <span class="o">=</span> <span class="n">layer</span><span class="o">.</span><span class="n">get_data</span><span class="p">(</span><span class="n">attribute</span><span class="o">=</span><span class="s">&#39;LONGITUDE&#39;</span><span class="p">)</span>
             <span class="k">assert</span> <span class="n">numpy</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">lon</span><span class="p">,</span> <span class="n">coords</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">])</span>
 </div>
-    <span class="n">test_reading_and_writing_of_vector_point_data</span><span class="o">.</span><span class="n">slow</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">test_reading_and_writing_of_vector_point_data</span><span class="o">.</span><span class="n">slow</span> <span class="o">=</span> <span class="bp">True</span>
 
 <div class="viewcode-block" id="Test_IO.test_analysis_of_vector_data_top_N"><a class="viewcode-back" href="../../../api-docs/safe/storage/test_io.html#safe.storage.test_io.Test_IO.test_analysis_of_vector_data_top_N">[docs]</a>    <span class="k">def</span> <span class="nf">test_analysis_of_vector_data_top_N</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Analysis of vector data - get top N of an attribute</span>
@@ -326,6 +335,10 @@
         <span class="n">filename</span> <span class="o">=</span> <span class="s">&#39;</span><span class="si">%s</span><span class="s">/</span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">TESTDATA</span><span class="p">,</span> <span class="n">layername</span><span class="p">)</span>
         <span class="n">V</span> <span class="o">=</span> <span class="n">read_layer</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
 
+        <span class="c"># Add some additional keywords</span>
+        <span class="n">V</span><span class="o">.</span><span class="n">keywords</span><span class="p">[</span><span class="s">&#39;kw1&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s">&#39;value1&#39;</span>
+        <span class="n">V</span><span class="o">.</span><span class="n">keywords</span><span class="p">[</span><span class="s">&#39;kw2&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s">&#39;value2&#39;</span>
+
         <span class="c"># Check string representation of vector class</span>
         <span class="k">assert</span> <span class="nb">str</span><span class="p">(</span><span class="n">V</span><span class="p">)</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s">&#39;Vector data&#39;</span><span class="p">)</span>
         <span class="k">assert</span> <span class="nb">str</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">V</span><span class="p">))</span> <span class="ow">in</span> <span class="nb">str</span><span class="p">(</span><span class="n">V</span><span class="p">)</span>
@@ -337,8 +350,12 @@
         <span class="n">data</span> <span class="o">=</span> <span class="n">V_ref</span><span class="o">.</span><span class="n">get_data</span><span class="p">()</span>
         <span class="n">projection</span> <span class="o">=</span> <span class="n">V_ref</span><span class="o">.</span><span class="n">get_projection</span><span class="p">()</span>
 
+        <span class="k">assert</span> <span class="s">&#39;kw1&#39;</span> <span class="ow">in</span> <span class="n">V_ref</span><span class="o">.</span><span class="n">get_keywords</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="s">&#39;kw2&#39;</span> <span class="ow">in</span> <span class="n">V_ref</span><span class="o">.</span><span class="n">get_keywords</span><span class="p">()</span>
+
         <span class="c"># Create new object from test data</span>
-        <span class="n">V_new</span> <span class="o">=</span> <span class="n">Vector</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">projection</span><span class="o">=</span><span class="n">projection</span><span class="p">,</span> <span class="n">geometry</span><span class="o">=</span><span class="n">geometry</span><span class="p">)</span>
+        <span class="n">V_new</span> <span class="o">=</span> <span class="n">Vector</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">projection</span><span class="o">=</span><span class="n">projection</span><span class="p">,</span> <span class="n">geometry</span><span class="o">=</span><span class="n">geometry</span><span class="p">,</span>
+                       <span class="n">keywords</span><span class="o">=</span><span class="n">V_ref</span><span class="o">.</span><span class="n">get_keywords</span><span class="p">())</span>
 
         <span class="c"># Check equality operations</span>
         <span class="k">assert</span> <span class="n">V_new</span> <span class="o">==</span> <span class="n">V_ref</span>
@@ -392,6 +409,12 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="n">msg</span> <span class="o">=</span> <span class="s">&#39;Should have raised TypeError&#39;</span>
             <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+        <span class="c"># Check that differences in keywords affect comparison</span>
+        <span class="k">assert</span> <span class="n">V_new</span> <span class="o">==</span> <span class="n">V_ref</span>
+        <span class="n">V_tmp</span><span class="o">.</span><span class="n">keywords</span><span class="p">[</span><span class="s">&#39;kw2&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s">&#39;blah&#39;</span>
+        <span class="k">assert</span> <span class="ow">not</span> <span class="n">V_tmp</span> <span class="o">==</span> <span class="n">V_ref</span>
+        <span class="k">assert</span> <span class="n">V_tmp</span> <span class="o">!=</span> <span class="n">V_ref</span>
 </div>
 <div class="viewcode-block" id="Test_IO.test_vector_class_geometry_types"><a class="viewcode-back" href="../../../api-docs/safe/storage/test_io.html#safe.storage.test_io.Test_IO.test_vector_class_geometry_types">[docs]</a>    <span class="k">def</span> <span class="nf">test_vector_class_geometry_types</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Admissible geometry types work in vector class</span>
@@ -613,7 +636,7 @@
             <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">attributes_new</span><span class="p">[</span><span class="n">i</span><span class="p">]:</span>
                 <span class="k">assert</span> <span class="n">attributes_new</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">key</span><span class="p">]</span> <span class="o">==</span> <span class="n">attributes</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">key</span><span class="p">]</span>
 </div>
-    <span class="n">test_reading_and_writing_of_vector_polygon_data</span><span class="o">.</span><span class="n">slow</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">test_reading_and_writing_of_vector_polygon_data</span><span class="o">.</span><span class="n">slow</span> <span class="o">=</span> <span class="bp">True</span>
 
 <div class="viewcode-block" id="Test_IO.test_centroids_from_polygon_data"><a class="viewcode-back" href="../../../api-docs/safe/storage/test_io.html#safe.storage.test_io.Test_IO.test_centroids_from_polygon_data">[docs]</a>    <span class="k">def</span> <span class="nf">test_centroids_from_polygon_data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Centroid point data can be derived from polygon data</span>
@@ -676,7 +699,7 @@
             <span class="c">#print &#39;writing to&#39;, out_filename</span>
             <span class="n">c_layer</span><span class="o">.</span><span class="n">write_to_file</span><span class="p">(</span><span class="n">out_filename</span><span class="p">)</span>
 </div>
-    <span class="n">test_centroids_from_polygon_data</span><span class="o">.</span><span class="n">slow</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">test_centroids_from_polygon_data</span><span class="o">.</span><span class="n">slow</span> <span class="o">=</span> <span class="bp">True</span>
 
 <div class="viewcode-block" id="Test_IO.test_rasters_and_arrays"><a class="viewcode-back" href="../../../api-docs/safe/storage/test_io.html#safe.storage.test_io.Test_IO.test_rasters_and_arrays">[docs]</a>    <span class="k">def</span> <span class="nf">test_rasters_and_arrays</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Consistency of rasters and associated arrays</span>
@@ -909,7 +932,7 @@
                     <span class="n">msg</span> <span class="o">=</span> <span class="s">&#39;Should have raised TypeError&#39;</span>
                     <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 </div>
-    <span class="n">test_reading_and_writing_of_real_rasters</span><span class="o">.</span><span class="n">slow</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">test_reading_and_writing_of_real_rasters</span><span class="o">.</span><span class="n">slow</span> <span class="o">=</span> <span class="bp">True</span>
 
 <div class="viewcode-block" id="Test_IO.test_no_projection"><a class="viewcode-back" href="../../../api-docs/safe/storage/test_io.html#safe.storage.test_io.Test_IO.test_no_projection">[docs]</a>    <span class="k">def</span> <span class="nf">test_no_projection</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Raster layers with no projection causes Exception to be raised</span>
@@ -935,7 +958,7 @@
         <span class="n">asc_filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">TESTDATA</span><span class="p">,</span> <span class="s">&#39;bad_ascii_format.asc&#39;</span><span class="p">)</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">read_layer</span><span class="p">(</span><span class="n">asc_filename</span><span class="p">)</span>
-        <span class="k">except</span> <span class="ne">Exception</span><span class="p">,</span> <span class="n">e</span><span class="p">:</span>
+        <span class="k">except</span> <span class="n">ReadLayerError</span><span class="p">,</span> <span class="n">e</span><span class="p">:</span>
             <span class="c"># Check that error message is reasonable, e.g.</span>
             <span class="c"># File /home/nielso/sandpit/inasafe_data/test/bad_ascii_format.asc</span>
             <span class="c"># exists, but could not be read. Please check if the file can</span>
@@ -951,12 +974,12 @@
         <span class="n">asc_filename</span> <span class="o">=</span> <span class="s">&#39;nonexisting_ascii_file_234xxxlcrhgqjk.asc&#39;</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">read_layer</span><span class="p">(</span><span class="n">asc_filename</span><span class="p">)</span>
-        <span class="k">except</span> <span class="ne">Exception</span><span class="p">,</span> <span class="n">e</span><span class="p">:</span>
+        <span class="k">except</span> <span class="n">ReadLayerError</span><span class="p">,</span> <span class="n">e</span><span class="p">:</span>
             <span class="c"># Check that this error message reflects that file did not exist</span>
             <span class="n">msg</span> <span class="o">=</span> <span class="s">&#39;Unexpected error message for non existing asc file: </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="n">e</span>
             <span class="k">assert</span> <span class="s">&#39;Could not find file&#39;</span> <span class="ow">in</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">),</span> <span class="n">msg</span>
 </div>
-    <span class="n">test_bad_ascii_data</span><span class="o">.</span><span class="n">slow</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">test_bad_ascii_data</span><span class="o">.</span><span class="n">slow</span> <span class="o">=</span> <span class="bp">True</span>
 
 <div class="viewcode-block" id="Test_IO.test_nodata_value"><a class="viewcode-back" href="../../../api-docs/safe/storage/test_io.html#safe.storage.test_io.Test_IO.test_nodata_value">[docs]</a>    <span class="k">def</span> <span class="nf">test_nodata_value</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;NODATA value is correctly recorded in GDAL</span>
@@ -984,7 +1007,7 @@
                    <span class="s">&#39;value </span><span class="si">%i</span><span class="s"> but it was </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">Amin</span><span class="p">,</span> <span class="n">nodata</span><span class="p">))</span>
             <span class="k">assert</span> <span class="n">nodata</span> <span class="o">==</span> <span class="n">Amin</span><span class="p">,</span> <span class="n">msg</span>
 </div>
-    <span class="n">test_nodata_value</span><span class="o">.</span><span class="n">slow</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">test_nodata_value</span><span class="o">.</span><span class="n">slow</span> <span class="o">=</span> <span class="bp">True</span>
 
 <div class="viewcode-block" id="Test_IO.test_vector_extrema"><a class="viewcode-back" href="../../../api-docs/safe/storage/test_io.html#safe.storage.test_io.Test_IO.test_vector_extrema">[docs]</a>    <span class="k">def</span> <span class="nf">test_vector_extrema</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Vector extremum calculation works</span>
@@ -1068,7 +1091,7 @@
             <span class="n">msg</span> <span class="o">=</span> <span class="s">&#39;-9999 should have been replaced by 0.0 in </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="n">rastername</span>
             <span class="k">assert</span> <span class="nb">min</span><span class="p">(</span><span class="n">C</span><span class="o">.</span><span class="n">flat</span><span class="p">[:])</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">9999</span><span class="p">,</span> <span class="n">msg</span>
 </div>
-    <span class="n">test_raster_extrema</span><span class="o">.</span><span class="n">slow</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">test_raster_extrema</span><span class="o">.</span><span class="n">slow</span> <span class="o">=</span> <span class="bp">True</span>
 
 <div class="viewcode-block" id="Test_IO.test_bins"><a class="viewcode-back" href="../../../api-docs/safe/storage/test_io.html#safe.storage.test_io.Test_IO.test_bins">[docs]</a>    <span class="k">def</span> <span class="nf">test_bins</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Linear and quantile bins are correct</span>
@@ -1127,7 +1150,7 @@
 
                     <span class="n">i0</span> <span class="o">=</span> <span class="n">i1</span>
 </div>
-    <span class="n">test_bins</span><span class="o">.</span><span class="n">slow</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">test_bins</span><span class="o">.</span><span class="n">slow</span> <span class="o">=</span> <span class="bp">True</span>
 
 <div class="viewcode-block" id="Test_IO.test_raster_to_vector_points"><a class="viewcode-back" href="../../../api-docs/safe/storage/test_io.html#safe.storage.test_io.Test_IO.test_raster_to_vector_points">[docs]</a>    <span class="k">def</span> <span class="nf">test_raster_to_vector_points</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Raster layers can be converted to vector point layers</span>
@@ -2019,7 +2042,7 @@
 
         <span class="c">#must be after above</span>
         <span class="n">indoout1</span> <span class="o">=</span> <span class="n">_</span><span class="p">(</span><span class="n">string1</span><span class="p">)</span>  <span class="c"># translate as &#39;Hi&#39;</span>
-        <span class="n">indoexpected1</span> <span class="o">=</span> <span class="s">&#39;Hi&#39;</span>
+        <span class="n">indoexpected1</span> <span class="o">=</span> <span class="s">&#39;Hi!&#39;</span>
         <span class="n">msg</span> <span class="o">=</span> <span class="s">&#39;Expected </span><span class="si">%s</span><span class="s">, got </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">indoexpected1</span><span class="p">,</span> <span class="n">indoout1</span><span class="p">)</span>
         <span class="k">assert</span> <span class="n">indoout1</span> <span class="o">==</span> <span class="n">indoexpected1</span><span class="p">,</span> <span class="n">msg</span>
 </div>
@@ -2031,7 +2054,7 @@
 
         <span class="k">try</span><span class="p">:</span>
             <span class="n">read_layer</span><span class="p">(</span><span class="n">hazard_filename</span><span class="p">)</span>
-        <span class="k">except</span> <span class="ne">Exception</span><span class="p">,</span> <span class="n">e</span><span class="p">:</span>
+        <span class="k">except</span> <span class="n">ReadLayerError</span><span class="p">,</span> <span class="n">e</span><span class="p">:</span>
             <span class="n">msg</span> <span class="o">=</span> <span class="s">&#39;Wrong error message: </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="n">e</span>
             <span class="k">assert</span> <span class="s">&#39;convert multipart&#39;</span> <span class="ow">in</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">),</span> <span class="n">msg</span>
         <span class="k">else</span><span class="p">:</span>
@@ -2071,7 +2094,7 @@
         <span class="n">msg</span> <span class="o">=</span> <span class="s">&#39;Projections did not match: </span><span class="si">%s</span><span class="s"> != </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">Hp</span><span class="p">,</span> <span class="n">Ep</span><span class="p">)</span>
         <span class="k">assert</span> <span class="n">Hp</span> <span class="o">==</span> <span class="n">Ep</span><span class="p">,</span> <span class="n">msg</span>
 </div>
-    <span class="n">test_projection_comparisons</span><span class="o">.</span><span class="n">slow</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">test_projection_comparisons</span><span class="o">.</span><span class="n">slow</span> <span class="o">=</span> <span class="bp">True</span>
 </div>
 <span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&#39;__main__&#39;</span><span class="p">:</span>
     <span class="n">suite</span> <span class="o">=</span> <span class="n">unittest</span><span class="o">.</span><span class="n">makeSuite</span><span class="p">(</span><span class="n">Test_IO</span><span class="p">,</span> <span class="s">&#39;test&#39;</span><span class="p">)</span>
@@ -2090,7 +2113,7 @@
 <div id="searchbox" style="display: none">
   <h3>Quick search</h3>
     <form class="search" action="../../../search.html" method="get">
-      <input type="text" name="q" size="18" />
+      <input type="text" name="q" />
       <input type="submit" value="Go" />
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
@@ -2125,7 +2148,7 @@
 
     <div class="footer">
         &copy; Copyright 2012, BNPB/AIFDR/GFDRR.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.1.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
     </div>
     <!-- cloud_sptheme 1.3 -->
   </body>

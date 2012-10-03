@@ -4,14 +4,17 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
+
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>safe_qgis.test_safe_interface &mdash; InaSAFE v0.5.0-alpha documentation</title>
+    <title>safe_qgis.test_safe_interface &mdash; InaSAFE 0.5.0-alpha documentation</title>
+    
     <link rel="stylesheet" href="../../_static/cloud.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-    <link rel="stylesheet" href="../../http://fonts.googleapis.com/css?family=Noticia+Text|Droid+Sans+Mono" type="text/css" />
+    <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Noticia+Text|Droid+Sans+Mono" type="text/css" />
+    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
@@ -26,7 +29,7 @@
     <script type="text/javascript" src="../../_static/doctools.js"></script>
     <script type="text/javascript" src="../../_static/jquery.cookie.js"></script>
     <script type="text/javascript" src="../../_static/toggle_sections.js"></script>
-    <link rel="top" title="InaSAFE v0.5.0-alpha documentation" href="../../index.html" />
+    <link rel="top" title="InaSAFE 0.5.0-alpha documentation" href="../../index.html" />
     <link rel="up" title="Module code" href="../index.html" /> 
   </head>
   <body>
@@ -85,7 +88,7 @@
 <span class="kn">from</span> <span class="nn">safe_qgis.exceptions</span> <span class="kn">import</span> <span class="p">(</span><span class="n">KeywordNotFoundException</span><span class="p">,</span>
                                <span class="n">InsufficientOverlapException</span><span class="p">,</span>
                                <span class="n">InvalidBoundingBoxException</span><span class="p">)</span>
-<span class="kn">from</span> <span class="nn">common.testing</span> <span class="kn">import</span> <span class="n">TESTDATA</span><span class="p">,</span> <span class="n">HAZDATA</span><span class="p">,</span> <span class="n">EXPDATA</span>
+<span class="kn">from</span> <span class="nn">safe.common.testing</span> <span class="kn">import</span> <span class="n">TESTDATA</span><span class="p">,</span> <span class="n">HAZDATA</span><span class="p">,</span> <span class="n">EXPDATA</span>
 
 
 <div class="viewcode-block" id="SafeInterfaceTest"><a class="viewcode-back" href="../../api-docs/safe_qgis_tests/test_safe_interface.html#safe_qgis.test_safe_interface.SafeInterfaceTest">[docs]</a><span class="k">class</span> <span class="nc">SafeInterfaceTest</span><span class="p">(</span><span class="n">unittest</span><span class="o">.</span><span class="n">TestCase</span><span class="p">):</span>
@@ -211,16 +214,22 @@
         <span class="sd">&quot;&quot;&quot;Check we can get the available functions from the impact calculator.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">myList</span> <span class="o">=</span> <span class="n">availableFunctions</span><span class="p">()</span>
-        <span class="k">assert</span> <span class="n">myList</span> <span class="o">&gt;</span> <span class="mi">1</span>
+        <span class="n">myMessage</span> <span class="o">=</span> <span class="s">&#39;No functions available (len=</span><span class="si">%s</span><span class="s">s)&#39;</span> <span class="o">%</span> <span class="nb">len</span><span class="p">(</span><span class="n">myList</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">myList</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span> <span class="n">myMessage</span>
 
         <span class="c"># Also test if it works when we give it two layers</span>
         <span class="c"># to see if we can determine which functions will</span>
         <span class="c"># work for them.</span>
         <span class="n">myKeywords1</span> <span class="o">=</span> <span class="n">readKeywordsFromFile</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rasterShakePath</span><span class="p">)</span>
         <span class="n">myKeywords2</span> <span class="o">=</span> <span class="n">readKeywordsFromFile</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">vectorPath</span><span class="p">)</span>
+        <span class="c"># We need to explicitly add the layer type to each keyword list</span>
+        <span class="n">myKeywords1</span><span class="p">[</span><span class="s">&#39;layertype&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s">&#39;raster&#39;</span>
+        <span class="n">myKeywords2</span><span class="p">[</span><span class="s">&#39;layertype&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s">&#39;vector&#39;</span>
+
         <span class="n">myList</span> <span class="o">=</span> <span class="p">[</span><span class="n">myKeywords1</span><span class="p">,</span> <span class="n">myKeywords2</span><span class="p">]</span>
         <span class="n">myList</span> <span class="o">=</span> <span class="n">availableFunctions</span><span class="p">(</span><span class="n">myList</span><span class="p">)</span>
-        <span class="k">assert</span> <span class="n">myList</span> <span class="o">&gt;</span> <span class="mi">1</span>
+        <span class="n">myMessage</span> <span class="o">=</span> <span class="s">&#39;No functions available (len=</span><span class="si">%s</span><span class="s">s)&#39;</span> <span class="o">%</span> <span class="nb">len</span><span class="p">(</span><span class="n">myList</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">myList</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span> <span class="n">myMessage</span>
 </div>
 <div class="viewcode-block" id="SafeInterfaceTest.test_getKeywordFromFile"><a class="viewcode-back" href="../../api-docs/safe_qgis_tests/test_safe_interface.html#safe_qgis.test_safe_interface.SafeInterfaceTest.test_getKeywordFromFile">[docs]</a>    <span class="k">def</span> <span class="nf">test_getKeywordFromFile</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Get keyword from a filesystem file&#39;s .keyword file.&quot;&quot;&quot;</span>
@@ -292,7 +301,7 @@
 <div id="searchbox" style="display: none">
   <h3>Quick search</h3>
     <form class="search" action="../../search.html" method="get">
-      <input type="text" name="q" size="18" />
+      <input type="text" name="q" />
       <input type="submit" value="Go" />
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
@@ -327,7 +336,7 @@
 
     <div class="footer">
         &copy; Copyright 2012, BNPB/AIFDR/GFDRR.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.1.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
     </div>
     <!-- cloud_sptheme 1.3 -->
   </body>
