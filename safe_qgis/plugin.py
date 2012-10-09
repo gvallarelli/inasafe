@@ -152,6 +152,7 @@ class Plugin:
         # pylint: disable=W0201
         self.actionDock = QAction(QIcon(':/plugins/inasafe/icon.png'),
                     self.tr('Toggle InaSAFE Dock'), self.iface.mainWindow())
+        self.actionDock.setObjectName('InaSAFEActionDock')
         self.actionDock.setStatusTip(self.tr(
                             'Show/hide InaSAFE dock widget'))
         self.actionDock.setWhatsThis(self.tr(
@@ -172,6 +173,7 @@ class Plugin:
         self.actionKeywordsDialog = QAction(
                             QIcon(':/plugins/inasafe/keywords.png'),
                             self.tr('Keyword Editor'), self.iface.mainWindow())
+        self.actionKeywordsDialog.setObjectName('InaSAFEActionKeywordDialog')
         self.actionKeywordsDialog.setStatusTip(self.tr(
                                     'Open the keywords editor'))
         self.actionKeywordsDialog.setWhatsThis(self.tr(
@@ -190,6 +192,7 @@ class Plugin:
         self.actionResetDock = QAction(
                             QIcon(':/plugins/inasafe/reload.png'),
                             self.tr('Reset Dock'), self.iface.mainWindow())
+        self.actionResetDock.setObjectName('InaSAFEActionResetDock')
         self.actionResetDock.setStatusTip(self.tr(
                                     'Reset the InaSAFE Dock'))
         self.actionResetDock.setWhatsThis(self.tr(
@@ -207,6 +210,7 @@ class Plugin:
         self.actionOptions = QAction(
                         QIcon(':/plugins/inasafe/options.png'),
                         self.tr('InaSAFE Options'), self.iface.mainWindow())
+        self.actionOptions.setObjectName('InaSAFEOptions')
         self.actionOptions.setStatusTip(self.tr(
                                     'Open InaSAFE options dialog'))
         self.actionOptions.setWhatsThis(self.tr(
@@ -225,6 +229,7 @@ class Plugin:
                         QIcon(':/plugins/inasafe/functions-table.png'),
                         self.tr('InaSAFE Impact Functions Doc'),
                         self.iface.mainWindow())
+        self.actionImpactFunctionsDoc.setObjectName('InaSAFEActionImpactFunctionsDoc')
         self.actionImpactFunctionsDoc.setStatusTip(self.tr(
                                     'Open InaSAFE impact functions doc'))
         self.actionImpactFunctionsDoc.setWhatsThis(self.tr(
@@ -238,6 +243,7 @@ class Plugin:
 
         # Short cut for Open Impact Functions Doc
         self.keyAction = QAction("Test Plugin", self.iface.mainWindow())
+        self.keyAction.setObjectName('InaSAFEActionTestPlugin')
         self.iface.registerMainWindowAction(self.keyAction, "F7")
         self.iface.addPluginToMenu("&Test plugins", self.keyAction)
         QObject.connect(self.keyAction, SIGNAL("triggered()"),
@@ -247,6 +253,7 @@ class Plugin:
         # create dockwidget and tabify it with the legend
         #--------------------------------------
         self.dockWidget = Dock(self.iface)
+        self.dockWidget.setObjectName('InaSAFEDock')
         self.iface.addDockWidget(Qt.LeftDockWidgetArea, self.dockWidget)
         myLegendTab = self.iface.mainWindow().findChild(QApplication, 'Legend')
 
