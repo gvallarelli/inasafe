@@ -210,7 +210,7 @@ class Plugin:
         self.actionOptions = QAction(
                         QIcon(':/plugins/inasafe/options.png'),
                         self.tr('InaSAFE Options'), self.iface.mainWindow())
-        self.actionOptions.setObjectName('InaSAFEOptions')
+        self.actionOptions.setObjectName('InaSAFEActionOptions')
         self.actionOptions.setStatusTip(self.tr(
                                     'Open InaSAFE options dialog'))
         self.actionOptions.setWhatsThis(self.tr(
@@ -376,6 +376,7 @@ class Plugin:
         myDialog = OptionsDialog(self.iface.mainWindow(),
                                       self.iface,
                                       self.dockWidget)
+        myDialog.setObjectName('InaSAFEOptionsDialog')
         myDialog.show()
 
     def showKeywordsEditor(self):
