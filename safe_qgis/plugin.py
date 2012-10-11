@@ -232,6 +232,27 @@ class Plugin:
         self.iface.addPluginToMenu(self.tr('InaSAFE'),
                                    self.actionImpactFunctionsDoc)
 
+        #----------------------------------
+        # Create action for gui scripting
+        #-----------------------------------
+        ## FIXME: need to change the image file....
+        self.actionScriptDialog = QAction(
+                QIcon(':/plugins/inasafe/functions-table.png'),
+                self.tr('InaSAFE GUI Scripting'),
+                self.iface.mainWindow())
+
+        self.actionScriptDialog.setStatusTip(self.tr(
+            'InaSAFE GUI Scripting Tools'))
+        self.actionScriptDialog.setWhatsThis(self.tr(
+            'Run GUI Scripting Tools'))
+        QObject.connect(self.actionScriptDialog, SIGNAL('triggered()'),
+            self.showScriptDialog)
+
+        self.iface.addToolBarIcon(self.actionScriptDialog)
+        self.iface.addPluginToMenu(self.tr('InaSAFE'),
+            self.actionScriptDialog)
+
+
         # Short cut for Open Impact Functions Doc
         self.keyAction = QAction("Test Plugin", self.iface.mainWindow())
         self.keyAction.setObjectName('InaSAFEActionTestPlugin')
@@ -298,6 +319,9 @@ class Plugin:
         self.iface.removePluginMenu(self.tr('InaSAFE'),
                                     self.actionImpactFunctionsDoc)
         self.iface.removeToolBarIcon(self.actionImpactFunctionsDoc)
+        self.iface.removeToolBarIcon(self.actionScriptDialog)
+        self.iface.removePluginMenu(self.tr('InaSAFE'),
+                                    self.actionScriptDialog)
         self.iface.mainWindow().removeDockWidget(self.dockWidget)
         self.dockWidget.setVisible(False)
         self.dockWidget.destroy()
@@ -457,3 +481,10 @@ class Plugin:
     def keyActionF7(self):
         '''Executed when user press F7'''
         self.showImpactFunctionsDoc()
+
+    def showScriptDialog(self):
+        """Show Script Dialog"""
+        from safe_qgis.script_dialog import ScriptDialog
+
+        dialog = ScriptDialog(self.iface.mainWindow())
+        dialog.show()
