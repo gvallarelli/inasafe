@@ -55,7 +55,7 @@ class Vector(Layer):
 
     def __init__(self, data=None, projection=None, geometry=None,
                  geometry_type=None, name=None, keywords=None,
-                 style_info=None, sublayer=None):
+                 style_info=None, sublayer=None, store_to_filename=None):
         """Initialise object with either geometry or filename
 
         Args:
@@ -88,6 +88,12 @@ class Vector(Layer):
                   table name in case of sqlite etc.) to load. Only applicable
                   to those dataformats supporting more than one layer in the
                   data file.
+            * store_to_filename: str Optional filename to use when data
+                  is stored
+                  upon initialisation. This is only used if args data and
+                  geometry are provided as memory data. If data is
+                  interpreted as a file name to read from, store_to_filename
+                  is ignored.
 
         Returns:
             * An instance of class Vector.
@@ -96,7 +102,6 @@ class Vector(Layer):
             * Propogates any exceptions encountered.
 
         Notes:
-
             If data is a filename, all other arguments are ignored
             as they will be inferred from the file.
 
@@ -178,9 +183,10 @@ class Vector(Layer):
             # * Check the integrity of given data
             # * Ensure everything is the same as when a filename was specified.
             #   This will e.g. establish extent
-            tmp_filename = unique_filename(suffix='.shp')
-            self.write_to_file(tmp_filename)
-            self.read_from_file(tmp_filename)
+            if store_to_filename is None:
+                store_to_filename = unique_filename(suffix='.shp')
+            self.write_to_file(store_to_filename)
+            self.read_from_file(store_to_filename)
 
     def __str__(self):
         """Render as name, number of features, geometry type

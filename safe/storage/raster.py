@@ -11,6 +11,7 @@ from safe.common.numerics import nanallclose, geotransform2axes, grid2points
 from safe.common.dynamic_translations import names as internationalised_titles
 from safe.common.exceptions import ReadLayerError, WriteLayerError
 from safe.common.exceptions import GetDataError, InaSAFEError
+from safe.common.utilities import unique_filename
 
 from layer import Layer
 from vector import Vector
@@ -28,7 +29,8 @@ class Raster(Layer):
     """
 
     def __init__(self, data=None, projection=None, geotransform=None,
-                 name=None, keywords=None, style_info=None):
+                 name=None, keywords=None, style_info=None,
+                 store_to_filename=None):
         """Initialise object with either data or filename
 
         Args:
@@ -55,6 +57,12 @@ class Raster(Layer):
             * style_info: Dictionary with information about how this layer
                           should be styled. See impact_functions/styles.py
                           for examples.
+            * store_to_filename: str Optional filename to use when data
+                  is stored
+                  upon initialisation. This is only used if args data and
+                  geometry are provided as memory data. If data is
+                  interpreted as a file name to read from, store_to_filename
+                  is ignored.
 
         Note:
             If data is a filename, all other arguments are ignored
@@ -97,7 +105,13 @@ class Raster(Layer):
             #              this should be taken care of there
             self.nodata_value = numpy.nan
 
-            # FIXME(Ole): Store data here like we do with vector data
+            # Write and read back again to
+            # * Check the integrity of given data
+            # * Ensure everything is the same as when a filename was specified.
+            if store_to_filename is None:
+                store_to_filename = unique_filename(suffix='.tif')
+            self.write_to_file(store_to_filename)
+            self.read_from_file(store_to_filename)
 
     def __str__(self):
         """Render as name and dimensions
