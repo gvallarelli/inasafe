@@ -11,16 +11,11 @@ Contact : ole.moller.nielsen@gmail.com
 .. todo:: Check raster is single band
 
 """
-from safe.common.utilities import temp_dir
-
 __author__ = 'tim@linfiniti.com'
-__version__ = '0.5.1'
 __revision__ = '$Format:%H$'
 __date__ = '10/01/2011'
 __copyright__ = ('Copyright 2012, Australia Indonesia Facility for '
                  'Disaster Reduction')
-__type__ = 'final'  # beta, final etc will be shown in dock title
-
 import os
 import numpy
 import logging
@@ -39,7 +34,7 @@ from qgis.core import (QgsMapLayer,
                        QgsRectangle)
 from qgis.analysis import QgsZonalStatistics
 
-# TODO: Rather impor via safe_interface.py TS
+# TODO: Rather import via safe_interface.py TS
 from safe.api import write_keywords, read_keywords, ReadLayerError
 
 from safe_qgis.dock_base import Ui_DockBase
@@ -51,9 +46,11 @@ from safe_qgis.safe_interface import (availableFunctions,
                                       getFunctionTitle,
                                       getOptimalExtent,
                                       getBufferedExtent,
-                                      internationalisedNames,
                                       getSafeImpactFunctions,
-                                      writeKeywordsToFile)
+                                      writeKeywordsToFile,
+                                      safeTr,
+                                      get_version,
+                                      temp_dir)
 from safe_qgis.keyword_io import KeywordIO
 from safe_qgis.clipper import clipLayer
 from safe_qgis.exceptions import (KeywordNotFoundException,
@@ -62,13 +59,14 @@ from safe_qgis.exceptions import (KeywordNotFoundException,
                                   InsufficientParametersException,
                                   HashNotFoundException)
 from safe_qgis.map import Map
+from safe_qgis.html_renderer import HtmlRenderer
 from safe_qgis.utilities import (htmlHeader,
                                  htmlFooter,
                                  setVectorStyle,
                                  setRasterStyle,
                                  qgisVersion)
-from safe_qgis.configurable_impact_functions_dialog import (
-   ConfigurableImpactFunctionsDialog)
+from safe_qgis.function_options_dialog import (
+   FunctionOptionsDialog)
 from safe_qgis.keywords_dialog import KeywordsDialog
 
 # Don't remove this even if it is flagged as unused by your ide
@@ -105,8 +103,17 @@ class Dock(QtGui.QDockWidget, Ui_DockBase):
 
         QtGui.QDockWidget.__init__(self, None)
         self.setupUi(self)
+        myLongVersion = get_version()
+        LOGGER.debug('Version: %s' % myLongVersion)
+        myTokens = myLongVersion.split('.')
+        myVersion = '%s.%s.%s' % (myTokens[0], myTokens[1], myTokens[2])
+        try:
+            myVersionType = myTokens[3].split('2')[0]
+        except IndexError:
+            myVersionType = 'final'
+        # Allowed version names: ('alpha', 'beta', 'rc', 'final')
         self.setWindowTitle(self.tr('InaSAFE %s %s' % (
-                                __version__, __type__)))
+            myVersion, myVersionType)))
         # Save reference to the QGIS interface
         self.iface = iface
         self.header = None  # for storing html header template
@@ -127,6 +134,8 @@ class Dock(QtGui.QDockWidget, Ui_DockBase):
         self.setOkButtonStatus()
         self._aggregationPrefix = 'aggr_'
         self.pbnPrint.setEnabled(False)
+        # used by configurable function options button
+        self.activeFunction = None
 
         self.initPostprocessingOutput()
 
@@ -398,17 +407,17 @@ class Dock(QtGui.QDockWidget, Ui_DockBase):
            None.
 
         Raises:
-           no exceptions explicitly raised."""
-        # Add any other logic you mught like here...
+           no exceptions explicitly raised.
+        """
+        # Add any other logic you might like here...
         if not theIndex.isNull or not theIndex == '':
             myFunctionID = self.getFunctionID()
 
             myFunctions = getSafeImpactFunctions(myFunctionID)
-            self.myFunction = myFunctions[0][myFunctionID]
+            self.activeFunction = myFunctions[0][myFunctionID]
             self.functionParams = None
-            if hasattr(self.myFunction, 'parameters'):
-                self.functionParams = self.myFunction.parameters
-
+            if hasattr(self.activeFunction, 'parameters'):
+                self.functionParams = self.activeFunction.parameters
             self.setToolFunctionOptionsButton()
         else:
             del theIndex
@@ -461,11 +470,10 @@ class Dock(QtGui.QDockWidget, Ui_DockBase):
 
         Raises:
            no exceptions explicitly raised."""
-        conf = ConfigurableImpactFunctionsDialog(self)
-        conf.setDialogInfo(self.getFunctionID())
-        conf.buildFormFromImpactFunctionsParameter(self.myFunction,
-                                                   self.functionParams)
-        conf.showNormal()
+        myDialog = FunctionOptionsDialog(self)
+        myDialog.setDialogInfo(self.getFunctionID())
+        myDialog.buildForm(self.activeFunction, self.functionParams)
+        myDialog.showNormal()
 
     def canvasLayersetChanged(self):
         """A helper slot to update the dock combos if the canvas layerset
@@ -572,8 +580,8 @@ class Dock(QtGui.QDockWidget, Ui_DockBase):
                 myLayer not in myCanvasLayers):
                 continue
 
-         # .. todo:: check raster is single band
-         #    store uuid in user property of list widget for layers
+        # .. todo:: check raster is single band
+        #    store uuid in user property of list widget for layers
 
             myName = myLayer.name()
             mySource = str(myLayer.id())
@@ -586,8 +594,7 @@ class Dock(QtGui.QDockWidget, Ui_DockBase):
                 myTitle = myName
             else:
                 # Lookup internationalised title if available
-                if myTitle in internationalisedNames:
-                    myTitle = internationalisedNames[myTitle]
+                myTitle = safeTr(myTitle)
             # Register title with layer
             if myTitle and self.setLayerNameFromTitleFlag:
                 myLayer.setLayerName(myTitle)
@@ -645,15 +652,15 @@ class Dock(QtGui.QDockWidget, Ui_DockBase):
         """
         #FIXME (MB) remove hazardlayer and exposure layer type check when
         # vector aggregation is supported
-        selectedHazardLayer = self.getHazardLayer()
-        selectedExposureLayer = self.getExposureLayer()
+        mySelectedHazardLayer = self.getHazardLayer()
+        mySelectedExposureLayer = self.getExposureLayer()
 
         #more than 1 because No aggregation is always there
         if (self.cboAggregation.count() > 1 and
-           selectedHazardLayer is not None and
-           selectedExposureLayer is not None and
-           selectedHazardLayer.type() == QgsMapLayer.RasterLayer and
-           selectedExposureLayer.type() == QgsMapLayer.RasterLayer):
+           mySelectedHazardLayer is not None and
+           mySelectedExposureLayer is not None and
+           mySelectedHazardLayer.type() == QgsMapLayer.RasterLayer and
+           mySelectedExposureLayer.type() == QgsMapLayer.RasterLayer):
             self.cboAggregation.setEnabled(True)
         else:
             self.cboAggregation.setEnabled(False)
@@ -1272,8 +1279,7 @@ class Dock(QtGui.QDockWidget, Ui_DockBase):
         #there is no usable attribute, use None
         if len(fields) == 0:
             aggrAttribute = None
-            LOGGER.debug(
-                'there is no usable attribute, use None')
+            LOGGER.debug('there is no usable attribute, use None')
         #there is only one usable attribute, use it
         elif len(fields) == 1:
             aggrAttribute = fields[0]
@@ -1797,9 +1803,8 @@ class Dock(QtGui.QDockWidget, Ui_DockBase):
                         myValue = myKeywords[myKeyword]
 
                         # Translate titles explicitly if possible
-                        if myKeyword == 'title' and \
-                                myValue in internationalisedNames:
-                            myValue = internationalisedNames[myValue]
+                        if myKeyword == 'title':
+                            myValue = safeTr(myValue)
 
                         # Add this keyword to report
                         myReport += ('<tr>'
@@ -1907,37 +1912,72 @@ class Dock(QtGui.QDockWidget, Ui_DockBase):
             Any exceptions raised by the InaSAFE library will be propogated.
         """
         myMap = Map(self.iface)
-        myFilename = QtGui.QFileDialog.getSaveFileName(self,
-                            self.tr('Write to PDF'),
-                            temp_dir() + os.sep + myMap.getMapTitle() + '.pdf',
-                            self.tr('Pdf File (*.pdf)'))
-        myMap.setImpactLayer(self.iface.activeLayer())
+        if self.iface.activeLayer() is None:
+            QtGui.QMessageBox.warning(self,
+                                self.tr('InaSAFE'),
+                                self.tr('Please select a valid impact layer'
+                                        ' before trying to print.'))
+            return
+
         self.showBusy(self.tr('Map Creator'),
-                      self.tr('Generating your map as a PDF document...'),
+                      self.tr('Preparing map and report'),
                       theProgress=20)
-        try:
-            myMap.makePdf(myFilename)
+
+        myMap.setImpactLayer(self.iface.activeLayer())
+        LOGGER.debug('Map Title: %s' % myMap.getMapTitle())
+        myMapFilename = QtGui.QFileDialog.getSaveFileName(self,
+                            self.tr('Write to PDF'),
+                            os.path.join(temp_dir(),
+                                         myMap.getMapTitle() + '.pdf'),
+                            self.tr('Pdf File (*.pdf)'))
+        myMapFilename = str(myMapFilename)
+
+        if myMapFilename is None:
             self.showBusy(self.tr('Map Creator'),
-                          self.tr('Your PDF was created....opening using '
-                                  'the default PDF viewer on your system.'
-                                  'The generated pdf is saved as: %s' %
-                                  myFilename),
-                          theProgress=80)
-            QtGui.QDesktopServices.openUrl(QtCore.QUrl('file:///' + myFilename,
-                                 QtCore.QUrl.TolerantMode))
-            self.showBusy(self.tr('Map Creator'),
-                          self.tr('Processing complete.'
-                                  'The generated pdf is saved as: %s' %
-                                  myFilename),
+                          self.tr('Printing cancelled!'),
                           theProgress=100)
+            self.hideBusy()
+            return
+
+        myTableFilename = os.path.splitext(myMapFilename)[0] + '_table.pdf'
+        myHtmlRenderer = HtmlRenderer(thePageDpi=myMap.pageDpi)
+        myHtmlPdfPath = myHtmlRenderer.printImpactTable(
+            theLayer=self.iface.activeLayer(), theFilename=myTableFilename)
+
+        try:
+            myMapPdfPath = myMap.printToPdf(myMapFilename)
         except Exception, e:  # pylint: disable=W0703
             # FIXME (Ole): This branch is not covered by the tests
             myReport = getExceptionWithStacktrace(e, html=True)
             if myReport is not None:
                 self.displayHtml(myReport)
 
+        myStatus = self.tr('Your PDF was created....opening using '
+                           'the default PDF viewer on your system.>'
+                           'The generated pdfs were saved as:%(br)s'
+                           '%(map)s%(br)s and %(br)s%(table)s'
+                           % {
+            'br': '<br>',
+            'map': myMapPdfPath,
+            'table': myHtmlPdfPath})
+
+        self.showBusy(self.tr('Map Creator'),
+                      myStatus,
+                      theProgress=80)
+
+        QtGui.QDesktopServices.openUrl(
+            QtCore.QUrl('file:///' + myHtmlPdfPath,
+            QtCore.QUrl.TolerantMode))
+        QtGui.QDesktopServices.openUrl(
+            QtCore.QUrl('file:///' + myMapPdfPath,
+            QtCore.QUrl.TolerantMode))
+
+        self.showBusy(self.tr('Map Creator'),
+                      myStatus,
+                      theProgress=100)
+
         self.hideBusy()
-        myMap.showComposer()
+        #myMap.showComposer()
 
     def addComboItemInOrder(self, theCombo, theItemText, theItemData=None):
         """Although QComboBox allows you to set an InsertAlphabetically enum

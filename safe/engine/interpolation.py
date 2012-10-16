@@ -40,8 +40,7 @@ def assign_hazard_values_to_exposure_data(hazard, exposure,
        * attribute_name:
              If hazard layer is of type raster, this is the name for new
              attribute in the result containing the hazard level.
-             If None (default) the name of hazard is used
-
+             If None (default) the name of hazard is used.
              If hazard layer is of type vector, it is the name of the
              attribute to transfer from the hazard layer into the result.
              If None (default) all attributes are transferred.
@@ -91,6 +90,16 @@ def assign_hazard_values_to_exposure_data(hazard, exposure,
         Raster-Polygon:  Polygon data
         Raster-Raster:   Raster data
     """
+
+    # Make sure attribute name can be stored in a shapefile
+    if attribute_name is not None and len(attribute_name) > 10:
+        msg = ('Specified attribute name "%s"\
+         has length = %i. '
+               'To fit into a shapefile it must be at most 10 characters '
+               'long. How about naming it "%s"?' % (attribute_name,
+                                                    len(attribute_name),
+                                                    attribute_name[:10]))
+        raise InaSAFEError(msg)
 
     layer_name, attribute_name = check_inputs(hazard, exposure,
                                               layer_name, attribute_name)
@@ -307,14 +316,14 @@ def interpolate_polygon_raster(source, target,
     polygon_geometry = source.get_geometry(as_geometry_objects=True)
 
     # FIXME (Ole): Perhaps refactor so that polygon_geometry can
-    # be passed in directly
-    outer_rings = [p.outer_ring for p in polygon_geometry]
-    inner_rings = [p.inner_rings for p in polygon_geometry]
+    # be passed in directly. See issue #324, comment
+    #https://github.com/AIFDR/inasafe/issues/324#issuecomment-9440584
+    # FIXME (Ole): Not sure if needed, but explicitly make sure
+    # exposure raster is *never* scaled here
     polygon_attributes = source.get_data()
     res = clip_grid_by_polygons(target.get_data(),
                                 target.get_geotransform(),
-                                outer_rings,
-                                inner_rings=inner_rings)
+                                polygon_geometry)
 
     # Create one new point layer with interpolated attributes
     new_geometry = []
@@ -392,6 +401,8 @@ def interpolate_raster_vector_points(source, target,
     N = len(target)
     if attribute_name is None:
         attribute_name = source.get_name()
+        # FIXME (Ole): Launder for shape files
+        attribute_name = str(attribute_name[:10])
 
     try:
         values = interpolate_raster(longitudes, latitudes, A,

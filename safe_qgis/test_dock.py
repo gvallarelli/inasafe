@@ -12,7 +12,7 @@ Contact : ole.moller.nielsen@gmail.com
 """
 
 __author__ = 'tim@linfiniti.com'
-__version__ = '0.5.0'
+__version__ = '0.5.1'
 __date__ = '10/01/2011'
 __copyright__ = ('Copyright 2012, Australia Indonesia Facility for '
                  'Disaster Reduction')
@@ -37,7 +37,6 @@ from qgis.core import (QgsRasterLayer,
                        QgsRectangle)
 
 from safe.common.testing import HAZDATA, EXPDATA, TESTDATA, UNITDATA
-
 from safe_qgis.utilities_test import (getQgisTestApp,
                                 setCanvasCrs,
                                 setPadangGeoExtent,
@@ -318,6 +317,7 @@ class DockTest(unittest.TestCase):
 
     def setUp(self):
         """Fixture run before all tests"""
+        os.environ['LANG'] = 'en'
         DOCK.showOnlyVisibleLayersFlag = True
         loadStandardLayers()
         DOCK.cboHazard.setCurrentIndex(0)
@@ -438,7 +438,7 @@ class DockTest(unittest.TestCase):
         myResult, myMessage = setupScenario(
             theHazard='Tsunami Max Inundation',
             theExposure='Tsunami Building Exposure',
-            theFunction='Be temporarily closed',
+            theFunction='Be flooded',
             theFunctionId='Flood Building Impact Function',
             theAggregationEnabledFlag=False)
         myMessage += ' when the when hazard is raster and exposure is vector'
@@ -449,7 +449,7 @@ class DockTest(unittest.TestCase):
         myResult, myMessage = setupScenario(
             theHazard='A flood in Jakarta',
             theExposure='Essential buildings',
-            theFunction='Be temporarily closed',
+            theFunction='Be flooded',
             theFunctionId='Flood Building Impact Function',
             theAggregationEnabledFlag=False)
         myMessage += ' when the when hazard and exposure layer are vector'
@@ -1286,6 +1286,19 @@ class DockTest(unittest.TestCase):
                      (myBeforeCount, myAfterCount))
         assert myBeforeCount == myAfterCount - 1, myMessage
         QgsMapLayerRegistry.instance().removeMapLayer(myLayer.id())
+
+    def test_issue317(self):
+        """Points near the edge of a raster hazard layer are interpolated OK"""
+
+        setCanvasCrs(GEOCRS, True)
+        setJakartaGeoExtent()
+        myResult, myMessage = setupScenario(
+            theHazard='A flood in Jakarta like in 2007',
+            theExposure='OSM Building Polygons',
+            theFunction='Be flooded',
+            theFunctionId='Flood Building Impact Function')
+        DOCK.getFunctions()
+        assert myResult, myMessage
 
 if __name__ == '__main__':
     suite = unittest.makeSuite(DockTest, 'test')
