@@ -211,6 +211,29 @@ class Plugin:
                                    self.actionOptions)
 
         #--------------------------------------
+        # Create action for simple qgis ui dialog
+        #--------------------------------------
+        #FIXME: change image to represent the functionality
+        self.actionSimpleInterface = QAction(
+            QIcon(':/plugins/inasafe/reload.png'),
+            self.tr('Change QGIS Interface to simple version'), self.iface.mainWindow())
+        self.actionSimpleInterface.setCheckable(True)
+        self.actionSimpleInterface.setChecked(False)
+
+        self.actionSimpleInterface.setStatusTip(self.tr(
+            'Change QGIS Interface to simple version'))
+        self.actionSimpleInterface.setWhatsThis(self.tr(
+            'Change QGIS Interface to simple version'))
+        QObject.connect(self.actionSimpleInterface, SIGNAL('triggered()'),
+            self.toggleSimpleInterface)
+
+        self.iface.addToolBarIcon(self.actionSimpleInterface)
+        self.iface.addPluginToMenu(self.tr('InaSAFE'),
+            self.actionSimpleInterface)
+
+
+
+        #--------------------------------------
         # Create action for impact functions doc dialog
         #--------------------------------------
         self.actionImpactFunctionsDoc = QAction(
@@ -450,3 +473,38 @@ class Plugin:
     def keyActionF7(self):
         '''Executed when user press F7'''
         self.showImpactFunctionsDoc()
+
+    def toggleSimpleInterface(self):
+        """ Change QGIS User Interface to simple version
+        Args:
+           None.
+        Returns:
+           None.
+        Raises:
+           no exceptions explicitly raised.
+        """
+
+        if self.actionSimpleInterface.isChecked():
+            displayFlag = False
+        else:
+            displayFlag = True
+
+        # toggle display of action toolbar
+        toolbars = [
+            'advancedDigitizeToolBar', 'attributesToolBar',
+            'databaseToolBar', 'digitizeToolBar', 'fileToolBar',
+            #'layerToolBar',
+            'mapNavToolToolBar',
+            #'rasterToolBar',
+            'vectorToolBar',
+
+            'pluginToolBar', 'helpToolBar', 'webToolBar'
+        ]
+
+        for toolbar in toolbars:
+            actionButton = getattr(self.iface, toolbar)()
+            actionButton.setVisible(displayFlag)
+
+
+        ## change the layout of InaSAFE dock and layers tab
+        # do something....
