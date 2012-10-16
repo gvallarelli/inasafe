@@ -24,7 +24,8 @@ from PyQt4.QtCore import QObject
 
 #Do not import any QGIS or SAFE modules in this module!
 from safe_qgis.impact_calculator_thread import ImpactCalculatorThread
-from safe_qgis.exceptions import InsufficientParametersException
+from safe_qgis.exceptions import (InsufficientParametersException,
+                                  ZoomOnePixelError)
 from safe_qgis.safe_interface import (readSafeLayer,
                                    getSafeImpactFunctions)
 
@@ -164,7 +165,8 @@ class ImpactCalculator(QObject):
             myHazardLayer = readSafeLayer(self._hazardLayer)
             myExposureLayer = readSafeLayer(self._exposureLayer)
         except:
-            raise
+            myMessage = self.tr('Error: Zoom is too big')
+            raise ZoomOnePixelError(myMessage)
 
         myFunctions = getSafeImpactFunctions(self._function)
         myFunction = myFunctions[0][self._function]

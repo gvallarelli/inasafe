@@ -11,6 +11,7 @@ Contact : ole.moller.nielsen@gmail.com
 .. todo:: Check raster is single band
 
 """
+from safe.common.exceptions import ReadLayerError
 __author__ = 'tim@linfiniti.com'
 __revision__ = '$Format:%H$'
 __date__ = '10/01/2011'
@@ -57,7 +58,7 @@ from safe_qgis.exceptions import (KeywordNotFoundException,
                                   InsufficientOverlapException,
                                   InvalidParameterException,
                                   InsufficientParametersException,
-                                  HashNotFoundException)
+                                  HashNotFoundException, ZoomOnePixelError)
 from safe_qgis.map import Map
 from safe_qgis.html_renderer import HtmlRenderer
 from safe_qgis.utilities import (htmlHeader,
@@ -888,6 +889,15 @@ class Dock(QtGui.QDockWidget, Ui_DockBase):
         try:
             self.runner = self.calculator.getRunner()
         except InsufficientParametersException, e:
+            QtGui.qApp.restoreOverrideCursor()
+            self.hideBusy()
+            myContext = self.tr('An exception occurred when setting up the '
+                                ' model runner.')
+            myMessage = getExceptionWithStacktrace(e, html=True,
+                                                   context=myContext)
+            self.displayHtml(myMessage)
+            return
+        except ZoomOnePixelError, e:
             QtGui.qApp.restoreOverrideCursor()
             self.hideBusy()
             myContext = self.tr('An exception occurred when setting up the '
