@@ -274,7 +274,9 @@ def loadStandardLayers():
                   join(EXPDATA, 'DKI_buildings.shp'),
                   join(HAZDATA, 'jakarta_flood_category_123.asc'),
                   join(TESTDATA, 'roads_Maumere.shp'),
-                  join(TESTDATA, 'kabupaten_jakarta_singlepart.shp')]
+                  join(TESTDATA, 'kabupaten_jakarta_singlepart.shp'),
+                  join(EXPDATA, 'glp10ag.asc'),
+                  join(HAZDATA, 'sumatran_fault_7.8_shakemap.asc')]
     myHazardLayerCount, myExposureLayerCount = loadLayers(myFileList,
                                                        theDataDirectory=None)
     #FIXME (MB) -1 is untill we add the aggregation category because of
@@ -946,6 +948,30 @@ class DockTest(unittest.TestCase):
                 transparentSingleValuePixelList())
         #print "Transparency list:" + str(myTransparencyList)
         assert (len(myTransparencyList) > 0)
+
+    def test_ZoomIn(self):
+        """Test when user zoom to one pixel level"""
+
+        myResult, myMessage = setupScenario(
+                theHazard='An earthquake at the Sumatran fault (Mw 7.8)',
+                theExposure='People',
+                theFunction='Die or be displaced',
+                theFunctionId='I T B Fatality Function')
+        assert myResult, myMessage
+
+        # Enable on-the-fly reprojection
+        # Zoom
+        setCanvasCrs(GEOCRS, True)
+        IFACE.mapCanvas().setExtent(
+                            QgsRectangle(100.3430, -0.9089, 100.3588, -0.9022))
+
+        # Press RUN
+        myButton = DOCK.pbnRunStop
+        QTest.mouseClick(myButton, QtCore.Qt.LeftButton)
+        myResult = DOCK.wvResults.page().currentFrame().toPlainText()
+
+        # myMessage = 'Result not as expected: %s' % myResult
+        # assert '2366' in myResult, myMessage
 
     def test_Issue47(self):
         """Issue47: Problem when hazard & exposure data are in different
