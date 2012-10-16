@@ -12,7 +12,8 @@ SOURCES = __init__.py \
 FORMS = dock_base.ui \
         help_base.ui \
         keywords_dialog_base.ui \
-        options_dialog_base.ui
+        options_dialog_base.ui \
+    script_dialog.ui
 
 TRANSLATIONS = i18n/inasafe_id.ts \
                i18n/inasafe_af.ts
