@@ -22,7 +22,7 @@ import os
 import sys
 import tempfile
 import logging
-from subprocess import (call, CalledProcessError)
+from subprocess import (call, CalledProcessError, check_output, Popen, PIPE, STDOUT)
 
 from PyQt4.QtCore import QCoreApplication
 from qgis.core import (QgsCoordinateTransform,
@@ -39,7 +39,8 @@ from safe_qgis.safe_interface import (verify,
 from safe_qgis.keyword_io import KeywordIO
 from safe_qgis.exceptions import (InvalidParameterException,
                            NoFeaturesInExtentException,
-                           InvalidProjectionException)
+                           InvalidProjectionException,
+                           ZoomOnePixelError)
 
 LOGGER = logging.getLogger(name='InaSAFE')
 
@@ -96,8 +97,12 @@ def clipLayer(theLayer, theExtent, theCellSize=None, theExtraKeywords=None,
             theExtraKeywords=theExtraKeywords,
             explodeMultipart=explodeMultipart)
     else:
-        return _clipRasterLayer(theLayer, theExtent, theCellSize,
-            theExtraKeywords=theExtraKeywords)
+        try:
+            retval = _clipRasterLayer(theLayer, theExtent, theCellSize,
+                        theExtraKeywords=theExtraKeywords)
+            return retval
+        except ZoomOnePixelError, e:
+            raise e
 
 
 def _clipVectorLayer(theLayer, theExtent,
@@ -373,21 +378,32 @@ def _clipRasterLayer(theLayer, theExtent, theCellSize=None,
     # Now run GDAL warp scottie...
     LOGGER.debug(myCommand)
     try:
-        myResult = call(myCommand, shell=True)
+        # myResult = check_output(myCommand, shell=True)
+        myResult = Popen(myCommand, shell=True, stdin=PIPE, stdout=PIPE, stderr=PIPE)
+        LOGGER.debug('Popen %s' % myResult.stderr)
+        output_str = myResult.stdout.read()
+        if 'ERROR 1: Attempt to create 1x0 dataset' in output_str:
+            raise ZoomOnePixelError('Too zoom')
+            return
         del myResult
     except CalledProcessError, e:
         myMessage = tr('<p>Error while executing the following shell command:'
                      '</p><pre>%s</pre><p>Error message: %s'
                      % (myCommand, str(e)))
         # shameless hack - see https://github.com/AIFDR/inasafe/issues/141
+        LOGGER.debug('lalalala %s' % e)
+        LOGGER.debug('lalalala %s' % e.output)
         if sys.platform == 'darwin':  # Mac OS X
             if 'Errno 4' in str(e):
                 # continue as the error seems to be non critical
                 pass
             else:
-                raise Exception(myMessage)
+                raise ZoomOnePixelError(myMessage)
         else:
-            raise Exception(myMessage)
+            if 'ERROR 1' in str(e.output):
+                raise ZoomOnePixelError(myMessage)
+            else:
+                raise ZoomOnePixelError(myMessage)
 
     # .. todo:: Check the result of the shell call is ok
     myKeywordIO = KeywordIO()

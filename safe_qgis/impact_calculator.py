@@ -12,6 +12,7 @@ Contact : ole.moller.nielsen@gmail.com
      (at your option) any later version.
 
 """
+from safe.common.exceptions import ReadLayerError
 
 __author__ = 'tim@linfiniti.com, ole.moller.nielsen@gmail.com'
 __version__ = '0.5.0'
@@ -164,8 +165,13 @@ class ImpactCalculator(QObject):
         try:
             myHazardLayer = readSafeLayer(self._hazardLayer)
             myExposureLayer = readSafeLayer(self._exposureLayer)
-        except:
-            myMessage = self.tr('Error: Zoom is too big')
+        except ZoomOnePixelError, e:
+            myMessage = self.tr('Error: Zoom is too much')
+            myMessage += str(e)
+            raise ZoomOnePixelError(myMessage)
+        except ReadLayerError, e:
+            myMessage = self.tr('Error: Zoom is too much')
+            myMessage += str(e)
             raise ZoomOnePixelError(myMessage)
 
         myFunctions = getSafeImpactFunctions(self._function)

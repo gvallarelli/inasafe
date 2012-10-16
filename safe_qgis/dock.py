@@ -831,6 +831,8 @@ class Dock(QtGui.QDockWidget, Ui_DockBase):
         """
         try:
             myHazardFilename, myExposureFilename = self.optimalClip()
+        except ZoomOnePixelError, e:
+            raise e
         except:
             QtGui.qApp.restoreOverrideCursor()
             self.hideBusy()
@@ -876,6 +878,15 @@ class Dock(QtGui.QDockWidget, Ui_DockBase):
 
         try:
             self.setupCalculator()
+        except ZoomOnePixelError, e:
+            QtGui.qApp.restoreOverrideCursor()
+            self.hideBusy()
+            myContext = self.tr('An exception occurred when setting up the '
+                                ' model runner.')
+            myMessage = getExceptionWithStacktrace(e, html=True,
+                                                   context=myContext)
+            self.displayHtml(myMessage)
+            return
         except InsufficientOverlapException, e:
             QtGui.qApp.restoreOverrideCursor()
             self.hideBusy()
@@ -1657,8 +1668,11 @@ class Dock(QtGui.QDockWidget, Ui_DockBase):
                             'layer and the current view extents.')
         myProgress = 22
         self.showBusy(myTitle, myMessage, myProgress)
-        myClippedHazardPath = clipLayer(myHazardLayer, myBufferedGeoExtent,
+        try:
+            myClippedHazardPath = clipLayer(myHazardLayer, myBufferedGeoExtent,
                                         myCellSize)
+        except ZoomOnePixelError, e:
+            myMessage = e
 
         myTitle = self.tr('Preparing exposure data...')
         myMessage = self.tr('We are resampling and clipping the exposure'

@@ -888,6 +888,21 @@ class Test_Engine(unittest.TestCase):
 
     test_polygon_hazard_with_holes_and_raster_exposure.slow = False
 
+    def test_Zoom(self):
+        """Text for zomming to much until less than one pixel
+        """
+        hazard_filename = ('%s/sumatran_fault_7.8_shakemap.as' % HAZDATA)
+        exposure_filename = ('%s/glp10ag.asc' % EXPDATA)
+
+        # Calculate impact using API
+        H = read_layer(hazard_filename)
+        E = read_layer(exposure_filename)
+
+        plugin_name = 'Die or be displaced'
+        plugin_list = get_plugins(plugin_name)
+        assert len(plugin_list) == 1
+        assert plugin_list[0].keys()[0] == plugin_name
+
     def test_flood_building_impact_function(self):
         """Flood building impact function works
 
