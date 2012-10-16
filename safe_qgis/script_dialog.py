@@ -44,12 +44,21 @@ class ScriptDialog(QtGui.QDialog, Ui_ScriptDialogBase):
         self.setupUi(self)
         self.setWindowTitle(self.tr('Script Dialog'))
 
+        self.tblScript.setColumnWidth(0, 200)
+        self.tblScript.setColumnWidth(1, 50)
+
+
         # add script folder to sys.path
         sys.path.append(self.getScriptPath())
 
         self.populateTable()
 
     def getScriptPath(self):
+        """ Get base path for directory that contains the script files
+
+        Returns:
+        String containing absolute base path for script files
+        """
         root = os.path.dirname(__file__)
         return os.path.abspath(os.path.join(root, '..', 'script_runner'))
 
@@ -74,14 +83,49 @@ class ScriptDialog(QtGui.QDialog, Ui_ScriptDialogBase):
         self.tblScript.setRowCount(len(files))
         for index, filename in enumerate(files):
             self.tblScript.setItem(index, 0, QtGui.QTableWidgetItem(filename))
+            self.tblScript.setItem(index, 1, QtGui.QTableWidgetItem(''))
 
-    @pyqtSignature('')
-    def on_btnRunSelected_clicked(self):
-        filename = str(self.tblScript.currentItem().text())
+
+    def runScript(self, filename):
+        """ runs script in QGIS
+        Args:
+           * filename - the script filename
+        Returns:
+           not applicable
+        Raises:
+           no exceptions explicitly raised
+        """
+
+        # set status to 'running'
+
+
+        # run script
         module, _ = os.path.splitext(filename)
         script = __import__(module)
 
         script.run_script(qgis.utils.iface)
+
+
+    @pyqtSignature('')
+    def on_btnRunSelected_clicked(self):
+        currentRow = self.tblScript.currentRow()
+        filename = str(self.tblScript.item(currentRow, 0).text())
+
+        # set status to 'running'
+        statusItem = self.tblScript.item(currentRow, 1)
+        statusItem.setText(self.tr('Running'))
+
+        # run script
+        try:
+            self.runScript(filename)
+        except Exception as ex:
+            # set status to 'fail'
+            statusItem.setText(self.tr('Fail'))
+            # just reraise the exception
+            raise
+
+        # set status to 'OK'
+        statusItem.setText(self.tr('OK'))
 
     @pyqtSignature('')
     def on_btnRefresh_clicked(self):
