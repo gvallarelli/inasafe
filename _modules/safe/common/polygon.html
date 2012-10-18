@@ -9,7 +9,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>safe.common.polygon &mdash; InaSAFE 0.5.0-alpha documentation</title>
+    <title>safe.common.polygon &mdash; InaSAFE 0.5.1-final documentation</title>
     
     <link rel="stylesheet" href="../../../_static/cloud.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
@@ -18,7 +18,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../',
-        VERSION:     '0.5.0-alpha',
+        VERSION:     '0.5.1-final',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -29,7 +29,8 @@
     <script type="text/javascript" src="../../../_static/doctools.js"></script>
     <script type="text/javascript" src="../../../_static/jquery.cookie.js"></script>
     <script type="text/javascript" src="../../../_static/toggle_sections.js"></script>
-    <link rel="top" title="InaSAFE 0.5.0-alpha documentation" href="../../../index.html" />
+    <link rel="shortcut icon" href="../../../_static/favicon.ico"/>
+    <link rel="top" title="InaSAFE 0.5.1-final documentation" href="../../../index.html" />
     <link rel="up" title="Module code" href="../../index.html" /> 
   </head>
   <body>
@@ -90,12 +91,13 @@
 
 <span class="kn">from</span> <span class="nn">safe.common.numerics</span> <span class="kn">import</span> <span class="n">ensure_numeric</span>
 <span class="kn">from</span> <span class="nn">safe.common.numerics</span> <span class="kn">import</span> <span class="n">grid2points</span><span class="p">,</span> <span class="n">geotransform2axes</span>
-<span class="kn">from</span> <span class="nn">safe.common.exceptions</span> <span class="kn">import</span> <span class="n">PolygonInputError</span>
+<span class="kn">from</span> <span class="nn">safe.common.exceptions</span> <span class="kn">import</span> <span class="n">PolygonInputError</span><span class="p">,</span> <span class="n">InaSAFEError</span>
 
 <span class="n">LOGGER</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s">&#39;InaSAFE&#39;</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="separate_points_by_polygon"><a class="viewcode-back" href="../../../api-docs/safe/common/polygon.html#safe.common.polygon.separate_points_by_polygon">[docs]</a><span class="k">def</span> <span class="nf">separate_points_by_polygon</span><span class="p">(</span><span class="n">points</span><span class="p">,</span> <span class="n">polygon</span><span class="p">,</span>
+                               <span class="n">polygon_bbox</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
                                <span class="n">closed</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
                                <span class="n">check_input</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
                                <span class="n">use_numpy</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
@@ -104,9 +106,13 @@
 <span class="sd">    Args:</span>
 <span class="sd">        * points: Tuple of (x, y) coordinates, or list of tuples</span>
 <span class="sd">        * polygon: list or Nx2 array of polygon vertices</span>
+<span class="sd">        * polygon_bbox: (optional) bounding box for polygon</span>
 <span class="sd">        * closed: (optional) determine whether points on boundary should be</span>
 <span class="sd">              regarded as belonging to the polygon (closed = True)</span>
-<span class="sd">              or not (closed = False)</span>
+<span class="sd">              or not (closed = False). If None, boundary is left undefined,</span>
+<span class="sd">              i.e. some points on boundary may be deemed to be inside while</span>
+<span class="sd">              others may be deemed to be outside. This options makes</span>
+<span class="sd">              the code faster.</span>
 <span class="sd">        * check_input: Allows faster execution if set to False</span>
 <span class="sd">        * use_numpy: Use the fast numpy implementation</span>
 
@@ -139,8 +145,8 @@
 
     <span class="k">if</span> <span class="n">check_input</span><span class="p">:</span>
         <span class="c"># Input checks</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="s">&#39;Keyword argument &quot;closed&quot; must be boolean&#39;</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">closed</span><span class="p">,</span> <span class="nb">bool</span><span class="p">):</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s">&#39;Keyword argument &quot;closed&quot; must be boolean or None&#39;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">closed</span><span class="p">,</span> <span class="nb">bool</span><span class="p">)</span> <span class="ow">or</span> <span class="n">closed</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">):</span>
             <span class="k">raise</span> <span class="n">PolygonInputError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
         <span class="k">try</span><span class="p">:</span>
@@ -188,11 +194,24 @@
         <span class="k">if</span> <span class="n">points</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">PolygonInputError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
-    <span class="c"># Exclude points that outside polygon bounding box</span>
-    <span class="n">minpx</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">polygon</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">])</span>
-    <span class="n">maxpx</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">polygon</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">])</span>
-    <span class="n">minpy</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">polygon</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">])</span>
-    <span class="n">maxpy</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">polygon</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">])</span>
+    <span class="c"># If there are no points return two 0-vectors</span>
+    <span class="k">if</span> <span class="n">points</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">numpy</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="n">numpy</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+    <span class="c"># Get polygon extents to rule out segments that</span>
+    <span class="c"># are outside its bounding box. This is a very important</span>
+    <span class="c"># optimisation</span>
+    <span class="k">if</span> <span class="n">polygon_bbox</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="n">minpx</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">polygon</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">])</span>
+        <span class="n">maxpx</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">polygon</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">])</span>
+        <span class="n">minpy</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">polygon</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">])</span>
+        <span class="n">maxpy</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">polygon</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">])</span>
+        <span class="n">polygon_bbox</span> <span class="o">=</span> <span class="p">[</span><span class="n">minpx</span><span class="p">,</span> <span class="n">maxpx</span><span class="p">,</span> <span class="n">minpy</span><span class="p">,</span> <span class="n">maxpy</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">minpx</span> <span class="o">=</span> <span class="n">polygon_bbox</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">maxpx</span> <span class="o">=</span> <span class="n">polygon_bbox</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">minpy</span> <span class="o">=</span> <span class="n">polygon_bbox</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+        <span class="n">maxpy</span> <span class="o">=</span> <span class="n">polygon_bbox</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
 
     <span class="n">x</span> <span class="o">=</span> <span class="n">points</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span>
     <span class="n">y</span> <span class="o">=</span> <span class="n">points</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span>
@@ -234,7 +253,7 @@
 <span class="sd">       polygon - Nx2 array of polygon vertices</span>
 <span class="sd">       closed - (optional) determine whether points on boundary should be</span>
 <span class="sd">       regarded as belonging to the polygon (closed = True)</span>
-<span class="sd">       or not (closed = False)</span>
+<span class="sd">       or not (closed = False). Close can also be None.</span>
 <span class="sd">       rtol, atol: Tolerances for when a point is considered to coincide with</span>
 <span class="sd">                   a line. Default 0.0.</span>
 
@@ -254,12 +273,10 @@
 
     <span class="n">N</span> <span class="o">=</span> <span class="n">polygon</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
     <span class="n">M</span> <span class="o">=</span> <span class="n">points</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
     <span class="k">if</span> <span class="n">M</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
         <span class="c"># If no points return two 0-vectors</span>
         <span class="k">return</span> <span class="n">numpy</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="n">numpy</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-
-    <span class="n">x</span> <span class="o">=</span> <span class="n">points</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span>
-    <span class="n">y</span> <span class="o">=</span> <span class="n">points</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span>
 
     <span class="c"># Vector to return sorted indices (inside first, then outside)</span>
     <span class="n">indices</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">M</span><span class="p">,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">int</span><span class="p">)</span>
@@ -267,25 +284,8 @@
     <span class="c"># Vector keeping track of which points are inside</span>
     <span class="n">inside</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">M</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">numpy</span><span class="o">.</span><span class="n">int</span><span class="p">)</span>  <span class="c"># All assumed outside initially</span>
 
-    <span class="c"># Mask for points can be considered for inclusion</span>
-    <span class="n">candidates</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">M</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">numpy</span><span class="o">.</span><span class="n">bool</span><span class="p">)</span>  <span class="c"># All True initially</span>
-
-    <span class="c"># Find points on polygon boundary</span>
-    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">N</span><span class="p">):</span>
-        <span class="c"># Loop through polygon edges</span>
-        <span class="n">j</span> <span class="o">=</span> <span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">%</span> <span class="n">N</span>
-        <span class="n">edge</span> <span class="o">=</span> <span class="p">[</span><span class="n">polygon</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="p">:],</span> <span class="n">polygon</span><span class="p">[</span><span class="n">j</span><span class="p">,</span> <span class="p">:]]</span>
-
-        <span class="c"># Select those that are on the boundary</span>
-        <span class="n">boundary_points</span> <span class="o">=</span> <span class="n">point_on_line</span><span class="p">(</span><span class="n">points</span><span class="p">,</span> <span class="n">edge</span><span class="p">,</span> <span class="n">rtol</span><span class="p">,</span> <span class="n">atol</span><span class="p">)</span>
-
-        <span class="k">if</span> <span class="n">closed</span><span class="p">:</span>
-            <span class="n">inside</span><span class="p">[</span><span class="n">boundary_points</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">inside</span><span class="p">[</span><span class="n">boundary_points</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
-
-        <span class="c"># Remove boundary point from further analysis</span>
-        <span class="n">candidates</span><span class="p">[</span><span class="n">boundary_points</span><span class="p">]</span> <span class="o">=</span> <span class="bp">False</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">points</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">points</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span>
 
     <span class="c"># Algorithm for finding points inside polygon</span>
     <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">N</span><span class="p">):</span>
@@ -294,16 +294,31 @@
         <span class="n">px_i</span><span class="p">,</span> <span class="n">py_i</span> <span class="o">=</span> <span class="n">polygon</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="p">:]</span>
         <span class="n">px_j</span><span class="p">,</span> <span class="n">py_j</span> <span class="o">=</span> <span class="n">polygon</span><span class="p">[</span><span class="n">j</span><span class="p">,</span> <span class="p">:]</span>
 
-        <span class="c"># Intersection formula</span>
+        <span class="c"># Edge crossing formula</span>
         <span class="n">sigma</span> <span class="o">=</span> <span class="p">(</span><span class="n">y</span> <span class="o">-</span> <span class="n">py_i</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">py_j</span> <span class="o">-</span> <span class="n">py_i</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">px_j</span> <span class="o">-</span> <span class="n">px_i</span><span class="p">)</span>
         <span class="n">seg_i</span> <span class="o">=</span> <span class="p">(</span><span class="n">py_i</span> <span class="o">&lt;</span> <span class="n">y</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">py_j</span> <span class="o">&gt;=</span> <span class="n">y</span><span class="p">)</span>
         <span class="n">seg_j</span> <span class="o">=</span> <span class="p">(</span><span class="n">py_j</span> <span class="o">&lt;</span> <span class="n">y</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">py_i</span> <span class="o">&gt;=</span> <span class="n">y</span><span class="p">)</span>
-        <span class="n">mask</span> <span class="o">=</span> <span class="p">(</span><span class="n">px_i</span> <span class="o">+</span> <span class="n">sigma</span> <span class="o">&lt;</span> <span class="n">x</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">seg_i</span> <span class="o">+</span> <span class="n">seg_j</span><span class="p">)</span> <span class="o">*</span> <span class="n">candidates</span>
+        <span class="n">mask</span> <span class="o">=</span> <span class="p">(</span><span class="n">px_i</span> <span class="o">+</span> <span class="n">sigma</span> <span class="o">&lt;</span> <span class="n">x</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">seg_i</span> <span class="o">+</span> <span class="n">seg_j</span><span class="p">)</span>
 
         <span class="n">inside</span><span class="p">[</span><span class="n">mask</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">inside</span><span class="p">[</span><span class="n">mask</span><span class="p">]</span>
 
     <span class="c"># Restore numpy warnings</span>
     <span class="n">numpy</span><span class="o">.</span><span class="n">seterr</span><span class="p">(</span><span class="o">**</span><span class="n">original_numpy_settings</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">closed</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="c"># Find points on polygon boundary</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">N</span><span class="p">):</span>
+            <span class="c"># Loop through polygon edges</span>
+            <span class="n">j</span> <span class="o">=</span> <span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">%</span> <span class="n">N</span>
+            <span class="n">edge</span> <span class="o">=</span> <span class="p">[</span><span class="n">polygon</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="p">:],</span> <span class="n">polygon</span><span class="p">[</span><span class="n">j</span><span class="p">,</span> <span class="p">:]]</span>
+
+            <span class="c"># Select those that are on the boundary</span>
+            <span class="n">boundary_points</span> <span class="o">=</span> <span class="n">point_on_line</span><span class="p">(</span><span class="n">points</span><span class="p">,</span> <span class="n">edge</span><span class="p">,</span> <span class="n">rtol</span><span class="p">,</span> <span class="n">atol</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">closed</span><span class="p">:</span>
+                <span class="n">inside</span><span class="p">[</span><span class="n">boundary_points</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">inside</span><span class="p">[</span><span class="n">boundary_points</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
 
     <span class="c"># Record point as either inside or outside</span>
     <span class="n">inside_index</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">inside</span><span class="p">)</span>  <span class="c"># How many points are inside</span>
@@ -417,7 +432,8 @@
     <span class="k">return</span> <span class="n">indices</span><span class="p">[:</span><span class="n">inside_index</span><span class="p">],</span> <span class="n">indices</span><span class="p">[</span><span class="n">inside_index</span><span class="p">:]</span>
 
 
-<div class="viewcode-block" id="point_on_line"><a class="viewcode-back" href="../../../api-docs/safe/common/polygon.html#safe.common.polygon.point_on_line">[docs]</a><span class="k">def</span> <span class="nf">point_on_line</span><span class="p">(</span><span class="n">points</span><span class="p">,</span> <span class="n">line</span><span class="p">,</span> <span class="n">rtol</span><span class="o">=</span><span class="mf">1.0e-5</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1.0e-8</span><span class="p">):</span>
+<div class="viewcode-block" id="point_on_line"><a class="viewcode-back" href="../../../api-docs/safe/common/polygon.html#safe.common.polygon.point_on_line">[docs]</a><span class="k">def</span> <span class="nf">point_on_line</span><span class="p">(</span><span class="n">points</span><span class="p">,</span> <span class="n">line</span><span class="p">,</span> <span class="n">rtol</span><span class="o">=</span><span class="mf">1.0e-5</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1.0e-8</span><span class="p">,</span>
+                  <span class="n">check_input</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Determine if a point is on a line segment</span>
 
 <span class="sd">    Input</span>
@@ -441,24 +457,26 @@
 <span class="sd">    Tolerances rtol and atol are used with numpy.allclose()</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="c"># Prepare input data</span>
-    <span class="n">points</span> <span class="o">=</span> <span class="n">ensure_numeric</span><span class="p">(</span><span class="n">points</span><span class="p">)</span>
-    <span class="n">line</span> <span class="o">=</span> <span class="n">ensure_numeric</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+    <span class="n">one_point</span> <span class="o">=</span> <span class="bp">False</span>
+    <span class="k">if</span> <span class="n">check_input</span><span class="p">:</span>
+        <span class="c"># Prepare input data</span>
+        <span class="n">points</span> <span class="o">=</span> <span class="n">ensure_numeric</span><span class="p">(</span><span class="n">points</span><span class="p">)</span>
+        <span class="n">line</span> <span class="o">=</span> <span class="n">ensure_numeric</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
 
-    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">points</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-        <span class="c"># One point only - make into 1 x 2 array</span>
-        <span class="n">points</span> <span class="o">=</span> <span class="n">points</span><span class="p">[</span><span class="n">numpy</span><span class="o">.</span><span class="n">newaxis</span><span class="p">,</span> <span class="p">:]</span>
-        <span class="n">one_point</span> <span class="o">=</span> <span class="bp">True</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">one_point</span> <span class="o">=</span> <span class="bp">False</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">points</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="c"># One point only - make into 1 x 2 array</span>
+            <span class="n">points</span> <span class="o">=</span> <span class="n">points</span><span class="p">[</span><span class="n">numpy</span><span class="o">.</span><span class="n">newaxis</span><span class="p">,</span> <span class="p">:]</span>
+            <span class="n">one_point</span> <span class="o">=</span> <span class="bp">True</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">one_point</span> <span class="o">=</span> <span class="bp">False</span>
 
-    <span class="n">msg</span> <span class="o">=</span> <span class="s">&#39;Argument points must be either [x, y] or an Nx2 array of points&#39;</span>
-    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">points</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">points</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">points</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s">&#39;Argument points must be either [x, y] or an Nx2 array of points&#39;</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">points</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">points</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">points</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
     <span class="n">N</span> <span class="o">=</span> <span class="n">points</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>  <span class="c"># Number of points</span>
 
@@ -508,6 +526,56 @@
         <span class="k">return</span> <span class="n">result</span>
 
 </div>
+<div class="viewcode-block" id="in_and_outside_polygon"><a class="viewcode-back" href="../../../api-docs/safe/common/polygon.html#safe.common.polygon.in_and_outside_polygon">[docs]</a><span class="k">def</span> <span class="nf">in_and_outside_polygon</span><span class="p">(</span><span class="n">points</span><span class="p">,</span> <span class="n">polygon</span><span class="p">,</span>
+                           <span class="n">closed</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
+                           <span class="n">holes</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+                           <span class="n">check_input</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Separate a list of points into two sets inside and outside a polygon</span>
+
+<span class="sd">    Input</span>
+<span class="sd">        points: (tuple, list or array) of coordinates</span>
+<span class="sd">        polygon: list or Nx2 array of polygon vertices</span>
+<span class="sd">        closed: Set to True if points on boundary are considered</span>
+<span class="sd">                to be &#39;inside&#39; polygon</span>
+<span class="sd">        holes: list of polygons representing holes. Points inside either of</span>
+<span class="sd">               these are considered outside polygon</span>
+
+<span class="sd">    Output</span>
+<span class="sd">        inside: Indices of points inside the polygon</span>
+<span class="sd">        outside: Indices of points outside the polygon</span>
+
+<span class="sd">    See separate_points_by_polygon for more documentation</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c"># Get separation by outer_ring</span>
+    <span class="n">inside</span><span class="p">,</span> <span class="n">outside</span> <span class="o">=</span> <span class="n">separate_points_by_polygon</span><span class="p">(</span><span class="n">points</span><span class="p">,</span> <span class="n">polygon</span><span class="p">,</span>
+                                                 <span class="n">closed</span><span class="o">=</span><span class="n">closed</span><span class="p">,</span>
+                                                 <span class="n">check_input</span><span class="o">=</span><span class="n">check_input</span><span class="p">)</span>
+
+    <span class="c"># Take care of holes</span>
+    <span class="k">if</span> <span class="n">holes</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;Argument holes must be a list of polygons, &#39;</span>
+               <span class="s">&#39;I got </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="n">holes</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">holes</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">InaSAFEError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">hole</span> <span class="ow">in</span> <span class="n">holes</span><span class="p">:</span>
+            <span class="n">in_hole</span><span class="p">,</span> <span class="n">out_hole</span> <span class="o">=</span> <span class="n">separate_points_by_polygon</span><span class="p">(</span><span class="n">points</span><span class="p">[</span><span class="n">inside</span><span class="p">],</span>
+                                                           <span class="n">hole</span><span class="p">,</span>
+                                                           <span class="n">closed</span><span class="o">=</span><span class="ow">not</span> <span class="n">closed</span><span class="p">,</span>
+                                                           <span class="n">check_input</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+
+            <span class="n">in_hole</span> <span class="o">=</span> <span class="n">inside</span><span class="p">[</span><span class="n">in_hole</span><span class="p">]</span>  <span class="c"># Inside hole</span>
+            <span class="n">inside</span> <span class="o">=</span> <span class="n">inside</span><span class="p">[</span><span class="n">out_hole</span><span class="p">]</span>  <span class="c"># Inside outer_ring but outside hole</span>
+
+            <span class="c"># Add holde indices to outside</span>
+            <span class="n">outside</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">concatenate</span><span class="p">((</span><span class="n">outside</span><span class="p">,</span> <span class="n">in_hole</span><span class="p">))</span>
+
+        <span class="n">outside</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="n">inside</span><span class="p">,</span> <span class="n">outside</span>
+
+</div>
 <div class="viewcode-block" id="is_inside_polygon"><a class="viewcode-back" href="../../../api-docs/safe/common/polygon.html#safe.common.polygon.is_inside_polygon">[docs]</a><span class="k">def</span> <span class="nf">is_inside_polygon</span><span class="p">(</span><span class="n">point</span><span class="p">,</span> <span class="n">polygon</span><span class="p">,</span> <span class="n">closed</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Determine if one point is inside a polygon</span>
 
@@ -522,7 +590,8 @@
         <span class="k">return</span> <span class="bp">False</span>
 
 </div>
-<div class="viewcode-block" id="inside_polygon"><a class="viewcode-back" href="../../../api-docs/safe/common/polygon.html#safe.common.polygon.inside_polygon">[docs]</a><span class="k">def</span> <span class="nf">inside_polygon</span><span class="p">(</span><span class="n">points</span><span class="p">,</span> <span class="n">polygon</span><span class="p">,</span> <span class="n">closed</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
+<div class="viewcode-block" id="inside_polygon"><a class="viewcode-back" href="../../../api-docs/safe/common/polygon.html#safe.common.polygon.inside_polygon">[docs]</a><span class="k">def</span> <span class="nf">inside_polygon</span><span class="p">(</span><span class="n">points</span><span class="p">,</span> <span class="n">polygon</span><span class="p">,</span> <span class="n">closed</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">holes</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+                   <span class="n">check_input</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Determine points inside a polygon</span>
 
 <span class="sd">       Functions inside_polygon and outside_polygon have been defined in</span>
@@ -533,16 +602,21 @@
 
 <span class="sd">       points and polygon can be a geospatial instance,</span>
 <span class="sd">       a list or a numeric array</span>
+
+<span class="sd">       holes: list of polygons representing holes. Points inside either of</span>
+<span class="sd">       these are not considered inside_polygon</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="n">indices</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">separate_points_by_polygon</span><span class="p">(</span><span class="n">points</span><span class="p">,</span> <span class="n">polygon</span><span class="p">,</span>
-                                            <span class="n">closed</span><span class="o">=</span><span class="n">closed</span><span class="p">,</span>
-                                            <span class="n">check_input</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+    <span class="n">indices</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">in_and_outside_polygon</span><span class="p">(</span><span class="n">points</span><span class="p">,</span> <span class="n">polygon</span><span class="p">,</span>
+                                        <span class="n">closed</span><span class="o">=</span><span class="n">closed</span><span class="p">,</span>
+                                        <span class="n">holes</span><span class="o">=</span><span class="n">holes</span><span class="p">,</span>
+                                        <span class="n">check_input</span><span class="o">=</span><span class="n">check_input</span><span class="p">)</span>
 
     <span class="c"># Return indices of points inside polygon</span>
     <span class="k">return</span> <span class="n">indices</span>
 
-</div>
+
+<span class="c"># FIXME (Ole): This also needs to fixed as per issue #324</span></div>
 <div class="viewcode-block" id="is_outside_polygon"><a class="viewcode-back" href="../../../api-docs/safe/common/polygon.html#safe.common.polygon.is_outside_polygon">[docs]</a><span class="k">def</span> <span class="nf">is_outside_polygon</span><span class="p">(</span><span class="n">point</span><span class="p">,</span> <span class="n">polygon</span><span class="p">,</span> <span class="n">closed</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Determine if one point is outside a polygon</span>
 
@@ -557,7 +631,8 @@
         <span class="k">return</span> <span class="bp">False</span>
 
 </div>
-<div class="viewcode-block" id="outside_polygon"><a class="viewcode-back" href="../../../api-docs/safe/common/polygon.html#safe.common.polygon.outside_polygon">[docs]</a><span class="k">def</span> <span class="nf">outside_polygon</span><span class="p">(</span><span class="n">points</span><span class="p">,</span> <span class="n">polygon</span><span class="p">,</span> <span class="n">closed</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
+<div class="viewcode-block" id="outside_polygon"><a class="viewcode-back" href="../../../api-docs/safe/common/polygon.html#safe.common.polygon.outside_polygon">[docs]</a><span class="k">def</span> <span class="nf">outside_polygon</span><span class="p">(</span><span class="n">points</span><span class="p">,</span> <span class="n">polygon</span><span class="p">,</span> <span class="n">closed</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
+                    <span class="n">holes</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">check_input</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Determine points outside a polygon</span>
 
 <span class="sd">       Functions inside_polygon and outside_polygon have been defined in</span>
@@ -565,36 +640,18 @@
 <span class="sd">       the first part of the indices array and outside indices in the last</span>
 
 <span class="sd">       See separate_points_by_polygon for documentation</span>
+
+<span class="sd">       holes: list of polygons representing holes. Points inside either of</span>
+<span class="sd">              these are considered outside polygon</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="n">_</span><span class="p">,</span> <span class="n">indices</span> <span class="o">=</span> <span class="n">separate_points_by_polygon</span><span class="p">(</span><span class="n">points</span><span class="p">,</span> <span class="n">polygon</span><span class="p">,</span>
-                                            <span class="n">closed</span><span class="o">=</span><span class="n">closed</span><span class="p">,</span>
-                                            <span class="n">check_input</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+    <span class="n">_</span><span class="p">,</span> <span class="n">indices</span> <span class="o">=</span> <span class="n">in_and_outside_polygon</span><span class="p">(</span><span class="n">points</span><span class="p">,</span> <span class="n">polygon</span><span class="p">,</span>
+                                        <span class="n">closed</span><span class="o">=</span><span class="n">closed</span><span class="p">,</span>
+                                        <span class="n">holes</span><span class="o">=</span><span class="n">holes</span><span class="p">,</span>
+                                        <span class="n">check_input</span><span class="o">=</span><span class="n">check_input</span><span class="p">)</span>
 
     <span class="c"># Return indices of points outside polygon</span>
     <span class="k">return</span> <span class="n">indices</span>
-
-</div>
-<div class="viewcode-block" id="in_and_outside_polygon"><a class="viewcode-back" href="../../../api-docs/safe/common/polygon.html#safe.common.polygon.in_and_outside_polygon">[docs]</a><span class="k">def</span> <span class="nf">in_and_outside_polygon</span><span class="p">(</span><span class="n">points</span><span class="p">,</span> <span class="n">polygon</span><span class="p">,</span> <span class="n">closed</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Separate a list of points into two sets inside and outside a polygon</span>
-
-<span class="sd">    Input</span>
-<span class="sd">        points: (tuple, list or array) of coordinates</span>
-<span class="sd">        polygon: list or Nx2 array of polygon vertices</span>
-<span class="sd">        closed: Set to True if points on boundary are considered</span>
-<span class="sd">                to be &#39;inside&#39; polygon</span>
-
-<span class="sd">    Output</span>
-<span class="sd">        inside: Array of points inside the polygon</span>
-<span class="sd">        outside: Array of points outside the polygon</span>
-
-<span class="sd">    See separate_points_by_polygon for more documentation</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="n">inside</span><span class="p">,</span> <span class="n">outside</span> <span class="o">=</span> <span class="n">separate_points_by_polygon</span><span class="p">(</span><span class="n">points</span><span class="p">,</span> <span class="n">polygon</span><span class="p">,</span>
-                                                 <span class="n">closed</span><span class="o">=</span><span class="n">closed</span><span class="p">,</span>
-                                                 <span class="n">check_input</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">inside</span><span class="p">,</span> <span class="n">outside</span>
 
 </div>
 <div class="viewcode-block" id="clip_lines_by_polygon"><a class="viewcode-back" href="../../../api-docs/safe/common/polygon.html#safe.common.polygon.clip_lines_by_polygon">[docs]</a><span class="k">def</span> <span class="nf">clip_lines_by_polygon</span><span class="p">(</span><span class="n">lines</span><span class="p">,</span> <span class="n">polygon</span><span class="p">,</span>
@@ -609,6 +666,9 @@
 <span class="sd">       closed: (optional) determine whether points on boundary should be</span>
 <span class="sd">               regarded as belonging to the polygon (closed = True)</span>
 <span class="sd">               or not (closed = False) - False is not recommended here</span>
+<span class="sd">               This parameter can also be None in which case it is undefined</span>
+<span class="sd">               whether a line on the boundary will fall inside or outside.</span>
+<span class="sd">               This will make the algorithm about 20% faster.</span>
 <span class="sd">       check_input: Allows faster execution if set to False</span>
 
 <span class="sd">    Output</span>
@@ -640,7 +700,8 @@
                        <span class="o">%</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
                 <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
-            <span class="n">msg</span> <span class="o">=</span> <span class="s">&#39;Lines must be 2d array of vertices&#39;</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;Lines must be 2d array of vertices: &#39;</span>
+                   <span class="s">&#39;I got </span><span class="si">%d</span><span class="s"> dimensions&#39;</span> <span class="o">%</span> <span class="nb">len</span><span class="p">(</span><span class="n">lines</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">))</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="nb">len</span><span class="p">(</span><span class="n">lines</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
@@ -659,36 +720,53 @@
         <span class="k">if</span> <span class="ow">not</span> <span class="n">polygon</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
-        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">lines</span><span class="p">:</span>
-            <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;Each line segment must be 2 dimensional. &#39;</span>
-                   <span class="s">&#39;I got </span><span class="si">%d</span><span class="s"> dimensions&#39;</span> <span class="o">%</span> <span class="nb">len</span><span class="p">(</span><span class="n">line</span><span class="o">.</span><span class="n">shape</span><span class="p">))</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="nb">len</span><span class="p">(</span><span class="n">line</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
-
-    <span class="c">#N = polygon.shape[0]  # Number of vertices in polygon</span>
-    <span class="n">M</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span>  <span class="c"># Number of lines</span>
-
-    <span class="n">inside_line_segments</span> <span class="o">=</span> <span class="p">{}</span>
-    <span class="n">outside_line_segments</span> <span class="o">=</span> <span class="p">{}</span>
-
     <span class="c"># Get polygon extents to quickly rule out lines where all segments</span>
     <span class="c"># are outside and on the same side of its bounding box</span>
     <span class="n">minpx</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">polygon</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">])</span>
     <span class="n">maxpx</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">polygon</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">])</span>
     <span class="n">minpy</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">polygon</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">])</span>
     <span class="n">maxpy</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">polygon</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">])</span>
+    <span class="n">polygon_bbox</span> <span class="o">=</span> <span class="p">[</span><span class="n">minpx</span><span class="p">,</span> <span class="n">maxpx</span><span class="p">,</span> <span class="n">minpy</span><span class="p">,</span> <span class="n">maxpy</span><span class="p">]</span>
+
+    <span class="c"># Get polygon_segments</span>
+    <span class="n">polygon_segments</span> <span class="o">=</span> <span class="n">polygon2segments</span><span class="p">(</span><span class="n">polygon</span><span class="p">)</span>
+
+    <span class="c"># Call underlying function</span>
+    <span class="k">return</span> <span class="n">_clip_lines_by_polygon</span><span class="p">(</span><span class="n">lines</span><span class="p">,</span>
+                                  <span class="n">polygon</span><span class="p">,</span>
+                                  <span class="n">polygon_segments</span><span class="p">,</span>
+                                  <span class="n">polygon_bbox</span><span class="p">,</span>
+                                  <span class="n">closed</span><span class="o">=</span><span class="n">closed</span><span class="p">)</span>
+
+</div>
+<span class="k">def</span> <span class="nf">_clip_lines_by_polygon</span><span class="p">(</span><span class="n">lines</span><span class="p">,</span>
+                           <span class="n">polygon</span><span class="p">,</span>
+                           <span class="n">polygon_segments</span><span class="p">,</span>
+                           <span class="n">polygon_bbox</span><span class="p">,</span>
+                           <span class="n">closed</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Clip multiple lines by polygon</span>
+
+<span class="sd">    Underlying function.</span>
+<span class="sd">    - see clip_lines_by_polygon for details</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c"># Get bounding box</span>
+    <span class="n">minpx</span> <span class="o">=</span> <span class="n">polygon_bbox</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">maxpx</span> <span class="o">=</span> <span class="n">polygon_bbox</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">minpy</span> <span class="o">=</span> <span class="n">polygon_bbox</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+    <span class="n">maxpy</span> <span class="o">=</span> <span class="n">polygon_bbox</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
+
+    <span class="n">inside_line_segments</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">outside_line_segments</span> <span class="o">=</span> <span class="p">{}</span>
 
     <span class="c"># Loop through lines</span>
+    <span class="n">M</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span>
     <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">M</span><span class="p">):</span>
-        <span class="n">line</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">lines</span><span class="p">[</span><span class="n">k</span><span class="p">])</span>
+        <span class="n">line</span> <span class="o">=</span> <span class="n">lines</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
 
-        <span class="c"># Optimisation (will depend on how many lines are outside)</span>
-        <span class="c"># In test_engine.py</span>
-        <span class="c"># Multiple lines are clipped correctly by complex polygon ... ok</span>
-        <span class="c"># Ran 1 test in 12.517s</span>
-        <span class="c"># Ran 1 test in 11.474s</span>
-        <span class="k">if</span> <span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="n">line</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">])</span> <span class="o">&lt;</span> <span class="n">minpx</span> <span class="ow">or</span>  <span class="c"># Everything is to the left</span>
-            <span class="nb">min</span><span class="p">(</span><span class="n">line</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">])</span> <span class="o">&gt;</span> <span class="n">maxpx</span> <span class="ow">or</span>  <span class="c"># Everything is to the right</span>
+        <span class="c"># Exclude lines that are fully outside polygon bounding box</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="n">line</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">])</span> <span class="o">&lt;</span> <span class="n">minpx</span> <span class="ow">or</span>  <span class="c"># Everything is to the west</span>
+            <span class="nb">min</span><span class="p">(</span><span class="n">line</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">])</span> <span class="o">&gt;</span> <span class="n">maxpx</span> <span class="ow">or</span>  <span class="c"># Everything is to the east</span>
             <span class="nb">max</span><span class="p">(</span><span class="n">line</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">])</span> <span class="o">&lt;</span> <span class="n">minpy</span> <span class="ow">or</span>  <span class="c"># Everything is to the south</span>
             <span class="nb">min</span><span class="p">(</span><span class="n">line</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">])</span> <span class="o">&gt;</span> <span class="n">maxpy</span><span class="p">):</span>   <span class="c"># Everything is to the north</span>
 
@@ -696,9 +774,12 @@
             <span class="n">outside_line_segments</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">line</span><span class="p">]</span>
             <span class="k">continue</span>
 
-        <span class="n">inside</span><span class="p">,</span> <span class="n">outside</span> <span class="o">=</span> <span class="n">clip_line_by_polygon</span><span class="p">(</span><span class="n">line</span><span class="p">,</span> <span class="n">polygon</span><span class="p">,</span>
-                                               <span class="n">closed</span><span class="o">=</span><span class="n">closed</span><span class="p">,</span>
-                                               <span class="n">check_input</span><span class="o">=</span><span class="n">check_input</span><span class="p">)</span>
+        <span class="c"># Call underlying function for one line and one polygon</span>
+        <span class="n">inside</span><span class="p">,</span> <span class="n">outside</span> <span class="o">=</span> <span class="n">_clip_line_by_polygon</span><span class="p">(</span><span class="n">line</span><span class="p">,</span>
+                                                <span class="n">polygon</span><span class="p">,</span>
+                                                <span class="n">polygon_segments</span><span class="p">,</span>
+                                                <span class="n">polygon_bbox</span><span class="p">,</span>
+                                                <span class="n">closed</span><span class="o">=</span><span class="n">closed</span><span class="p">)</span>
 
         <span class="c"># Record clipped line segments from line k</span>
         <span class="n">inside_line_segments</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">inside</span>
@@ -706,9 +787,10 @@
 
     <span class="k">return</span> <span class="n">inside_line_segments</span><span class="p">,</span> <span class="n">outside_line_segments</span>
 
-</div>
+
 <div class="viewcode-block" id="clip_line_by_polygon"><a class="viewcode-back" href="../../../api-docs/safe/common/polygon.html#safe.common.polygon.clip_line_by_polygon">[docs]</a><span class="k">def</span> <span class="nf">clip_line_by_polygon</span><span class="p">(</span><span class="n">line</span><span class="p">,</span> <span class="n">polygon</span><span class="p">,</span>
                          <span class="n">closed</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
+                         <span class="n">polygon_bbox</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
                          <span class="n">check_input</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Clip line segments by polygon</span>
 
@@ -719,6 +801,8 @@
 <span class="sd">       closed: (optional) determine whether points on boundary should be</span>
 <span class="sd">       regarded as belonging to the polygon (closed = True)</span>
 <span class="sd">       or not (closed = False) - False is not recommended here</span>
+<span class="sd">       polygon_bbox: Provide bounding box around polygon if known.</span>
+<span class="sd">           This is a small optimisation</span>
 <span class="sd">       check_input: Allows faster execution if set to False</span>
 
 <span class="sd">    Outputs</span>
@@ -787,15 +871,42 @@
         <span class="k">if</span> <span class="ow">not</span> <span class="n">polygon</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
-    <span class="c"># Get polygon extents to quickly rule out segments that</span>
+    <span class="c"># Get polygon extents to rule out segments that</span>
     <span class="c"># are outside its bounding box</span>
-    <span class="n">minpx</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">polygon</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">])</span>
-    <span class="n">maxpx</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">polygon</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">])</span>
-    <span class="n">minpy</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">polygon</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">])</span>
-    <span class="n">maxpy</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">polygon</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">])</span>
+    <span class="k">if</span> <span class="n">polygon_bbox</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="n">minpx</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">polygon</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">])</span>
+        <span class="n">maxpx</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">polygon</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">])</span>
+        <span class="n">minpy</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">polygon</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">])</span>
+        <span class="n">maxpy</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">polygon</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">])</span>
+        <span class="n">polygon_bbox</span> <span class="o">=</span> <span class="p">[</span><span class="n">minpx</span><span class="p">,</span> <span class="n">maxpx</span><span class="p">,</span> <span class="n">minpy</span><span class="p">,</span> <span class="n">maxpy</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">minpx</span> <span class="o">=</span> <span class="n">polygon_bbox</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">maxpx</span> <span class="o">=</span> <span class="n">polygon_bbox</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">minpy</span> <span class="o">=</span> <span class="n">polygon_bbox</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+        <span class="n">maxpy</span> <span class="o">=</span> <span class="n">polygon_bbox</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
 
-    <span class="n">N</span> <span class="o">=</span> <span class="n">polygon</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>  <span class="c"># Number of vertices in polygon</span>
-    <span class="n">M</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>  <span class="c"># Number of segments</span>
+    <span class="c"># Convert polygon to segments</span>
+    <span class="n">polygon_segments</span> <span class="o">=</span> <span class="n">polygon2segments</span><span class="p">(</span><span class="n">polygon</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">_clip_line_by_polygon</span><span class="p">(</span><span class="n">line</span><span class="p">,</span>
+                                 <span class="n">polygon</span><span class="p">,</span>
+                                 <span class="n">polygon_segments</span><span class="p">,</span>
+                                 <span class="n">polygon_bbox</span><span class="p">,</span>
+                                 <span class="n">closed</span><span class="o">=</span><span class="n">closed</span><span class="p">)</span>
+
+
+<span class="c"># FIXME (Ole, 14 sep 2012): Will clean this up soon, promise</span>
+<span class="c"># pylint: disable=W0613</span></div>
+<span class="k">def</span> <span class="nf">_clip_line_by_polygon</span><span class="p">(</span><span class="n">line</span><span class="p">,</span>
+                          <span class="n">polygon</span><span class="p">,</span>
+                          <span class="n">polygon_segments</span><span class="p">,</span>
+                          <span class="n">polygon_bbox</span><span class="p">,</span>
+                          <span class="n">closed</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Clip line segments by polygon</span>
+
+<span class="sd">    This is the underlying function</span>
+<span class="sd">    - see public clip_line_by_polygon() for details</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="c"># Algorithm</span>
     <span class="c">#</span>
@@ -807,11 +918,22 @@
     <span class="c"># 3: For each new line segment</span>
     <span class="c">#    * Calculate its midpoint</span>
     <span class="c">#    * Determine if it is inside or outside clipping polygon</span>
+    <span class="c"># 4: Join adjacent segments into polylines that are either</span>
+    <span class="c">#     fully inside or outside polygon</span>
+    <span class="c"># 5</span>
 
-    <span class="c"># Loop through line segments</span>
+    <span class="c"># Get bounding box</span>
+    <span class="n">minpx</span> <span class="o">=</span> <span class="n">polygon_bbox</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">maxpx</span> <span class="o">=</span> <span class="n">polygon_bbox</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">minpy</span> <span class="o">=</span> <span class="n">polygon_bbox</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+    <span class="n">maxpy</span> <span class="o">=</span> <span class="n">polygon_bbox</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
+
+    <span class="c"># Lists collecting clipped line segments</span>
     <span class="n">inside_line_segments</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="n">outside_line_segments</span> <span class="o">=</span> <span class="p">[]</span>
 
+    <span class="c"># Loop through line segments</span>
+    <span class="n">M</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
     <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">M</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):</span>
         <span class="n">p0</span> <span class="o">=</span> <span class="n">line</span><span class="p">[</span><span class="n">k</span><span class="p">,</span> <span class="p">:]</span>
         <span class="n">p1</span> <span class="o">=</span> <span class="n">line</span><span class="p">[</span><span class="n">k</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="p">:]</span>
@@ -820,32 +942,46 @@
         <span class="c">#-------------</span>
         <span class="c"># Optimisation</span>
         <span class="c">#-------------</span>
-        <span class="c"># Skip segments where both end points are outside polygon bounding box</span>
-        <span class="c"># and which don&#39;t intersect the bounding box</span>
+        <span class="c"># Skip segments that are outside polygon bounding box</span>
 
         <span class="c"># In test_engine.py</span>
-        <span class="c"># Multiple lines are clipped correctly by complex polygon ... ok</span>
-        <span class="c"># Ran 1 test in 187.759s</span>
-        <span class="c"># Ran 1 test in 12.517s</span>
-        <span class="n">segment_is_outside_bbox</span> <span class="o">=</span> <span class="bp">True</span>
-        <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="p">[</span><span class="n">p0</span><span class="p">,</span> <span class="n">p1</span><span class="p">]:</span>
-            <span class="n">x</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-            <span class="n">y</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">x</span> <span class="o">&gt;</span> <span class="n">maxpx</span> <span class="ow">or</span> <span class="n">x</span> <span class="o">&lt;</span> <span class="n">minpx</span> <span class="ow">or</span> <span class="n">y</span> <span class="o">&gt;</span> <span class="n">maxpy</span> <span class="ow">or</span> <span class="n">y</span> <span class="o">&lt;</span> <span class="n">minpy</span><span class="p">):</span>
-                <span class="c">#  This end point is inside polygon bounding box</span>
+        <span class="c"># test_polygon_to_roads_interpolation_flood_example with</span>
+        <span class="c"># (E_attributes[:-1:100]) took</span>
+        <span class="c"># * Without this: 92s</span>
+        <span class="c"># * With original optimisation: 61s</span>
+        <span class="c"># * With new version: 54s</span>
+        <span class="k">if</span> <span class="n">p0</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">minpx</span> <span class="ow">and</span> <span class="n">p1</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">minpx</span><span class="p">:</span>  <span class="c"># Entire segment to the west</span>
+            <span class="n">segment_is_outside_bbox</span> <span class="o">=</span> <span class="bp">True</span>
+        <span class="k">elif</span> <span class="n">p0</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">maxpx</span> <span class="ow">and</span> <span class="n">p1</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">maxpx</span><span class="p">:</span>  <span class="c"># Entire segment to the east</span>
+            <span class="n">segment_is_outside_bbox</span> <span class="o">=</span> <span class="bp">True</span>
+        <span class="k">elif</span> <span class="n">p0</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">minpy</span> <span class="ow">and</span> <span class="n">p1</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">minpy</span><span class="p">:</span>  <span class="c"># Entire segment to the south</span>
+            <span class="n">segment_is_outside_bbox</span> <span class="o">=</span> <span class="bp">True</span>
+        <span class="k">elif</span> <span class="n">p0</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">maxpy</span> <span class="ow">and</span> <span class="n">p1</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">maxpy</span><span class="p">:</span>  <span class="c"># Entire segment to the north</span>
+            <span class="n">segment_is_outside_bbox</span> <span class="o">=</span> <span class="bp">True</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c"># Skip segments where both end points are outside polygon</span>
+            <span class="c"># bounding box and which don&#39;t intersect the bounding box</span>
+            <span class="n">segment_is_outside_bbox</span> <span class="o">=</span> <span class="bp">True</span>
+            <span class="k">if</span> <span class="n">minpx</span> <span class="o">&lt;</span> <span class="n">p0</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">maxpx</span> <span class="ow">or</span> <span class="n">minpy</span> <span class="o">&lt;</span> <span class="n">p0</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">maxpy</span><span class="p">:</span>
+                <span class="c"># First endpoint is inside bounding box</span>
                 <span class="n">segment_is_outside_bbox</span> <span class="o">=</span> <span class="bp">False</span>
-                <span class="k">break</span>
-
-        <span class="c"># Does segment intersect polygon bounding box?</span>
-        <span class="n">corners</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="n">minpx</span><span class="p">,</span> <span class="n">minpy</span><span class="p">],</span> <span class="p">[</span><span class="n">maxpx</span><span class="p">,</span> <span class="n">minpy</span><span class="p">],</span>
-                               <span class="p">[</span><span class="n">maxpx</span><span class="p">,</span> <span class="n">maxpy</span><span class="p">],</span> <span class="p">[</span><span class="n">minpx</span><span class="p">,</span> <span class="n">maxpy</span><span class="p">]])</span>
-        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">):</span>
-            <span class="n">edge</span> <span class="o">=</span> <span class="p">[</span><span class="n">corners</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="p">:],</span> <span class="n">corners</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="p">:]]</span>
-            <span class="n">status</span><span class="p">,</span> <span class="n">value</span> <span class="o">=</span> <span class="n">intersection</span><span class="p">(</span><span class="n">segment</span><span class="p">,</span> <span class="n">edge</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
-                <span class="c"># Segment intersects polygon bounding box</span>
+            <span class="k">elif</span> <span class="n">minpx</span> <span class="o">&lt;</span> <span class="n">p1</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">maxpx</span> <span class="ow">or</span> <span class="n">minpy</span> <span class="o">&lt;</span> <span class="n">p1</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">maxpy</span><span class="p">:</span>
+                <span class="c"># Second endpoint is inside bounding box</span>
                 <span class="n">segment_is_outside_bbox</span> <span class="o">=</span> <span class="bp">False</span>
-                <span class="k">break</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c"># Both end points are outside bounding box, but could be on</span>
+                <span class="c"># either side so need to check if segment intersects polygon</span>
+                <span class="c"># bounding box.</span>
+                <span class="n">corners</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="n">minpx</span><span class="p">,</span> <span class="n">minpy</span><span class="p">],</span> <span class="p">[</span><span class="n">maxpx</span><span class="p">,</span> <span class="n">minpy</span><span class="p">],</span>
+                                       <span class="p">[</span><span class="n">maxpx</span><span class="p">,</span> <span class="n">maxpy</span><span class="p">],</span> <span class="p">[</span><span class="n">minpx</span><span class="p">,</span> <span class="n">maxpy</span><span class="p">],</span>
+                                       <span class="p">[</span><span class="n">minpx</span><span class="p">,</span> <span class="n">minpy</span><span class="p">]])</span>
+                <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">4</span><span class="p">):</span>
+                    <span class="n">edge</span> <span class="o">=</span> <span class="p">[</span><span class="n">corners</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="p">:],</span> <span class="n">corners</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="p">:]]</span>
+                    <span class="n">value</span> <span class="o">=</span> <span class="n">intersection</span><span class="p">(</span><span class="n">segment</span><span class="p">,</span> <span class="n">edge</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+                        <span class="c"># Segment intersects polygon bounding box</span>
+                        <span class="n">segment_is_outside_bbox</span> <span class="o">=</span> <span class="bp">False</span>
+                        <span class="k">break</span>
         <span class="c">#-----------------</span>
         <span class="c"># End optimisation</span>
         <span class="c">#-----------------</span>
@@ -855,51 +991,74 @@
             <span class="n">outside_line_segments</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">segment</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="c"># Intersect segment with all polygon edges</span>
-            <span class="c"># and decide for each sub-segment</span>
-            <span class="n">intersections</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">segment</span><span class="p">)</span>  <span class="c"># Initialise with end points</span>
-            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">N</span><span class="p">):</span>
-                <span class="c"># Loop through polygon edges</span>
-                <span class="n">j</span> <span class="o">=</span> <span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">%</span> <span class="n">N</span>
-                <span class="n">edge</span> <span class="o">=</span> <span class="p">[</span><span class="n">polygon</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="p">:],</span> <span class="n">polygon</span><span class="p">[</span><span class="n">j</span><span class="p">,</span> <span class="p">:]]</span>
+            <span class="c"># and decide for each sub-segment whether in or out</span>
+            <span class="n">values</span> <span class="o">=</span> <span class="n">intersection</span><span class="p">(</span><span class="n">segment</span><span class="p">,</span> <span class="n">polygon_segments</span><span class="p">)</span>
+            <span class="n">mask</span> <span class="o">=</span> <span class="o">-</span><span class="n">numpy</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">values</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">])</span>
+            <span class="n">V</span> <span class="o">=</span> <span class="n">values</span><span class="p">[</span><span class="n">mask</span><span class="p">]</span>
 
-                <span class="n">status</span><span class="p">,</span> <span class="n">value</span> <span class="o">=</span> <span class="n">intersection</span><span class="p">(</span><span class="n">segment</span><span class="p">,</span> <span class="n">edge</span><span class="p">)</span>
-                <span class="k">if</span> <span class="n">status</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
-                    <span class="c"># Collinear overlapping lines found</span>
-                    <span class="c"># Use midpoint of common segment</span>
-                    <span class="c"># FIXME (Ole): Maybe better to use</span>
-                    <span class="c">#              common segment directly</span>
-                    <span class="n">value</span> <span class="o">=</span> <span class="p">(</span><span class="n">value</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">value</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">/</span> <span class="mi">2</span>
+            <span class="c"># Array for intersections</span>
+            <span class="n">intersections</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">V</span><span class="p">)</span> <span class="o">+</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
 
-                <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
-                    <span class="c"># Record intersection point found</span>
-                    <span class="n">intersections</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
-                <span class="k">else</span><span class="p">:</span>
-                    <span class="k">pass</span>
+            <span class="c"># Include end points</span>
+            <span class="n">intersections</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">p0</span>
+            <span class="n">intersections</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">p1</span>
 
+            <span class="c"># Add internal intersections</span>
+            <span class="n">intersections</span><span class="p">[</span><span class="mi">2</span><span class="p">:,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">V</span>
+
+            <span class="c"># For each intersection, computer distance from first end point</span>
+            <span class="n">V</span> <span class="o">=</span> <span class="n">intersections</span> <span class="o">-</span> <span class="n">p0</span>
+            <span class="n">distances</span> <span class="o">=</span> <span class="p">(</span><span class="n">V</span> <span class="o">*</span> <span class="n">V</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+            <span class="c"># Sort intersections by distance</span>
+            <span class="n">idx</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">distances</span><span class="p">)</span>
+            <span class="n">distances</span> <span class="o">=</span> <span class="n">distances</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
+            <span class="n">intersections</span> <span class="o">=</span> <span class="n">intersections</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
+
+            <span class="c"># Remove duplicate points</span>
+            <span class="n">duplicates</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">distances</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
+            <span class="n">duplicates</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span> <span class="o">=</span> <span class="n">distances</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span> <span class="o">-</span> <span class="n">distances</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span>
+            <span class="n">intersections</span> <span class="o">=</span> <span class="n">intersections</span><span class="p">[</span><span class="o">-</span><span class="n">duplicates</span><span class="p">,</span> <span class="p">:]</span>
+
+            <span class="c"># FIXME (Ole): Next candidate for vectorisation (11/9/2012) below</span>
             <span class="c"># Loop through intersections for this line segment</span>
-            <span class="n">distances</span> <span class="o">=</span> <span class="p">{}</span>
-            <span class="n">P</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">intersections</span><span class="p">)</span>
-            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">P</span><span class="p">):</span>
-                <span class="n">v</span> <span class="o">=</span> <span class="n">segment</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">intersections</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
-                <span class="n">d</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
-                <span class="n">distances</span><span class="p">[</span><span class="n">d</span><span class="p">]</span> <span class="o">=</span> <span class="n">intersections</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>  <span class="c"># Don&#39;t record duplicates</span>
+            <span class="c">#distances = {}</span>
+            <span class="c">#for i in range(len(intersections)):</span>
+            <span class="c">#    v = p0 - intersections[i]</span>
+            <span class="c">#    d = numpy.dot(v, v)</span>
+            <span class="c">#    if d in distances:</span>
+            <span class="c">#        print i, d, distances[d], intersections[i]</span>
+            <span class="c">#        import sys; sys.exit()</span>
+            <span class="c">#    distances[d] = intersections[i]  # Don&#39;t record duplicates</span>
 
-            <span class="c"># Sort by Schwarzian transform</span>
-            <span class="n">A</span> <span class="o">=</span> <span class="nb">zip</span><span class="p">(</span><span class="n">distances</span><span class="o">.</span><span class="n">keys</span><span class="p">(),</span> <span class="n">distances</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
-            <span class="n">A</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>
-            <span class="n">_</span><span class="p">,</span> <span class="n">intersections</span> <span class="o">=</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">A</span><span class="p">)</span>
+            <span class="c"># Sort intersections by distance using Schwarzian transform</span>
+            <span class="c">#A = zip(distances.keys(), distances.values())</span>
+            <span class="c">#A.sort()</span>
+            <span class="c">#_, intersections = zip(*A)</span>
 
-            <span class="n">P</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">intersections</span><span class="p">)</span>
+            <span class="c"># Separate segment midpoints according to polygon</span>
+            <span class="c"># Deliberately ignore boundary as midpoints by definition</span>
+            <span class="c"># are fully inside or fully outside.</span>
+            <span class="n">intersections</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">intersections</span><span class="p">)</span>
+            <span class="n">midpoints</span> <span class="o">=</span> <span class="p">(</span><span class="n">intersections</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">intersections</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span> <span class="o">/</span> <span class="mi">2</span>
+            <span class="n">inside</span><span class="p">,</span> <span class="n">outside</span> <span class="o">=</span> <span class="n">separate_points_by_polygon</span><span class="p">(</span><span class="n">midpoints</span><span class="p">,</span>
+                                                         <span class="n">polygon</span><span class="p">,</span>
+                                                         <span class="n">polygon_bbox</span><span class="p">,</span>
+                                                         <span class="n">check_input</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span>
+                                                         <span class="n">closed</span><span class="o">=</span><span class="n">closed</span><span class="p">)</span>
 
-            <span class="c"># Separate segments according to polygon</span>
-            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">P</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):</span>
-                <span class="n">segment</span> <span class="o">=</span> <span class="p">[</span><span class="n">intersections</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">intersections</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]]</span>
-                <span class="n">midpoint</span> <span class="o">=</span> <span class="p">(</span><span class="n">segment</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">segment</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">/</span> <span class="mi">2</span>
-
-                <span class="k">if</span> <span class="n">is_inside_polygon</span><span class="p">(</span><span class="n">midpoint</span><span class="p">,</span> <span class="n">polygon</span><span class="p">,</span> <span class="n">closed</span><span class="o">=</span><span class="n">closed</span><span class="p">):</span>
-                    <span class="n">inside_line_segments</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">segment</span><span class="p">)</span>
-                <span class="k">else</span><span class="p">:</span>
-                    <span class="n">outside_line_segments</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">segment</span><span class="p">)</span>
+            <span class="c"># Form segments and add to the right lists</span>
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">([</span><span class="n">inside</span><span class="p">,</span> <span class="n">outside</span><span class="p">]):</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">segments</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">concatenate</span><span class="p">((</span><span class="n">intersections</span><span class="p">[</span><span class="n">idx</span><span class="p">,</span> <span class="p">:],</span>
+                                                  <span class="n">intersections</span><span class="p">[</span><span class="n">idx</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="p">:]),</span>
+                                                 <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+                    <span class="n">m</span><span class="p">,</span> <span class="n">n</span> <span class="o">=</span> <span class="n">segments</span><span class="o">.</span><span class="n">shape</span>
+                    <span class="n">segments</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">segments</span><span class="p">,</span> <span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">n</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+                    <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                        <span class="n">inside_line_segments</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">segments</span><span class="o">.</span><span class="n">tolist</span><span class="p">())</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">outside_line_segments</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">segments</span><span class="o">.</span><span class="n">tolist</span><span class="p">())</span>
 
     <span class="c"># Rejoin adjacent segments and add to result lines</span>
     <span class="n">inside_lines</span> <span class="o">=</span> <span class="n">join_line_segments</span><span class="p">(</span><span class="n">inside_line_segments</span><span class="p">)</span>
@@ -907,7 +1066,7 @@
 
     <span class="k">return</span> <span class="n">inside_lines</span><span class="p">,</span> <span class="n">outside_lines</span>
 
-</div>
+
 <div class="viewcode-block" id="join_line_segments"><a class="viewcode-back" href="../../../api-docs/safe/common/polygon.html#safe.common.polygon.join_line_segments">[docs]</a><span class="k">def</span> <span class="nf">join_line_segments</span><span class="p">(</span><span class="n">segments</span><span class="p">,</span> <span class="n">rtol</span><span class="o">=</span><span class="mf">1.0e-12</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1.0e-12</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Join adjacent line segments</span>
 
@@ -927,23 +1086,6 @@
 
     <span class="n">line</span> <span class="o">=</span> <span class="n">segments</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
     <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">segments</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):</span>
-
-        <span class="c">#flag = False</span>
-        <span class="c">#segment = segments[i]</span>
-        <span class="c">#if (numpy.allclose(segment[0], [122.231108, -8.626598]) or</span>
-        <span class="c">#    numpy.allclose(segment[0], [122.231021, -8.626557]) or</span>
-        <span class="c">#    numpy.allclose(segment[1], [122.231108, -8.626598]) or</span>
-        <span class="c">#    numpy.allclose(segment[1], [122.231021, -8.626557])):</span>
-        <span class="c">#    print</span>
-        <span class="c">#    print &#39;Found &#39;, i, segment, segments[i + 1]</span>
-        <span class="c">#    flag = True</span>
-        <span class="c">#else:</span>
-        <span class="c">#    flag = False</span>
-
-        <span class="c"># Not joined are</span>
-        <span class="c">#[[122.231108, -8.626598], [122.231021, -8.626557]]</span>
-        <span class="c">#[[122.231021, -8.626557], [122.230284, -8.625983]]</span>
-
         <span class="k">if</span> <span class="n">numpy</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">segments</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span> <span class="n">segments</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span>
                           <span class="n">rtol</span><span class="o">=</span><span class="n">rtol</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="n">atol</span><span class="p">):</span>
             <span class="c"># Segments are adjacent</span>
@@ -972,7 +1114,7 @@
 
     <span class="n">lines</span> <span class="o">=</span> <span class="p">[]</span>
 
-    <span class="c"># Ensure reproducibility (needed?)</span>
+    <span class="c"># Ensure reproducibility (FIXME: is this needed?)</span>
     <span class="c">#keys = D.keys()</span>
     <span class="c">#keys.sort()</span>
 
@@ -984,8 +1126,29 @@
 
 
 <span class="c">#--------------------------------------------------</span>
-<span class="c"># Helper function to generate points inside polygon</span>
+<span class="c"># Helper functions to generate points inside polygon</span>
 <span class="c">#--------------------------------------------------</span></div>
+<div class="viewcode-block" id="generate_random_points_in_bbox"><a class="viewcode-back" href="../../../api-docs/safe/common/polygon.html#safe.common.polygon.generate_random_points_in_bbox">[docs]</a><span class="k">def</span> <span class="nf">generate_random_points_in_bbox</span><span class="p">(</span><span class="n">polygon</span><span class="p">,</span> <span class="n">N</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Generate random points in polygon bounding box</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c"># Find outer extent of polygon</span>
+    <span class="n">minpx</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">polygon</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">])</span>
+    <span class="n">maxpx</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">polygon</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">])</span>
+    <span class="n">minpy</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">polygon</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">])</span>
+    <span class="n">maxpy</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">polygon</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">])</span>
+
+    <span class="n">seed_function</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
+
+    <span class="n">points</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">N</span><span class="p">):</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">uniform</span><span class="p">(</span><span class="n">minpx</span><span class="p">,</span> <span class="n">maxpx</span><span class="p">)</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="n">uniform</span><span class="p">(</span><span class="n">minpy</span><span class="p">,</span> <span class="n">maxpy</span><span class="p">)</span>
+        <span class="n">points</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">])</span>
+
+    <span class="k">return</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">points</span><span class="p">)</span>
+
+</div>
 <div class="viewcode-block" id="populate_polygon"><a class="viewcode-back" href="../../../api-docs/safe/common/polygon.html#safe.common.polygon.populate_polygon">[docs]</a><span class="k">def</span> <span class="nf">populate_polygon</span><span class="p">(</span><span class="n">polygon</span><span class="p">,</span> <span class="n">number_of_points</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">exclude</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Populate given polygon with uniformly distributed points.</span>
 
@@ -1004,28 +1167,20 @@
 <span class="sd">       will return five randomly selected points inside the unit square</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="c"># Find outer extent of polygon</span>
-    <span class="n">max_x</span> <span class="o">=</span> <span class="n">min_x</span> <span class="o">=</span> <span class="n">polygon</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
-    <span class="n">max_y</span> <span class="o">=</span> <span class="n">min_y</span> <span class="o">=</span> <span class="n">polygon</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
-    <span class="k">for</span> <span class="n">point</span> <span class="ow">in</span> <span class="n">polygon</span><span class="p">[</span><span class="mi">1</span><span class="p">:]:</span>
-        <span class="n">x</span> <span class="o">=</span> <span class="n">point</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-        <span class="k">if</span> <span class="n">x</span> <span class="o">&gt;</span> <span class="n">max_x</span><span class="p">:</span>
-            <span class="n">max_x</span> <span class="o">=</span> <span class="n">x</span>
-        <span class="k">if</span> <span class="n">x</span> <span class="o">&lt;</span> <span class="n">min_x</span><span class="p">:</span>
-            <span class="n">min_x</span> <span class="o">=</span> <span class="n">x</span>
+    <span class="n">polygon</span> <span class="o">=</span> <span class="n">ensure_numeric</span><span class="p">(</span><span class="n">polygon</span><span class="p">)</span>
 
-        <span class="n">y</span> <span class="o">=</span> <span class="n">point</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-        <span class="k">if</span> <span class="n">y</span> <span class="o">&gt;</span> <span class="n">max_y</span><span class="p">:</span>
-            <span class="n">max_y</span> <span class="o">=</span> <span class="n">y</span>
-        <span class="k">if</span> <span class="n">y</span> <span class="o">&lt;</span> <span class="n">min_y</span><span class="p">:</span>
-            <span class="n">min_y</span> <span class="o">=</span> <span class="n">y</span>
+    <span class="c"># Find outer extent of polygon</span>
+    <span class="n">minpx</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">polygon</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">])</span>
+    <span class="n">maxpx</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">polygon</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">])</span>
+    <span class="n">minpy</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">polygon</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">])</span>
+    <span class="n">maxpy</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">polygon</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">])</span>
 
     <span class="c"># Generate random points until enough are in polygon</span>
     <span class="n">seed_function</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
     <span class="n">points</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">while</span> <span class="nb">len</span><span class="p">(</span><span class="n">points</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">number_of_points</span><span class="p">:</span>
-        <span class="n">x</span> <span class="o">=</span> <span class="n">uniform</span><span class="p">(</span><span class="n">min_x</span><span class="p">,</span> <span class="n">max_x</span><span class="p">)</span>
-        <span class="n">y</span> <span class="o">=</span> <span class="n">uniform</span><span class="p">(</span><span class="n">min_y</span><span class="p">,</span> <span class="n">max_y</span><span class="p">)</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">uniform</span><span class="p">(</span><span class="n">minpx</span><span class="p">,</span> <span class="n">maxpx</span><span class="p">)</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="n">uniform</span><span class="p">(</span><span class="n">minpy</span><span class="p">,</span> <span class="n">maxpy</span><span class="p">)</span>
 
         <span class="n">append</span> <span class="o">=</span> <span class="bp">False</span>
         <span class="k">if</span> <span class="n">is_inside_polygon</span><span class="p">([</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">],</span> <span class="n">polygon</span><span class="p">):</span>
@@ -1046,55 +1201,52 @@
 <span class="c">#------------------------------------</span>
 <span class="c"># Functionality for line intersection</span>
 <span class="c">#------------------------------------</span>
-<span class="c">#def multiple_intersection(segments0, segments1, rtol=1.0e-5, atol=1.0e-8):</span>
-<span class="c">#    &quot;&quot;&quot;Returns intersecting points between multiple line segments.</span>
-<span class="c">#</span>
-<span class="c">#    Note, if parallel lines coincide partly (i.e. share a common segment),</span>
-<span class="c">#    the midpoint of the segment where lines coincide is returned</span>
-<span class="c">#</span>
-<span class="c">#    Inputs:</span>
-<span class="c">#        lines: A</span>
-<span class="c">#        , line1: Each defined by two end points as in:</span>
-<span class="c">#                      [[x0, y0], [x1, y1]]</span>
-<span class="c">#                      A line can also be a 2x2 numpy array with each row</span>
-<span class="c">#                      corresponding to a point.</span>
-<span class="c">#</span>
-<span class="c">#    Output:</span>
-<span class="c">#        status, value - where status and value is interpreted as follows:</span>
-<span class="c">#        status == 0: no intersection, value set to None.</span>
-<span class="c">#        status == 1: intersection point found and returned in value as [x,y].</span>
-<span class="c">#        status == 2: Collinear overlapping lines found.</span>
-<span class="c">#                     Value takes the form [[x0,y0], [x1,y1]] which is the</span>
-<span class="c">#                     segment common to both lines.</span>
-<span class="c">#        status == 3: Collinear non-overlapping lines. Value set to None.</span>
-<span class="c">#        status == 4: Lines are parallel. Value set to None.</span>
-<span class="c">#    &quot;&quot;&quot;</span>
-<span class="c">#</span>
-<span class="c">#    pass</span>
-
 </div>
-<div class="viewcode-block" id="intersection"><a class="viewcode-back" href="../../../api-docs/safe/common/polygon.html#safe.common.polygon.intersection">[docs]</a><span class="k">def</span> <span class="nf">intersection</span><span class="p">(</span><span class="n">line0</span><span class="p">,</span> <span class="n">line1</span><span class="p">,</span> <span class="n">rtol</span><span class="o">=</span><span class="mf">1.0e-12</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1.0e-12</span><span class="p">):</span>
+<div class="viewcode-block" id="intersection"><a class="viewcode-back" href="../../../api-docs/safe/common/polygon.html#safe.common.polygon.intersection">[docs]</a><span class="k">def</span> <span class="nf">intersection</span><span class="p">(</span><span class="n">line0</span><span class="p">,</span> <span class="n">line1</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Returns intersecting point between two line segments.</span>
 
-<span class="sd">    However, if parallel lines coincide partly (i.e. share a common segment),</span>
-<span class="sd">    the line segment where lines coincide is returned</span>
+<span class="sd">    If the lines are parallel or coincide partly (i.e. share a common segment),</span>
+<span class="sd">    they are considered to not intersect.</span>
 
 <span class="sd">    Inputs:</span>
-<span class="sd">        line0, line1: Each defined by two end points as in:</span>
-<span class="sd">                      [[x0, y0], [x1, y1]]</span>
-<span class="sd">                      A line can also be a 2x2 numpy array with each row</span>
-<span class="sd">                      corresponding to a point.</span>
-<span class="sd">        rtol, atol: Tolerances passed onto numpy.allclose</span>
+<span class="sd">        line0: A simple line segment defined by two end points:</span>
+<span class="sd">              [[x0, y0], [x1, y1]]</span>
+
+<span class="sd">        line1: A collection of line segments vectorised following the format</span>
+<span class="sd">               line[0, 0, :] = x2</span>
+<span class="sd">               line[0, 1, :] = y2</span>
+<span class="sd">               line[1, 0, :] = x3</span>
+<span class="sd">               line[1, 1, :] = y3</span>
 
 <span class="sd">    Output:</span>
-<span class="sd">        status, value - where status and value is interpreted as follows:</span>
-<span class="sd">        status == 0: no intersection, value set to None.</span>
-<span class="sd">        status == 1: intersection point found and returned in value as [x,y].</span>
-<span class="sd">        status == 2: Collinear overlapping lines found.</span>
-<span class="sd">                     Value takes the form [[x0,y0], [x1,y1]] which is the</span>
-<span class="sd">                     segment common to both lines.</span>
-<span class="sd">        status == 3: Collinear non-overlapping lines. Value set to None.</span>
-<span class="sd">        status == 4: Lines are parallel. Value set to None.</span>
+<span class="sd">        intersections: Nx2 array with intersection points or nan</span>
+<span class="sd">                       (in case of no intersection)</span>
+<span class="sd">                       If line1 consisted of just one line,</span>
+<span class="sd">                       None is returned for backwards compatibility</span>
+
+
+<span class="sd">    Notes</span>
+
+<span class="sd">    A vectorised input line can be constructed either as list:</span>
+<span class="sd">    line1 = [[[0, 24, 0, 15],    # x2</span>
+<span class="sd">              [12, 0, 24, 0]],   # y2</span>
+<span class="sd">             [[24, 0, 0, 5],     # x3</span>
+<span class="sd">              [0, 12, 12, 15]]]  # y3</span>
+
+<span class="sd">    or as an array</span>
+
+<span class="sd">    line1 = numpy.zeros(16).reshape(2, 2, 4)  # Four segments</span>
+<span class="sd">    line1[0, 0, :] = [0, 24, 0, 15]   # x2</span>
+<span class="sd">    line1[0, 1, :] = [12, 0, 24, 0]   # y2</span>
+<span class="sd">    line1[1, 0, :] = [24, 0, 0, 5]    # x3</span>
+<span class="sd">    line1[1, 1, :] = [0, 12, 12, 15]  # y3</span>
+
+
+<span class="sd">    To select array of intersections from result, use the following idiom:</span>
+
+<span class="sd">    value = intersection(line0, line1)</span>
+<span class="sd">    mask = -numpy.isnan(value[:, 0])</span>
+<span class="sd">    v = value[mask]</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">line0</span> <span class="o">=</span> <span class="n">ensure_numeric</span><span class="p">(</span><span class="n">line0</span><span class="p">,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">float</span><span class="p">)</span>
@@ -1103,114 +1255,67 @@
     <span class="n">x0</span><span class="p">,</span> <span class="n">y0</span> <span class="o">=</span> <span class="n">line0</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:]</span>
     <span class="n">x1</span><span class="p">,</span> <span class="n">y1</span> <span class="o">=</span> <span class="n">line0</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="p">:]</span>
 
-    <span class="n">x2</span><span class="p">,</span> <span class="n">y2</span> <span class="o">=</span> <span class="n">line1</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:]</span>
-    <span class="n">x3</span><span class="p">,</span> <span class="n">y3</span> <span class="o">=</span> <span class="n">line1</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="p">:]</span>
-
-    <span class="n">denom</span> <span class="o">=</span> <span class="p">(</span><span class="n">y3</span> <span class="o">-</span> <span class="n">y2</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">x1</span> <span class="o">-</span> <span class="n">x0</span><span class="p">)</span> <span class="o">-</span> <span class="p">(</span><span class="n">x3</span> <span class="o">-</span> <span class="n">x2</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">y1</span> <span class="o">-</span> <span class="n">y0</span><span class="p">)</span>
-    <span class="n">u0</span> <span class="o">=</span> <span class="p">(</span><span class="n">x3</span> <span class="o">-</span> <span class="n">x2</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">y0</span> <span class="o">-</span> <span class="n">y2</span><span class="p">)</span> <span class="o">-</span> <span class="p">(</span><span class="n">y3</span> <span class="o">-</span> <span class="n">y2</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">x0</span> <span class="o">-</span> <span class="n">x2</span><span class="p">)</span>
-    <span class="n">u1</span> <span class="o">=</span> <span class="p">(</span><span class="n">x2</span> <span class="o">-</span> <span class="n">x0</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">y1</span> <span class="o">-</span> <span class="n">y0</span><span class="p">)</span> <span class="o">-</span> <span class="p">(</span><span class="n">y2</span> <span class="o">-</span> <span class="n">y0</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">x1</span> <span class="o">-</span> <span class="n">x0</span><span class="p">)</span>
-
-    <span class="k">if</span> <span class="n">numpy</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">denom</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="n">rtol</span><span class="o">=</span><span class="n">rtol</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="n">atol</span><span class="p">):</span>
-        <span class="c"># Lines are parallel - check if they are collinear</span>
-        <span class="k">if</span> <span class="n">numpy</span><span class="o">.</span><span class="n">allclose</span><span class="p">([</span><span class="n">u0</span><span class="p">,</span> <span class="n">u1</span><span class="p">],</span> <span class="mf">0.0</span><span class="p">,</span> <span class="n">rtol</span><span class="o">=</span><span class="n">rtol</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="n">atol</span><span class="p">):</span>
-            <span class="c"># We now know that the lines are collinear</span>
-            <span class="n">state</span> <span class="o">=</span> <span class="p">(</span><span class="n">point_on_line</span><span class="p">([</span><span class="n">x0</span><span class="p">,</span> <span class="n">y0</span><span class="p">],</span> <span class="n">line1</span><span class="p">,</span> <span class="n">rtol</span><span class="o">=</span><span class="n">rtol</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="n">atol</span><span class="p">),</span>
-                     <span class="n">point_on_line</span><span class="p">([</span><span class="n">x1</span><span class="p">,</span> <span class="n">y1</span><span class="p">],</span> <span class="n">line1</span><span class="p">,</span> <span class="n">rtol</span><span class="o">=</span><span class="n">rtol</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="n">atol</span><span class="p">),</span>
-                     <span class="n">point_on_line</span><span class="p">([</span><span class="n">x2</span><span class="p">,</span> <span class="n">y2</span><span class="p">],</span> <span class="n">line0</span><span class="p">,</span> <span class="n">rtol</span><span class="o">=</span><span class="n">rtol</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="n">atol</span><span class="p">),</span>
-                     <span class="n">point_on_line</span><span class="p">([</span><span class="n">x3</span><span class="p">,</span> <span class="n">y3</span><span class="p">],</span> <span class="n">line0</span><span class="p">,</span> <span class="n">rtol</span><span class="o">=</span><span class="n">rtol</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="n">atol</span><span class="p">))</span>
-
-            <span class="k">return</span> <span class="n">collinearmap</span><span class="p">[</span><span class="n">state</span><span class="p">]([</span><span class="n">x0</span><span class="p">,</span> <span class="n">y0</span><span class="p">],</span> <span class="p">[</span><span class="n">x1</span><span class="p">,</span> <span class="n">y1</span><span class="p">],</span>
-                                       <span class="p">[</span><span class="n">x2</span><span class="p">,</span> <span class="n">y2</span><span class="p">],</span> <span class="p">[</span><span class="n">x3</span><span class="p">,</span> <span class="n">y3</span><span class="p">])</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="c"># Lines are parallel but aren&#39;t collinear</span>
-            <span class="k">return</span> <span class="mi">4</span><span class="p">,</span> <span class="bp">None</span>
+    <span class="c"># Special treatment of return value if line1 was non vectorised</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">line1</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="n">one_point</span> <span class="o">=</span> <span class="bp">True</span>
+        <span class="c"># Broadcast to vectorised version</span>
+        <span class="n">line1</span> <span class="o">=</span> <span class="n">line1</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="c"># Lines are not parallel, check if they intersect</span>
-        <span class="n">u0</span> <span class="o">=</span> <span class="n">u0</span> <span class="o">/</span> <span class="n">denom</span>
-        <span class="n">u1</span> <span class="o">=</span> <span class="n">u1</span> <span class="o">/</span> <span class="n">denom</span>
+        <span class="n">one_point</span> <span class="o">=</span> <span class="bp">False</span>
 
-        <span class="n">x</span> <span class="o">=</span> <span class="n">x0</span> <span class="o">+</span> <span class="n">u0</span> <span class="o">*</span> <span class="p">(</span><span class="n">x1</span> <span class="o">-</span> <span class="n">x0</span><span class="p">)</span>
-        <span class="n">y</span> <span class="o">=</span> <span class="n">y0</span> <span class="o">+</span> <span class="n">u0</span> <span class="o">*</span> <span class="p">(</span><span class="n">y1</span> <span class="o">-</span> <span class="n">y0</span><span class="p">)</span>
+    <span class="c"># Extract vectorised coordinates</span>
+    <span class="n">x2</span> <span class="o">=</span> <span class="n">line1</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="p">:]</span>
+    <span class="n">y2</span> <span class="o">=</span> <span class="n">line1</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="p">:]</span>
+    <span class="n">x3</span> <span class="o">=</span> <span class="n">line1</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="p">:]</span>
+    <span class="n">y3</span> <span class="o">=</span> <span class="n">line1</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="p">:]</span>
 
-        <span class="c"># Sanity check - can be removed to speed up if needed</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">numpy</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">x2</span> <span class="o">+</span> <span class="n">u1</span> <span class="o">*</span> <span class="p">(</span><span class="n">x3</span> <span class="o">-</span> <span class="n">x2</span><span class="p">),</span> <span class="n">rtol</span><span class="o">=</span><span class="n">rtol</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="n">atol</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">Exception</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">numpy</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">y2</span> <span class="o">+</span> <span class="n">u1</span> <span class="o">*</span> <span class="p">(</span><span class="n">y3</span> <span class="o">-</span> <span class="n">y2</span><span class="p">),</span> <span class="n">rtol</span><span class="o">=</span><span class="n">rtol</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="n">atol</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">Exception</span>
+    <span class="c"># Calculate denominator (lines are parallel if it is 0)</span>
+    <span class="n">y3y2</span> <span class="o">=</span> <span class="n">y3</span> <span class="o">-</span> <span class="n">y2</span>
+    <span class="n">x3x2</span> <span class="o">=</span> <span class="n">x3</span> <span class="o">-</span> <span class="n">x2</span>
+    <span class="n">x1x0</span> <span class="o">=</span> <span class="n">x1</span> <span class="o">-</span> <span class="n">x0</span>
+    <span class="n">y1y0</span> <span class="o">=</span> <span class="n">y1</span> <span class="o">-</span> <span class="n">y0</span>
+    <span class="n">x2x0</span> <span class="o">=</span> <span class="n">x2</span> <span class="o">-</span> <span class="n">x0</span>
+    <span class="n">y2y0</span> <span class="o">=</span> <span class="n">y2</span> <span class="o">-</span> <span class="n">y0</span>
+    <span class="n">denominator</span> <span class="o">=</span> <span class="n">y3y2</span> <span class="o">*</span> <span class="n">x1x0</span> <span class="o">-</span> <span class="n">x3x2</span> <span class="o">*</span> <span class="n">y1y0</span>
 
-        <span class="c"># Check if point found lies within given line segments</span>
-        <span class="k">if</span> <span class="mf">0.0</span> <span class="o">&lt;=</span> <span class="n">u0</span> <span class="o">&lt;=</span> <span class="mf">1.0</span> <span class="ow">and</span> <span class="mf">0.0</span> <span class="o">&lt;=</span> <span class="n">u1</span> <span class="o">&lt;=</span> <span class="mf">1.0</span><span class="p">:</span>
-            <span class="c"># We have intersection</span>
-            <span class="k">return</span> <span class="mi">1</span><span class="p">,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">])</span>
+    <span class="c"># Suppress numpy warnings (as we&#39;ll be dividing by zero)</span>
+    <span class="n">original_numpy_settings</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">seterr</span><span class="p">(</span><span class="n">invalid</span><span class="o">=</span><span class="s">&#39;ignore&#39;</span><span class="p">,</span> <span class="n">divide</span><span class="o">=</span><span class="s">&#39;ignore&#39;</span><span class="p">)</span>
+
+    <span class="n">u0</span> <span class="o">=</span> <span class="p">(</span><span class="n">y3y2</span> <span class="o">*</span> <span class="n">x2x0</span> <span class="o">-</span> <span class="n">x3x2</span> <span class="o">*</span> <span class="n">y2y0</span><span class="p">)</span> <span class="o">/</span> <span class="n">denominator</span>
+    <span class="n">u1</span> <span class="o">=</span> <span class="p">(</span><span class="n">x2x0</span> <span class="o">*</span> <span class="n">y1y0</span> <span class="o">-</span> <span class="n">y2y0</span> <span class="o">*</span> <span class="n">x1x0</span><span class="p">)</span> <span class="o">/</span> <span class="n">denominator</span>
+
+    <span class="c"># Restore numpy warnings</span>
+    <span class="n">numpy</span><span class="o">.</span><span class="n">seterr</span><span class="p">(</span><span class="o">**</span><span class="n">original_numpy_settings</span><span class="p">)</span>
+
+     <span class="c"># Only points that lie within given line segments are true intersections</span>
+    <span class="n">mask</span> <span class="o">=</span> <span class="p">(</span><span class="mf">0.0</span> <span class="o">&lt;=</span> <span class="n">u0</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">u0</span> <span class="o">&lt;=</span> <span class="mf">1.0</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="mf">0.0</span> <span class="o">&lt;=</span> <span class="n">u1</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">u1</span> <span class="o">&lt;=</span> <span class="mf">1.0</span><span class="p">)</span>
+
+    <span class="c"># Calculate intersection points</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">x0</span> <span class="o">+</span> <span class="n">u0</span><span class="p">[</span><span class="n">mask</span><span class="p">]</span> <span class="o">*</span> <span class="n">x1x0</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">y0</span> <span class="o">+</span> <span class="n">u0</span><span class="p">[</span><span class="n">mask</span><span class="p">]</span> <span class="o">*</span> <span class="n">y1y0</span>
+
+    <span class="c"># Return intersection points as N x 2 array</span>
+    <span class="n">N</span> <span class="o">=</span> <span class="n">line1</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">N</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span> <span class="o">*</span> <span class="n">numpy</span><span class="o">.</span><span class="n">nan</span>
+    <span class="n">result</span><span class="p">[</span><span class="n">mask</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">x</span>
+    <span class="n">result</span><span class="p">[</span><span class="n">mask</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">y</span>
+
+    <span class="c"># Special treatment of return value if line1 was non vectorised</span>
+    <span class="k">if</span> <span class="n">one_point</span><span class="p">:</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">numpy</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">result</span><span class="p">)):</span>
+            <span class="k">return</span> <span class="bp">None</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="c"># No intersection</span>
-            <span class="k">return</span> <span class="mi">0</span><span class="p">,</span> <span class="bp">None</span>
+            <span class="k">return</span> <span class="n">result</span>
 
-
-<span class="c"># Result functions used in intersection() below for possible states</span>
-<span class="c"># of collinear lines</span>
-<span class="c"># (p0,p1) defines line 0, (p2,p3) defines line 1.</span>
-</div>
-<span class="k">def</span> <span class="nf">lines_dont_coincide</span><span class="p">(</span><span class="n">_p0</span><span class="p">,</span> <span class="n">_p1</span><span class="p">,</span> <span class="n">_p2</span><span class="p">,</span> <span class="n">_p3</span><span class="p">):</span>
-    <span class="k">return</span> <span class="mi">3</span><span class="p">,</span> <span class="bp">None</span>
-
-
-<span class="k">def</span> <span class="nf">lines_0_fully_included_in_1</span><span class="p">(</span><span class="n">_p0</span><span class="p">,</span> <span class="n">_p1</span><span class="p">,</span> <span class="n">_p2</span><span class="p">,</span> <span class="n">_p3</span><span class="p">):</span>
-    <span class="k">return</span> <span class="mi">2</span><span class="p">,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">_p0</span><span class="p">,</span> <span class="n">_p1</span><span class="p">])</span>
-
-
-<span class="k">def</span> <span class="nf">lines_1_fully_included_in_0</span><span class="p">(</span><span class="n">_p0</span><span class="p">,</span> <span class="n">_p1</span><span class="p">,</span> <span class="n">_p2</span><span class="p">,</span> <span class="n">_p3</span><span class="p">):</span>
-    <span class="k">return</span> <span class="mi">2</span><span class="p">,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">_p2</span><span class="p">,</span> <span class="n">_p3</span><span class="p">])</span>
-
-
-<span class="k">def</span> <span class="nf">lines_overlap_same_direction</span><span class="p">(</span><span class="n">_p0</span><span class="p">,</span> <span class="n">_p1</span><span class="p">,</span> <span class="n">_p2</span><span class="p">,</span> <span class="n">_p3</span><span class="p">):</span>
-    <span class="k">return</span> <span class="mi">2</span><span class="p">,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">_p0</span><span class="p">,</span> <span class="n">_p3</span><span class="p">])</span>
-
-
-<span class="k">def</span> <span class="nf">lines_overlap_same_direction2</span><span class="p">(</span><span class="n">_p0</span><span class="p">,</span> <span class="n">_p1</span><span class="p">,</span> <span class="n">_p2</span><span class="p">,</span> <span class="n">_p3</span><span class="p">):</span>
-    <span class="k">return</span> <span class="mi">2</span><span class="p">,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">_p2</span><span class="p">,</span> <span class="n">_p1</span><span class="p">])</span>
-
-
-<span class="k">def</span> <span class="nf">lines_overlap_opposite_direction</span><span class="p">(</span><span class="n">_p0</span><span class="p">,</span> <span class="n">_p1</span><span class="p">,</span> <span class="n">_p2</span><span class="p">,</span> <span class="n">_p3</span><span class="p">):</span>
-    <span class="k">return</span> <span class="mi">2</span><span class="p">,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">_p0</span><span class="p">,</span> <span class="n">_p2</span><span class="p">])</span>
-
-
-<span class="k">def</span> <span class="nf">lines_overlap_opposite_direction2</span><span class="p">(</span><span class="n">_p0</span><span class="p">,</span> <span class="n">_p1</span><span class="p">,</span> <span class="n">_p2</span><span class="p">,</span> <span class="n">_p3</span><span class="p">):</span>
-    <span class="k">return</span> <span class="mi">2</span><span class="p">,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">_p3</span><span class="p">,</span> <span class="n">_p1</span><span class="p">])</span>
-
-
-<span class="c"># This function called when an impossible state is found</span>
-<span class="k">def</span> <span class="nf">lines_error</span><span class="p">(</span><span class="n">p1</span><span class="p">,</span> <span class="n">p2</span><span class="p">,</span> <span class="n">p3</span><span class="p">,</span> <span class="n">p4</span><span class="p">):</span>
-    <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;Impossible state: p1=</span><span class="si">%s</span><span class="s">, p2=</span><span class="si">%s</span><span class="s">, p3=</span><span class="si">%s</span><span class="s">, p4=</span><span class="si">%s</span><span class="s">&#39;</span>
-           <span class="o">%</span> <span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">p1</span><span class="p">),</span> <span class="nb">str</span><span class="p">(</span><span class="n">p2</span><span class="p">),</span> <span class="nb">str</span><span class="p">(</span><span class="n">p3</span><span class="p">),</span> <span class="nb">str</span><span class="p">(</span><span class="n">p4</span><span class="p">)))</span>
-    <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
-
-<span class="c"># Mapping to possible states for line intersection</span>
-<span class="c">#</span>
-<span class="c">#                 0s1    0e1    1s0    1e0   # line 0 starts on 1, 0 ends 1,</span>
-<span class="c">#                                                   1 starts 0, 1 ends 0</span>
-<span class="n">collinearmap</span> <span class="o">=</span> <span class="p">{(</span><span class="bp">False</span><span class="p">,</span> <span class="bp">False</span><span class="p">,</span> <span class="bp">False</span><span class="p">,</span> <span class="bp">False</span><span class="p">):</span> <span class="n">lines_dont_coincide</span><span class="p">,</span>
-                <span class="p">(</span><span class="bp">False</span><span class="p">,</span> <span class="bp">False</span><span class="p">,</span> <span class="bp">False</span><span class="p">,</span> <span class="bp">True</span><span class="p">):</span> <span class="n">lines_error</span><span class="p">,</span>
-                <span class="p">(</span><span class="bp">False</span><span class="p">,</span> <span class="bp">False</span><span class="p">,</span> <span class="bp">True</span><span class="p">,</span> <span class="bp">False</span><span class="p">):</span> <span class="n">lines_error</span><span class="p">,</span>
-                <span class="p">(</span><span class="bp">False</span><span class="p">,</span> <span class="bp">False</span><span class="p">,</span> <span class="bp">True</span><span class="p">,</span> <span class="bp">True</span><span class="p">):</span> <span class="n">lines_1_fully_included_in_0</span><span class="p">,</span>
-                <span class="p">(</span><span class="bp">False</span><span class="p">,</span> <span class="bp">True</span><span class="p">,</span> <span class="bp">False</span><span class="p">,</span> <span class="bp">False</span><span class="p">):</span> <span class="n">lines_error</span><span class="p">,</span>
-                <span class="p">(</span><span class="bp">False</span><span class="p">,</span> <span class="bp">True</span><span class="p">,</span> <span class="bp">False</span><span class="p">,</span> <span class="bp">True</span><span class="p">):</span> <span class="n">lines_overlap_opposite_direction2</span><span class="p">,</span>
-                <span class="p">(</span><span class="bp">False</span><span class="p">,</span> <span class="bp">True</span><span class="p">,</span> <span class="bp">True</span><span class="p">,</span> <span class="bp">False</span><span class="p">):</span> <span class="n">lines_overlap_same_direction2</span><span class="p">,</span>
-                <span class="p">(</span><span class="bp">False</span><span class="p">,</span> <span class="bp">True</span><span class="p">,</span> <span class="bp">True</span><span class="p">,</span> <span class="bp">True</span><span class="p">):</span> <span class="n">lines_1_fully_included_in_0</span><span class="p">,</span>
-                <span class="p">(</span><span class="bp">True</span><span class="p">,</span> <span class="bp">False</span><span class="p">,</span> <span class="bp">False</span><span class="p">,</span> <span class="bp">False</span><span class="p">):</span> <span class="n">lines_error</span><span class="p">,</span>
-                <span class="p">(</span><span class="bp">True</span><span class="p">,</span> <span class="bp">False</span><span class="p">,</span> <span class="bp">False</span><span class="p">,</span> <span class="bp">True</span><span class="p">):</span> <span class="n">lines_overlap_same_direction</span><span class="p">,</span>
-                <span class="p">(</span><span class="bp">True</span><span class="p">,</span> <span class="bp">False</span><span class="p">,</span> <span class="bp">True</span><span class="p">,</span> <span class="bp">False</span><span class="p">):</span> <span class="n">lines_overlap_opposite_direction</span><span class="p">,</span>
-                <span class="p">(</span><span class="bp">True</span><span class="p">,</span> <span class="bp">False</span><span class="p">,</span> <span class="bp">True</span><span class="p">,</span> <span class="bp">True</span><span class="p">):</span> <span class="n">lines_1_fully_included_in_0</span><span class="p">,</span>
-                <span class="p">(</span><span class="bp">True</span><span class="p">,</span> <span class="bp">True</span><span class="p">,</span> <span class="bp">False</span><span class="p">,</span> <span class="bp">False</span><span class="p">):</span> <span class="n">lines_0_fully_included_in_1</span><span class="p">,</span>
-                <span class="p">(</span><span class="bp">True</span><span class="p">,</span> <span class="bp">True</span><span class="p">,</span> <span class="bp">False</span><span class="p">,</span> <span class="bp">True</span><span class="p">):</span> <span class="n">lines_0_fully_included_in_1</span><span class="p">,</span>
-                <span class="p">(</span><span class="bp">True</span><span class="p">,</span> <span class="bp">True</span><span class="p">,</span> <span class="bp">True</span><span class="p">,</span> <span class="bp">False</span><span class="p">):</span> <span class="n">lines_0_fully_included_in_1</span><span class="p">,</span>
-                <span class="p">(</span><span class="bp">True</span><span class="p">,</span> <span class="bp">True</span><span class="p">,</span> <span class="bp">True</span><span class="p">,</span> <span class="bp">True</span><span class="p">):</span> <span class="n">lines_0_fully_included_in_1</span><span class="p">}</span>
+    <span class="c"># Normal return of Nx2 array of intersections (or nan)</span>
+    <span class="k">return</span> <span class="n">result</span>
 
 
 <span class="c"># Main functions for polygon clipping</span>
 <span class="c"># FIXME (Ole): Both can be rigged to return points or lines</span>
-<span class="c"># outside any polygon by adding that as the entry in the list returned</span>
-<div class="viewcode-block" id="clip_grid_by_polygons"><a class="viewcode-back" href="../../../api-docs/safe/common/polygon.html#safe.common.polygon.clip_grid_by_polygons">[docs]</a><span class="k">def</span> <span class="nf">clip_grid_by_polygons</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">geotransform</span><span class="p">,</span> <span class="n">polygons</span><span class="p">):</span>
+<span class="c"># outside any polygon by adding that as the entry in the list returned</span></div>
+<div class="viewcode-block" id="clip_grid_by_polygons"><a class="viewcode-back" href="../../../api-docs/safe/common/polygon.html#safe.common.polygon.clip_grid_by_polygons">[docs]</a><span class="k">def</span> <span class="nf">clip_grid_by_polygons</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">geotransform</span><span class="p">,</span> <span class="n">polygons</span><span class="p">,</span> <span class="n">inner_rings</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Clip raster grid by polygon</span>
 
 <span class="sd">    Input</span>
@@ -1219,6 +1324,7 @@
 <span class="sd">                      (top left x, w-e pixel resolution, rotation,</span>
 <span class="sd">                       top left y, rotation, n-s pixel resolution)</span>
 <span class="sd">        polygons: list of polygons, each an array of vertices</span>
+<span class="sd">        inner_rings: list of list of holes - each an array of vertices</span>
 
 <span class="sd">    Output</span>
 <span class="sd">        points_covered: List of (points, values) - one per input polygon.</span>
@@ -1244,13 +1350,18 @@
     <span class="n">remaining_points</span> <span class="o">=</span> <span class="n">points</span>
     <span class="n">remaining_values</span> <span class="o">=</span> <span class="n">values</span>
 
-    <span class="k">for</span> <span class="n">polygon</span> <span class="ow">in</span> <span class="n">polygons</span><span class="p">:</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">polygon</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">polygons</span><span class="p">):</span>
         <span class="c">#print &#39;Remaining points&#39;, len(remaining_points)</span>
 
-        <span class="n">inside</span><span class="p">,</span> <span class="n">outside</span> <span class="o">=</span> <span class="n">separate_points_by_polygon</span><span class="p">(</span><span class="n">remaining_points</span><span class="p">,</span>
-                                                     <span class="n">polygon</span><span class="p">,</span>
-                                                     <span class="n">closed</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
-                                                     <span class="n">check_input</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">inner_rings</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">holes</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">holes</span> <span class="o">=</span> <span class="n">inner_rings</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        <span class="n">inside</span><span class="p">,</span> <span class="n">outside</span> <span class="o">=</span> <span class="n">in_and_outside_polygon</span><span class="p">(</span><span class="n">remaining_points</span><span class="p">,</span>
+                                                 <span class="n">polygon</span><span class="p">,</span>
+                                                 <span class="n">holes</span><span class="o">=</span><span class="n">holes</span><span class="p">,</span>
+                                                 <span class="n">closed</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
+                                                 <span class="n">check_input</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
         <span class="c"># Add features inside this polygon</span>
         <span class="n">points_covered</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">remaining_points</span><span class="p">[</span><span class="n">inside</span><span class="p">],</span>
                                <span class="n">remaining_values</span><span class="p">[</span><span class="n">inside</span><span class="p">]))</span>
@@ -1262,13 +1373,20 @@
     <span class="k">return</span> <span class="n">points_covered</span>
 
 </div>
-<div class="viewcode-block" id="clip_lines_by_polygons"><a class="viewcode-back" href="../../../api-docs/safe/common/polygon.html#safe.common.polygon.clip_lines_by_polygons">[docs]</a><span class="k">def</span> <span class="nf">clip_lines_by_polygons</span><span class="p">(</span><span class="n">lines</span><span class="p">,</span> <span class="n">polygons</span><span class="p">,</span> <span class="n">check_input</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
+<div class="viewcode-block" id="clip_lines_by_polygons"><a class="viewcode-back" href="../../../api-docs/safe/common/polygon.html#safe.common.polygon.clip_lines_by_polygons">[docs]</a><span class="k">def</span> <span class="nf">clip_lines_by_polygons</span><span class="p">(</span><span class="n">lines</span><span class="p">,</span> <span class="n">polygons</span><span class="p">,</span> <span class="n">check_input</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">closed</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Clip multiple lines by multiple polygons</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        lines: Sequence of polylines: [[p0, p1, ...], [q0, q1, ...], ...]</span>
 <span class="sd">               where pi and qi are point coordinates (x, y).</span>
 <span class="sd">        polygons: list of polygons, each an array of vertices</span>
+<span class="sd">        closed: optional parameter to determine whether lines that fall on</span>
+<span class="sd">                an polygon boundary should be considered to be inside</span>
+<span class="sd">                (closed=True), outside (closed=False) or</span>
+<span class="sd">                undetermined (closed=None). The latter case will speed the</span>
+<span class="sd">                algorithm up but lines on boundaries may or may not be</span>
+<span class="sd">                deemed to fall inside the polygon and so will be</span>
+<span class="sd">                indeterministic</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        lines_covered: List of polylines inside a polygon</span>
@@ -1277,6 +1395,27 @@
 
 <span class="sd">    If multiple polygons overlap, the one first encountered will be used</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="n">check_input</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">lines</span><span class="p">)):</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">lines</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">ensure_numeric</span><span class="p">(</span><span class="n">lines</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">numpy</span><span class="o">.</span><span class="n">float</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">Exception</span><span class="p">,</span> <span class="n">e</span><span class="p">:</span>
+                <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;Line could not be converted to numeric array: </span><span class="si">%s</span><span class="s">&#39;</span>
+                       <span class="o">%</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
+                <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+            <span class="n">msg</span> <span class="o">=</span> <span class="s">&#39;Lines must be 2d array of vertices&#39;</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">len</span><span class="p">(</span><span class="n">lines</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">polygons</span><span class="p">)):</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">polygons</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">ensure_numeric</span><span class="p">(</span><span class="n">polygons</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">numpy</span><span class="o">.</span><span class="n">float</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">Exception</span><span class="p">,</span> <span class="n">e</span><span class="p">:</span>
+                <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;Polygon could not be converted to numeric array: </span><span class="si">%s</span><span class="s">&#39;</span>
+                       <span class="o">%</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
+                <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
     <span class="c"># Initialise structures</span>
     <span class="n">lines_covered</span> <span class="o">=</span> <span class="p">[]</span>
@@ -1289,24 +1428,68 @@
         <span class="c">#       &#39;%i lines&#39; % (i, len(polygon),</span>
         <span class="c">#                     len(polygons),</span>
         <span class="c">#                     len(remaining_lines)))</span>
-
         <span class="n">inside_lines</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">clip_lines_by_polygon</span><span class="p">(</span><span class="n">remaining_lines</span><span class="p">,</span>
                                                 <span class="n">polygon</span><span class="p">,</span>
-                                                <span class="n">check_input</span><span class="o">=</span><span class="n">check_input</span><span class="p">)</span>
+                                                <span class="n">check_input</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
         <span class="c">#print (&#39;- %i segments were inside&#39;</span>
         <span class="c">#       % len(line_dictionary_to_geometry(inside_lines)))</span>
 
         <span class="c"># Record lines inside this polygon</span>
         <span class="n">lines_covered</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">inside_lines</span><span class="p">)</span>
 
-        <span class="c"># Keep lines outside as remaining lines</span>
+        <span class="c"># Use lines outside as remaining lines</span>
         <span class="c"># FIXME (Ole): This optimisation needs some thought</span>
         <span class="c"># as lines are often partially clipped. We also need to keep</span>
         <span class="c"># track of the parent line to get its attributes if we want</span>
         <span class="c"># to go down this road</span>
         <span class="c">#remaining_lines = outside_lines</span>
 
-    <span class="k">return</span> <span class="n">lines_covered</span></div>
+    <span class="k">return</span> <span class="n">lines_covered</span>
+
+</div>
+<div class="viewcode-block" id="polygon2segments"><a class="viewcode-back" href="../../../api-docs/safe/common/polygon.html#safe.common.polygon.polygon2segments">[docs]</a><span class="k">def</span> <span class="nf">polygon2segments</span><span class="p">(</span><span class="n">polygon</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Convert polygon to segments structure suitable for use in intersection</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        polygon: Nx2 array of polygon vertices</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        A collection of line segments (x0, y0) -&gt; (x1, y1) vectorised</span>
+<span class="sd">        following the format</span>
+<span class="sd">               line[0, 0, :] = x0</span>
+<span class="sd">               line[0, 1, :] = y0</span>
+<span class="sd">               line[1, 0, :] = x1</span>
+<span class="sd">               line[1, 1, :] = y1</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">polygon</span> <span class="o">=</span> <span class="n">ensure_numeric</span><span class="p">(</span><span class="n">polygon</span><span class="p">,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">float</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">Exception</span><span class="p">,</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;Polygon could not be converted to numeric array: </span><span class="si">%s</span><span class="s">&#39;</span>
+               <span class="o">%</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
+        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+    <span class="n">N</span> <span class="o">=</span> <span class="n">polygon</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>  <span class="c"># Number of vertices in polygon</span>
+
+    <span class="n">segments</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">N</span> <span class="o">*</span> <span class="mi">4</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">N</span><span class="p">)</span>
+    <span class="n">x3</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">N</span><span class="p">)</span>
+    <span class="n">y3</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">N</span><span class="p">)</span>
+
+    <span class="n">x2</span> <span class="o">=</span> <span class="n">polygon</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span>
+    <span class="n">y2</span> <span class="o">=</span> <span class="n">polygon</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span>
+
+    <span class="n">x3</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">x2</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+    <span class="n">x3</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">x2</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">y3</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">y2</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+    <span class="n">y3</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">y2</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="n">segments</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">x2</span>
+    <span class="n">segments</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">y2</span>
+    <span class="n">segments</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">x3</span>
+    <span class="n">segments</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">y3</span>
+
+    <span class="k">return</span> <span class="n">segments</span></div>
 </pre></div>
 
           </div>
@@ -1355,7 +1538,8 @@
 
     <div class="footer">
         &copy; Copyright 2012, BNPB/AIFDR/GFDRR.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+      Last updated on Oct 18, 2012.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
     </div>
     <!-- cloud_sptheme 1.3 -->
   </body>

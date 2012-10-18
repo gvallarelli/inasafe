@@ -9,7 +9,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>safe.engine.core &mdash; InaSAFE 0.5.0-alpha documentation</title>
+    <title>safe.engine.core &mdash; InaSAFE 0.5.1-final documentation</title>
     
     <link rel="stylesheet" href="../../../_static/cloud.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
@@ -18,7 +18,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../',
-        VERSION:     '0.5.0-alpha',
+        VERSION:     '0.5.1-final',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -29,7 +29,8 @@
     <script type="text/javascript" src="../../../_static/doctools.js"></script>
     <script type="text/javascript" src="../../../_static/jquery.cookie.js"></script>
     <script type="text/javascript" src="../../../_static/toggle_sections.js"></script>
-    <link rel="top" title="InaSAFE 0.5.0-alpha documentation" href="../../../index.html" />
+    <link rel="shortcut icon" href="../../../_static/favicon.ico"/>
+    <link rel="top" title="InaSAFE 0.5.1-final documentation" href="../../../index.html" />
     <link rel="up" title="Module code" href="../../index.html" /> 
   </head>
   <body>
@@ -70,6 +71,9 @@
 <span class="kn">from</span> <span class="nn">safe.storage.projection</span> <span class="kn">import</span> <span class="n">DEFAULT_PROJECTION</span>
 <span class="kn">from</span> <span class="nn">safe.common.utilities</span> <span class="kn">import</span> <span class="n">unique_filename</span><span class="p">,</span> <span class="n">verify</span>
 <span class="kn">from</span> <span class="nn">utilities</span> <span class="kn">import</span> <span class="n">REQUIRED_KEYWORDS</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
+<span class="kn">from</span> <span class="nn">socket</span> <span class="kn">import</span> <span class="n">gethostname</span>
+<span class="kn">import</span> <span class="nn">getpass</span>
 
 <span class="c"># The LOGGER is intialised in utilities.py by init</span>
 <span class="kn">import</span> <span class="nn">logging</span>
@@ -105,8 +109,28 @@
     <span class="c"># Get an instance of the passed impact_fcn</span>
     <span class="n">impact_function</span> <span class="o">=</span> <span class="n">impact_fcn</span><span class="p">()</span>
 
+    <span class="c"># start time</span>
+    <span class="n">start_time</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
     <span class="c"># Pass input layers to plugin</span>
     <span class="n">F</span> <span class="o">=</span> <span class="n">impact_function</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">layers</span><span class="p">)</span>
+
+    <span class="c"># end time</span>
+    <span class="n">end_time</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
+    <span class="c"># elapsed time</span>
+    <span class="n">elapsed_time</span> <span class="o">=</span> <span class="n">end_time</span> <span class="o">-</span> <span class="n">start_time</span>
+    <span class="n">elapsed_time_sec</span> <span class="o">=</span> <span class="n">elapsed_time</span><span class="o">.</span><span class="n">total_seconds</span><span class="p">()</span>
+    <span class="c"># get current time stamp</span>
+    <span class="c"># need to change : to _ because : is forbidden in keywords</span>
+    <span class="n">time_stamp</span> <span class="o">=</span> <span class="n">end_time</span><span class="o">.</span><span class="n">isoformat</span><span class="p">(</span><span class="s">&#39;_&#39;</span><span class="p">)</span>
+    <span class="c"># get user</span>
+    <span class="n">user</span> <span class="o">=</span> <span class="n">getpass</span><span class="o">.</span><span class="n">getuser</span><span class="p">()</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&#39; &#39;</span><span class="p">,</span> <span class="s">&#39;_&#39;</span><span class="p">)</span>
+    <span class="c"># get host</span>
+    <span class="n">host_name</span> <span class="o">=</span> <span class="n">gethostname</span><span class="p">()</span>
+
+    <span class="n">F</span><span class="o">.</span><span class="n">keywords</span><span class="p">[</span><span class="s">&#39;elapsed_time&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">elapsed_time_sec</span>
+    <span class="n">F</span><span class="o">.</span><span class="n">keywords</span><span class="p">[</span><span class="s">&#39;time_stamp&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">time_stamp</span><span class="p">[:</span><span class="mi">19</span><span class="p">]</span>  <span class="c"># remove decimal part</span>
+    <span class="n">F</span><span class="o">.</span><span class="n">keywords</span><span class="p">[</span><span class="s">&#39;host_name&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">host_name</span>
+    <span class="n">F</span><span class="o">.</span><span class="n">keywords</span><span class="p">[</span><span class="s">&#39;user&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">user</span>
 
     <span class="n">msg</span> <span class="o">=</span> <span class="s">&#39;Impact function </span><span class="si">%s</span><span class="s"> returned None&#39;</span> <span class="o">%</span> <span class="nb">str</span><span class="p">(</span><span class="n">impact_function</span><span class="p">)</span>
     <span class="n">verify</span><span class="p">(</span><span class="n">F</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">,</span> <span class="n">msg</span><span class="p">)</span>
@@ -353,7 +377,8 @@
 
     <div class="footer">
         &copy; Copyright 2012, BNPB/AIFDR/GFDRR.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+      Last updated on Oct 18, 2012.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
     </div>
     <!-- cloud_sptheme 1.3 -->
   </body>

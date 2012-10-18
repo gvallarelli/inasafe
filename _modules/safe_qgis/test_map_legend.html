@@ -1,0 +1,304 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>safe_qgis.test_map_legend &mdash; InaSAFE 0.5.1-final documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/cloud.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Noticia+Text|Droid+Sans+Mono" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.5.1-final',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../_static/jquery.cookie.js"></script>
+    <script type="text/javascript" src="../../_static/toggle_sections.js"></script>
+    <link rel="shortcut icon" href="../../_static/favicon.ico"/>
+    <link rel="top" title="InaSAFE 0.5.1-final documentation" href="../../index.html" />
+    <link rel="up" title="Module code" href="../index.html" /> 
+  </head>
+  <body>
+    <div class="relbar-top">
+        
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> &nbsp; &nbsp;</li>
+    <li><a href="../../index.html">Home</a> &raquo;</li>
+    <li><a href="../../contents.html">Contents</a> &raquo;</li>
+
+          <li><a href="../index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    </div>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for safe_qgis.test_map_legend</h1><div class="highlight"><pre>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">InaSAFE Disaster risk assessment tool developed by AusAid and World Bank</span>
+<span class="sd">- **Map  Legend test Cases.**</span>
+
+<span class="sd">Contact : ole.moller.nielsen@gmail.com</span>
+
+<span class="sd">.. note:: This program is free software; you can redistribute it and/or modify</span>
+<span class="sd">     it under the terms of the GNU General Public License as published by</span>
+<span class="sd">     the Free Software Foundation; either version 2 of the License, or</span>
+<span class="sd">     (at your option) any later version.</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="n">__author__</span> <span class="o">=</span> <span class="s">&#39;tim@linfiniti.com&#39;</span>
+<span class="n">__version__</span> <span class="o">=</span> <span class="s">&#39;0.5.1&#39;</span>
+<span class="n">__date__</span> <span class="o">=</span> <span class="s">&#39;12/10/2012&#39;</span>
+<span class="n">__copyright__</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;Copyright 2012, Australia Indonesia Facility for &#39;</span>
+                 <span class="s">&#39;Disaster Reduction&#39;</span><span class="p">)</span>
+
+<span class="kn">import</span> <span class="nn">unittest</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+
+<span class="c"># Add PARENT directory to path to make test aware of other modules</span>
+<span class="c">#pardir = os.path.abspath(os.path.join(os.path.dirname(__file__), &#39;..&#39;))</span>
+<span class="c">#sys.path.append(pardir)</span>
+
+<span class="kn">from</span> <span class="nn">PyQt4</span> <span class="kn">import</span> <span class="n">QtGui</span>
+<span class="kn">from</span> <span class="nn">qgis.core</span> <span class="kn">import</span> <span class="p">(</span><span class="n">QgsSymbol</span><span class="p">,</span>
+                       <span class="n">QgsMapLayerRegistry</span><span class="p">)</span>
+<span class="kn">from</span> <span class="nn">safe_qgis.safe_interface</span> <span class="kn">import</span> <span class="n">temp_dir</span><span class="p">,</span> <span class="n">unique_filename</span>
+<span class="kn">from</span> <span class="nn">safe_qgis.utilities_test</span> <span class="kn">import</span> <span class="p">(</span><span class="n">getQgisTestApp</span><span class="p">,</span>
+                                      <span class="n">assertHashesForFile</span><span class="p">,</span>
+                                      <span class="n">loadLayer</span><span class="p">)</span>
+<span class="kn">from</span> <span class="nn">safe_qgis.map</span> <span class="kn">import</span> <span class="n">MapLegend</span>
+
+<span class="n">QGISAPP</span><span class="p">,</span> <span class="n">CANVAS</span><span class="p">,</span> <span class="n">IFACE</span><span class="p">,</span> <span class="n">PARENT</span> <span class="o">=</span> <span class="n">getQgisTestApp</span><span class="p">()</span>
+<span class="n">LOGGER</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s">&#39;InaSAFE&#39;</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="MapLegendTest"><a class="viewcode-back" href="../../api-docs/safe_qgis_tests/test_map_legend.html#safe_qgis.test_map_legend.MapLegendTest">[docs]</a><span class="k">class</span> <span class="nc">MapLegendTest</span><span class="p">(</span><span class="n">unittest</span><span class="o">.</span><span class="n">TestCase</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Test the InaSAFE Map generator&quot;&quot;&quot;</span>
+<div class="viewcode-block" id="MapLegendTest.setUp"><a class="viewcode-back" href="../../api-docs/safe_qgis_tests/test_map_legend.html#safe_qgis.test_map_legend.MapLegendTest.setUp">[docs]</a>    <span class="k">def</span> <span class="nf">setUp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Setup fixture run before each tests&quot;&quot;&quot;</span>
+        <span class="n">myRegistry</span> <span class="o">=</span> <span class="n">QgsMapLayerRegistry</span><span class="o">.</span><span class="n">instance</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">myLayer</span> <span class="ow">in</span> <span class="n">myRegistry</span><span class="o">.</span><span class="n">mapLayers</span><span class="p">():</span>
+            <span class="n">myRegistry</span><span class="o">.</span><span class="n">removeMapLayer</span><span class="p">(</span><span class="n">myLayer</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="MapLegendTest.test_getLegend"><a class="viewcode-back" href="../../api-docs/safe_qgis_tests/test_map_legend.html#safe_qgis.test_map_legend.MapLegendTest.test_getLegend">[docs]</a>    <span class="k">def</span> <span class="nf">test_getLegend</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Getting a legend for a generic layer works.&quot;&quot;&quot;</span>
+        <span class="n">LOGGER</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&#39;test_getLegend called&#39;</span><span class="p">)</span>
+        <span class="n">myLayer</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">loadLayer</span><span class="p">(</span><span class="s">&#39;test_shakeimpact.shp&#39;</span><span class="p">)</span>
+        <span class="n">myMapLegend</span> <span class="o">=</span> <span class="n">MapLegend</span><span class="p">(</span><span class="n">myLayer</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">myMapLegend</span><span class="o">.</span><span class="n">layer</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span>
+        <span class="n">myLegend</span> <span class="o">=</span> <span class="n">myMapLegend</span><span class="o">.</span><span class="n">getLegend</span><span class="p">()</span>
+        <span class="n">myPath</span> <span class="o">=</span> <span class="n">unique_filename</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="s">&#39;getLegend&#39;</span><span class="p">,</span>
+                                 <span class="n">suffix</span><span class="o">=</span><span class="s">&#39;.png&#39;</span><span class="p">,</span>
+                                 <span class="nb">dir</span><span class="o">=</span><span class="n">temp_dir</span><span class="p">(</span><span class="s">&#39;test&#39;</span><span class="p">))</span>
+        <span class="n">myLegend</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">myPath</span><span class="p">,</span> <span class="s">&#39;PNG&#39;</span><span class="p">)</span>
+        <span class="n">LOGGER</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">myPath</span><span class="p">)</span>
+        <span class="c"># As we have discovered, different versions of Qt and</span>
+        <span class="c"># OS platforms cause different output, so hashes are a list</span>
+        <span class="c"># of &#39;known good&#39; renders.</span>
+        <span class="n">myExpectedHashes</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;&#39;</span><span class="p">,</span>  <span class="c"># win</span>
+                            <span class="s">&#39;d0c3071c4babe7db4f9762b311d61184&#39;</span><span class="p">,</span>  <span class="c"># ub12.04xiner</span>
+                            <span class="s">&#39;b94cfd8a10d709ff28466ada425f24c8&#39;</span><span class="p">,</span>  <span class="c"># ub11.04-64</span>
+                            <span class="s">&#39;00dc58aa50867de9b617ccfab0d13f21&#39;</span><span class="p">,</span>  <span class="c"># ub12.04</span>
+                            <span class="s">&#39;e65853e217a4c9b0c2f303dd2aadb373&#39;</span><span class="p">,</span>  <span class="c"># ub12.04 xvfb</span>
+                            <span class="s">&#39;e4273364b33a943e1108f519dbe8e06c&#39;</span><span class="p">,</span>  <span class="c"># ub12.04-64</span>
+                            <span class="s">&#39;91177a81bee4400be4e85789e3be1e91&#39;</span><span class="p">,</span>  <span class="c"># binary read</span>
+                            <span class="s">&#39;57da6f81b4a55507e1bed0b73423244b&#39;</span><span class="p">,</span>  <span class="c"># wVistaSP2-32</span>
+                            <span class="s">&#39;&#39;</span><span class="p">]</span>
+        <span class="n">assertHashesForFile</span><span class="p">(</span><span class="n">myExpectedHashes</span><span class="p">,</span> <span class="n">myPath</span><span class="p">)</span>
+        <span class="n">LOGGER</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&#39;test_getLegend done&#39;</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="MapLegendTest.test_getVectorLegend"><a class="viewcode-back" href="../../api-docs/safe_qgis_tests/test_map_legend.html#safe_qgis.test_map_legend.MapLegendTest.test_getVectorLegend">[docs]</a>    <span class="k">def</span> <span class="nf">test_getVectorLegend</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Getting a legend for a vector layer works.&quot;&quot;&quot;</span>
+        <span class="n">myLayer</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">loadLayer</span><span class="p">(</span><span class="s">&#39;test_shakeimpact.shp&#39;</span><span class="p">)</span>
+        <span class="n">myMapLegend</span> <span class="o">=</span> <span class="n">MapLegend</span><span class="p">(</span><span class="n">myLayer</span><span class="p">)</span>
+        <span class="n">myImage</span> <span class="o">=</span> <span class="n">myMapLegend</span><span class="o">.</span><span class="n">getVectorLegend</span><span class="p">()</span>
+        <span class="n">myPath</span> <span class="o">=</span> <span class="n">unique_filename</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="s">&#39;getVectorLegend&#39;</span><span class="p">,</span>
+                                 <span class="n">suffix</span><span class="o">=</span><span class="s">&#39;.png&#39;</span><span class="p">,</span>
+                                 <span class="nb">dir</span><span class="o">=</span><span class="n">temp_dir</span><span class="p">(</span><span class="s">&#39;test&#39;</span><span class="p">))</span>
+        <span class="n">myImage</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">myPath</span><span class="p">,</span> <span class="s">&#39;PNG&#39;</span><span class="p">)</span>
+        <span class="n">LOGGER</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">myPath</span><span class="p">)</span>
+        <span class="c"># As we have discovered, different versions of Qt and</span>
+        <span class="c"># OS platforms cause different output, so hashes are a list</span>
+        <span class="c"># of &#39;known good&#39; renders.</span>
+        <span class="c"># Results currently identical to getLegend as image is same</span>
+        <span class="n">myExpectedHashes</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;&#39;</span><span class="p">,</span>  <span class="c"># win</span>
+                            <span class="s">&#39;d0c3071c4babe7db4f9762b311d61184&#39;</span><span class="p">,</span>  <span class="c"># ub12.04 xinr</span>
+                            <span class="s">&#39;b94cfd8a10d709ff28466ada425f24c8&#39;</span><span class="p">,</span>  <span class="c"># ub11.04-64</span>
+                            <span class="s">&#39;00dc58aa50867de9b617ccfab0d13f21&#39;</span><span class="p">,</span>  <span class="c"># ub12.04</span>
+                            <span class="s">&#39;e65853e217a4c9b0c2f303dd2aadb373&#39;</span><span class="p">,</span>  <span class="c"># ub12.04 xvfb</span>
+                            <span class="s">&#39;e4273364b33a943e1108f519dbe8e06c&#39;</span><span class="p">,</span>  <span class="c"># ub12.04-64</span>
+                            <span class="c"># ub11.04-64 laptop</span>
+                            <span class="s">&#39;91177a81bee4400be4e85789e3be1e91&#39;</span><span class="p">,</span>  <span class="c"># Binary Read</span>
+                            <span class="s">&#39;57da6f81b4a55507e1bed0b73423244b&#39;</span><span class="p">,</span>  <span class="c"># wVistaSP2-32</span>
+                            <span class="s">&#39;&#39;</span><span class="p">]</span>
+        <span class="n">assertHashesForFile</span><span class="p">(</span><span class="n">myExpectedHashes</span><span class="p">,</span> <span class="n">myPath</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="MapLegendTest.test_getRasterLegend"><a class="viewcode-back" href="../../api-docs/safe_qgis_tests/test_map_legend.html#safe_qgis.test_map_legend.MapLegendTest.test_getRasterLegend">[docs]</a>    <span class="k">def</span> <span class="nf">test_getRasterLegend</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Getting a legend for a raster layer works.&quot;&quot;&quot;</span>
+        <span class="n">myLayer</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">loadLayer</span><span class="p">(</span><span class="s">&#39;test_floodimpact.tif&#39;</span><span class="p">)</span>
+        <span class="n">myMapLegend</span> <span class="o">=</span> <span class="n">MapLegend</span><span class="p">(</span><span class="n">myLayer</span><span class="p">)</span>
+        <span class="n">myImage</span> <span class="o">=</span> <span class="n">myMapLegend</span><span class="o">.</span><span class="n">getRasterLegend</span><span class="p">()</span>
+        <span class="n">myPath</span> <span class="o">=</span> <span class="n">unique_filename</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="s">&#39;getRasterLegend&#39;</span><span class="p">,</span>
+                                 <span class="n">suffix</span><span class="o">=</span><span class="s">&#39;.png&#39;</span><span class="p">,</span>
+                                 <span class="nb">dir</span><span class="o">=</span><span class="n">temp_dir</span><span class="p">(</span><span class="s">&#39;test&#39;</span><span class="p">))</span>
+        <span class="n">myImage</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">myPath</span><span class="p">,</span> <span class="s">&#39;PNG&#39;</span><span class="p">)</span>
+        <span class="n">LOGGER</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">myPath</span><span class="p">)</span>
+        <span class="c"># As we have discovered, different versions of Qt and</span>
+        <span class="c"># OS platforms cause different output, so hashes are a list</span>
+        <span class="c"># of &#39;known good&#39; renders.</span>
+        <span class="n">myExpectedHashes</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;&#39;</span><span class="p">,</span>  <span class="c"># win</span>
+                            <span class="s">&#39;9ead6ce0ac789adc65a6f00bd2d1f709&#39;</span><span class="p">,</span>  <span class="c"># ub12.04xiner</span>
+                            <span class="s">&#39;84bc3d518e3a0504f8dc36dfd620394e&#39;</span><span class="p">,</span>  <span class="c"># ub11.04-64</span>
+                            <span class="s">&#39;b68ccc328de852f0c66b8abe43eab3da&#39;</span><span class="p">,</span>  <span class="c"># ub12.04</span>
+                            <span class="s">&#39;cd5fb96f6c5926085d251400dd3b4928&#39;</span><span class="p">,</span>  <span class="c"># ub12.04 xvfb</span>
+                            <span class="s">&#39;a654d0dcb6b6d14b0a7a62cd979c16b9&#39;</span><span class="p">,</span>  <span class="c"># ub12.04-64</span>
+                            <span class="c"># ub11.04-64 laptop</span>
+                            <span class="s">&#39;9692ba8dbf909b8fe3ed27a8f4924b78&#39;</span><span class="p">,</span>  <span class="c"># binary read</span>
+                            <span class="s">&#39;5f4ef033bb1d6f36af4c08db55ca63be&#39;</span><span class="p">,</span>  <span class="c"># wVistaSP2-32</span>
+                            <span class="s">&#39;&#39;</span><span class="p">,</span>
+                            <span class="p">]</span>
+        <span class="n">assertHashesForFile</span><span class="p">(</span><span class="n">myExpectedHashes</span><span class="p">,</span> <span class="n">myPath</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="MapLegendTest.test_addSymbolToLegend"><a class="viewcode-back" href="../../api-docs/safe_qgis_tests/test_map_legend.html#safe_qgis.test_map_legend.MapLegendTest.test_addSymbolToLegend">[docs]</a>    <span class="k">def</span> <span class="nf">test_addSymbolToLegend</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Test we can add a symbol to the legend.&quot;&quot;&quot;</span>
+        <span class="n">myLayer</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">loadLayer</span><span class="p">(</span><span class="s">&#39;test_floodimpact.tif&#39;</span><span class="p">)</span>
+        <span class="n">myMapLegend</span> <span class="o">=</span> <span class="n">MapLegend</span><span class="p">(</span><span class="n">myLayer</span><span class="p">)</span>
+        <span class="n">mySymbol</span> <span class="o">=</span> <span class="n">QgsSymbol</span><span class="p">()</span>
+        <span class="n">mySymbol</span><span class="o">.</span><span class="n">setColor</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QColor</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">34</span><span class="p">,</span> <span class="mi">56</span><span class="p">))</span>
+        <span class="n">myMapLegend</span><span class="o">.</span><span class="n">addSymbolToLegend</span><span class="p">(</span><span class="n">mySymbol</span><span class="p">,</span>
+                                <span class="n">theMin</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                                <span class="n">theMax</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+                                <span class="n">theCategory</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+                                <span class="n">theLabel</span><span class="o">=</span><span class="s">&#39;Foo&#39;</span><span class="p">)</span>
+        <span class="n">myPath</span> <span class="o">=</span> <span class="n">unique_filename</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="s">&#39;addSymblToLegend&#39;</span><span class="p">,</span>
+                                 <span class="n">suffix</span><span class="o">=</span><span class="s">&#39;.png&#39;</span><span class="p">,</span>
+                                 <span class="nb">dir</span><span class="o">=</span><span class="n">temp_dir</span><span class="p">(</span><span class="s">&#39;test&#39;</span><span class="p">))</span>
+        <span class="n">myMapLegend</span><span class="o">.</span><span class="n">getLegend</span><span class="p">()</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">myPath</span><span class="p">,</span> <span class="s">&#39;PNG&#39;</span><span class="p">)</span>
+        <span class="n">LOGGER</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">myPath</span><span class="p">)</span>
+        <span class="n">myExpectedHashes</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;850ed7ad9e8f992e96c5449701ba5434&#39;</span><span class="p">,</span>  <span class="c"># ub 12.04-64</span>
+                            <span class="s">&#39;3d4d9f196fb2fe1e18d54a8d6ab4a349&#39;</span><span class="p">,</span>
+                            <span class="s">&#39;e8ef2222f90fc2f95dc86f416de2579e&#39;</span><span class="p">,</span>  <span class="c"># ub 11.04-64</span>
+                            <span class="s">&#39;&#39;</span><span class="p">]</span>
+        <span class="n">assertHashesForFile</span><span class="p">(</span><span class="n">myExpectedHashes</span><span class="p">,</span> <span class="n">myPath</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="MapLegendTest.test_addClassToLegend"><a class="viewcode-back" href="../../api-docs/safe_qgis_tests/test_map_legend.html#safe_qgis.test_map_legend.MapLegendTest.test_addClassToLegend">[docs]</a>    <span class="k">def</span> <span class="nf">test_addClassToLegend</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Test we can add a class to the map legend.&quot;&quot;&quot;</span>
+        <span class="n">myLayer</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">loadLayer</span><span class="p">(</span><span class="s">&#39;test_shakeimpact.shp&#39;</span><span class="p">)</span>
+        <span class="n">myMapLegend</span> <span class="o">=</span> <span class="n">MapLegend</span><span class="p">(</span><span class="n">myLayer</span><span class="p">)</span>
+        <span class="n">myColour</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QColor</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">34</span><span class="p">,</span> <span class="mi">126</span><span class="p">)</span>
+        <span class="n">myMapLegend</span><span class="o">.</span><span class="n">addClassToLegend</span><span class="p">(</span><span class="n">myColour</span><span class="p">,</span>
+                               <span class="n">theMin</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+                               <span class="n">theMax</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+                               <span class="n">theCategory</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+                               <span class="n">theLabel</span><span class="o">=</span><span class="s">&#39;bar&#39;</span><span class="p">)</span>
+        <span class="n">myMapLegend</span><span class="o">.</span><span class="n">addClassToLegend</span><span class="p">(</span><span class="n">myColour</span><span class="p">,</span>
+                               <span class="n">theMin</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+                               <span class="n">theMax</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+                               <span class="n">theCategory</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+                               <span class="n">theLabel</span><span class="o">=</span><span class="s">&#39;foo&#39;</span><span class="p">)</span>
+        <span class="n">myPath</span> <span class="o">=</span> <span class="n">unique_filename</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="s">&#39;addClassToLegend&#39;</span><span class="p">,</span>
+                                 <span class="n">suffix</span><span class="o">=</span><span class="s">&#39;.png&#39;</span><span class="p">,</span>
+                                 <span class="nb">dir</span><span class="o">=</span><span class="n">temp_dir</span><span class="p">(</span><span class="s">&#39;test&#39;</span><span class="p">))</span>
+        <span class="n">myMapLegend</span><span class="o">.</span><span class="n">getLegend</span><span class="p">()</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">myPath</span><span class="p">,</span> <span class="s">&#39;PNG&#39;</span><span class="p">)</span>
+        <span class="n">LOGGER</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">myPath</span><span class="p">)</span>
+        <span class="c"># As we have discovered, different versions of Qt and</span>
+        <span class="c"># OS platforms cause different output, so hashes are a list</span>
+        <span class="c"># of &#39;known good&#39; renders.</span>
+        <span class="n">myExpectedHashes</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;&#39;</span><span class="p">,</span>  <span class="c"># win</span>
+                            <span class="s">&#39;67c0f45792318298664dd02cc0ac94c3&#39;</span><span class="p">,</span>  <span class="c"># ub12.04xiner</span>
+                            <span class="s">&#39;53e0ba1144e071ad41756595d29bf444&#39;</span><span class="p">,</span>  <span class="c"># ub12.04</span>
+                            <span class="s">&#39;0681c3587305074bc9272f456fb4dd09&#39;</span><span class="p">,</span>  <span class="c"># ub12.04 xvfb</span>
+                            <span class="s">&#39;a37443d70604bdc8c279576b424a158c&#39;</span><span class="p">,</span>  <span class="c"># ub12.04-64</span>
+                            <span class="c"># ub11.04-64 laptop</span>
+                            <span class="s">&#39;944cee3eb9d916816b60ef41e8069683&#39;</span><span class="p">,</span>  <span class="c"># binary read</span>
+                            <span class="s">&#39;de3ceb6547ffc6c557d031c0b7ee9e75&#39;</span><span class="p">,</span>  <span class="c"># wVistaSP2-32</span>
+                            <span class="s">&#39;91177a81bee4400be4e85789e3be1e91&#39;</span><span class="p">,</span>  <span class="c"># ub12.04-64</span>
+                            <span class="s">&#39;e65853e217a4c9b0c2f303dd2aadb373&#39;</span><span class="p">,</span>  <span class="c"># ub12.04 xvfb</span>
+                            <span class="s">&#39;b94cfd8a10d709ff28466ada425f24c8&#39;</span><span class="p">,</span>  <span class="c"># ub11.04-64</span>
+                            <span class="p">]</span>
+        <span class="n">assertHashesForFile</span><span class="p">(</span><span class="n">myExpectedHashes</span><span class="p">,</span> <span class="n">myPath</span><span class="p">)</span>
+</div></div>
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">suite</span> <span class="o">=</span> <span class="n">unittest</span><span class="o">.</span><span class="n">makeSuite</span><span class="p">(</span><span class="n">MapLegendTest</span><span class="p">,</span> <span class="s">&#39;test&#39;</span><span class="p">)</span>
+    <span class="n">runner</span> <span class="o">=</span> <span class="n">unittest</span><span class="o">.</span><span class="n">TextTestRunner</span><span class="p">(</span><span class="n">verbosity</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">runner</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">suite</span><span class="p">)</span>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+        <p class="logo"><a href="../../contents.html">
+          <img class="logo" src="../../_static/icon.png" alt="Logo"/>
+        </a></p>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="relbar-bottom">
+        
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> &nbsp; &nbsp;</li>
+    <li><a href="../../index.html">Home</a> &raquo;</li>
+    <li><a href="../../contents.html">Contents</a> &raquo;</li>
+
+          <li><a href="../index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    </div>
+
+    <div class="footer">
+        &copy; Copyright 2012, BNPB/AIFDR/GFDRR.
+      Last updated on Oct 18, 2012.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+    </div>
+    <!-- cloud_sptheme 1.3 -->
+  </body>
+</html>

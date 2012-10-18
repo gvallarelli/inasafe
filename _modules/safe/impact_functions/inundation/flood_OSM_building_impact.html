@@ -9,7 +9,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>safe.impact_functions.inundation.flood_OSM_building_impact &mdash; InaSAFE 0.5.0-alpha documentation</title>
+    <title>safe.impact_functions.inundation.flood_OSM_building_impact &mdash; InaSAFE 0.5.1-final documentation</title>
     
     <link rel="stylesheet" href="../../../../_static/cloud.css" type="text/css" />
     <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
@@ -18,7 +18,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../../',
-        VERSION:     '0.5.0-alpha',
+        VERSION:     '0.5.1-final',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -29,7 +29,8 @@
     <script type="text/javascript" src="../../../../_static/doctools.js"></script>
     <script type="text/javascript" src="../../../../_static/jquery.cookie.js"></script>
     <script type="text/javascript" src="../../../../_static/toggle_sections.js"></script>
-    <link rel="top" title="InaSAFE 0.5.0-alpha documentation" href="../../../../index.html" />
+    <link rel="shortcut icon" href="../../../../_static/favicon.ico"/>
+    <link rel="top" title="InaSAFE 0.5.1-final documentation" href="../../../../index.html" />
     <link rel="up" title="Module code" href="../../../index.html" /> 
   </head>
   <body>
@@ -72,16 +73,16 @@
 <div class="viewcode-block" id="FloodBuildingImpactFunction"><a class="viewcode-back" href="../../../../api-docs/safe/impact_functions/inundation/flood_OSM_building_impact.html#safe.impact_functions.inundation.flood_OSM_building_impact.FloodBuildingImpactFunction">[docs]</a><span class="k">class</span> <span class="nc">FloodBuildingImpactFunction</span><span class="p">(</span><span class="n">FunctionProvider</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Inundation impact on building data</span>
 
-<span class="sd">    :param requires category == &#39;hazard&#39; and \</span>
+<span class="sd">    :param requires category==&#39;hazard&#39; and \</span>
 <span class="sd">                    subcategory in [&#39;flood&#39;, &#39;tsunami&#39;]</span>
 
-<span class="sd">    :param requires category == &#39;exposure&#39; and \</span>
-<span class="sd">                    subcategory in [&#39;building&#39;, &#39;structure&#39;] and \</span>
-<span class="sd">                    layertype == &#39;vector&#39;</span>
+<span class="sd">    :param requires category==&#39;exposure&#39; and \</span>
+<span class="sd">                    subcategory==&#39;structure&#39; and \</span>
+<span class="sd">                    layertype==&#39;vector&#39;</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">target_field</span> <span class="o">=</span> <span class="s">&#39;INUNDATED&#39;</span>
-    <span class="n">title</span> <span class="o">=</span> <span class="n">_</span><span class="p">(</span><span class="s">&#39;Be temporarily closed&#39;</span><span class="p">)</span>
+    <span class="n">title</span> <span class="o">=</span> <span class="n">_</span><span class="p">(</span><span class="s">&#39;Be flooded&#39;</span><span class="p">)</span>
 
 <div class="viewcode-block" id="FloodBuildingImpactFunction.run"><a class="viewcode-back" href="../../../../api-docs/safe/impact_functions/inundation/flood_OSM_building_impact.html#safe.impact_functions.inundation.flood_OSM_building_impact.FloodBuildingImpactFunction.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">layers</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Flood impact to buildings (e.g. from Open Street Map)</span>
@@ -205,6 +206,8 @@
 <span class="c">##                                    _(&#39;Temporarily closed&#39;),</span>
 <span class="c">##                                    _(&#39;Total&#39;)))</span>
 
+        <span class="n">school_closed</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">hospital_closed</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="c"># Generate break down by building usage type is available</span>
         <span class="k">if</span> <span class="s">&#39;type&#39;</span> <span class="ow">in</span> <span class="n">attribute_names</span><span class="p">:</span>
             <span class="c"># Make list of building types</span>
@@ -223,6 +226,10 @@
                 <span class="n">building_list</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">building_type</span><span class="o">.</span><span class="n">capitalize</span><span class="p">(),</span>
                                       <span class="n">affected_buildings</span><span class="p">[</span><span class="n">usage</span><span class="p">],</span>
                                       <span class="n">buildings</span><span class="p">[</span><span class="n">usage</span><span class="p">]])</span>
+                <span class="k">if</span> <span class="n">building_type</span> <span class="o">==</span> <span class="s">&#39;school&#39;</span><span class="p">:</span>
+                    <span class="n">school_closed</span> <span class="o">=</span> <span class="n">affected_buildings</span><span class="p">[</span><span class="n">usage</span><span class="p">]</span>
+                <span class="k">if</span> <span class="n">building_type</span> <span class="o">==</span> <span class="s">&#39;hospital&#39;</span><span class="p">:</span>
+                    <span class="n">hospital_closed</span> <span class="o">=</span> <span class="n">affected_buildings</span><span class="p">[</span><span class="n">usage</span><span class="p">]</span>
 <span class="c">##                fid.write(&#39;%s, %i, %i\n&#39; % (building_type.capitalize(),</span>
 <span class="c">##                                            affected_buildings[usage],</span>
 <span class="c">##                                            buildings[usage]))</span>
@@ -243,6 +250,23 @@
         <span class="n">table_body</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">TableRow</span><span class="p">(</span><span class="n">_</span><span class="p">(</span><span class="s">&#39;Action Checklist:&#39;</span><span class="p">),</span> <span class="n">header</span><span class="o">=</span><span class="bp">True</span><span class="p">))</span>
         <span class="n">table_body</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">TableRow</span><span class="p">(</span><span class="n">_</span><span class="p">(</span><span class="s">&#39;Are the critical facilities still &#39;</span>
                                      <span class="s">&#39;open?&#39;</span><span class="p">)))</span>
+        <span class="n">table_body</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">TableRow</span><span class="p">(</span><span class="n">_</span><span class="p">(</span><span class="s">&#39;Which structures have warning capacity &#39;</span>
+                                     <span class="s">&#39;(eg. sirens, speakers, etc.)?&#39;</span><span class="p">)))</span>
+        <span class="n">table_body</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">TableRow</span><span class="p">(</span><span class="n">_</span><span class="p">(</span><span class="s">&#39;Which buildings will be evacuation &#39;</span>
+                                     <span class="s">&#39;centres?&#39;</span><span class="p">)))</span>
+        <span class="n">table_body</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">TableRow</span><span class="p">(</span><span class="n">_</span><span class="p">(</span><span class="s">&#39;Where will we locate the operations &#39;</span>
+                                     <span class="s">&#39;centre?&#39;</span><span class="p">)))</span>
+        <span class="n">table_body</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">TableRow</span><span class="p">(</span><span class="n">_</span><span class="p">(</span><span class="s">&#39;Where will we locate warehouse and/or &#39;</span>
+                                     <span class="s">&#39;distribution centres?&#39;</span><span class="p">)))</span>
+        <span class="k">if</span> <span class="n">school_closed</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">table_body</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">TableRow</span><span class="p">(</span><span class="n">_</span><span class="p">(</span><span class="s">&#39;Where will the students from the </span><span class="si">%d</span><span class="s"> &#39;</span>
+                                         <span class="s">&#39;closed schools go to study?&#39;</span><span class="p">)</span> <span class="o">%</span>
+                                         <span class="n">school_closed</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">hospital_closed</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">table_body</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">TableRow</span><span class="p">(</span><span class="n">_</span><span class="p">(</span><span class="s">&#39;Where will the patients from the </span><span class="si">%d</span><span class="s"> &#39;</span>
+                                         <span class="s">&#39;closed hospitals go for treatment &#39;</span>
+                                         <span class="s">&#39;and how will we transport them?&#39;</span><span class="p">)</span> <span class="o">%</span>
+                                         <span class="n">hospital_closed</span><span class="p">))</span>
 
         <span class="n">table_body</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">TableRow</span><span class="p">(</span><span class="n">_</span><span class="p">(</span><span class="s">&#39;Notes&#39;</span><span class="p">),</span> <span class="n">header</span><span class="o">=</span><span class="bp">True</span><span class="p">))</span>
         <span class="n">assumption</span> <span class="o">=</span> <span class="n">_</span><span class="p">(</span><span class="s">&#39;Buildings are said to be flooded when &#39;</span><span class="p">)</span>
@@ -322,7 +346,8 @@
 
     <div class="footer">
         &copy; Copyright 2012, BNPB/AIFDR/GFDRR.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+      Last updated on Oct 18, 2012.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
     </div>
     <!-- cloud_sptheme 1.3 -->
   </body>

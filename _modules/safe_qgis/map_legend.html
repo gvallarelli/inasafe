@@ -1,0 +1,426 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>safe_qgis.map_legend &mdash; InaSAFE 0.5.1-final documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/cloud.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Noticia+Text|Droid+Sans+Mono" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.5.1-final',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../_static/jquery.cookie.js"></script>
+    <script type="text/javascript" src="../../_static/toggle_sections.js"></script>
+    <link rel="shortcut icon" href="../../_static/favicon.ico"/>
+    <link rel="top" title="InaSAFE 0.5.1-final documentation" href="../../index.html" />
+    <link rel="up" title="Module code" href="../index.html" /> 
+  </head>
+  <body>
+    <div class="relbar-top">
+        
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> &nbsp; &nbsp;</li>
+    <li><a href="../../index.html">Home</a> &raquo;</li>
+    <li><a href="../../contents.html">Contents</a> &raquo;</li>
+
+          <li><a href="../index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    </div>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for safe_qgis.map_legend</h1><div class="highlight"><pre>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">InaSAFE Disaster risk assessment tool developed by AusAid -</span>
+<span class="sd">  **InaSAFE map legend module.**</span>
+
+<span class="sd">Contact : ole.moller.nielsen@gmail.com</span>
+
+<span class="sd">.. note:: This program is free software; you can redistribute it and/or modify</span>
+<span class="sd">     it under the terms of the GNU General Public License as published by</span>
+<span class="sd">     the Free Software Foundation; either version 2 of the License, or</span>
+<span class="sd">     (at your option) any later version.</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="n">__author__</span> <span class="o">=</span> <span class="s">&#39;tim@linfiniti.com&#39;</span>
+<span class="n">__revision__</span> <span class="o">=</span> <span class="s">&#39;$Format:%H$&#39;</span>
+<span class="n">__date__</span> <span class="o">=</span> <span class="s">&#39;10/01/2011&#39;</span>
+<span class="n">__copyright__</span> <span class="o">=</span> <span class="s">&#39;Copyright 2012, Australia Indonesia Facility for &#39;</span>
+<span class="n">__copyright__</span> <span class="o">+=</span> <span class="s">&#39;Disaster Reduction&#39;</span>
+
+<span class="kn">import</span> <span class="nn">logging</span>
+
+<span class="kn">from</span> <span class="nn">PyQt4</span> <span class="kn">import</span> <span class="n">QtCore</span><span class="p">,</span> <span class="n">QtGui</span>
+<span class="kn">from</span> <span class="nn">qgis.core</span> <span class="kn">import</span> <span class="n">QgsMapLayer</span>
+<span class="kn">from</span> <span class="nn">safe_qgis.exceptions</span> <span class="kn">import</span> <span class="p">(</span><span class="n">LegendLayerException</span><span class="p">,</span>
+                                  <span class="n">KeywordNotFoundException</span><span class="p">)</span>
+<span class="kn">from</span> <span class="nn">safe_qgis.utilities</span> <span class="kn">import</span> <span class="n">qgisVersion</span>
+<span class="kn">from</span> <span class="nn">safe_qgis.keyword_io</span> <span class="kn">import</span> <span class="n">KeywordIO</span>
+
+<span class="n">LOGGER</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s">&#39;InaSAFE&#39;</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="MapLegend"><a class="viewcode-back" href="../../api-docs/safe_qgis/map_legend.html#safe_qgis.map_legend.MapLegend">[docs]</a><span class="k">class</span> <span class="nc">MapLegend</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;A class for creating a map legend.&quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">theLayer</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Constructor for the Map Legend class.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            theIface - reference to the QGIS iface object</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            None</span>
+<span class="sd">        Raises:</span>
+<span class="sd">            Any exceptions raised will be propagated.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">LOGGER</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&#39;InaSAFE Map class initialised&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">legendImage</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">layer</span> <span class="o">=</span> <span class="n">theLayer</span>
+        <span class="c"># how high each row of the legend should be</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">legendIncrement</span> <span class="o">=</span> <span class="mi">30</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">keywordIO</span> <span class="o">=</span> <span class="n">KeywordIO</span><span class="p">()</span>
+
+<div class="viewcode-block" id="MapLegend.tr"><a class="viewcode-back" href="../../api-docs/safe_qgis/map_legend.html#safe_qgis.map_legend.MapLegend.tr">[docs]</a>    <span class="k">def</span> <span class="nf">tr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">theString</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;We implement this ourself since we do not inherit QObject.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">           theString - string for translation.</span>
+<span class="sd">        Returns:</span>
+<span class="sd">           Translated version of theString.</span>
+<span class="sd">        Raises:</span>
+<span class="sd">           no exceptions explicitly raised.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">QCoreApplication</span><span class="o">.</span><span class="n">translate</span><span class="p">(</span><span class="s">&#39;MapLegend&#39;</span><span class="p">,</span> <span class="n">theString</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="MapLegend.getLegend"><a class="viewcode-back" href="../../api-docs/safe_qgis/map_legend.html#safe_qgis.map_legend.MapLegend.getLegend">[docs]</a>    <span class="k">def</span> <span class="nf">getLegend</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Examine the classes of the impact layer associated with this print</span>
+<span class="sd">        job.</span>
+
+<span class="sd">        .. note: This is a wrapper for the rasterLegend and vectorLegend</span>
+<span class="sd">           methods.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            None</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            None</span>
+<span class="sd">        Raises:</span>
+<span class="sd">            An InvalidLegendLayer will be raised if a legend cannot be</span>
+<span class="sd">            created from the layer.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">LOGGER</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&#39;InaSAFE Map Legend getLegend called&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">layer</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">myMessage</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tr</span><span class="p">(</span><span class="s">&#39;Unable to make a legend when map generator &#39;</span>
+                                <span class="s">&#39;has no layer set.&#39;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">LegendLayerException</span><span class="p">(</span><span class="n">myMessage</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">keywordIO</span><span class="o">.</span><span class="n">readKeywords</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">layer</span><span class="p">,</span> <span class="s">&#39;impact_summary&#39;</span><span class="p">)</span>
+        <span class="k">except</span> <span class="n">KeywordNotFoundException</span><span class="p">,</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">myMessage</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tr</span><span class="p">(</span><span class="s">&#39;This layer does not appear to be an impact &#39;</span>
+                                <span class="s">&#39;layer. Try selecting an impact layer in the &#39;</span>
+                                <span class="s">&#39;QGIS layers list or creating a new impact &#39;</span>
+                                <span class="s">&#39;scenario before using the print tool.&#39;</span>
+                                <span class="s">&#39;</span><span class="se">\n</span><span class="s">Message: </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="n">myMessage</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">layer</span><span class="o">.</span><span class="n">type</span><span class="p">()</span> <span class="o">==</span> <span class="n">QgsMapLayer</span><span class="o">.</span><span class="n">VectorLayer</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">getVectorLegend</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">getRasterLegend</span><span class="p">()</span>
+</div>
+<div class="viewcode-block" id="MapLegend.getVectorLegend"><a class="viewcode-back" href="../../api-docs/safe_qgis/map_legend.html#safe_qgis.map_legend.MapLegend.getVectorLegend">[docs]</a>    <span class="k">def</span> <span class="nf">getVectorLegend</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get the legend for this layer as a graphic.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            None</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            A QImage object.</span>
+<span class="sd">            self.legend is also populated with the image.</span>
+<span class="sd">        Raises:</span>
+<span class="sd">            An InvalidLegendLayer will be raised if a legend cannot be</span>
+<span class="sd">            created from the layer.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">LOGGER</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&#39;InaSAFE Map getVectorLegend called&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">layer</span><span class="o">.</span><span class="n">isUsingRendererV2</span><span class="p">():</span>
+            <span class="n">myMessage</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tr</span><span class="p">(</span><span class="s">&#39;A legend can only be generated for &#39;</span>
+                                <span class="s">&#39;vector layers that use the &quot;new symbology&quot; &#39;</span>
+                                <span class="s">&#39;implementation in QGIS.&#39;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">LegendLayerException</span><span class="p">(</span><span class="n">myMessage</span><span class="p">)</span>
+            <span class="c"># new symbology - subclass of QgsFeatureRendererV2 class</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">legendImage</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="n">myRenderer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">layer</span><span class="o">.</span><span class="n">rendererV2</span><span class="p">()</span>
+        <span class="n">myType</span> <span class="o">=</span> <span class="n">myRenderer</span><span class="o">.</span><span class="n">type</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">myType</span> <span class="o">==</span> <span class="s">&quot;singleSymbol&quot;</span><span class="p">:</span>
+            <span class="n">mySymbol</span> <span class="o">=</span> <span class="n">myRenderer</span><span class="o">.</span><span class="n">symbol</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">addSymbolToLegend</span><span class="p">(</span><span class="n">theLabel</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">layer</span><span class="o">.</span><span class="n">name</span><span class="p">(),</span>
+                                   <span class="n">theSymbol</span><span class="o">=</span><span class="n">mySymbol</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">myType</span> <span class="o">==</span> <span class="s">&quot;categorizedSymbol&quot;</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">myCategory</span> <span class="ow">in</span> <span class="n">myRenderer</span><span class="o">.</span><span class="n">categories</span><span class="p">():</span>
+                <span class="n">mySymbol</span> <span class="o">=</span> <span class="n">myCategory</span><span class="o">.</span><span class="n">symbol</span><span class="p">()</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">addSymbolToLegend</span><span class="p">(</span>
+                    <span class="n">theCategory</span><span class="o">=</span><span class="n">myCategory</span><span class="o">.</span><span class="n">value</span><span class="p">()</span><span class="o">.</span><span class="n">toString</span><span class="p">(),</span>
+                    <span class="n">theLabel</span><span class="o">=</span><span class="n">myCategory</span><span class="o">.</span><span class="n">label</span><span class="p">(),</span>
+                    <span class="n">theSymbol</span><span class="o">=</span><span class="n">mySymbol</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">myType</span> <span class="o">==</span> <span class="s">&quot;graduatedSymbol&quot;</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">myRange</span> <span class="ow">in</span> <span class="n">myRenderer</span><span class="o">.</span><span class="n">ranges</span><span class="p">():</span>
+                <span class="n">mySymbol</span> <span class="o">=</span> <span class="n">myRange</span><span class="o">.</span><span class="n">symbol</span><span class="p">()</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">addSymbolToLegend</span><span class="p">(</span><span class="n">theMin</span><span class="o">=</span><span class="n">myRange</span><span class="o">.</span><span class="n">lowerValue</span><span class="p">(),</span>
+                                       <span class="n">theMax</span><span class="o">=</span><span class="n">myRange</span><span class="o">.</span><span class="n">upperValue</span><span class="p">(),</span>
+                                       <span class="n">theLabel</span><span class="o">=</span><span class="n">myRange</span><span class="o">.</span><span class="n">label</span><span class="p">(),</span>
+                                       <span class="n">theSymbol</span><span class="o">=</span><span class="n">mySymbol</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c">#type unknown</span>
+            <span class="n">myMessage</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tr</span><span class="p">(</span><span class="s">&#39;Unrecognised renderer type found for the &#39;</span>
+                                <span class="s">&#39;impact layer. Please use one of these: &#39;</span>
+                                <span class="s">&#39;single symbol, categorised symbol or &#39;</span>
+                                <span class="s">&#39;graduated symbol and then try again.&#39;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">LegendLayerException</span><span class="p">(</span><span class="n">myMessage</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">legendImage</span>
+</div>
+<div class="viewcode-block" id="MapLegend.getRasterLegend"><a class="viewcode-back" href="../../api-docs/safe_qgis/map_legend.html#safe_qgis.map_legend.MapLegend.getRasterLegend">[docs]</a>    <span class="k">def</span> <span class="nf">getRasterLegend</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get the legend for a raster layer as an image.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            None</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            An image representing the layer&#39;s legend.</span>
+<span class="sd">            self.legend is also populated</span>
+<span class="sd">        Raises:</span>
+<span class="sd">            An InvalidLegendLayer will be raised if a legend cannot be</span>
+<span class="sd">            created from the layer.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">LOGGER</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&#39;InaSAFE Map Legend getRasterLegend called&#39;</span><span class="p">)</span>
+        <span class="c"># test if QGIS 1.8.0 or older</span>
+        <span class="c"># see issue #259</span>
+        <span class="k">if</span> <span class="n">qgisVersion</span><span class="p">()</span> <span class="o">&lt;=</span> <span class="mi">10800</span><span class="p">:</span>
+            <span class="n">myShader</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">layer</span><span class="o">.</span><span class="n">rasterShader</span><span class="p">()</span><span class="o">.</span><span class="n">rasterShaderFunction</span><span class="p">()</span>
+            <span class="n">myRampItems</span> <span class="o">=</span> <span class="n">myShader</span><span class="o">.</span><span class="n">colorRampItemList</span><span class="p">()</span>
+            <span class="n">myLastValue</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c"># Making an assumption here...</span>
+            <span class="k">print</span> <span class="s">&#39;Source: </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">layer</span><span class="o">.</span><span class="n">source</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">myItem</span> <span class="ow">in</span> <span class="n">myRampItems</span><span class="p">:</span>
+                <span class="n">myValue</span> <span class="o">=</span> <span class="n">myItem</span><span class="o">.</span><span class="n">value</span>
+                <span class="n">myLabel</span> <span class="o">=</span> <span class="n">myItem</span><span class="o">.</span><span class="n">label</span>
+                <span class="n">myColor</span> <span class="o">=</span> <span class="n">myItem</span><span class="o">.</span><span class="n">color</span>
+                <span class="k">print</span> <span class="s">&#39;Value: </span><span class="si">%s</span><span class="s"> Label </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">myValue</span><span class="p">,</span> <span class="n">myLabel</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">addClassToLegend</span><span class="p">(</span><span class="n">myColor</span><span class="p">,</span>
+                                      <span class="n">theMin</span><span class="o">=</span><span class="n">myLastValue</span><span class="p">,</span>
+                                      <span class="n">theMax</span><span class="o">=</span><span class="n">myValue</span><span class="p">,</span>
+                                      <span class="n">theLabel</span><span class="o">=</span><span class="n">myLabel</span><span class="p">)</span>
+                <span class="n">myLastValue</span> <span class="o">=</span> <span class="n">myValue</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c">#TODO implement QGIS2.0 variant</span>
+            <span class="c">#In master branch, use QgsRasterRenderer::rasterRenderer() to</span>
+            <span class="c"># get/set how a raster is displayed.</span>
+            <span class="k">pass</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">legendImage</span>
+</div>
+<div class="viewcode-block" id="MapLegend.addSymbolToLegend"><a class="viewcode-back" href="../../api-docs/safe_qgis/map_legend.html#safe_qgis.map_legend.MapLegend.addSymbolToLegend">[docs]</a>    <span class="k">def</span> <span class="nf">addSymbolToLegend</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                          <span class="n">theSymbol</span><span class="p">,</span>
+                          <span class="n">theMin</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+                          <span class="n">theMax</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+                          <span class="n">theCategory</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+                          <span class="n">theLabel</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Add a class to the current legend. If the legend is not defined,</span>
+<span class="sd">        a new one will be created. A legend is just an image file with nicely</span>
+<span class="sd">        rendered classes in it.</span>
+
+<span class="sd">        .. note:: This method just extracts the colour from the symbol and then</span>
+<span class="sd">           delegates to the addClassToLegend function.</span>
+
+<span class="sd">        Args:</span>
+
+<span class="sd">            * theSymbol - **Required** symbol for the class as a QgsSymbol</span>
+<span class="sd">            * theMin - Optional minimum value for the class</span>
+<span class="sd">            * theMax - Optional maximum value for the class\</span>
+<span class="sd">            * theCategory - Optional category name (will be used in lieu of</span>
+<span class="sd">                       min/max)</span>
+<span class="sd">            * theLabel - Optional text label for the class</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            None</span>
+<span class="sd">        Raises:</span>
+<span class="sd">            Throws an exception if the class could not be added for</span>
+<span class="sd">            some reason..</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">LOGGER</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&#39;InaSAFE Map Legend addSymbolToLegend called&#39;</span><span class="p">)</span>
+        <span class="n">myColour</span> <span class="o">=</span> <span class="n">theSymbol</span><span class="o">.</span><span class="n">color</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">addClassToLegend</span><span class="p">(</span><span class="n">myColour</span><span class="p">,</span>
+                              <span class="n">theMin</span><span class="o">=</span><span class="n">theMin</span><span class="p">,</span>
+                              <span class="n">theMax</span><span class="o">=</span><span class="n">theMax</span><span class="p">,</span>
+                              <span class="n">theCategory</span><span class="o">=</span><span class="n">theCategory</span><span class="p">,</span>
+                              <span class="n">theLabel</span><span class="o">=</span><span class="n">theLabel</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="MapLegend.addClassToLegend"><a class="viewcode-back" href="../../api-docs/safe_qgis/map_legend.html#safe_qgis.map_legend.MapLegend.addClassToLegend">[docs]</a>    <span class="k">def</span> <span class="nf">addClassToLegend</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                         <span class="n">theColour</span><span class="p">,</span>
+                         <span class="n">theMin</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+                         <span class="n">theMax</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+                         <span class="n">theCategory</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+                         <span class="n">theLabel</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Add a class to the current legend. If the legend is not defined,</span>
+<span class="sd">        a new one will be created. A legend is just an image file with nicely</span>
+<span class="sd">        rendered classes in it.</span>
+
+<span class="sd">        Args:</span>
+
+<span class="sd">            * theColour - **Required** colour for the class as a QColor</span>
+<span class="sd">            * theMin - Optional minimum value for the class</span>
+<span class="sd">            * theMax - Optional maximum value for the class\</span>
+<span class="sd">            * theCategory - Optional category name (will be used in lieu of</span>
+<span class="sd">                       min/max)</span>
+<span class="sd">            * theLabel - Optional text label for the class</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            None</span>
+<span class="sd">        Raises:</span>
+<span class="sd">            Throws an exception if the class could not be added for</span>
+<span class="sd">            some reason..</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">LOGGER</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&#39;InaSAFE Map Legend addClassToLegend called&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">extendLegend</span><span class="p">()</span>
+        <span class="n">myOffset</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">legendImage</span><span class="o">.</span><span class="n">height</span><span class="p">()</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">legendIncrement</span>
+        <span class="n">myPainter</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QPainter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">legendImage</span><span class="p">)</span>
+        <span class="n">myBrush</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QBrush</span><span class="p">(</span><span class="n">theColour</span><span class="p">)</span>
+        <span class="n">myPainter</span><span class="o">.</span><span class="n">setBrush</span><span class="p">(</span><span class="n">myBrush</span><span class="p">)</span>
+        <span class="n">myPainter</span><span class="o">.</span><span class="n">setPen</span><span class="p">(</span><span class="n">theColour</span><span class="p">)</span>
+        <span class="n">myWhitespace</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c"># white space above and below each class itcon</span>
+        <span class="n">mySquareSize</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">legendIncrement</span> <span class="o">-</span> <span class="p">(</span><span class="n">myWhitespace</span> <span class="o">*</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="n">myLeftIndent</span> <span class="o">=</span> <span class="mi">10</span>
+        <span class="n">myPainter</span><span class="o">.</span><span class="n">drawRect</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">QRectF</span><span class="p">(</span><span class="n">myLeftIndent</span><span class="p">,</span>
+                                         <span class="n">myOffset</span> <span class="o">+</span> <span class="n">myWhitespace</span><span class="p">,</span>
+                                         <span class="n">mySquareSize</span><span class="p">,</span> <span class="n">mySquareSize</span><span class="p">))</span>
+        <span class="n">myPainter</span><span class="o">.</span><span class="n">setPen</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QColor</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>  <span class="c"># outline colour</span>
+        <span class="n">myLabelX</span> <span class="o">=</span> <span class="n">myLeftIndent</span> <span class="o">+</span> <span class="n">mySquareSize</span> <span class="o">+</span> <span class="mi">10</span>
+        <span class="n">myFontSize</span> <span class="o">=</span> <span class="mi">8</span>
+        <span class="n">myFontWeight</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QFont</span><span class="o">.</span><span class="n">Normal</span>
+        <span class="n">myItalicsFlag</span> <span class="o">=</span> <span class="bp">False</span>
+        <span class="n">myFont</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QFont</span><span class="p">(</span><span class="s">&#39;verdana&#39;</span><span class="p">,</span>
+                             <span class="n">myFontSize</span><span class="p">,</span>
+                             <span class="n">myFontWeight</span><span class="p">,</span>
+                             <span class="n">myItalicsFlag</span><span class="p">)</span>
+        <span class="n">myPainter</span><span class="o">.</span><span class="n">setFont</span><span class="p">(</span><span class="n">myFont</span><span class="p">)</span>
+        <span class="n">myLabel</span> <span class="o">=</span> <span class="s">&#39;&#39;</span>
+        <span class="k">if</span> <span class="n">theLabel</span><span class="p">:</span>
+            <span class="n">myLabel</span> <span class="o">=</span> <span class="n">theLabel</span>
+        <span class="k">if</span> <span class="n">theMin</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="ow">and</span> <span class="n">theMax</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">myLabel</span> <span class="o">+=</span> <span class="s">&#39; [&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">theMin</span><span class="p">)</span> <span class="o">+</span> <span class="s">&#39;, &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">theMax</span><span class="p">)</span> <span class="o">+</span> <span class="s">&#39;]&#39;</span>
+        <span class="k">if</span> <span class="n">theCategory</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">myLabel</span> <span class="o">=</span> <span class="s">&#39; (&#39;</span> <span class="o">+</span> <span class="n">theCategory</span> <span class="o">+</span> <span class="s">&#39;)&#39;</span>
+        <span class="n">myPainter</span><span class="o">.</span><span class="n">drawText</span><span class="p">(</span><span class="n">myLabelX</span><span class="p">,</span> <span class="n">myOffset</span> <span class="o">+</span> <span class="mi">25</span><span class="p">,</span> <span class="n">myLabel</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="MapLegend.extendLegend"><a class="viewcode-back" href="../../api-docs/safe_qgis/map_legend.html#safe_qgis.map_legend.MapLegend.extendLegend">[docs]</a>    <span class="k">def</span> <span class="nf">extendLegend</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Grow the legend pixmap enough to accommodate one more legend entry.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            None</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            None</span>
+<span class="sd">        Raises:</span>
+<span class="sd">            Any exceptions raised by the InaSAFE library will be propogated.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">LOGGER</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&#39;InaSAFE Map Legend extendLegend called&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">legendImage</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">legendImage</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QPixmap</span><span class="p">(</span><span class="mi">300</span><span class="p">,</span> <span class="mi">80</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">legendImage</span><span class="o">.</span><span class="n">fill</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QColor</span><span class="p">(</span><span class="mi">255</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">255</span><span class="p">))</span>
+            <span class="n">myPainter</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QPainter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">legendImage</span><span class="p">)</span>
+            <span class="n">myFontSize</span> <span class="o">=</span> <span class="mi">12</span>
+            <span class="n">myFontWeight</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QFont</span><span class="o">.</span><span class="n">Bold</span>
+            <span class="n">myItalicsFlag</span> <span class="o">=</span> <span class="bp">False</span>
+            <span class="n">myFont</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QFont</span><span class="p">(</span><span class="s">&#39;verdana&#39;</span><span class="p">,</span>
+                                 <span class="n">myFontSize</span><span class="p">,</span>
+                                 <span class="n">myFontWeight</span><span class="p">,</span>
+                                 <span class="n">myItalicsFlag</span><span class="p">)</span>
+            <span class="n">myPainter</span><span class="o">.</span><span class="n">setFont</span><span class="p">(</span><span class="n">myFont</span><span class="p">)</span>
+            <span class="n">myPainter</span><span class="o">.</span><span class="n">drawText</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">25</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">tr</span><span class="p">(</span><span class="s">&#39;Legend&#39;</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c"># extend the existing legend down for the next class</span>
+            <span class="n">myPixmap</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QPixmap</span><span class="p">(</span><span class="mi">300</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">legendImage</span><span class="o">.</span><span class="n">height</span><span class="p">()</span> <span class="o">+</span>
+                                          <span class="bp">self</span><span class="o">.</span><span class="n">legendIncrement</span><span class="p">)</span>
+            <span class="n">myPixmap</span><span class="o">.</span><span class="n">fill</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QColor</span><span class="p">(</span><span class="mi">255</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">255</span><span class="p">))</span>
+            <span class="n">myPainter</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QPainter</span><span class="p">(</span><span class="n">myPixmap</span><span class="p">)</span>
+
+            <span class="n">myRect</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">QRectF</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span>
+                                   <span class="bp">self</span><span class="o">.</span><span class="n">legendImage</span><span class="o">.</span><span class="n">width</span><span class="p">(),</span>
+                                   <span class="bp">self</span><span class="o">.</span><span class="n">legendImage</span><span class="o">.</span><span class="n">height</span><span class="p">())</span>
+            <span class="n">myPainter</span><span class="o">.</span><span class="n">drawPixmap</span><span class="p">(</span><span class="n">myRect</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">legendImage</span><span class="p">,</span> <span class="n">myRect</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">legendImage</span> <span class="o">=</span> <span class="n">myPixmap</span></div></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+        <p class="logo"><a href="../../contents.html">
+          <img class="logo" src="../../_static/icon.png" alt="Logo"/>
+        </a></p>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="relbar-bottom">
+        
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> &nbsp; &nbsp;</li>
+    <li><a href="../../index.html">Home</a> &raquo;</li>
+    <li><a href="../../contents.html">Contents</a> &raquo;</li>
+
+          <li><a href="../index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    </div>
+
+    <div class="footer">
+        &copy; Copyright 2012, BNPB/AIFDR/GFDRR.
+      Last updated on Oct 18, 2012.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+    </div>
+    <!-- cloud_sptheme 1.3 -->
+  </body>
+</html>

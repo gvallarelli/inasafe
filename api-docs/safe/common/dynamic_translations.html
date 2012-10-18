@@ -9,7 +9,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Module: safe.common.dynamic_translations &mdash; InaSAFE 0.5.0-alpha documentation</title>
+    <title>Module: safe.common.dynamic_translations &mdash; InaSAFE 0.5.1-final documentation</title>
     
     <link rel="stylesheet" href="../../../_static/cloud.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
@@ -18,7 +18,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../',
-        VERSION:     '0.5.0-alpha',
+        VERSION:     '0.5.1-final',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -29,10 +29,11 @@
     <script type="text/javascript" src="../../../_static/doctools.js"></script>
     <script type="text/javascript" src="../../../_static/jquery.cookie.js"></script>
     <script type="text/javascript" src="../../../_static/toggle_sections.js"></script>
-    <link rel="top" title="InaSAFE 0.5.0-alpha documentation" href="../../../index.html" />
+    <link rel="shortcut icon" href="../../../_static/favicon.ico"/>
+    <link rel="top" title="InaSAFE 0.5.1-final documentation" href="../../../index.html" />
     <link rel="up" title="Package::safe.common" href="../common.html" />
-    <link rel="next" title="Module: safe.common.test_numerics" href="test_numerics.html" />
-    <link rel="prev" title="Module: safe.common.test_interpolate" href="test_interpolate.html" /> 
+    <link rel="next" title="Module: safe.common.numerics" href="numerics.html" />
+    <link rel="prev" title="Module: safe.common.test_numerics" href="test_numerics.html" /> 
   </head>
   <body>
     <div class="relbar-top">
@@ -47,10 +48,10 @@
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
         <li class="right" >
-          <a href="test_numerics.html" title="Module: safe.common.test_numerics"
+          <a href="numerics.html" title="Module: safe.common.numerics"
              accesskey="N">next</a> &nbsp; &nbsp;</li>
         <li class="right" >
-          <a href="test_interpolate.html" title="Module: safe.common.test_interpolate"
+          <a href="test_numerics.html" title="Module: safe.common.test_numerics"
              accesskey="P">previous</a> &nbsp; &nbsp;</li>
     <li><a href="../../../index.html">Home</a> &raquo;</li>
     <li><a href="../../../contents.html">Contents</a> &raquo;</li>
@@ -80,11 +81,11 @@ can therefore not be translated.</p>
 in datasets and translatable_string is the string that will appear as the
 translated at runtime.</p>
 <p>e.g (using a neutral symbol)
-{&#8216;title1&#8217;: _(&#8216;Jakarta 2007 flood&#8217;)}</p>
+{&#8216;title1&#8217;: tr(&#8216;Jakarta 2007 flood&#8217;)}</p>
 <p>or (using existing title)
-{&#8216;Schools&#8217;: _(&#8216;Schools&#8217;)}</p>
+{&#8216;Schools&#8217;: tr(&#8216;Schools&#8217;)}</p>
 <p>or (attribute value)
-{&#8216;school&#8217;: _(&#8216;school&#8217;)}</p>
+{&#8216;school&#8217;: tr(&#8216;school&#8217;)}</p>
 <p>With the underscore function, the specified string will be seen by the
 translation system and can appear in the supported languages as with
 other strings in SAFE.</p>
@@ -92,7 +93,17 @@ other strings in SAFE.</p>
 mappings between strings expected at runtime to strings seen by the
 existing translation systems.</p>
 <p>To use:</p>
-<p>from dynamic_translations import names</p>
+<p>This module contains words and phrases that need to be translatable but
+would not normally be available in code for example, that originate from
+a dataset or external source.</p>
+<p>Just put your translations here, and it will be available to the tr function
+but never import this module or the functions in it!</p>
+<dl class="function">
+<dt id="safe.common.dynamic_translations.dynamic_translations">
+<tt class="descclassname">safe.common.dynamic_translations.</tt><tt class="descname">dynamic_translations</tt><big>(</big><big>)</big><a class="reference internal" href="../../../_modules/safe/common/dynamic_translations.html#dynamic_translations"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe.common.dynamic_translations.dynamic_translations" title="Permalink to this definition">¶</a></dt>
+<dd><p>These listed here so they get translated apriori to loading data.</p>
+</dd></dl>
+
 <p>This module forms part of the <a class="reference external" href="http://inasafe.org">InaSAFE</a> tool.</p>
 </div>
 
@@ -106,11 +117,11 @@ existing translation systems.</p>
           <img class="logo" src="../../../_static/icon.png" alt="Logo"/>
         </a></p>
   <h4>Previous topic</h4>
-  <p class="topless"><a href="test_interpolate.html"
-                        title="previous chapter">Module:  safe.common.test_interpolate</a></p>
-  <h4>Next topic</h4>
   <p class="topless"><a href="test_numerics.html"
-                        title="next chapter">Module:  safe.common.test_numerics</a></p>
+                        title="previous chapter">Module:  safe.common.test_numerics</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="numerics.html"
+                        title="next chapter">Module:  safe.common.numerics</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="../../../_sources/api-docs/safe/common/dynamic_translations.txt"
@@ -145,10 +156,10 @@ existing translation systems.</p>
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
         <li class="right" >
-          <a href="test_numerics.html" title="Module: safe.common.test_numerics"
+          <a href="numerics.html" title="Module: safe.common.numerics"
              >next</a> &nbsp; &nbsp;</li>
         <li class="right" >
-          <a href="test_interpolate.html" title="Module: safe.common.test_interpolate"
+          <a href="test_numerics.html" title="Module: safe.common.test_numerics"
              >previous</a> &nbsp; &nbsp;</li>
     <li><a href="../../../index.html">Home</a> &raquo;</li>
     <li><a href="../../../contents.html">Contents</a> &raquo;</li>
@@ -162,7 +173,8 @@ existing translation systems.</p>
 
     <div class="footer">
         &copy; Copyright 2012, BNPB/AIFDR/GFDRR.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+      Last updated on Oct 18, 2012.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
     </div>
     <!-- cloud_sptheme 1.3 -->
   </body>

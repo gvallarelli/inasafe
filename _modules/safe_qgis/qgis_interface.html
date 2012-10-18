@@ -9,7 +9,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>safe_qgis.qgis_interface &mdash; InaSAFE 0.5.0-alpha documentation</title>
+    <title>safe_qgis.qgis_interface &mdash; InaSAFE 0.5.1-final documentation</title>
     
     <link rel="stylesheet" href="../../_static/cloud.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -18,7 +18,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '0.5.0-alpha',
+        VERSION:     '0.5.1-final',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -29,7 +29,8 @@
     <script type="text/javascript" src="../../_static/doctools.js"></script>
     <script type="text/javascript" src="../../_static/jquery.cookie.js"></script>
     <script type="text/javascript" src="../../_static/toggle_sections.js"></script>
-    <link rel="top" title="InaSAFE 0.5.0-alpha documentation" href="../../index.html" />
+    <link rel="shortcut icon" href="../../_static/favicon.ico"/>
+    <link rel="top" title="InaSAFE 0.5.1-final documentation" href="../../index.html" />
     <link rel="up" title="Module code" href="../index.html" /> 
   </head>
   <body>
@@ -85,9 +86,11 @@
                  <span class="s">&#39;Copyright (c) 2011 German Carrillo, &#39;</span>
                  <span class="s">&#39;geotux_tuxman@linuxmail.org&#39;</span><span class="p">)</span>
 
-
-<span class="kn">from</span> <span class="nn">PyQt4.QtCore</span> <span class="kn">import</span> <span class="n">QObject</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">from</span> <span class="nn">PyQt4.QtCore</span> <span class="kn">import</span> <span class="n">QObject</span><span class="p">,</span> <span class="n">SIGNAL</span><span class="p">,</span> <span class="n">pyqtSlot</span>
 <span class="kn">from</span> <span class="nn">qgis.core</span> <span class="kn">import</span> <span class="n">QgsMapLayerRegistry</span>
+<span class="kn">from</span> <span class="nn">qgis.gui</span> <span class="kn">import</span> <span class="n">QgsMapCanvasLayer</span>
+<span class="n">LOGGER</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s">&#39;InaSAFE&#39;</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="QgisInterface"><a class="viewcode-back" href="../../api-docs/safe_qgis/qgis_interface.html#safe_qgis.qgis_interface.QgisInterface">[docs]</a><span class="k">class</span> <span class="nc">QgisInterface</span><span class="p">(</span><span class="n">QObject</span><span class="p">):</span>
@@ -101,7 +104,68 @@
         <span class="sd">&quot;&quot;&quot;Constructor&quot;&quot;&quot;</span>
         <span class="n">QObject</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">canvas</span> <span class="o">=</span> <span class="n">canvas</span>
+        <span class="c"># Set up slots so we can mimick the behaviour of QGIS when layers</span>
+        <span class="c"># are added.</span>
+        <span class="n">LOGGER</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&#39;Initialising canvas...&#39;</span><span class="p">)</span>
+        <span class="n">QObject</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">QgsMapLayerRegistry</span><span class="o">.</span><span class="n">instance</span><span class="p">(),</span>
+                        <span class="n">SIGNAL</span><span class="p">(</span><span class="s">&#39;layersAdded(QList&lt;QgsMapLayer *&gt;)&#39;</span><span class="p">),</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">addLayers</span><span class="p">)</span>
+        <span class="n">QObject</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">QgsMapLayerRegistry</span><span class="o">.</span><span class="n">instance</span><span class="p">(),</span>
+                        <span class="n">SIGNAL</span><span class="p">(</span><span class="s">&#39;layerWasAdded(QgsMapLayer *)&#39;</span><span class="p">),</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">addLayer</span><span class="p">)</span>
 
+    <span class="nd">@pyqtSlot</span><span class="p">(</span><span class="s">&#39;QStringList&#39;</span><span class="p">)</span>
+<div class="viewcode-block" id="QgisInterface.addLayers"><a class="viewcode-back" href="../../api-docs/safe_qgis/qgis_interface.html#safe_qgis.qgis_interface.QgisInterface.addLayers">[docs]</a>    <span class="k">def</span> <span class="nf">addLayers</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">theLayers</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Handle layers being added to the registry so they show up in canvas.</span>
+
+<span class="sd">        .. note: The QgsInterface api does not include this method, it is added</span>
+<span class="sd">                 here as a helper to facilitate testing.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            theLayers: list&lt;QgsMapLayer&gt; list of map layers that were added</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            None</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c">#LOGGER.debug(&#39;addLayers called on qgis_interface&#39;)</span>
+        <span class="c">#LOGGER.debug(&#39;Number of layers being added: %s&#39; % len(theLayers))</span>
+        <span class="c">#LOGGER.debug(&#39;Layer Count Before: %s&#39; % len(self.canvas.layers()))</span>
+        <span class="n">myLayers</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">canvas</span><span class="o">.</span><span class="n">layers</span><span class="p">()</span>
+        <span class="n">myCanvasLayers</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">myLayer</span> <span class="ow">in</span> <span class="n">myLayers</span><span class="p">:</span>
+            <span class="n">myCanvasLayers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">QgsMapCanvasLayer</span><span class="p">(</span><span class="n">myLayer</span><span class="p">))</span>
+        <span class="k">for</span> <span class="n">myLayer</span> <span class="ow">in</span> <span class="n">theLayers</span><span class="p">:</span>
+            <span class="n">myCanvasLayers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">QgsMapCanvasLayer</span><span class="p">(</span><span class="n">myLayer</span><span class="p">))</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">canvas</span><span class="o">.</span><span class="n">setLayerSet</span><span class="p">(</span><span class="n">myCanvasLayers</span><span class="p">)</span>
+        <span class="c">#LOGGER.debug(&#39;Layer Count After: %s&#39; % len(self.canvas.layers()))</span>
+</div>
+    <span class="nd">@pyqtSlot</span><span class="p">(</span><span class="s">&#39;QgsMapLayer&#39;</span><span class="p">)</span>
+<div class="viewcode-block" id="QgisInterface.addLayer"><a class="viewcode-back" href="../../api-docs/safe_qgis/qgis_interface.html#safe_qgis.qgis_interface.QgisInterface.addLayer">[docs]</a>    <span class="k">def</span> <span class="nf">addLayer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">theLayer</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Handle a layer being added to the registry so it shows up in canvas.</span>
+
+<span class="sd">        .. note: The QgsInterface api does not include this method, it is added</span>
+<span class="sd">                 here as a helper to facilitate testing.</span>
+
+<span class="sd">        .. note: The addLayer method was deprecated in QGIS 1.8 so you should</span>
+<span class="sd">                 not need this method much.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            theLayers: list&lt;QgsMapLayer&gt; list of map layers that were added</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            None</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">pass</span>
+
+    <span class="c"># ---------------- API Mock for QgsInterface follows -------------------</span>
+</div>
 <div class="viewcode-block" id="QgisInterface.zoomFull"><a class="viewcode-back" href="../../api-docs/safe_qgis/qgis_interface.html#safe_qgis.qgis_interface.QgisInterface.zoomFull">[docs]</a>    <span class="k">def</span> <span class="nf">zoomFull</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Zoom to the map full extent&quot;&quot;&quot;</span>
         <span class="k">pass</span>
@@ -206,7 +270,8 @@
 
     <div class="footer">
         &copy; Copyright 2012, BNPB/AIFDR/GFDRR.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+      Last updated on Oct 18, 2012.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
     </div>
     <!-- cloud_sptheme 1.3 -->
   </body>

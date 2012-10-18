@@ -1,0 +1,248 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>safe.common.dynamic_translations &mdash; InaSAFE 0.5.1-final documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/cloud.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Noticia+Text|Droid+Sans+Mono" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '0.5.1-final',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../../_static/jquery.cookie.js"></script>
+    <script type="text/javascript" src="../../../_static/toggle_sections.js"></script>
+    <link rel="shortcut icon" href="../../../_static/favicon.ico"/>
+    <link rel="top" title="InaSAFE 0.5.1-final documentation" href="../../../index.html" />
+    <link rel="up" title="Module code" href="../../index.html" /> 
+  </head>
+  <body>
+    <div class="relbar-top">
+        
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> &nbsp; &nbsp;</li>
+    <li><a href="../../../index.html">Home</a> &raquo;</li>
+    <li><a href="../../../contents.html">Contents</a> &raquo;</li>
+
+          <li><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    </div>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for safe.common.dynamic_translations</h1><div class="highlight"><pre>
+<span class="sd">&quot;&quot;&quot;Lookup table mapping layer titles to translatable strings</span>
+
+<span class="sd">Layer titles are kept in the associated keywords files. However,</span>
+<span class="sd">these files are not seen by the internationalisation system and</span>
+<span class="sd">can therefore not be translated.</span>
+
+<span class="sd">To achieve this for selected titles, we maintain a lookup table of the form</span>
+
+<span class="sd">{string: translatable_string}</span>
+
+<span class="sd">where string e.g. comes from the keywords file or attribute names/values</span>
+<span class="sd">in datasets and translatable_string is the string that will appear as the</span>
+<span class="sd">translated at runtime.</span>
+
+<span class="sd">e.g (using a neutral symbol)</span>
+<span class="sd">{&#39;title1&#39;: tr(&#39;Jakarta 2007 flood&#39;)}</span>
+
+<span class="sd">or (using existing title)</span>
+<span class="sd">{&#39;Schools&#39;: tr(&#39;Schools&#39;)}</span>
+
+<span class="sd">or (attribute value)</span>
+<span class="sd">{&#39;school&#39;: tr(&#39;school&#39;)}</span>
+
+<span class="sd">With the underscore function, the specified string will be seen by the</span>
+<span class="sd">translation system and can appear in the supported languages as with</span>
+<span class="sd">other strings in SAFE.</span>
+
+<span class="sd">Note, this module does *not* provide translations! Rather it provides</span>
+<span class="sd">mappings between strings expected at runtime to strings seen by the</span>
+<span class="sd">existing translation systems.</span>
+
+<span class="sd">To use:</span>
+
+<span class="sd">This module contains words and phrases that need to be translatable but</span>
+<span class="sd">would not normally be available in code for example, that originate from</span>
+<span class="sd">a dataset or external source.</span>
+
+<span class="sd">Just put your translations here, and it will be available to the tr function</span>
+<span class="sd">but never import this module or the functions in it!</span>
+
+
+
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="c"># FIXME (Ole): Simplify to just maintain one list of strings and have</span>
+<span class="c">#              this module automatically generate the _() versions:</span>
+<span class="c"># for s in strings:</span>
+<span class="c">#     names[s] = &#39;_(%s)&#39; % s</span>
+
+<span class="kn">from</span> <span class="nn">safe.common.utilities</span> <span class="kn">import</span> <span class="n">ugettext</span> <span class="k">as</span> <span class="n">tr</span>
+
+
+<span class="c"># Don&#39;t call this function</span>
+<div class="viewcode-block" id="dynamic_translations"><a class="viewcode-back" href="../../../api-docs/safe/common/dynamic_translations.html#safe.common.dynamic_translations.dynamic_translations">[docs]</a><span class="k">def</span> <span class="nf">dynamic_translations</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;These listed here so they get translated apriori to loading data.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c"># Bangunan DKI</span>
+    <span class="n">tr</span><span class="p">(</span><span class="s">&#39;DKI buildings&#39;</span><span class="p">)</span>
+    <span class="c"># Banjir seperti 2007</span>
+    <span class="n">tr</span><span class="p">(</span><span class="s">&#39;Jakarta 2007 flood&#39;</span><span class="p">)</span>
+    <span class="n">tr</span><span class="p">(</span><span class="s">&#39;Jakarta 2007 flood&#39;</span><span class="p">)</span>
+    <span class="n">tr</span><span class="p">(</span><span class="s">&#39;A flood in Jakarta like in 2007&#39;</span><span class="p">)</span>
+    <span class="n">tr</span><span class="p">(</span><span class="s">&#39;Jakarta flood like 2007 with pump failure at Pluit Ancol and Sunter&#39;</span><span class="p">)</span>
+    <span class="c"># Banjir 2007 tanpa pompa di Pluit, Ancol dan Sunter</span>
+    <span class="n">tr</span><span class="p">(</span><span class="s">&#39;Jakarta flood like 2007 with pump failure at Pluit and Ancol&#39;</span><span class="p">)</span>
+    <span class="n">tr</span><span class="p">(</span><span class="s">&#39;A flood in Jakarta like in 2007 but with structural improvements&#39;</span><span class="p">)</span>
+    <span class="c"># Dam Pluit Runtuh</span>
+    <span class="n">tr</span><span class="p">(</span><span class="s">&#39;Sea wall collapse at Pluit&#39;</span><span class="p">)</span>
+    <span class="c"># Daerah Rawan Banjir</span>
+    <span class="n">tr</span><span class="p">(</span><span class="s">&#39;Jakarta flood prone areas&#39;</span><span class="p">)</span>
+    <span class="n">tr</span><span class="p">(</span><span class="s">&#39;A flood in Jakarta in RW areas identified as flood prone&#39;</span><span class="p">)</span>
+    <span class="c"># Daerah Rawan Banjir</span>
+    <span class="c"># Penduduk Jakarta</span>
+    <span class="n">tr</span><span class="p">(</span><span class="s">&#39;Population Jakarta&#39;</span><span class="p">)</span>
+    <span class="n">tr</span><span class="p">(</span><span class="s">&#39;People&#39;</span><span class="p">)</span>
+    <span class="n">tr</span><span class="p">(</span><span class="s">&#39;people&#39;</span><span class="p">)</span>
+    <span class="n">tr</span><span class="p">(</span><span class="s">&#39;People in Jakarta&#39;</span><span class="p">)</span>
+    <span class="n">tr</span><span class="p">(</span><span class="s">&#39;Flood Depth (design) Jakarta&#39;</span><span class="p">)</span>
+    <span class="n">tr</span><span class="p">(</span><span class="s">&#39;Flood Depth (current) Jakarta&#39;</span><span class="p">)</span>
+    <span class="n">tr</span><span class="p">(</span><span class="s">&#39;An earthquake in Yogyakarta like in 2006&#39;</span><span class="p">)</span>
+    <span class="n">tr</span><span class="p">(</span><span class="s">&#39;Indonesian Earthquake Hazard Map&#39;</span><span class="p">)</span>
+    <span class="n">tr</span><span class="p">(</span><span class="s">&#39;A tsunami in Maumere (Mw 8.1)&#39;</span><span class="p">)</span>
+    <span class="n">tr</span><span class="p">(</span><span class="s">&#39;A tsunami in Padang (Mw 8.8)&#39;</span><span class="p">)</span>
+    <span class="n">tr</span><span class="p">(</span><span class="s">&#39;An earthquake at the Sumatran fault (Mw 7.8)&#39;</span><span class="p">)</span>
+    <span class="c"># Skenario Gempabumi Sesar Sumatra Mw 7.8</span>
+    <span class="n">tr</span><span class="p">(</span><span class="s">&#39;An earthquake at the Mentawai fault (Mw 9.0)&#39;</span><span class="p">)</span>
+    <span class="c"># Skenario Gempabumi Sesar Mentawai Mw 9.0</span>
+    <span class="n">tr</span><span class="p">(</span><span class="s">&#39;An earthquake in Padang like in 2009&#39;</span><span class="p">)</span>
+    <span class="n">tr</span><span class="p">(</span><span class="s">&#39;An earthquake in Yogyakarta like in 2006&#39;</span><span class="p">)</span>
+    <span class="n">tr</span><span class="p">(</span><span class="s">&#39;An earthquake at the Lembang fault&#39;</span><span class="p">)</span>
+    <span class="c"># Bangunan OSM</span>
+    <span class="n">tr</span><span class="p">(</span><span class="s">&#39;OSM building footprints&#39;</span><span class="p">)</span>
+    <span class="c"># Bangunan OSM</span>
+    <span class="n">tr</span><span class="p">(</span><span class="s">&#39;OSM buildings&#39;</span><span class="p">)</span>
+    <span class="n">tr</span><span class="p">(</span><span class="s">&#39;AIBEP schools&#39;</span><span class="p">)</span>
+    <span class="c"># Perkiraan penduduk</span>
+    <span class="n">tr</span><span class="p">(</span><span class="s">&#39;Population density (5kmx5km)&#39;</span><span class="p">)</span>
+    <span class="n">tr</span><span class="p">(</span><span class="s">&#39;Office buildings Jakarta&#39;</span><span class="p">)</span>
+    <span class="c"># Puskesmas dan rumah sakit</span>
+    <span class="n">tr</span><span class="p">(</span><span class="s">&#39;Hospitals and clinics Jakarta&#39;</span><span class="p">)</span>
+    <span class="n">tr</span><span class="p">(</span><span class="s">&#39;Schools Jakarta&#39;</span><span class="p">)</span>
+    <span class="n">tr</span><span class="p">(</span><span class="s">&#39;Schools&#39;</span><span class="p">)</span>
+    <span class="n">tr</span><span class="p">(</span><span class="s">&#39;Industrial buildings Jakarta&#39;</span><span class="p">)</span>
+    <span class="n">tr</span><span class="p">(</span><span class="s">&#39;Industrial areas Jakarta&#39;</span><span class="p">)</span>
+    <span class="n">tr</span><span class="p">(</span><span class="s">&#39;Commercial areas Jakarta&#39;</span><span class="p">)</span>
+    <span class="n">tr</span><span class="p">(</span><span class="s">&#39;Hospitals Jakarta&#39;</span><span class="p">)</span>
+    <span class="n">tr</span><span class="p">(</span><span class="s">&#39;An eruption&#39;</span><span class="p">)</span>
+    <span class="n">tr</span><span class="p">(</span><span class="s">&#39;A volcano eruption&#39;</span><span class="p">)</span>
+    <span class="n">tr</span><span class="p">(</span><span class="s">&#39;A volcano alert&#39;</span><span class="p">)</span>
+
+    <span class="c"># Data attribute value start here</span>
+    <span class="n">tr</span><span class="p">(</span><span class="s">&#39;office&#39;</span><span class="p">)</span>
+    <span class="n">tr</span><span class="p">(</span><span class="s">&#39;clinic&#39;</span><span class="p">)</span>
+    <span class="n">tr</span><span class="p">(</span><span class="s">&#39;terrace&#39;</span><span class="p">)</span>
+    <span class="n">tr</span><span class="p">(</span><span class="s">&#39;police&#39;</span><span class="p">)</span>
+    <span class="n">tr</span><span class="p">(</span><span class="s">&#39;residential&#39;</span><span class="p">)</span>
+    <span class="n">tr</span><span class="p">(</span><span class="s">&#39;kindergarten&#39;</span><span class="p">)</span>
+    <span class="n">tr</span><span class="p">(</span><span class="s">&#39;bank&#39;</span><span class="p">)</span>
+    <span class="n">tr</span><span class="p">(</span><span class="s">&#39;place of worship&#39;</span><span class="p">)</span>
+    <span class="n">tr</span><span class="p">(</span><span class="s">&#39;school&#39;</span><span class="p">)</span>
+    <span class="n">tr</span><span class="p">(</span><span class="s">&#39;university&#39;</span><span class="p">)</span>
+    <span class="n">tr</span><span class="p">(</span><span class="s">&#39;apartments&#39;</span><span class="p">)</span>
+    <span class="n">tr</span><span class="p">(</span><span class="s">&#39;college&#39;</span><span class="p">)</span>
+    <span class="n">tr</span><span class="p">(</span><span class="s">&#39;commercial&#39;</span><span class="p">)</span>
+    <span class="n">tr</span><span class="p">(</span><span class="s">&#39;hospital&#39;</span><span class="p">)</span>
+    <span class="n">tr</span><span class="p">(</span><span class="s">&#39;industrial&#39;</span><span class="p">)</span>
+    <span class="n">tr</span><span class="p">(</span><span class="s">&#39;civic&#39;</span><span class="p">)</span>
+    <span class="n">tr</span><span class="p">(</span><span class="s">&#39;church&#39;</span><span class="p">)</span>
+    <span class="n">tr</span><span class="p">(</span><span class="s">&#39;hotel&#39;</span><span class="p">)</span>
+    <span class="n">tr</span><span class="p">(</span><span class="s">&#39;public building&#39;</span><span class="p">)</span>
+    <span class="n">tr</span><span class="p">(</span><span class="s">&#39;other&#39;</span><span class="p">)</span>
+    <span class="n">tr</span><span class="p">(</span><span class="s">&#39;fire station&#39;</span><span class="p">)</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+        <p class="logo"><a href="../../../contents.html">
+          <img class="logo" src="../../../_static/icon.png" alt="Logo"/>
+        </a></p>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="relbar-bottom">
+        
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> &nbsp; &nbsp;</li>
+    <li><a href="../../../index.html">Home</a> &raquo;</li>
+    <li><a href="../../../contents.html">Contents</a> &raquo;</li>
+
+          <li><a href="../../index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    </div>
+
+    <div class="footer">
+        &copy; Copyright 2012, BNPB/AIFDR/GFDRR.
+      Last updated on Oct 18, 2012.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+    </div>
+    <!-- cloud_sptheme 1.3 -->
+  </body>
+</html>

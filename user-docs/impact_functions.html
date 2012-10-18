@@ -9,7 +9,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Impact Functions &mdash; InaSAFE 0.5.0-alpha documentation</title>
+    <title>Impact Functions &mdash; InaSAFE 0.5.1-final documentation</title>
     
     <link rel="stylesheet" href="../_static/cloud.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -18,7 +18,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.5.0-alpha',
+        VERSION:     '0.5.1-final',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -29,9 +29,10 @@
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <script type="text/javascript" src="../_static/jquery.cookie.js"></script>
     <script type="text/javascript" src="../_static/toggle_sections.js"></script>
-    <link rel="top" title="InaSAFE 0.5.0-alpha documentation" href="../index.html" />
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+    <link rel="top" title="InaSAFE 0.5.1-final documentation" href="../index.html" />
     <link rel="up" title="InaSAFE user documentation" href="index.html" />
-    <link rel="next" title="Data Types" href="data_types.html" />
+    <link rel="next" title="Postprocessors" href="postprocessors.html" />
     <link rel="prev" title="InaSAFE Options" href="options.html" /> 
   </head>
   <body>
@@ -47,7 +48,7 @@
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
         <li class="right" >
-          <a href="data_types.html" title="Data Types"
+          <a href="postprocessors.html" title="Postprocessors"
              accesskey="N">next</a> &nbsp; &nbsp;</li>
         <li class="right" >
           <a href="options.html" title="InaSAFE Options"
@@ -71,6 +72,54 @@
 <p>This document explains the purpose of impact functions and lists the
 different available impact function and the requirements each has to be
 used effectively.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">This document is still a work in progress.</p>
+</div>
+<div class="section" id="what-is-an-impact-function">
+<h2>What is an impact function?<a class="headerlink" href="#what-is-an-impact-function" title="Permalink to this headline">¶</a></h2>
+<p>In impact function is a software programme that computes a risk assessment
+given a number of inputs. The risk assessment will typically have a spatial
+component (e.g. a GIS layer which can be incorporated into a map) and a
+non-spatial component (e.g. a list of actions you may want to consider carrying out,
+or a list of estimates of disaster risk reduction elements such as how many
+bags of rice to make available).</p>
+</div>
+<div class="section" id="selecting-an-impact-function">
+<h2>Selecting an impact function<a class="headerlink" href="#selecting-an-impact-function" title="Permalink to this headline">¶</a></h2>
+<p>Impact functions are bundled with the InaSAFE software. The graphical user interface
+(provided as a plugin for QGIS will offer a list of impact functions that can be
+used based on the layers you have loaded and their <a class="reference internal" href="keywords.html"><em>keywords</em></a>.</p>
+</div>
+<div class="section" id="exploring-impact-functions">
+<h2>Exploring impact functions<a class="headerlink" href="#exploring-impact-functions" title="Permalink to this headline">¶</a></h2>
+<p>You can use the impact function table to explore all of the possible impact functions
+that can be used. They are listed in a table with a series of pick-lists (combo boxes)
+above which can be used to filter the functions based on different criteria as
+illustrated below.</p>
+<div class="figure align-center">
+<img alt="../_images/impact_function_table_unfiltered.png" src="../_images/impact_function_table_unfiltered.png" />
+</div>
+<p>When applying a filter set, the list of available functions that meet those criteria is
+updated as shown below.</p>
+<div class="figure align-center">
+<img alt="../_images/impact_function_table_filtered.png" src="../_images/impact_function_table_filtered.png" />
+</div>
+<p>The impact function table is simply a browser to help you to familiarise yourself with
+the functions available. For the actual usage of the functions you need to have
+layers available (i.e. loaded in QGIS) with the appropriate keywords for your target function.</p>
+</div>
+<div class="section" id="creating-impact-functions">
+<h2>Creating impact functions<a class="headerlink" href="#creating-impact-functions" title="Permalink to this headline">¶</a></h2>
+<p>If you feel there is an important impact function which is missing, there are two
+avenues you can follow:</p>
+<ul class="simple">
+<li>You can develop it yourself or with the aid of a programmer who has a good understanding
+of the python programming language.</li>
+<li>You can file a ticket on our <a class="reference external" href="https://github.com/AIFDR/inasafe/issues">issue tracking system</a>,
+and if time and resources allow we will implement it for you.</li>
+</ul>
+</div>
 </div>
 
 
@@ -82,12 +131,23 @@ used effectively.</p>
         <p class="logo"><a href="../contents.html">
           <img class="logo" src="../_static/icon.png" alt="Logo"/>
         </a></p>
+  <h3><a href="../contents.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Impact Functions</a><ul>
+<li><a class="reference internal" href="#what-is-an-impact-function">What is an impact function?</a></li>
+<li><a class="reference internal" href="#selecting-an-impact-function">Selecting an impact function</a></li>
+<li><a class="reference internal" href="#exploring-impact-functions">Exploring impact functions</a></li>
+<li><a class="reference internal" href="#creating-impact-functions">Creating impact functions</a></li>
+</ul>
+</li>
+</ul>
+
   <h4>Previous topic</h4>
   <p class="topless"><a href="options.html"
                         title="previous chapter">InaSAFE Options</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="data_types.html"
-                        title="next chapter">Data Types</a></p>
+  <p class="topless"><a href="postprocessors.html"
+                        title="next chapter">Postprocessors</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="../_sources/user-docs/impact_functions.txt"
@@ -122,7 +182,7 @@ used effectively.</p>
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
         <li class="right" >
-          <a href="data_types.html" title="Data Types"
+          <a href="postprocessors.html" title="Postprocessors"
              >next</a> &nbsp; &nbsp;</li>
         <li class="right" >
           <a href="options.html" title="InaSAFE Options"
@@ -137,7 +197,8 @@ used effectively.</p>
 
     <div class="footer">
         &copy; Copyright 2012, BNPB/AIFDR/GFDRR.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+      Last updated on Oct 18, 2012.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
     </div>
     <!-- cloud_sptheme 1.3 -->
   </body>

@@ -9,7 +9,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Module: safe.storage.utilities &mdash; InaSAFE 0.5.0-alpha documentation</title>
+    <title>Module: safe.storage.utilities &mdash; InaSAFE 0.5.1-final documentation</title>
     
     <link rel="stylesheet" href="../../../_static/cloud.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
@@ -18,7 +18,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../',
-        VERSION:     '0.5.0-alpha',
+        VERSION:     '0.5.1-final',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -29,9 +29,10 @@
     <script type="text/javascript" src="../../../_static/doctools.js"></script>
     <script type="text/javascript" src="../../../_static/jquery.cookie.js"></script>
     <script type="text/javascript" src="../../../_static/toggle_sections.js"></script>
-    <link rel="top" title="InaSAFE 0.5.0-alpha documentation" href="../../../index.html" />
+    <link rel="shortcut icon" href="../../../_static/favicon.ico"/>
+    <link rel="top" title="InaSAFE 0.5.1-final documentation" href="../../../index.html" />
     <link rel="up" title="Package::safe.storage" href="../storage.html" />
-    <link rel="next" title="Module: safe.storage.vector" href="vector.html" />
+    <link rel="next" title="Module: safe.storage.layer" href="layer.html" />
     <link rel="prev" title="Module: safe.storage.raster" href="raster.html" /> 
   </head>
   <body>
@@ -47,7 +48,7 @@
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
         <li class="right" >
-          <a href="vector.html" title="Module: safe.storage.vector"
+          <a href="layer.html" title="Module: safe.storage.layer"
              accesskey="N">next</a> &nbsp; &nbsp;</li>
         <li class="right" >
           <a href="raster.html" title="Module: safe.storage.raster"
@@ -71,6 +72,31 @@
   <div class="section" id="module-safe.storage.utilities">
 <span id="module-safe-storage-utilities"></span><h1>Module:  safe.storage.utilities<a class="headerlink" href="#module-safe.storage.utilities" title="Permalink to this headline">¶</a></h1>
 <p><strong>Utilities for storage module</strong></p>
+<dl class="function">
+<dt id="safe.storage.utilities.array2ring">
+<tt class="descclassname">safe.storage.utilities.</tt><tt class="descname">array2ring</tt><big>(</big><em>A</em><big>)</big><a class="reference internal" href="../../../_modules/safe/storage/utilities.html#array2ring"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe.storage.utilities.array2ring" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert coordinates to linear_ring</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><ul class="first last">
+<li><dl class="first docutils">
+<dt>A: Nx2 Array of coordinates representing either a polygon or a line.</dt>
+<dd><p class="first last">A can be either a numpy array or a list of coordinates.</p>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+<dt>Returns:</dt>
+<dd><ul class="first last simple">
+<li>ring: OGR linear_ring</li>
+</ul>
+</dd>
+</dl>
+<p>Note:
+Based on <a class="reference external" href="http://www.packtpub.com/article/working-geospatial-data-python">http://www.packtpub.com/article/working-geospatial-data-python</a></p>
+</dd></dl>
+
 <dl class="function">
 <dt id="safe.storage.utilities.array2wkt">
 <tt class="descclassname">safe.storage.utilities.</tt><tt class="descname">array2wkt</tt><big>(</big><em>A</em>, <em>geom_type='POLYGON'</em><big>)</big><a class="reference internal" href="../../../_modules/safe/storage/utilities.html#array2wkt"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe.storage.utilities.array2wkt" title="Permalink to this definition">¶</a></dt>
@@ -245,8 +271,24 @@ positive.</p>
 </dd></dl>
 
 <dl class="function">
+<dt id="safe.storage.utilities.check_geotransform">
+<tt class="descclassname">safe.storage.utilities.</tt><tt class="descname">check_geotransform</tt><big>(</big><em>geotransform</em><big>)</big><a class="reference internal" href="../../../_modules/safe/storage/utilities.html#check_geotransform"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe.storage.utilities.check_geotransform" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check that geotransform is valid</p>
+<dl class="docutils">
+<dt>Args</dt>
+<dd><ul class="first simple">
+<li>geotransform: GDAL geotransform (6-tuple).</li>
+</ul>
+<p class="last">(top left x, w-e pixel resolution, rotation,
+top left y, rotation, n-s pixel resolution).
+See e.g. <a class="reference external" href="http://www.gdal.org/gdal_tutorial.html">http://www.gdal.org/gdal_tutorial.html</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
 <dt id="safe.storage.utilities.combine_polygon_and_point_layers">
-<tt class="descclassname">safe.storage.utilities.</tt><tt class="descname">combine_polygon_and_point_layers</tt><big>(</big><em>layers</em><big>)</big><a class="headerlink" href="#safe.storage.utilities.combine_polygon_and_point_layers" title="Permalink to this definition">¶</a></dt>
+<tt class="descclassname">safe.storage.utilities.</tt><tt class="descname">combine_polygon_and_point_layers</tt><big>(</big><em>layers</em><big>)</big><a class="reference internal" href="../../../_modules/safe/storage/utilities.html#combine_polygon_and_point_layers"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe.storage.utilities.combine_polygon_and_point_layers" title="Permalink to this definition">¶</a></dt>
 <dd><p>Combine polygon and point layers</p>
 <dl class="docutils">
 <dt>Args:</dt>
@@ -368,6 +410,24 @@ or (resx + resy) / 2 (if isotropic is True)</p>
 <dd><p class="first">If geometry type cannot be determined an Exception is raised.</p>
 <p class="last">There is no consistency check across all entries of the
 geometry list, only the first element is used in this determination.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="safe.storage.utilities.get_ringdata">
+<tt class="descclassname">safe.storage.utilities.</tt><tt class="descname">get_ringdata</tt><big>(</big><em>ring</em><big>)</big><a class="reference internal" href="../../../_modules/safe/storage/utilities.html#get_ringdata"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe.storage.utilities.get_ringdata" title="Permalink to this definition">¶</a></dt>
+<dd><p>Extract coordinates from OGR ring object</p>
+<dl class="docutils">
+<dt>Args</dt>
+<dd><ul class="first last simple">
+<li>OGR ring object</li>
+</ul>
+</dd>
+<dt>Returns</dt>
+<dd><ul class="first last simple">
+<li>Nx2 numpy array of vertex coordinates (lon, lat)</li>
+</ul>
 </dd>
 </dl>
 </dd></dl>
@@ -534,6 +594,27 @@ If there are no &#8216;:&#8217;, then the keyword is treated as a key with no va
 </dd></dl>
 
 <dl class="function">
+<dt id="safe.storage.utilities.rings_equal">
+<tt class="descclassname">safe.storage.utilities.</tt><tt class="descname">rings_equal</tt><big>(</big><em>x</em>, <em>y</em>, <em>rtol=1e-06</em>, <em>atol=1e-08</em><big>)</big><a class="reference internal" href="../../../_modules/safe/storage/utilities.html#rings_equal"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe.storage.utilities.rings_equal" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compares to linear rings as numpy arrays</p>
+<dl class="docutils">
+<dt>Args</dt>
+<dd><ul class="first last simple">
+<li>x, y: Nx2 numpy arrays</li>
+</ul>
+</dd>
+<dt>Returns:</dt>
+<dd><ul class="first simple">
+<li>True if x == y or x&#8217; == y (up to the specified tolerance)</li>
+</ul>
+<p class="last">where x&#8217; is x reversed in the first dimension. This corresponds to
+linear rings being seen as equal irrespective of whether ther are
+organised in clock wise or counter clock wise order</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
 <dt id="safe.storage.utilities.write_keywords">
 <tt class="descclassname">safe.storage.utilities.</tt><tt class="descname">write_keywords</tt><big>(</big><em>keywords</em>, <em>filename</em>, <em>sublayer=None</em><big>)</big><a class="reference internal" href="../../../_modules/safe/storage/utilities.html#write_keywords"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe.storage.utilities.write_keywords" title="Permalink to this definition">¶</a></dt>
 <dd><p>Write keywords dictonary to file</p>
@@ -601,8 +682,8 @@ errors in the application.</p>
   <p class="topless"><a href="raster.html"
                         title="previous chapter">Module:  safe.storage.raster</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="vector.html"
-                        title="next chapter">Module:  safe.storage.vector</a></p>
+  <p class="topless"><a href="layer.html"
+                        title="next chapter">Module:  safe.storage.layer</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="../../../_sources/api-docs/safe/storage/utilities.txt"
@@ -637,7 +718,7 @@ errors in the application.</p>
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
         <li class="right" >
-          <a href="vector.html" title="Module: safe.storage.vector"
+          <a href="layer.html" title="Module: safe.storage.layer"
              >next</a> &nbsp; &nbsp;</li>
         <li class="right" >
           <a href="raster.html" title="Module: safe.storage.raster"
@@ -654,7 +735,8 @@ errors in the application.</p>
 
     <div class="footer">
         &copy; Copyright 2012, BNPB/AIFDR/GFDRR.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+      Last updated on Oct 18, 2012.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
     </div>
     <!-- cloud_sptheme 1.3 -->
   </body>

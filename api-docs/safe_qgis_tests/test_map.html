@@ -9,7 +9,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Module: safe_qgis.test_map &mdash; InaSAFE 0.5.0-alpha documentation</title>
+    <title>Module: safe_qgis.test_map &mdash; InaSAFE 0.5.1-final documentation</title>
     
     <link rel="stylesheet" href="../../_static/cloud.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -18,7 +18,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '0.5.0-alpha',
+        VERSION:     '0.5.1-final',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -29,10 +29,11 @@
     <script type="text/javascript" src="../../_static/doctools.js"></script>
     <script type="text/javascript" src="../../_static/jquery.cookie.js"></script>
     <script type="text/javascript" src="../../_static/toggle_sections.js"></script>
-    <link rel="top" title="InaSAFE 0.5.0-alpha documentation" href="../../index.html" />
+    <link rel="shortcut icon" href="../../_static/favicon.ico"/>
+    <link rel="top" title="InaSAFE 0.5.1-final documentation" href="../../index.html" />
     <link rel="up" title="Package::safe_qgis_tests" href="../safe_qgis_tests.html" />
-    <link rel="next" title="Module: safe_qgis.test_impact_calculator" href="test_impact_calculator.html" />
-    <link rel="prev" title="Module: safe_qgis.test_keywords_dialog" href="test_keywords_dialog.html" /> 
+    <link rel="next" title="Module: safe_qgis.test_help" href="test_help.html" />
+    <link rel="prev" title="Module: safe_qgis.test_utilities" href="test_utilities.html" /> 
   </head>
   <body>
     <div class="relbar-top">
@@ -47,10 +48,10 @@
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
         <li class="right" >
-          <a href="test_impact_calculator.html" title="Module: safe_qgis.test_impact_calculator"
+          <a href="test_help.html" title="Module: safe_qgis.test_help"
              accesskey="N">next</a> &nbsp; &nbsp;</li>
         <li class="right" >
-          <a href="test_keywords_dialog.html" title="Module: safe_qgis.test_keywords_dialog"
+          <a href="test_utilities.html" title="Module: safe_qgis.test_utilities"
              accesskey="P">previous</a> &nbsp; &nbsp;</li>
     <li><a href="../../index.html">Home</a> &raquo;</li>
     <li><a href="../../contents.html">Contents</a> &raquo;</li>
@@ -69,31 +70,15 @@
             
   <div class="section" id="module-safe_qgis.test_map">
 <span id="module-safe-qgis-test-map"></span><h1>Module:  safe_qgis.test_map<a class="headerlink" href="#module-safe_qgis.test_map" title="Permalink to this headline">¶</a></h1>
-<p>InaSAFE Disaster risk assessment tool developed by AusAid and World Bank
-- <strong>GUI Test Cases.</strong></p>
-<p>Contact : <a class="reference external" href="mailto:ole&#46;moller&#46;nielsen&#37;&#52;&#48;gmail&#46;com">ole<span>&#46;</span>moller<span>&#46;</span>nielsen<span>&#64;</span>gmail<span>&#46;</span>com</a></p>
-<div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">This program is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
-(at your option) any later version.</p>
-</div>
+<p><strong>Tests for map creation in QGIS plugin.</strong></p>
 <dl class="class">
 <dt id="safe_qgis.test_map.MapTest">
 <em class="property">class </em><tt class="descclassname">safe_qgis.test_map.</tt><tt class="descname">MapTest</tt><big>(</big><em>methodName='runTest'</em><big>)</big><a class="reference internal" href="../../_modules/safe_qgis/test_map.html#MapTest"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe_qgis.test_map.MapTest" title="Permalink to this definition">¶</a></dt>
 <dd><p>Test the InaSAFE Map generator</p>
 <dl class="method">
-<dt id="safe_qgis.test_map.MapTest.Xtest_renderTable">
-<tt class="descname">Xtest_renderTable</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/safe_qgis/test_map.html#MapTest.Xtest_renderTable"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe_qgis.test_map.MapTest.Xtest_renderTable" title="Permalink to this definition">¶</a></dt>
-<dd><p>Test that html renders nicely. Commented out for now until we work
-out how to get webkit to do offscreen rendering nicely.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="safe_qgis.test_map.MapTest.addSymbolToLegend">
-<tt class="descname">addSymbolToLegend</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/safe_qgis/test_map.html#MapTest.addSymbolToLegend"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe_qgis.test_map.MapTest.addSymbolToLegend" title="Permalink to this definition">¶</a></dt>
-<dd><p>Test we can add a symbol to the legend.</p>
+<dt id="safe_qgis.test_map.MapTest.Xtest_renderTemplate">
+<tt class="descname">Xtest_renderTemplate</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#safe_qgis.test_map.MapTest.Xtest_renderTemplate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test that load template works</p>
 </dd></dl>
 
 <dl class="method">
@@ -103,33 +88,9 @@ out how to get webkit to do offscreen rendering nicely.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="safe_qgis.test_map.MapTest.test_addClassToLegend">
-<tt class="descname">test_addClassToLegend</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/safe_qgis/test_map.html#MapTest.test_addClassToLegend"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe_qgis.test_map.MapTest.test_addClassToLegend" title="Permalink to this definition">¶</a></dt>
-<dd><p>Test we can add a class to the map legend.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="safe_qgis.test_map.MapTest.test_getLegend">
-<tt class="descname">test_getLegend</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/safe_qgis/test_map.html#MapTest.test_getLegend"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe_qgis.test_map.MapTest.test_getLegend" title="Permalink to this definition">¶</a></dt>
-<dd><p>Getting a legend for a generic layer works.</p>
-</dd></dl>
-
-<dl class="method">
 <dt id="safe_qgis.test_map.MapTest.test_getMapTitle">
 <tt class="descname">test_getMapTitle</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/safe_qgis/test_map.html#MapTest.test_getMapTitle"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe_qgis.test_map.MapTest.test_getMapTitle" title="Permalink to this definition">¶</a></dt>
 <dd><p>Getting the map title from the keywords</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="safe_qgis.test_map.MapTest.test_getRasterLegend">
-<tt class="descname">test_getRasterLegend</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/safe_qgis/test_map.html#MapTest.test_getRasterLegend"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe_qgis.test_map.MapTest.test_getRasterLegend" title="Permalink to this definition">¶</a></dt>
-<dd><p>Getting a legend for a raster layer works.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="safe_qgis.test_map.MapTest.test_getVectorLegend">
-<tt class="descname">test_getVectorLegend</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/safe_qgis/test_map.html#MapTest.test_getVectorLegend"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe_qgis.test_map.MapTest.test_getVectorLegend" title="Permalink to this definition">¶</a></dt>
-<dd><p>Getting a legend for a vector layer works.</p>
 </dd></dl>
 
 <dl class="method">
@@ -139,21 +100,15 @@ out how to get webkit to do offscreen rendering nicely.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="safe_qgis.test_map.MapTest.test_inasafeMap">
-<tt class="descname">test_inasafeMap</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/safe_qgis/test_map.html#MapTest.test_inasafeMap"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe_qgis.test_map.MapTest.test_inasafeMap" title="Permalink to this definition">¶</a></dt>
-<dd><p>Test making a pdf using the Map class.</p>
+<dt id="safe_qgis.test_map.MapTest.test_printToPdf">
+<tt class="descname">test_printToPdf</tt><big>(</big><big>)</big><a class="headerlink" href="#safe_qgis.test_map.MapTest.test_printToPdf" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test making a pdf of the map - this is the most typical use of map.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="safe_qgis.test_map.MapTest.test_mmPointConversion">
-<tt class="descname">test_mmPointConversion</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/safe_qgis/test_map.html#MapTest.test_mmPointConversion"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe_qgis.test_map.MapTest.test_mmPointConversion" title="Permalink to this definition">¶</a></dt>
-<dd><p>Test that conversions between pixel and page dimensions work.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="safe_qgis.test_map.MapTest.test_renderTemplate">
-<tt class="descname">test_renderTemplate</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/safe_qgis/test_map.html#MapTest.test_renderTemplate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe_qgis.test_map.MapTest.test_renderTemplate" title="Permalink to this definition">¶</a></dt>
-<dd><p>Test that load template works</p>
+<dt id="safe_qgis.test_map.MapTest.test_renderComposition">
+<tt class="descname">test_renderComposition</tt><big>(</big><big>)</big><a class="headerlink" href="#safe_qgis.test_map.MapTest.test_renderComposition" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test making an image of the map only.</p>
 </dd></dl>
 
 <dl class="method">
@@ -177,11 +132,11 @@ out how to get webkit to do offscreen rendering nicely.</p>
           <img class="logo" src="../../_static/icon.png" alt="Logo"/>
         </a></p>
   <h4>Previous topic</h4>
-  <p class="topless"><a href="test_keywords_dialog.html"
-                        title="previous chapter">Module:  safe_qgis.test_keywords_dialog</a></p>
+  <p class="topless"><a href="test_utilities.html"
+                        title="previous chapter">Module:  safe_qgis.test_utilities</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="test_impact_calculator.html"
-                        title="next chapter">Module:  safe_qgis.test_impact_calculator</a></p>
+  <p class="topless"><a href="test_help.html"
+                        title="next chapter">Module:  safe_qgis.test_help</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="../../_sources/api-docs/safe_qgis_tests/test_map.txt"
@@ -216,10 +171,10 @@ out how to get webkit to do offscreen rendering nicely.</p>
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
         <li class="right" >
-          <a href="test_impact_calculator.html" title="Module: safe_qgis.test_impact_calculator"
+          <a href="test_help.html" title="Module: safe_qgis.test_help"
              >next</a> &nbsp; &nbsp;</li>
         <li class="right" >
-          <a href="test_keywords_dialog.html" title="Module: safe_qgis.test_keywords_dialog"
+          <a href="test_utilities.html" title="Module: safe_qgis.test_utilities"
              >previous</a> &nbsp; &nbsp;</li>
     <li><a href="../../index.html">Home</a> &raquo;</li>
     <li><a href="../../contents.html">Contents</a> &raquo;</li>
@@ -232,7 +187,8 @@ out how to get webkit to do offscreen rendering nicely.</p>
 
     <div class="footer">
         &copy; Copyright 2012, BNPB/AIFDR/GFDRR.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+      Last updated on Oct 18, 2012.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
     </div>
     <!-- cloud_sptheme 1.3 -->
   </body>

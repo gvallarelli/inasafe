@@ -1,0 +1,194 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>safe.postprocessors.postprocessor_factory &mdash; InaSAFE 0.5.1-final documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/cloud.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Noticia+Text|Droid+Sans+Mono" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '0.5.1-final',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../../_static/jquery.cookie.js"></script>
+    <script type="text/javascript" src="../../../_static/toggle_sections.js"></script>
+    <link rel="shortcut icon" href="../../../_static/favicon.ico"/>
+    <link rel="top" title="InaSAFE 0.5.1-final documentation" href="../../../index.html" />
+    <link rel="up" title="Module code" href="../../index.html" /> 
+  </head>
+  <body>
+    <div class="relbar-top">
+        
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> &nbsp; &nbsp;</li>
+    <li><a href="../../../index.html">Home</a> &raquo;</li>
+    <li><a href="../../../contents.html">Contents</a> &raquo;</li>
+
+          <li><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    </div>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for safe.postprocessors.postprocessor_factory</h1><div class="highlight"><pre>
+<span class="c"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;**Postprocessors package.**</span>
+
+<span class="sd">.. tip::</span>
+<span class="sd">   import like this from safe.postprocessors import get_post_processors and</span>
+<span class="sd">   then call get_post_processors(requested_postprocessors)</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="n">__author__</span> <span class="o">=</span> <span class="s">&#39;Marco Bernasocchi &lt;marco@opengis.ch&gt;&#39;</span>
+<span class="n">__revision__</span> <span class="o">=</span> <span class="s">&#39;$Format:%H$&#39;</span>
+<span class="n">__date__</span> <span class="o">=</span> <span class="s">&#39;10/10/2012&#39;</span>
+<span class="n">__license__</span> <span class="o">=</span> <span class="s">&quot;GPL&quot;</span>
+<span class="n">__copyright__</span> <span class="o">=</span> <span class="s">&#39;Copyright 2012, Australia Indonesia Facility for &#39;</span>
+<span class="n">__copyright__</span> <span class="o">+=</span> <span class="s">&#39;Disaster Reduction&#39;</span>
+
+<span class="kn">import</span> <span class="nn">logging</span>
+
+<span class="c"># pylint: disable=W0611</span>
+<span class="kn">from</span> <span class="nn">gender_postprocessor</span> <span class="kn">import</span> <span class="n">GenderPostprocessor</span>
+<span class="kn">from</span> <span class="nn">age_postprocessor</span> <span class="kn">import</span> <span class="n">AgePostprocessor</span>
+<span class="c"># pylint: enable=W0611</span>
+
+<span class="n">LOGGER</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s">&#39;InaSAFE&#39;</span><span class="p">)</span>
+<span class="c">#this _must_reflect the imported classes above</span>
+<span class="n">AVAILABLE_POSTPTOCESSORS</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;Gender&#39;</span><span class="p">,</span> <span class="s">&#39;Age&#39;</span><span class="p">]</span>
+
+
+<div class="viewcode-block" id="get_post_processors"><a class="viewcode-back" href="../../../api-docs/safe/postprocessors/postprocessor_factory.html#safe.postprocessors.postprocessor_factory.get_post_processors">[docs]</a><span class="k">def</span> <span class="nf">get_post_processors</span><span class="p">(</span><span class="n">requested_postprocessors</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Creates a dictionary of applicable postprocessor instances</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        * requested_postprocessors: dictionary of requested</span>
+<span class="sd">            postprocessors such as</span>
+<span class="sd">            {</span>
+<span class="sd">            &#39;Gender&#39;: {&#39;on&#39;: True},</span>
+<span class="sd">            &#39;Age&#39;: {&#39;on&#39;: True,</span>
+<span class="sd">                    &#39;params&#39;: {</span>
+<span class="sd">                        &#39;youth_ratio&#39;: defaults[&#39;YOUTH_RATIO&#39;],</span>
+<span class="sd">                        &#39;adult_ratio&#39;: defaults[&#39;ADULT_RATIO&#39;],</span>
+<span class="sd">                        &#39;elder_ratio&#39;: defaults[&#39;ELDER_RATIO&#39;]</span>
+<span class="sd">                        }</span>
+<span class="sd">                    }</span>
+<span class="sd">            }</span>
+<span class="sd">            with &#39;PostprocessorName&#39;: {&#39;on&#39;: True} being the minimum needed to</span>
+<span class="sd">            activate a postprocessor.</span>
+<span class="sd">            If asked for unimplemented postprocessors, the factory will just</span>
+<span class="sd">            skip it returning the valid ones</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        dict of postprocessors instances e.g.</span>
+<span class="sd">            {&#39;Gender&#39;:GenderPostprocessors instance}</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">postprocessor_instances</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="k">if</span> <span class="n">requested_postprocessors</span> <span class="ow">is</span> <span class="bp">None</span> <span class="ow">or</span> <span class="n">requested_postprocessors</span> <span class="o">==</span> <span class="p">{}:</span>
+        <span class="k">return</span> <span class="n">postprocessor_instances</span>
+
+    <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">values</span> <span class="ow">in</span> <span class="n">requested_postprocessors</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
+        <span class="n">constr_id</span> <span class="o">=</span> <span class="n">name</span> <span class="o">+</span> <span class="s">&#39;Postprocessor&#39;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">values</span><span class="p">[</span><span class="s">&#39;on&#39;</span><span class="p">]:</span>
+                <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">AVAILABLE_POSTPTOCESSORS</span><span class="p">:</span>
+                    <span class="c">#http://stackoverflow.com/a/554462</span>
+                    <span class="n">constr</span> <span class="o">=</span> <span class="nb">globals</span><span class="p">()[</span><span class="n">constr_id</span><span class="p">]</span>
+                    <span class="n">instance</span> <span class="o">=</span> <span class="n">constr</span><span class="p">()</span>
+                    <span class="n">postprocessor_instances</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">instance</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">LOGGER</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">constr_id</span> <span class="o">+</span> <span class="s">&#39; is not a valid Postprocessor,&#39;</span>
+                                             <span class="s">&#39; skipping it&#39;</span><span class="p">)</span>
+
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">LOGGER</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">constr_id</span> <span class="o">+</span> <span class="s">&#39; user disabled, skipping it&#39;</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="n">LOGGER</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">constr_id</span> <span class="o">+</span> <span class="s">&#39; has no &quot;on&quot; key, skipping it&#39;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">postprocessor_instances</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+        <p class="logo"><a href="../../../contents.html">
+          <img class="logo" src="../../../_static/icon.png" alt="Logo"/>
+        </a></p>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="relbar-bottom">
+        
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> &nbsp; &nbsp;</li>
+    <li><a href="../../../index.html">Home</a> &raquo;</li>
+    <li><a href="../../../contents.html">Contents</a> &raquo;</li>
+
+          <li><a href="../../index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    </div>
+
+    <div class="footer">
+        &copy; Copyright 2012, BNPB/AIFDR/GFDRR.
+      Last updated on Oct 18, 2012.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+    </div>
+    <!-- cloud_sptheme 1.3 -->
+  </body>
+</html>

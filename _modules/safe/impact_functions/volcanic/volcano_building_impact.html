@@ -1,0 +1,310 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>safe.impact_functions.volcanic.volcano_building_impact &mdash; InaSAFE 0.5.1-final documentation</title>
+    
+    <link rel="stylesheet" href="../../../../_static/cloud.css" type="text/css" />
+    <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Noticia+Text|Droid+Sans+Mono" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../../',
+        VERSION:     '0.5.1-final',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../../../_static/jquery.cookie.js"></script>
+    <script type="text/javascript" src="../../../../_static/toggle_sections.js"></script>
+    <link rel="shortcut icon" href="../../../../_static/favicon.ico"/>
+    <link rel="top" title="InaSAFE 0.5.1-final documentation" href="../../../../index.html" />
+    <link rel="up" title="Module code" href="../../../index.html" /> 
+  </head>
+  <body>
+    <div class="relbar-top">
+        
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> &nbsp; &nbsp;</li>
+    <li><a href="../../../../index.html">Home</a> &raquo;</li>
+    <li><a href="../../../../contents.html">Contents</a> &raquo;</li>
+
+          <li><a href="../../../index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    </div>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for safe.impact_functions.volcanic.volcano_building_impact</h1><div class="highlight"><pre>
+<span class="kn">import</span> <span class="nn">numpy</span>
+<span class="kn">from</span> <span class="nn">safe.impact_functions.core</span> <span class="kn">import</span> <span class="n">FunctionProvider</span>
+<span class="kn">from</span> <span class="nn">safe.impact_functions.core</span> <span class="kn">import</span> <span class="n">get_hazard_layer</span><span class="p">,</span> <span class="n">get_exposure_layer</span>
+<span class="kn">from</span> <span class="nn">safe.impact_functions.core</span> <span class="kn">import</span> <span class="n">get_question</span>
+<span class="kn">from</span> <span class="nn">safe.storage.vector</span> <span class="kn">import</span> <span class="n">Vector</span>
+<span class="kn">from</span> <span class="nn">safe.common.utilities</span> <span class="kn">import</span> <span class="n">ugettext</span> <span class="k">as</span> <span class="n">_</span>
+<span class="kn">from</span> <span class="nn">safe.common.tables</span> <span class="kn">import</span> <span class="n">Table</span><span class="p">,</span> <span class="n">TableRow</span>
+<span class="kn">from</span> <span class="nn">safe.engine.interpolation</span> <span class="kn">import</span> <span class="n">assign_hazard_values_to_exposure_data</span>
+<span class="kn">from</span> <span class="nn">safe.engine.interpolation</span> <span class="kn">import</span> <span class="n">make_circular_polygon</span>
+<span class="kn">from</span> <span class="nn">safe.common.exceptions</span> <span class="kn">import</span> <span class="n">InaSAFEError</span>
+
+
+<div class="viewcode-block" id="VolcanoBuildingImpact"><a class="viewcode-back" href="../../../../api-docs/safe/impact_functions/volcanic/volcano_building_impact.html#safe.impact_functions.volcanic.volcano_building_impact.VolcanoBuildingImpact">[docs]</a><span class="k">class</span> <span class="nc">VolcanoBuildingImpact</span><span class="p">(</span><span class="n">FunctionProvider</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Risk plugin for flood evacuation</span>
+
+<span class="sd">    :author AIFDR</span>
+<span class="sd">    :rating 4</span>
+<span class="sd">    :param requires category==&#39;hazard&#39; and \</span>
+<span class="sd">                    subcategory in [&#39;volcano&#39;] and \</span>
+<span class="sd">                    layertype==&#39;vector&#39;</span>
+
+<span class="sd">    :param requires category==&#39;exposure&#39; and \</span>
+<span class="sd">                    subcategory==&#39;structure&#39; and \</span>
+<span class="sd">                    layertype==&#39;vector&#39;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">title</span> <span class="o">=</span> <span class="n">_</span><span class="p">(</span><span class="s">&#39;Be affected&#39;</span><span class="p">)</span>
+    <span class="n">target_field</span> <span class="o">=</span> <span class="s">&#39;buildings&#39;</span>
+
+    <span class="n">parameters</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">distances</span><span class="o">=</span><span class="p">[</span><span class="mi">1000</span><span class="p">,</span> <span class="mi">2000</span><span class="p">,</span> <span class="mi">3000</span><span class="p">,</span> <span class="mi">5000</span><span class="p">,</span> <span class="mi">10000</span><span class="p">],</span>
+                      <span class="n">volcano_name</span><span class="o">=</span><span class="s">&#39;All&#39;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="VolcanoBuildingImpact.run"><a class="viewcode-back" href="../../../../api-docs/safe/impact_functions/volcanic/volcano_building_impact.html#safe.impact_functions.volcanic.volcano_building_impact.VolcanoBuildingImpact.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">layers</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Risk plugin for flood population evacuation</span>
+
+<span class="sd">        Input</span>
+<span class="sd">          layers: List of layers expected to contain</span>
+<span class="sd">              H: Raster layer of volcano depth</span>
+<span class="sd">              P: Raster layer of population data on the same grid as H</span>
+
+<span class="sd">        Counts number of people exposed to flood levels exceeding</span>
+<span class="sd">        specified threshold.</span>
+
+<span class="sd">        Return</span>
+<span class="sd">          Map of population exposed to volcanic hazard zones</span>
+<span class="sd">          Table with number of buildings affected</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c"># Identify hazard and exposure layers</span>
+        <span class="n">H</span> <span class="o">=</span> <span class="n">get_hazard_layer</span><span class="p">(</span><span class="n">layers</span><span class="p">)</span>  <span class="c"># Flood inundation</span>
+        <span class="n">E</span> <span class="o">=</span> <span class="n">get_exposure_layer</span><span class="p">(</span><span class="n">layers</span><span class="p">)</span>
+
+        <span class="n">question</span> <span class="o">=</span> <span class="n">get_question</span><span class="p">(</span><span class="n">H</span><span class="o">.</span><span class="n">get_name</span><span class="p">(),</span>
+                                <span class="n">E</span><span class="o">.</span><span class="n">get_name</span><span class="p">(),</span>
+                                <span class="bp">self</span><span class="p">)</span>
+
+        <span class="c"># Input checks</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">H</span><span class="o">.</span><span class="n">is_vector</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;Input hazard </span><span class="si">%s</span><span class="s">  was not a vector layer as expected &#39;</span>
+                   <span class="o">%</span> <span class="n">H</span><span class="o">.</span><span class="n">get_name</span><span class="p">())</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+        <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;Input hazard must be a polygon or point layer. &#39;</span>
+               <span class="s">&#39;I got </span><span class="si">%s</span><span class="s"> with layer &#39;</span>
+               <span class="s">&#39;type </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">H</span><span class="o">.</span><span class="n">get_name</span><span class="p">(),</span>
+                            <span class="n">H</span><span class="o">.</span><span class="n">get_geometry_name</span><span class="p">()))</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">H</span><span class="o">.</span><span class="n">is_polygon_data</span> <span class="ow">or</span> <span class="n">H</span><span class="o">.</span><span class="n">is_point_data</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">H</span><span class="o">.</span><span class="n">is_point_data</span><span class="p">:</span>
+            <span class="c"># Use concentric circles</span>
+            <span class="n">radii</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s">&#39;distances&#39;</span><span class="p">]</span>
+
+            <span class="n">centers</span> <span class="o">=</span> <span class="n">H</span><span class="o">.</span><span class="n">get_geometry</span><span class="p">()</span>
+            <span class="n">attributes</span> <span class="o">=</span> <span class="n">H</span><span class="o">.</span><span class="n">get_data</span><span class="p">()</span>
+            <span class="n">Z</span> <span class="o">=</span> <span class="n">make_circular_polygon</span><span class="p">(</span><span class="n">centers</span><span class="p">,</span> <span class="n">radii</span><span class="p">,</span> <span class="n">attributes</span><span class="o">=</span><span class="n">attributes</span><span class="p">)</span>
+            <span class="n">Z</span><span class="o">.</span><span class="n">write_to_file</span><span class="p">(</span><span class="s">&#39;Marapi_evac_zone_</span><span class="si">%s</span><span class="s">.shp&#39;</span> <span class="o">%</span> <span class="nb">str</span><span class="p">(</span><span class="n">radii</span><span class="p">))</span>  <span class="c"># To check</span>
+            <span class="n">category_title</span> <span class="o">=</span> <span class="s">&#39;Radius&#39;</span>
+            <span class="n">H</span> <span class="o">=</span> <span class="n">Z</span>
+
+            <span class="c">#category_names = [&#39;%s m&#39; % x for x in radii]</span>
+            <span class="n">category_names</span> <span class="o">=</span> <span class="n">radii</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c"># Use hazard map</span>
+            <span class="n">category_title</span> <span class="o">=</span> <span class="s">&#39;KRB&#39;</span>
+
+            <span class="c"># FIXME (Ole): Change to English and use translation system</span>
+            <span class="n">category_names</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;Kawasan Rawan Bencana III&#39;</span><span class="p">,</span>
+                              <span class="s">&#39;Kawasan Rawan Bencana II&#39;</span><span class="p">,</span>
+                              <span class="s">&#39;Kawasan Rawan Bencana I&#39;</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">category_title</span> <span class="ow">in</span> <span class="n">H</span><span class="o">.</span><span class="n">get_attribute_names</span><span class="p">():</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;Hazard data </span><span class="si">%s</span><span class="s"> did not contain expected &#39;</span>
+                   <span class="s">&#39;attribute </span><span class="si">%s</span><span class="s"> &#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">H</span><span class="o">.</span><span class="n">get_name</span><span class="p">(),</span> <span class="n">category_title</span><span class="p">))</span>
+            <span class="k">raise</span> <span class="n">InaSAFEError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+        <span class="c"># Run interpolation function for polygon2raster</span>
+        <span class="n">P</span> <span class="o">=</span> <span class="n">assign_hazard_values_to_exposure_data</span><span class="p">(</span><span class="n">H</span><span class="p">,</span> <span class="n">E</span><span class="p">)</span>
+
+        <span class="n">P</span><span class="o">.</span><span class="n">write_to_file</span><span class="p">(</span><span class="s">&#39;/tmp/volcano_building_impact.shp&#39;</span><span class="p">)</span>
+
+        <span class="c"># Initialise attributes of output dataset with all attributes</span>
+        <span class="c"># from input polygon and a population count of zero</span>
+        <span class="n">new_attributes</span> <span class="o">=</span> <span class="n">H</span><span class="o">.</span><span class="n">get_data</span><span class="p">()</span>
+
+        <span class="n">categories</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="n">new_attributes</span><span class="p">:</span>
+            <span class="n">attr</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">target_field</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="n">cat</span> <span class="o">=</span> <span class="n">attr</span><span class="p">[</span><span class="n">category_title</span><span class="p">]</span>
+            <span class="n">categories</span><span class="p">[</span><span class="n">cat</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="c"># Count affected population per polygon and total</span>
+        <span class="n">total_affected</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="n">P</span><span class="o">.</span><span class="n">get_data</span><span class="p">():</span>
+
+            <span class="c"># Update building count for associated polygon</span>
+            <span class="n">poly_id</span> <span class="o">=</span> <span class="n">attr</span><span class="p">[</span><span class="s">&#39;polygon_id&#39;</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">poly_id</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+                <span class="n">new_attributes</span><span class="p">[</span><span class="n">poly_id</span><span class="p">][</span><span class="bp">self</span><span class="o">.</span><span class="n">target_field</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+
+                <span class="c"># Update building count for each category</span>
+                <span class="n">cat</span> <span class="o">=</span> <span class="n">new_attributes</span><span class="p">[</span><span class="n">poly_id</span><span class="p">][</span><span class="n">category_title</span><span class="p">]</span>
+                <span class="n">categories</span><span class="p">[</span><span class="n">cat</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+
+            <span class="c"># Update total</span>
+            <span class="n">total_affected</span> <span class="o">+=</span> <span class="mi">1</span>
+
+        <span class="c"># Count totals</span>
+        <span class="n">total</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">E</span><span class="p">)</span>
+
+        <span class="c"># Generate simple impact report</span>
+        <span class="n">table_body</span> <span class="o">=</span> <span class="p">[</span><span class="n">question</span><span class="p">,</span>
+                      <span class="n">TableRow</span><span class="p">([</span><span class="n">_</span><span class="p">(</span><span class="s">&#39;Buildings&#39;</span><span class="p">),</span> <span class="n">_</span><span class="p">(</span><span class="s">&#39;Total&#39;</span><span class="p">),</span> <span class="n">_</span><span class="p">(</span><span class="s">&#39;Cumulative&#39;</span><span class="p">)],</span>
+                               <span class="n">header</span><span class="o">=</span><span class="bp">True</span><span class="p">),</span>
+                      <span class="n">TableRow</span><span class="p">([</span><span class="n">_</span><span class="p">(</span><span class="s">&#39;All&#39;</span><span class="p">),</span> <span class="n">total_affected</span><span class="p">])]</span>
+
+        <span class="n">cum</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">category_names</span><span class="p">:</span>
+            <span class="n">count</span> <span class="o">=</span> <span class="n">categories</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+            <span class="n">cum</span> <span class="o">+=</span> <span class="n">count</span>
+            <span class="n">table_body</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">TableRow</span><span class="p">([</span><span class="n">name</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">count</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="n">cum</span><span class="p">)]))</span>
+
+        <span class="n">table_body</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">TableRow</span><span class="p">(</span><span class="n">_</span><span class="p">(</span><span class="s">&#39;Map shows buildings affected in &#39;</span>
+                                     <span class="s">&#39;each of volcano hazard polygons.&#39;</span><span class="p">)))</span>
+        <span class="n">impact_table</span> <span class="o">=</span> <span class="n">Table</span><span class="p">(</span><span class="n">table_body</span><span class="p">)</span><span class="o">.</span><span class="n">toNewlineFreeString</span><span class="p">()</span>
+
+        <span class="c"># Extend impact report for on-screen display</span>
+        <span class="n">table_body</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="n">TableRow</span><span class="p">(</span><span class="n">_</span><span class="p">(</span><span class="s">&#39;Notes&#39;</span><span class="p">),</span> <span class="n">header</span><span class="o">=</span><span class="bp">True</span><span class="p">),</span>
+                           <span class="n">_</span><span class="p">(</span><span class="s">&#39;Total number of buildings </span><span class="si">%i</span><span class="s"> in the viewable &#39;</span>
+                             <span class="s">&#39;area&#39;</span><span class="p">)</span> <span class="o">%</span> <span class="n">total</span><span class="p">,</span>
+                           <span class="n">_</span><span class="p">(</span><span class="s">&#39;Only buildings available in Open Street Map&#39;</span>
+                             <span class="s">&#39;are considered.&#39;</span><span class="p">)])</span>
+        <span class="n">impact_summary</span> <span class="o">=</span> <span class="n">Table</span><span class="p">(</span><span class="n">table_body</span><span class="p">)</span><span class="o">.</span><span class="n">toNewlineFreeString</span><span class="p">()</span>
+        <span class="n">map_title</span> <span class="o">=</span> <span class="n">_</span><span class="p">(</span><span class="s">&#39;Buildings affected by volcanic hazard zone&#39;</span><span class="p">)</span>
+
+        <span class="c"># Define classes for legend for flooded building counts</span>
+        <span class="n">colours</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;#FFFFFF&#39;</span><span class="p">,</span> <span class="s">&#39;#38A800&#39;</span><span class="p">,</span> <span class="s">&#39;#79C900&#39;</span><span class="p">,</span> <span class="s">&#39;#CEED00&#39;</span><span class="p">,</span>
+                   <span class="s">&#39;#FFCC00&#39;</span><span class="p">,</span> <span class="s">&#39;#FF6600&#39;</span><span class="p">,</span> <span class="s">&#39;#FF0000&#39;</span><span class="p">,</span> <span class="s">&#39;#7A0000&#39;</span><span class="p">]</span>
+        <span class="n">building_counts</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">target_field</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">new_attributes</span><span class="p">]</span>
+        <span class="n">cls</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">numpy</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span>
+                                   <span class="nb">max</span><span class="p">(</span><span class="n">building_counts</span><span class="p">),</span>
+                                   <span class="nb">len</span><span class="p">(</span><span class="n">colours</span><span class="p">))</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+
+        <span class="c"># Define style info for output polygons showing population counts</span>
+        <span class="n">style_classes</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">colour</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">colours</span><span class="p">):</span>
+            <span class="n">lo</span> <span class="o">=</span> <span class="n">cls</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="n">hi</span> <span class="o">=</span> <span class="n">cls</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
+
+            <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">label</span> <span class="o">=</span> <span class="n">_</span><span class="p">(</span><span class="s">&#39;0&#39;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">label</span> <span class="o">=</span> <span class="n">_</span><span class="p">(</span><span class="s">&#39;</span><span class="si">%i</span><span class="s"> - </span><span class="si">%i</span><span class="s">&#39;</span><span class="p">)</span> <span class="o">%</span> <span class="p">(</span><span class="n">lo</span><span class="p">,</span> <span class="n">hi</span><span class="p">)</span>
+
+            <span class="n">entry</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="n">label</span><span class="p">,</span> <span class="n">colour</span><span class="o">=</span><span class="n">colour</span><span class="p">,</span> <span class="nb">min</span><span class="o">=</span><span class="n">lo</span><span class="p">,</span> <span class="nb">max</span><span class="o">=</span><span class="n">hi</span><span class="p">,</span>
+                         <span class="n">transparency</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+            <span class="n">style_classes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">entry</span><span class="p">)</span>
+
+        <span class="c"># Override style info with new classes and name</span>
+        <span class="n">style_info</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">target_field</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">target_field</span><span class="p">,</span>
+                          <span class="n">style_classes</span><span class="o">=</span><span class="n">style_classes</span><span class="p">,</span>
+                          <span class="n">legend_title</span><span class="o">=</span><span class="n">_</span><span class="p">(</span><span class="s">&#39;Building Count&#39;</span><span class="p">))</span>
+
+        <span class="c"># Create vector layer and return</span>
+        <span class="n">V</span> <span class="o">=</span> <span class="n">Vector</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">new_attributes</span><span class="p">,</span>
+                   <span class="n">projection</span><span class="o">=</span><span class="n">H</span><span class="o">.</span><span class="n">get_projection</span><span class="p">(),</span>
+                   <span class="n">geometry</span><span class="o">=</span><span class="n">H</span><span class="o">.</span><span class="n">get_geometry</span><span class="p">(</span><span class="n">as_geometry_objects</span><span class="o">=</span><span class="bp">True</span><span class="p">),</span>
+                   <span class="n">name</span><span class="o">=</span><span class="n">_</span><span class="p">(</span><span class="s">&#39;Buildings affected by volcanic hazard zone&#39;</span><span class="p">),</span>
+                   <span class="n">keywords</span><span class="o">=</span><span class="p">{</span><span class="s">&#39;impact_summary&#39;</span><span class="p">:</span> <span class="n">impact_summary</span><span class="p">,</span>
+                             <span class="s">&#39;impact_table&#39;</span><span class="p">:</span> <span class="n">impact_table</span><span class="p">,</span>
+                             <span class="s">&#39;map_title&#39;</span><span class="p">:</span> <span class="n">map_title</span><span class="p">,</span>
+                             <span class="s">&#39;target_field&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">target_field</span><span class="p">},</span>
+                   <span class="n">style_info</span><span class="o">=</span><span class="n">style_info</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">V</span></div></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+        <p class="logo"><a href="../../../../contents.html">
+          <img class="logo" src="../../../../_static/icon.png" alt="Logo"/>
+        </a></p>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="relbar-bottom">
+        
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> &nbsp; &nbsp;</li>
+    <li><a href="../../../../index.html">Home</a> &raquo;</li>
+    <li><a href="../../../../contents.html">Contents</a> &raquo;</li>
+
+          <li><a href="../../../index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    </div>
+
+    <div class="footer">
+        &copy; Copyright 2012, BNPB/AIFDR/GFDRR.
+      Last updated on Oct 18, 2012.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+    </div>
+    <!-- cloud_sptheme 1.3 -->
+  </body>
+</html>

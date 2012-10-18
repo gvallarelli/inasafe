@@ -9,7 +9,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>safe_qgis.clipper &mdash; InaSAFE 0.5.0-alpha documentation</title>
+    <title>safe_qgis.clipper &mdash; InaSAFE 0.5.1-final documentation</title>
     
     <link rel="stylesheet" href="../../_static/cloud.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -18,7 +18,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '0.5.0-alpha',
+        VERSION:     '0.5.1-final',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -29,7 +29,8 @@
     <script type="text/javascript" src="../../_static/doctools.js"></script>
     <script type="text/javascript" src="../../_static/jquery.cookie.js"></script>
     <script type="text/javascript" src="../../_static/toggle_sections.js"></script>
-    <link rel="top" title="InaSAFE 0.5.0-alpha documentation" href="../../index.html" />
+    <link rel="shortcut icon" href="../../_static/favicon.ico"/>
+    <link rel="top" title="InaSAFE 0.5.1-final documentation" href="../../index.html" />
     <link rel="up" title="Module code" href="../index.html" /> 
   </head>
   <body>
@@ -122,7 +123,8 @@
     <span class="k">return</span> <span class="n">QCoreApplication</span><span class="o">.</span><span class="n">translate</span><span class="p">(</span><span class="n">myContext</span><span class="p">,</span> <span class="n">theText</span><span class="p">)</span>
 
 </div>
-<div class="viewcode-block" id="clipLayer"><a class="viewcode-back" href="../../api-docs/safe_qgis/clipper.html#safe_qgis.clipper.clipLayer">[docs]</a><span class="k">def</span> <span class="nf">clipLayer</span><span class="p">(</span><span class="n">theLayer</span><span class="p">,</span> <span class="n">theExtent</span><span class="p">,</span> <span class="n">theCellSize</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">theExtraKeywords</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+<div class="viewcode-block" id="clipLayer"><a class="viewcode-back" href="../../api-docs/safe_qgis/clipper.html#safe_qgis.clipper.clipLayer">[docs]</a><span class="k">def</span> <span class="nf">clipLayer</span><span class="p">(</span><span class="n">theLayer</span><span class="p">,</span> <span class="n">theExtent</span><span class="p">,</span> <span class="n">theCellSize</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">theExtraKeywords</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+              <span class="n">explodeMultipart</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Clip a Hazard or Exposure layer to the extents provided.</span>
 
 <span class="sd">    .. note:: Will delegate to clipVectorLayer or clipRasterLayer as needed.</span>
@@ -139,6 +141,8 @@
 <span class="sd">            for a raster layer, the native raster cell size will be used.</span>
 <span class="sd">        * theExtraKeywords - Optional keywords dictionary to be added to</span>
 <span class="sd">                          output layer</span>
+<span class="sd">        * explodeMultipart - a bool describing if to convert multipart</span>
+<span class="sd">        features into singleparts</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        Path to the output clipped layer (placed in the</span>
@@ -151,14 +155,15 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">theLayer</span><span class="o">.</span><span class="n">type</span><span class="p">()</span> <span class="o">==</span> <span class="n">QgsMapLayer</span><span class="o">.</span><span class="n">VectorLayer</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">_clipVectorLayer</span><span class="p">(</span><span class="n">theLayer</span><span class="p">,</span> <span class="n">theExtent</span><span class="p">,</span>
-                                <span class="n">theExtraKeywords</span><span class="o">=</span><span class="n">theExtraKeywords</span><span class="p">)</span>
+            <span class="n">theExtraKeywords</span><span class="o">=</span><span class="n">theExtraKeywords</span><span class="p">,</span>
+            <span class="n">explodeMultipart</span><span class="o">=</span><span class="n">explodeMultipart</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">_clipRasterLayer</span><span class="p">(</span><span class="n">theLayer</span><span class="p">,</span> <span class="n">theExtent</span><span class="p">,</span> <span class="n">theCellSize</span><span class="p">,</span>
-                                <span class="n">theExtraKeywords</span><span class="o">=</span><span class="n">theExtraKeywords</span><span class="p">)</span>
+            <span class="n">theExtraKeywords</span><span class="o">=</span><span class="n">theExtraKeywords</span><span class="p">)</span>
 
 </div>
 <span class="k">def</span> <span class="nf">_clipVectorLayer</span><span class="p">(</span><span class="n">theLayer</span><span class="p">,</span> <span class="n">theExtent</span><span class="p">,</span>
-                     <span class="n">theExtraKeywords</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+                     <span class="n">theExtraKeywords</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">explodeMultipart</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Clip a Hazard or Exposure layer to the</span>
 <span class="sd">    extents of the current view frame. The layer must be a</span>
 <span class="sd">    vector layer or an exception will be thrown.</span>
@@ -174,6 +179,8 @@
 <span class="sd">           no checks are made to enforce this.</span>
 <span class="sd">        * theExtraKeywords - any additional keywords over and above the</span>
 <span class="sd">          original keywords that should be associated with the cliplayer.</span>
+<span class="sd">        * explodeMultipart - a bool describing if to convert multipart</span>
+<span class="sd">        features into singleparts</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        Path to the output clipped layer (placed in the</span>
@@ -189,9 +196,11 @@
 
     <span class="k">if</span> <span class="n">theLayer</span><span class="o">.</span><span class="n">type</span><span class="p">()</span> <span class="o">!=</span> <span class="n">QgsMapLayer</span><span class="o">.</span><span class="n">VectorLayer</span><span class="p">:</span>
         <span class="n">myMessage</span> <span class="o">=</span> <span class="n">tr</span><span class="p">(</span><span class="s">&#39;Expected a vector layer but received a </span><span class="si">%s</span><span class="s">.&#39;</span> <span class="o">%</span>
-                <span class="nb">str</span><span class="p">(</span><span class="n">theLayer</span><span class="o">.</span><span class="n">type</span><span class="p">()))</span>
+                       <span class="nb">str</span><span class="p">(</span><span class="n">theLayer</span><span class="o">.</span><span class="n">type</span><span class="p">()))</span>
         <span class="k">raise</span> <span class="n">InvalidParameterException</span><span class="p">(</span><span class="n">myMessage</span><span class="p">)</span>
 
+    <span class="c">#myHandle, myFilename = tempfile.mkstemp(&#39;.sqlite&#39;, &#39;clip_&#39;,</span>
+    <span class="c">#    temp_dir())</span>
     <span class="n">myHandle</span><span class="p">,</span> <span class="n">myFilename</span> <span class="o">=</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">mkstemp</span><span class="p">(</span><span class="s">&#39;.shp&#39;</span><span class="p">,</span> <span class="s">&#39;clip_&#39;</span><span class="p">,</span>
                                             <span class="n">temp_dir</span><span class="p">())</span>
 
@@ -208,17 +217,17 @@
     <span class="n">myGeoCrs</span><span class="o">.</span><span class="n">createFromId</span><span class="p">(</span><span class="mi">4326</span><span class="p">,</span> <span class="n">QgsCoordinateReferenceSystem</span><span class="o">.</span><span class="n">EpsgCrsId</span><span class="p">)</span>
     <span class="n">myXForm</span> <span class="o">=</span> <span class="n">QgsCoordinateTransform</span><span class="p">(</span><span class="n">myGeoCrs</span><span class="p">,</span> <span class="n">theLayer</span><span class="o">.</span><span class="n">crs</span><span class="p">())</span>
     <span class="n">myRect</span> <span class="o">=</span> <span class="n">QgsRectangle</span><span class="p">(</span><span class="n">theExtent</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">theExtent</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
-                          <span class="n">theExtent</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">theExtent</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span>
+        <span class="n">theExtent</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">theExtent</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span>
     <span class="n">myProjectedExtent</span> <span class="o">=</span> <span class="n">myXForm</span><span class="o">.</span><span class="n">transformBoundingBox</span><span class="p">(</span><span class="n">myRect</span><span class="p">)</span>
 
     <span class="c"># Get vector layer</span>
     <span class="n">myProvider</span> <span class="o">=</span> <span class="n">theLayer</span><span class="o">.</span><span class="n">dataProvider</span><span class="p">()</span>
     <span class="k">if</span> <span class="n">myProvider</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
         <span class="n">myMessage</span> <span class="o">=</span> <span class="n">tr</span><span class="p">(</span><span class="s">&#39;Could not obtain data provider from &#39;</span>
-               <span class="s">&#39;layer &quot;</span><span class="si">%s</span><span class="s">&quot;&#39;</span> <span class="o">%</span> <span class="n">theLayer</span><span class="o">.</span><span class="n">source</span><span class="p">())</span>
+                       <span class="s">&#39;layer &quot;</span><span class="si">%s</span><span class="s">&quot;&#39;</span> <span class="o">%</span> <span class="n">theLayer</span><span class="o">.</span><span class="n">source</span><span class="p">())</span>
         <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="n">myMessage</span><span class="p">)</span>
 
-    <span class="c"># get the layer field list, select by our extent then write to disk</span>
+    <span class="c"># Get the layer field list, select by our extent then write to disk</span>
     <span class="c"># .. todo:: FIXME - for different geometry types we should implement</span>
     <span class="c">#    different clipping behaviour e.g. reject polygons that</span>
     <span class="c">#    intersect the edge of the bbox. Tim</span>
@@ -226,22 +235,23 @@
     <span class="n">myFetchGeometryFlag</span> <span class="o">=</span> <span class="bp">True</span>
     <span class="n">myUseIntersectFlag</span> <span class="o">=</span> <span class="bp">True</span>
     <span class="n">myProvider</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="n">myAttributes</span><span class="p">,</span>
-                      <span class="n">myProjectedExtent</span><span class="p">,</span>
-                      <span class="n">myFetchGeometryFlag</span><span class="p">,</span>
-                      <span class="n">myUseIntersectFlag</span><span class="p">)</span>
+        <span class="n">myProjectedExtent</span><span class="p">,</span>
+        <span class="n">myFetchGeometryFlag</span><span class="p">,</span>
+        <span class="n">myUseIntersectFlag</span><span class="p">)</span>
 
     <span class="n">myFieldList</span> <span class="o">=</span> <span class="n">myProvider</span><span class="o">.</span><span class="n">fields</span><span class="p">()</span>
 
     <span class="n">myWriter</span> <span class="o">=</span> <span class="n">QgsVectorFileWriter</span><span class="p">(</span><span class="n">myFilename</span><span class="p">,</span>
-                                   <span class="s">&#39;UTF-8&#39;</span><span class="p">,</span>
-                                   <span class="n">myFieldList</span><span class="p">,</span>
-                                   <span class="n">theLayer</span><span class="o">.</span><span class="n">wkbType</span><span class="p">(),</span>
-                                   <span class="n">myGeoCrs</span><span class="p">,</span>
-                                   <span class="s">&#39;ESRI Shapefile&#39;</span><span class="p">)</span>
+        <span class="s">&#39;UTF-8&#39;</span><span class="p">,</span>
+        <span class="n">myFieldList</span><span class="p">,</span>
+        <span class="n">theLayer</span><span class="o">.</span><span class="n">wkbType</span><span class="p">(),</span>
+        <span class="n">myGeoCrs</span><span class="p">,</span>
+        <span class="c">#&#39;SQLite&#39;)  # FIXME (Ole): This works but is far too slow</span>
+        <span class="s">&#39;ESRI Shapefile&#39;</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">myWriter</span><span class="o">.</span><span class="n">hasError</span><span class="p">()</span> <span class="o">!=</span> <span class="n">QgsVectorFileWriter</span><span class="o">.</span><span class="n">NoError</span><span class="p">:</span>
         <span class="n">myMessage</span> <span class="o">=</span> <span class="n">tr</span><span class="p">(</span><span class="s">&#39;Error when creating shapefile: &lt;br&gt;Filename:&#39;</span>
-               <span class="s">&#39;</span><span class="si">%s</span><span class="s">&lt;br&gt;Error: </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span>
-            <span class="p">(</span><span class="n">myFilename</span><span class="p">,</span> <span class="n">myWriter</span><span class="o">.</span><span class="n">hasError</span><span class="p">()))</span>
+                       <span class="s">&#39;</span><span class="si">%s</span><span class="s">&lt;br&gt;Error: </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span>
+                       <span class="p">(</span><span class="n">myFilename</span><span class="p">,</span> <span class="n">myWriter</span><span class="o">.</span><span class="n">hasError</span><span class="p">()))</span>
         <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="n">myMessage</span><span class="p">)</span>
 
     <span class="c"># Reverse the coordinate xform now so that we can convert</span>
@@ -253,8 +263,12 @@
     <span class="k">while</span> <span class="n">myProvider</span><span class="o">.</span><span class="n">nextFeature</span><span class="p">(</span><span class="n">myFeature</span><span class="p">):</span>
         <span class="n">myGeometry</span> <span class="o">=</span> <span class="n">myFeature</span><span class="o">.</span><span class="n">geometry</span><span class="p">()</span>
         <span class="c"># Loop through the parts adding them to the output file</span>
-        <span class="c"># we ALWAYS write out single part features</span>
-        <span class="n">myGeometryList</span> <span class="o">=</span> <span class="n">explodeMultiPartGeometry</span><span class="p">(</span><span class="n">myGeometry</span><span class="p">)</span>
+        <span class="c"># we write out single part features unless explodeMultipart is False</span>
+        <span class="k">if</span> <span class="n">explodeMultipart</span><span class="p">:</span>
+            <span class="n">myGeometryList</span> <span class="o">=</span> <span class="n">explodeMultiPartGeometry</span><span class="p">(</span><span class="n">myGeometry</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">myGeometryList</span> <span class="o">=</span> <span class="p">[</span><span class="n">myGeometry</span><span class="p">]</span>
+
         <span class="k">for</span> <span class="n">myPart</span> <span class="ow">in</span> <span class="n">myGeometryList</span><span class="p">:</span>
             <span class="n">myPart</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">myXForm</span><span class="p">)</span>
             <span class="n">myFeature</span><span class="o">.</span><span class="n">setGeometry</span><span class="p">(</span><span class="n">myPart</span><span class="p">)</span>
@@ -270,7 +284,7 @@
 
     <span class="n">myKeywordIO</span> <span class="o">=</span> <span class="n">KeywordIO</span><span class="p">()</span>
     <span class="n">myKeywordIO</span><span class="o">.</span><span class="n">copyKeywords</span><span class="p">(</span><span class="n">theLayer</span><span class="p">,</span> <span class="n">myFilename</span><span class="p">,</span>
-                  <span class="n">theExtraKeywords</span><span class="o">=</span><span class="n">theExtraKeywords</span><span class="p">)</span>
+        <span class="n">theExtraKeywords</span><span class="o">=</span><span class="n">theExtraKeywords</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">myFilename</span>  <span class="c"># Filename of created file</span>
 
@@ -530,7 +544,8 @@
 
     <div class="footer">
         &copy; Copyright 2012, BNPB/AIFDR/GFDRR.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+      Last updated on Oct 18, 2012.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
     </div>
     <!-- cloud_sptheme 1.3 -->
   </body>

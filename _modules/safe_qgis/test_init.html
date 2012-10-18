@@ -1,0 +1,199 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>safe_qgis.test_init &mdash; InaSAFE 0.5.1-final documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/cloud.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Noticia+Text|Droid+Sans+Mono" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.5.1-final',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../_static/jquery.cookie.js"></script>
+    <script type="text/javascript" src="../../_static/toggle_sections.js"></script>
+    <link rel="shortcut icon" href="../../_static/favicon.ico"/>
+    <link rel="top" title="InaSAFE 0.5.1-final documentation" href="../../index.html" />
+    <link rel="up" title="Module code" href="../index.html" /> 
+  </head>
+  <body>
+    <div class="relbar-top">
+        
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> &nbsp; &nbsp;</li>
+    <li><a href="../../index.html">Home</a> &raquo;</li>
+    <li><a href="../../contents.html">Contents</a> &raquo;</li>
+
+          <li><a href="../index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    </div>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for safe_qgis.test_init</h1><div class="highlight"><pre>
+<span class="sd">&quot;&quot;&quot;**Tests for map creation in QGIS plugin.**</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="n">__author__</span> <span class="o">=</span> <span class="s">&#39;Tim Sutton &lt;tim@linfiniti.com&gt;&#39;</span>
+<span class="n">__revision__</span> <span class="o">=</span> <span class="s">&#39;$Format:%H$&#39;</span>
+<span class="n">__date__</span> <span class="o">=</span> <span class="s">&#39;17/10/2010&#39;</span>
+<span class="n">__license__</span> <span class="o">=</span> <span class="s">&quot;GPL&quot;</span>
+<span class="n">__copyright__</span> <span class="o">=</span> <span class="s">&#39;Copyright 2012, Australia Indonesia Facility for &#39;</span>
+<span class="n">__copyright__</span> <span class="o">+=</span> <span class="s">&#39;Disaster Reduction&#39;</span>
+
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">import</span> <span class="nn">unittest</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+
+<span class="n">LOGGER</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s">&#39;InaSAFE&#39;</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="TestInit"><a class="viewcode-back" href="../../api-docs/safe_qgis_tests/test_init.html#safe_qgis.test_init.TestInit">[docs]</a><span class="k">class</span> <span class="nc">TestInit</span><span class="p">(</span><span class="n">unittest</span><span class="o">.</span><span class="n">TestCase</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Test that the plugin init is usable for QGIS.</span>
+
+<span class="sd">    Based heavily on the validator class by Alessandro</span>
+<span class="sd">    Passoti available here:</span>
+
+<span class="sd">    http://github.com/qgis/qgis-django/blob/master/qgis-app/</span>
+<span class="sd">             plugins/validator.py</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="TestInit.testReadInit"><a class="viewcode-back" href="../../api-docs/safe_qgis_tests/test_init.html#safe_qgis.test_init.TestInit.testReadInit">[docs]</a>    <span class="k">def</span> <span class="nf">testReadInit</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Test that the plugin __init__ will validate on plugins.qgis.org.&quot;&quot;&quot;</span>
+
+        <span class="c"># You should update this list according to the latest in</span>
+        <span class="c"># https://github.com/qgis/qgis-django/blob/master/qgis-app/</span>
+        <span class="c">#        plugins/validator.py</span>
+
+        <span class="n">myRequiredMetadata</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;name&#39;</span><span class="p">,</span>
+                              <span class="s">&#39;description&#39;</span><span class="p">,</span>
+                              <span class="s">&#39;version&#39;</span><span class="p">,</span>
+                              <span class="s">&#39;qgisMinimumVersion&#39;</span><span class="p">,</span>
+                              <span class="s">&#39;email&#39;</span><span class="p">,</span>
+                              <span class="s">&#39;author&#39;</span><span class="p">]</span>
+
+        <span class="n">myFilePath</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">__file__</span><span class="p">),</span>
+                                  <span class="n">os</span><span class="o">.</span><span class="n">pardir</span><span class="p">,</span>
+                                  <span class="s">&#39;__init__.py&#39;</span><span class="p">))</span>
+        <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">myFilePath</span><span class="p">)</span>
+        <span class="n">myFile</span> <span class="o">=</span> <span class="nb">file</span><span class="p">(</span><span class="n">myFilePath</span><span class="p">,</span> <span class="s">&#39;rt&#39;</span><span class="p">)</span>
+        <span class="n">myContent</span> <span class="o">=</span> <span class="n">myFile</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+        <span class="n">myFile</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="n">myMetadata</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">myCounter</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">myLines</span> <span class="o">=</span> <span class="n">myContent</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span><span class="p">)</span>
+        <span class="k">while</span> <span class="n">myCounter</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">myLines</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s">&#39;def\s+([^\(]+)&#39;</span><span class="p">,</span> <span class="n">myLines</span><span class="p">[</span><span class="n">myCounter</span><span class="p">]):</span>
+                <span class="n">myMatch</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s">&#39;def\s+([^\(]+)&#39;</span><span class="p">,</span>
+                                  <span class="n">myLines</span><span class="p">[</span><span class="n">myCounter</span><span class="p">])</span><span class="o">.</span><span class="n">groups</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="n">myCounter</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="k">while</span> <span class="n">myCounter</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">myLines</span><span class="p">)</span> <span class="ow">and</span> <span class="n">myLines</span><span class="p">[</span><span class="n">myCounter</span><span class="p">]</span> <span class="o">!=</span> <span class="s">&#39;&#39;</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s">&#39;return\s+[&quot;</span><span class="se">\&#39;</span><span class="s">]?([^&quot;</span><span class="se">\&#39;</span><span class="s">]+)[&quot;</span><span class="se">\&#39;</span><span class="s">]?&#39;</span><span class="p">,</span>
+                                 <span class="n">myLines</span><span class="p">[</span><span class="n">myCounter</span><span class="p">]):</span>
+                        <span class="n">myMetadata</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">myMatch</span><span class="p">,</span>
+                                <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s">&#39;return\s+[&quot;</span><span class="se">\&#39;</span><span class="s">]?([^&quot;</span><span class="se">\&#39;</span><span class="s">]+)[&quot;</span><span class="se">\&#39;</span><span class="s">]?&#39;</span><span class="p">,</span>
+                                <span class="n">myLines</span><span class="p">[</span><span class="n">myCounter</span><span class="p">])</span><span class="o">.</span><span class="n">groups</span><span class="p">()[</span><span class="mi">0</span><span class="p">]))</span>
+                        <span class="k">break</span>
+                    <span class="n">myCounter</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="n">myCounter</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">len</span><span class="p">(</span><span class="n">myMetadata</span><span class="p">):</span>
+            <span class="k">assert</span> <span class="bp">False</span><span class="p">,</span> <span class="s">&#39;Metadata could not be read&#39;</span>
+
+        <span class="k">for</span> <span class="n">myItem</span> <span class="ow">in</span> <span class="n">myRequiredMetadata</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">myItem</span> <span class="ow">in</span> <span class="nb">dict</span><span class="p">(</span><span class="n">myMetadata</span><span class="p">)</span> <span class="ow">or</span> <span class="ow">not</span> <span class="nb">dict</span><span class="p">(</span><span class="n">myMetadata</span><span class="p">)[</span><span class="n">myItem</span><span class="p">]:</span>
+                <span class="k">assert</span> <span class="bp">False</span><span class="p">,</span> <span class="p">(</span><span class="s">&#39;Cannot find myMetadata &quot;</span><span class="si">%s</span><span class="s">&quot; &#39;</span>
+                <span class="s">&#39;in myMetadata source (</span><span class="si">%s</span><span class="s">). Please bear in mind &#39;</span>
+                <span class="s">&#39;that the current implementation of the __init__.py &#39;</span>
+                <span class="s">&#39;validator is based on regular expressions, check that &#39;</span>
+                <span class="s">&#39;your myMetadata functions directly return myMetadata values &#39;</span>
+                <span class="s">&#39;as strings.&#39;</span><span class="p">)</span> <span class="o">%</span> <span class="p">(</span>
+                    <span class="n">myItem</span><span class="p">,</span> <span class="nb">dict</span><span class="p">(</span><span class="n">myMetadata</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;metadata_source&#39;</span><span class="p">))</span>
+</div></div>
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">unittest</span><span class="o">.</span><span class="n">main</span><span class="p">()</span>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+        <p class="logo"><a href="../../contents.html">
+          <img class="logo" src="../../_static/icon.png" alt="Logo"/>
+        </a></p>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="relbar-bottom">
+        
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> &nbsp; &nbsp;</li>
+    <li><a href="../../index.html">Home</a> &raquo;</li>
+    <li><a href="../../contents.html">Contents</a> &raquo;</li>
+
+          <li><a href="../index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    </div>
+
+    <div class="footer">
+        &copy; Copyright 2012, BNPB/AIFDR/GFDRR.
+      Last updated on Oct 18, 2012.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+    </div>
+    <!-- cloud_sptheme 1.3 -->
+  </body>
+</html>

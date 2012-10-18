@@ -9,7 +9,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>safe.common.testing &mdash; InaSAFE 0.5.0-alpha documentation</title>
+    <title>safe.common.testing &mdash; InaSAFE 0.5.1-final documentation</title>
     
     <link rel="stylesheet" href="../../../_static/cloud.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
@@ -18,7 +18,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../',
-        VERSION:     '0.5.0-alpha',
+        VERSION:     '0.5.1-final',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -29,7 +29,8 @@
     <script type="text/javascript" src="../../../_static/doctools.js"></script>
     <script type="text/javascript" src="../../../_static/jquery.cookie.js"></script>
     <script type="text/javascript" src="../../../_static/toggle_sections.js"></script>
-    <link rel="top" title="InaSAFE 0.5.0-alpha documentation" href="../../../index.html" />
+    <link rel="shortcut icon" href="../../../_static/favicon.ico"/>
+    <link rel="top" title="InaSAFE 0.5.1-final documentation" href="../../../index.html" />
     <link rel="up" title="Module code" href="../../index.html" /> 
   </head>
   <body>
@@ -66,15 +67,29 @@
 <span class="kn">import</span> <span class="nn">os</span>
 
 <span class="kn">from</span> <span class="nn">numerics</span> <span class="kn">import</span> <span class="n">axes2points</span>
+<span class="kn">from</span> <span class="nn">numpy.testing</span> <span class="kn">import</span> <span class="n">Tester</span>
+<span class="kn">from</span> <span class="nn">safe.common.version</span> <span class="kn">import</span> <span class="n">get_version</span>
+
+
+<span class="k">class</span> <span class="nc">SafeTester</span><span class="p">(</span><span class="n">Tester</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_show_system_info</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">print</span> <span class="s">&#39;safe version </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="n">get_version</span><span class="p">()</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">SafeTester</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">_show_system_info</span><span class="p">()</span>
+
+
+<span class="c"># usage: &gt;&gt;&gt; from safe.common.testing import test_safe</span>
+<span class="c">#        &gt;&gt;&gt; test_safe()</span>
+<span class="n">test_safe</span> <span class="o">=</span> <span class="n">SafeTester</span><span class="p">()</span><span class="o">.</span><span class="n">test</span>
 
 <span class="c"># Find parent parent directory to path</span>
 <span class="c"># NOTE: This must match Makefile target testdata</span>
 <span class="c"># FIXME (Ole): Use environment variable for this.</span>
 <span class="c"># Assuming test data three lvls up</span>
-<span class="n">pardir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">__file__</span><span class="p">),</span>
-                                      <span class="s">&#39;..&#39;</span><span class="p">,</span>
-                                      <span class="s">&#39;..&#39;</span><span class="p">,</span>
-                                      <span class="s">&#39;..&#39;</span><span class="p">))</span>
+<span class="n">pardir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">realpath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span>
+    <span class="n">__file__</span><span class="p">)),</span>
+      <span class="s">&#39;..&#39;</span><span class="p">,</span>
+      <span class="s">&#39;..&#39;</span><span class="p">,</span>
+      <span class="s">&#39;..&#39;</span><span class="p">))</span>
 
 <span class="c"># Location of test data</span>
 <span class="n">DATANAME</span> <span class="o">=</span> <span class="s">&#39;inasafe_data&#39;</span>
@@ -750,7 +765,8 @@
 
     <div class="footer">
         &copy; Copyright 2012, BNPB/AIFDR/GFDRR.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+      Last updated on Oct 18, 2012.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
     </div>
     <!-- cloud_sptheme 1.3 -->
   </body>

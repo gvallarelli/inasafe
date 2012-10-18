@@ -9,7 +9,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>safe.storage.projection &mdash; InaSAFE 0.5.0-alpha documentation</title>
+    <title>safe.storage.projection &mdash; InaSAFE 0.5.1-final documentation</title>
     
     <link rel="stylesheet" href="../../../_static/cloud.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
@@ -18,7 +18,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../',
-        VERSION:     '0.5.0-alpha',
+        VERSION:     '0.5.1-final',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -29,7 +29,8 @@
     <script type="text/javascript" src="../../../_static/doctools.js"></script>
     <script type="text/javascript" src="../../../_static/jquery.cookie.js"></script>
     <script type="text/javascript" src="../../../_static/toggle_sections.js"></script>
-    <link rel="top" title="InaSAFE 0.5.0-alpha documentation" href="../../../index.html" />
+    <link rel="shortcut icon" href="../../../_static/favicon.ico"/>
+    <link rel="top" title="InaSAFE 0.5.1-final documentation" href="../../../index.html" />
     <link rel="up" title="Module code" href="../../index.html" /> 
   </head>
   <body>
@@ -99,13 +100,28 @@
                             <span class="n">srs</span><span class="o">.</span><span class="n">ImportFromWkt</span><span class="p">,</span>
                             <span class="n">srs</span><span class="o">.</span><span class="n">ImportFromEPSG</span><span class="p">,</span>
                             <span class="n">srs</span><span class="o">.</span><span class="n">ImportFromESRI</span><span class="p">,</span>
-                            <span class="n">srs</span><span class="o">.</span><span class="n">ImportFromMICoordSys</span><span class="p">,</span>
+                            <span class="c"># FIXME (Ole): This one emits the warning:</span>
+                            <span class="c"># Warning 5: Failed parsing CoordSys:</span>
+                            <span class="c"># &#39;Indonesia TM-3 zone 48.2&#39;</span>
+                            <span class="c">#srs.ImportFromMICoordSys,</span>
                             <span class="n">srs</span><span class="o">.</span><span class="n">ImportFromPCI</span><span class="p">,</span>
                             <span class="n">srs</span><span class="o">.</span><span class="n">ImportFromXML</span><span class="p">,</span>
                             <span class="n">srs</span><span class="o">.</span><span class="n">ImportFromUSGS</span><span class="p">,</span>
                             <span class="n">srs</span><span class="o">.</span><span class="n">ImportFromUrl</span><span class="p">]:</span>
 
-            <span class="n">res</span> <span class="o">=</span> <span class="n">import_func</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">res</span> <span class="o">=</span> <span class="n">import_func</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
+                <span class="c"># FIXME: NetCDF raster layer gives SRS error</span>
+                <span class="c"># Occasionally we get things like</span>
+                <span class="c">#   File &quot;/usr/lib/python2.7/dist-packages/osgeo/osr.py&quot;,</span>
+                <span class="c">#   line 639, in ImportFromEPSG</span>
+                <span class="c">#   return _osr.SpatialReference_ImportFromEPSG(self, *args)</span>
+                <span class="c">#   TypeError: in method &#39;SpatialReference_ImportFromEPSG&#39;,</span>
+                <span class="c">#   argument 2 of type &#39;int&#39;</span>
+                <span class="c"># e.g. when using NetCDF multiband data. Why?</span>
+                <span class="k">pass</span>
+
             <span class="k">if</span> <span class="n">res</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
                 <span class="n">input_OK</span> <span class="o">=</span> <span class="bp">True</span>
                 <span class="k">break</span>
@@ -219,7 +235,8 @@
 
     <div class="footer">
         &copy; Copyright 2012, BNPB/AIFDR/GFDRR.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+      Last updated on Oct 18, 2012.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
     </div>
     <!-- cloud_sptheme 1.3 -->
   </body>

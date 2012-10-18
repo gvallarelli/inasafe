@@ -9,7 +9,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>safe.impact_functions.volcanic.volcano_population_evacuation_polygon_hazard &mdash; InaSAFE 0.5.0-alpha documentation</title>
+    <title>safe.impact_functions.volcanic.volcano_population_evacuation_polygon_hazard &mdash; InaSAFE 0.5.1-final documentation</title>
     
     <link rel="stylesheet" href="../../../../_static/cloud.css" type="text/css" />
     <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
@@ -18,7 +18,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../../',
-        VERSION:     '0.5.0-alpha',
+        VERSION:     '0.5.1-final',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -29,7 +29,8 @@
     <script type="text/javascript" src="../../../../_static/doctools.js"></script>
     <script type="text/javascript" src="../../../../_static/jquery.cookie.js"></script>
     <script type="text/javascript" src="../../../../_static/toggle_sections.js"></script>
-    <link rel="top" title="InaSAFE 0.5.0-alpha documentation" href="../../../../index.html" />
+    <link rel="shortcut icon" href="../../../../_static/favicon.ico"/>
+    <link rel="top" title="InaSAFE 0.5.1-final documentation" href="../../../../index.html" />
     <link rel="up" title="Module code" href="../../../index.html" /> 
   </head>
   <body>
@@ -67,6 +68,8 @@
 <span class="kn">from</span> <span class="nn">safe.common.utilities</span> <span class="kn">import</span> <span class="n">ugettext</span> <span class="k">as</span> <span class="n">_</span>
 <span class="kn">from</span> <span class="nn">safe.common.tables</span> <span class="kn">import</span> <span class="n">Table</span><span class="p">,</span> <span class="n">TableRow</span>
 <span class="kn">from</span> <span class="nn">safe.engine.interpolation</span> <span class="kn">import</span> <span class="n">assign_hazard_values_to_exposure_data</span>
+<span class="kn">from</span> <span class="nn">safe.engine.interpolation</span> <span class="kn">import</span> <span class="n">make_circular_polygon</span>
+<span class="kn">from</span> <span class="nn">safe.common.exceptions</span> <span class="kn">import</span> <span class="n">InaSAFEError</span>
 
 
 <div class="viewcode-block" id="VolcanoFunctionVectorHazard"><a class="viewcode-back" href="../../../../api-docs/safe/impact_functions/volcanic/volcano_population_evacuation_polygon_hazard.html#safe.impact_functions.volcanic.volcano_population_evacuation_polygon_hazard.VolcanoFunctionVectorHazard">[docs]</a><span class="k">class</span> <span class="nc">VolcanoFunctionVectorHazard</span><span class="p">(</span><span class="n">FunctionProvider</span><span class="p">):</span>
@@ -84,8 +87,10 @@
 <span class="sd">                    datatype==&#39;density&#39;</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="n">title</span> <span class="o">=</span> <span class="n">_</span><span class="p">(</span><span class="s">&#39;be affected&#39;</span><span class="p">)</span>
+    <span class="n">title</span> <span class="o">=</span> <span class="n">_</span><span class="p">(</span><span class="s">&#39;Be affected&#39;</span><span class="p">)</span>
     <span class="n">target_field</span> <span class="o">=</span> <span class="s">&#39;population&#39;</span>
+
+    <span class="n">parameters</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">distances</span><span class="o">=</span><span class="p">[</span><span class="mi">1000</span><span class="p">,</span> <span class="mi">2000</span><span class="p">,</span> <span class="mi">3000</span><span class="p">,</span> <span class="mi">5000</span><span class="p">,</span> <span class="mi">10000</span><span class="p">])</span>
 
 <div class="viewcode-block" id="VolcanoFunctionVectorHazard.run"><a class="viewcode-back" href="../../../../api-docs/safe/impact_functions/volcanic/volcano_population_evacuation_polygon_hazard.html#safe.impact_functions.volcanic.volcano_population_evacuation_polygon_hazard.VolcanoFunctionVectorHazard.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">layers</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Risk plugin for flood population evacuation</span>
@@ -111,26 +116,54 @@
                                 <span class="n">E</span><span class="o">.</span><span class="n">get_name</span><span class="p">(),</span>
                                 <span class="bp">self</span><span class="p">)</span>
 
-        <span class="c"># Check that hazard is polygon type</span>
+        <span class="c"># Input checks</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">H</span><span class="o">.</span><span class="n">is_vector</span><span class="p">:</span>
             <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;Input hazard </span><span class="si">%s</span><span class="s">  was not a vector layer as expected &#39;</span>
                    <span class="o">%</span> <span class="n">H</span><span class="o">.</span><span class="n">get_name</span><span class="p">())</span>
             <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
-        <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;Input hazard must be a polygon layer. I got </span><span class="si">%s</span><span class="s"> with layer &#39;</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;Input hazard must be a polygon or point layer. &#39;</span>
+               <span class="s">&#39;I got </span><span class="si">%s</span><span class="s"> with layer &#39;</span>
                <span class="s">&#39;type </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">H</span><span class="o">.</span><span class="n">get_name</span><span class="p">(),</span>
                             <span class="n">H</span><span class="o">.</span><span class="n">get_geometry_name</span><span class="p">()))</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">H</span><span class="o">.</span><span class="n">is_polygon_data</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">H</span><span class="o">.</span><span class="n">is_polygon_data</span> <span class="ow">or</span> <span class="n">H</span><span class="o">.</span><span class="n">is_point_data</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">H</span><span class="o">.</span><span class="n">is_point_data</span><span class="p">:</span>
+            <span class="c"># Use concentric circles</span>
+            <span class="n">radii</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s">&#39;distances&#39;</span><span class="p">]</span>
+
+            <span class="n">centers</span> <span class="o">=</span> <span class="n">H</span><span class="o">.</span><span class="n">get_geometry</span><span class="p">()</span>
+            <span class="n">attributes</span> <span class="o">=</span> <span class="n">H</span><span class="o">.</span><span class="n">get_data</span><span class="p">()</span>
+            <span class="n">Z</span> <span class="o">=</span> <span class="n">make_circular_polygon</span><span class="p">(</span><span class="n">centers</span><span class="p">,</span> <span class="n">radii</span><span class="p">,</span> <span class="n">attributes</span><span class="o">=</span><span class="n">attributes</span><span class="p">)</span>
+            <span class="n">Z</span><span class="o">.</span><span class="n">write_to_file</span><span class="p">(</span><span class="s">&#39;Marapi_evac_zone_</span><span class="si">%s</span><span class="s">.shp&#39;</span> <span class="o">%</span> <span class="nb">str</span><span class="p">(</span><span class="n">radii</span><span class="p">))</span>  <span class="c"># To check</span>
+            <span class="n">category_title</span> <span class="o">=</span> <span class="s">&#39;Radius&#39;</span>
+            <span class="n">H</span> <span class="o">=</span> <span class="n">Z</span>
+
+            <span class="c">#category_names = [&#39;%s m&#39; % x for x in radii]</span>
+            <span class="n">category_names</span> <span class="o">=</span> <span class="n">radii</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c"># Use hazard map</span>
+            <span class="n">category_title</span> <span class="o">=</span> <span class="s">&#39;KRB&#39;</span>
+
+            <span class="c"># FIXME (Ole): Change to English and use translation system</span>
+            <span class="n">category_names</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;Kawasan Rawan Bencana III&#39;</span><span class="p">,</span>
+                              <span class="s">&#39;Kawasan Rawan Bencana II&#39;</span><span class="p">,</span>
+                              <span class="s">&#39;Kawasan Rawan Bencana I&#39;</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">category_title</span> <span class="ow">in</span> <span class="n">H</span><span class="o">.</span><span class="n">get_attribute_names</span><span class="p">():</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;Hazard data </span><span class="si">%s</span><span class="s"> did not contain expected &#39;</span>
+                   <span class="s">&#39;attribute </span><span class="si">%s</span><span class="s"> &#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">H</span><span class="o">.</span><span class="n">get_name</span><span class="p">(),</span> <span class="n">category_title</span><span class="p">))</span>
+            <span class="k">raise</span> <span class="n">InaSAFEError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
         <span class="c"># Run interpolation function for polygon2raster</span>
         <span class="n">P</span> <span class="o">=</span> <span class="n">assign_hazard_values_to_exposure_data</span><span class="p">(</span><span class="n">H</span><span class="p">,</span> <span class="n">E</span><span class="p">,</span>
-                                             <span class="n">attribute_name</span><span class="o">=</span><span class="s">&#39;population&#39;</span><span class="p">)</span>
+                                                  <span class="n">attribute_name</span><span class="o">=</span><span class="s">&#39;population&#39;</span><span class="p">)</span>
 
         <span class="c"># Initialise attributes of output dataset with all attributes</span>
         <span class="c"># from input polygon and a population count of zero</span>
         <span class="n">new_attributes</span> <span class="o">=</span> <span class="n">H</span><span class="o">.</span><span class="n">get_data</span><span class="p">()</span>
-        <span class="n">category_title</span> <span class="o">=</span> <span class="s">&#39;Category&#39;</span>
+
         <span class="n">categories</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="n">new_attributes</span><span class="p">:</span>
             <span class="n">attr</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">target_field</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
@@ -176,10 +209,14 @@
                       <span class="n">TableRow</span><span class="p">([</span><span class="n">_</span><span class="p">(</span><span class="s">&#39;People needing evacuation&#39;</span><span class="p">),</span>
                                 <span class="s">&#39;</span><span class="si">%i</span><span class="s">&#39;</span> <span class="o">%</span> <span class="n">evacuated</span><span class="p">],</span>
                                <span class="n">header</span><span class="o">=</span><span class="bp">True</span><span class="p">),</span>
-                      <span class="n">TableRow</span><span class="p">([</span><span class="n">_</span><span class="p">(</span><span class="s">&#39;Category&#39;</span><span class="p">),</span> <span class="n">_</span><span class="p">(</span><span class="s">&#39;Total&#39;</span><span class="p">)],</span>
+                      <span class="n">TableRow</span><span class="p">([</span><span class="n">_</span><span class="p">(</span><span class="s">&#39;Category&#39;</span><span class="p">),</span> <span class="n">_</span><span class="p">(</span><span class="s">&#39;Total&#39;</span><span class="p">),</span> <span class="n">_</span><span class="p">(</span><span class="s">&#39;Cumulative&#39;</span><span class="p">)],</span>
                                <span class="n">header</span><span class="o">=</span><span class="bp">True</span><span class="p">)]</span>
-        <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">pop</span> <span class="ow">in</span> <span class="n">categories</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
-            <span class="n">table_body</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">TableRow</span><span class="p">([</span><span class="n">name</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">pop</span><span class="p">)]))</span>
+
+        <span class="n">cum</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">category_names</span><span class="p">:</span>
+            <span class="n">pop</span> <span class="o">=</span> <span class="n">categories</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+            <span class="n">cum</span> <span class="o">+=</span> <span class="n">pop</span>
+            <span class="n">table_body</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">TableRow</span><span class="p">([</span><span class="n">name</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">pop</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="n">cum</span><span class="p">)]))</span>
 
         <span class="n">table_body</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">TableRow</span><span class="p">(</span><span class="n">_</span><span class="p">(</span><span class="s">&#39;Map shows population affected in &#39;</span>
                                      <span class="s">&#39;each of volcano hazard polygons.&#39;</span><span class="p">)))</span>
@@ -194,7 +231,8 @@
 
         <span class="c"># Extend impact report for on-screen display</span>
         <span class="n">table_body</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="n">TableRow</span><span class="p">(</span><span class="n">_</span><span class="p">(</span><span class="s">&#39;Notes&#39;</span><span class="p">),</span> <span class="n">header</span><span class="o">=</span><span class="bp">True</span><span class="p">),</span>
-                           <span class="n">_</span><span class="p">(</span><span class="s">&#39;Total population </span><span class="si">%i</span><span class="s"> in view port&#39;</span><span class="p">)</span> <span class="o">%</span> <span class="n">total</span><span class="p">,</span>
+                           <span class="n">_</span><span class="p">(</span><span class="s">&#39;Total population </span><span class="si">%i</span><span class="s"> in the viewable area&#39;</span><span class="p">)</span>
+                           <span class="o">%</span> <span class="n">total</span><span class="p">,</span>
                            <span class="n">_</span><span class="p">(</span><span class="s">&#39;People need evacuation if they are within the &#39;</span>
                              <span class="s">&#39;volcanic hazard zones.&#39;</span><span class="p">)])</span>
         <span class="n">impact_summary</span> <span class="o">=</span> <span class="n">Table</span><span class="p">(</span><span class="n">table_body</span><span class="p">)</span><span class="o">.</span><span class="n">toNewlineFreeString</span><span class="p">()</span>
@@ -231,7 +269,7 @@
         <span class="c"># Create vector layer and return</span>
         <span class="n">V</span> <span class="o">=</span> <span class="n">Vector</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">new_attributes</span><span class="p">,</span>
                    <span class="n">projection</span><span class="o">=</span><span class="n">H</span><span class="o">.</span><span class="n">get_projection</span><span class="p">(),</span>
-                   <span class="n">geometry</span><span class="o">=</span><span class="n">H</span><span class="o">.</span><span class="n">get_geometry</span><span class="p">(),</span>
+                   <span class="n">geometry</span><span class="o">=</span><span class="n">H</span><span class="o">.</span><span class="n">get_geometry</span><span class="p">(</span><span class="n">as_geometry_objects</span><span class="o">=</span><span class="bp">True</span><span class="p">),</span>
                    <span class="n">name</span><span class="o">=</span><span class="n">_</span><span class="p">(</span><span class="s">&#39;Population affected by volcanic hazard zone&#39;</span><span class="p">),</span>
                    <span class="n">keywords</span><span class="o">=</span><span class="p">{</span><span class="s">&#39;impact_summary&#39;</span><span class="p">:</span> <span class="n">impact_summary</span><span class="p">,</span>
                              <span class="s">&#39;impact_table&#39;</span><span class="p">:</span> <span class="n">impact_table</span><span class="p">,</span>
@@ -286,7 +324,8 @@
 
     <div class="footer">
         &copy; Copyright 2012, BNPB/AIFDR/GFDRR.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+      Last updated on Oct 18, 2012.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
     </div>
     <!-- cloud_sptheme 1.3 -->
   </body>

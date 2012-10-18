@@ -9,7 +9,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>safe.storage.utilities &mdash; InaSAFE 0.5.0-alpha documentation</title>
+    <title>safe.storage.utilities &mdash; InaSAFE 0.5.1-final documentation</title>
     
     <link rel="stylesheet" href="../../../_static/cloud.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
@@ -18,7 +18,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../',
-        VERSION:     '0.5.0-alpha',
+        VERSION:     '0.5.1-final',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -29,7 +29,8 @@
     <script type="text/javascript" src="../../../_static/doctools.js"></script>
     <script type="text/javascript" src="../../../_static/jquery.cookie.js"></script>
     <script type="text/javascript" src="../../../_static/toggle_sections.js"></script>
-    <link rel="top" title="InaSAFE 0.5.0-alpha documentation" href="../../../index.html" />
+    <link rel="shortcut icon" href="../../../_static/favicon.ico"/>
+    <link rel="top" title="InaSAFE 0.5.1-final documentation" href="../../../index.html" />
     <link rel="up" title="Module code" href="../../index.html" /> 
   </head>
   <body>
@@ -67,10 +68,13 @@
 <span class="kn">import</span> <span class="nn">copy</span>
 <span class="kn">import</span> <span class="nn">numpy</span>
 <span class="kn">import</span> <span class="nn">math</span>
+<span class="kn">from</span> <span class="nn">ast</span> <span class="kn">import</span> <span class="n">literal_eval</span>
 <span class="kn">from</span> <span class="nn">osgeo</span> <span class="kn">import</span> <span class="n">ogr</span>
 
 <span class="kn">from</span> <span class="nn">safe.common.numerics</span> <span class="kn">import</span> <span class="n">ensure_numeric</span>
 <span class="kn">from</span> <span class="nn">safe.common.utilities</span> <span class="kn">import</span> <span class="n">verify</span>
+<span class="kn">from</span> <span class="nn">safe.common.exceptions</span> <span class="kn">import</span> <span class="n">BoundingBoxError</span><span class="p">,</span> <span class="n">InaSAFEError</span>
+
 
 <span class="c"># Default attribute to assign to vector layers</span>
 <span class="n">DEFAULT_ATTRIBUTE</span> <span class="o">=</span> <span class="s">&#39;Affected&#39;</span>
@@ -180,8 +184,7 @@
 
 <span class="sd">    Args:</span>
 <span class="sd">        * keywords: Dictionary of keyword, value pairs</span>
-<span class="sd">              filename: Name of keywords file. Extension expected to be</span>
-<span class="sd">              .keywords</span>
+<span class="sd">        * filename: Name of keywords file. Extension expected to be .keywords</span>
 <span class="sd">        * sublayer: str Optional sublayer applicable only to multilayer formats</span>
 <span class="sd">             such as sqlite or netcdf which can potentially hold more than</span>
 <span class="sd">             one layer. The string should map to the layer group as per the</span>
@@ -326,6 +329,7 @@
     <span class="n">first_keywords</span> <span class="o">=</span> <span class="bp">None</span>
     <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">fid</span><span class="o">.</span><span class="n">readlines</span><span class="p">():</span>
         <span class="c"># Remove trailing (but not preceeding!) whitespace</span>
+        <span class="c"># FIXME: Can be removed altogether</span>
         <span class="n">text</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span>
 
         <span class="c"># Ignore blank lines</span>
@@ -342,9 +346,9 @@
                 <span class="n">blocks</span><span class="p">[</span><span class="n">current_block</span><span class="p">]</span> <span class="o">=</span> <span class="n">keywords</span>
             <span class="k">if</span> <span class="n">first_keywords</span> <span class="ow">is</span> <span class="bp">None</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">keywords</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
                 <span class="n">first_keywords</span> <span class="o">=</span> <span class="n">keywords</span>
-            <span class="c"># now set up for a new block</span>
+            <span class="c"># Now set up for a new block</span>
             <span class="n">current_block</span> <span class="o">=</span> <span class="n">text</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
-            <span class="c"># reset the keywords each time we encounter a new block</span>
+            <span class="c"># Reset the keywords each time we encounter a new block</span>
             <span class="c"># until we know we are on the desired one</span>
             <span class="n">keywords</span> <span class="o">=</span> <span class="p">{}</span>
             <span class="k">continue</span>
@@ -360,7 +364,13 @@
             <span class="n">key</span> <span class="o">=</span> <span class="n">text</span><span class="p">[:</span><span class="n">idx</span><span class="p">]</span>
 
             <span class="c"># Take value as everything after the first &#39;:&#39;</span>
-            <span class="n">val</span> <span class="o">=</span> <span class="n">text</span><span class="p">[</span><span class="n">idx</span> <span class="o">+</span> <span class="mi">1</span><span class="p">:]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+            <span class="n">textval</span> <span class="o">=</span> <span class="n">text</span><span class="p">[</span><span class="n">idx</span> <span class="o">+</span> <span class="mi">1</span><span class="p">:]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="c"># Take care of python structures like</span>
+                <span class="c"># booleans, None, lists, dicts etc</span>
+                <span class="n">val</span> <span class="o">=</span> <span class="n">literal_eval</span><span class="p">(</span><span class="n">textval</span><span class="p">)</span>
+            <span class="k">except</span> <span class="p">(</span><span class="ne">ValueError</span><span class="p">,</span> <span class="ne">SyntaxError</span><span class="p">):</span>
+                <span class="n">val</span> <span class="o">=</span> <span class="n">textval</span>
 
         <span class="c"># Add entry to dictionary</span>
         <span class="n">keywords</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">val</span>
@@ -384,6 +394,46 @@
             <span class="k">return</span> <span class="n">blocks</span><span class="p">[</span><span class="n">sublayer</span><span class="p">]</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">first_keywords</span>
+
+</div>
+<div class="viewcode-block" id="check_geotransform"><a class="viewcode-back" href="../../../api-docs/safe/storage/utilities.html#safe.storage.utilities.check_geotransform">[docs]</a><span class="k">def</span> <span class="nf">check_geotransform</span><span class="p">(</span><span class="n">geotransform</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Check that geotransform is valid</span>
+
+<span class="sd">    Args</span>
+<span class="sd">        * geotransform: GDAL geotransform (6-tuple).</span>
+<span class="sd">        (top left x, w-e pixel resolution, rotation,</span>
+<span class="sd">        top left y, rotation, n-s pixel resolution).</span>
+<span class="sd">        See e.g. http://www.gdal.org/gdal_tutorial.html</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;Supplied geotransform must be a tuple with &#39;</span>
+           <span class="s">&#39;6 numbers. I got </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="nb">str</span><span class="p">(</span><span class="n">geotransform</span><span class="p">))</span>
+    <span class="n">verify</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">geotransform</span><span class="p">)</span> <span class="o">==</span> <span class="mi">6</span><span class="p">,</span> <span class="n">msg</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">geotransform</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="nb">float</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">InaSAFEError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+    <span class="c"># Check longitude</span>
+    <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;Element in 0 (first) geotransform must be a valid &#39;</span>
+           <span class="s">&#39;longitude. I got </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="n">geotransform</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="n">verify</span><span class="p">(</span><span class="o">-</span><span class="mi">180</span> <span class="o">&lt;=</span> <span class="n">geotransform</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="mi">180</span><span class="p">,</span> <span class="n">msg</span><span class="p">)</span>
+
+    <span class="c"># Check latitude</span>
+    <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;Element 3 (fourth) in geotransform must be a valid &#39;</span>
+           <span class="s">&#39;latitude. I got </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="n">geotransform</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span>
+    <span class="n">verify</span><span class="p">(</span><span class="o">-</span><span class="mi">90</span> <span class="o">&lt;=</span> <span class="n">geotransform</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="mi">90</span><span class="p">,</span> <span class="n">msg</span><span class="p">)</span>
+
+    <span class="c"># Check cell size</span>
+    <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;Element 1 (second) in geotransform must be a positive &#39;</span>
+           <span class="s">&#39;number. I got </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="n">geotransform</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+    <span class="n">verify</span><span class="p">(</span><span class="n">geotransform</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span> <span class="n">msg</span><span class="p">)</span>
+
+    <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;Element 5 (sixth) in geotransform must be a negative &#39;</span>
+           <span class="s">&#39;number. I got </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="n">geotransform</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+    <span class="n">verify</span><span class="p">(</span><span class="n">geotransform</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">,</span> <span class="n">msg</span><span class="p">)</span>
 
 </div>
 <div class="viewcode-block" id="geotransform2bbox"><a class="viewcode-back" href="../../../api-docs/safe/storage/utilities.html#safe.storage.utilities.geotransform2bbox">[docs]</a><span class="k">def</span> <span class="nf">geotransform2bbox</span><span class="p">(</span><span class="n">geotransform</span><span class="p">,</span> <span class="n">columns</span><span class="p">,</span> <span class="n">rows</span><span class="p">):</span>
@@ -422,8 +472,7 @@
     <span class="k">return</span> <span class="p">[</span><span class="n">minx</span><span class="p">,</span> <span class="n">miny</span><span class="p">,</span> <span class="n">maxx</span><span class="p">,</span> <span class="n">maxy</span><span class="p">]</span>
 
 </div>
-<div class="viewcode-block" id="geotransform2resolution"><a class="viewcode-back" href="../../../api-docs/safe/storage/utilities.html#safe.storage.utilities.geotransform2resolution">[docs]</a><span class="k">def</span> <span class="nf">geotransform2resolution</span><span class="p">(</span><span class="n">geotransform</span><span class="p">,</span> <span class="n">isotropic</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span>
-                            <span class="n">rtol</span><span class="o">=</span><span class="mf">1.0e-6</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1.0e-8</span><span class="p">):</span>
+<div class="viewcode-block" id="geotransform2resolution"><a class="viewcode-back" href="../../../api-docs/safe/storage/utilities.html#safe.storage.utilities.geotransform2resolution">[docs]</a><span class="k">def</span> <span class="nf">geotransform2resolution</span><span class="p">(</span><span class="n">geotransform</span><span class="p">,</span> <span class="n">isotropic</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Convert geotransform to resolution</span>
 
 <span class="sd">    Args:</span>
@@ -431,31 +480,19 @@
 <span class="sd">                        (top left x, w-e pixel resolution, rotation,</span>
 <span class="sd">                        top left y, rotation, n-s pixel resolution).</span>
 <span class="sd">                        See e.g. http://www.gdal.org/gdal_tutorial.html</span>
-<span class="sd">        * isotropic: If True, verify that dx == dy and return dx</span>
-<span class="sd">                     If False (default) return 2-tuple (dx, dy)</span>
-<span class="sd">        * rtol, atol: Used to control how close dx and dy must be</span>
-<span class="sd">                      to quality for isotropic. These are passed on to</span>
-<span class="sd">                      numpy.allclose for comparison.</span>
+<span class="sd">        * isotropic: If True, return the average (dx + dy) / 2</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        * resolution: grid spacing (resx, resy) in (positive) decimal</span>
 <span class="sd">                      degrees ordered as longitude first, then latitude.</span>
-<span class="sd">                      or resx (if isotropic is True)</span>
+<span class="sd">                      or (resx + resy) / 2 (if isotropic is True)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">resx</span> <span class="o">=</span> <span class="n">geotransform</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>   <span class="c"># w-e pixel resolution</span>
     <span class="n">resy</span> <span class="o">=</span> <span class="o">-</span><span class="n">geotransform</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span>  <span class="c"># n-s pixel resolution (always negative)</span>
 
     <span class="k">if</span> <span class="n">isotropic</span><span class="p">:</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;Resolution requested with &#39;</span>
-               <span class="s">&#39;isotropic=True, but &#39;</span>
-               <span class="s">&#39;resolutions in the horizontal and vertical &#39;</span>
-               <span class="s">&#39;are different: resx = </span><span class="si">%.12f</span><span class="s">, resy = </span><span class="si">%.12f</span><span class="s">. &#39;</span>
-               <span class="o">%</span> <span class="p">(</span><span class="n">resx</span><span class="p">,</span> <span class="n">resy</span><span class="p">))</span>
-        <span class="n">verify</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">resx</span><span class="p">,</span> <span class="n">resy</span><span class="p">,</span>
-                              <span class="n">rtol</span><span class="o">=</span><span class="n">rtol</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="n">atol</span><span class="p">),</span> <span class="n">msg</span><span class="p">)</span>
-
-        <span class="k">return</span> <span class="n">resx</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">resx</span> <span class="o">+</span> <span class="n">resy</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">resx</span><span class="p">,</span> <span class="n">resy</span>
 
@@ -523,21 +560,30 @@
 
     <span class="n">result</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mi">180</span><span class="p">,</span> <span class="o">-</span><span class="mi">90</span><span class="p">,</span> <span class="mi">180</span><span class="p">,</span> <span class="mi">90</span><span class="p">]</span>
     <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">args</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">a</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">continue</span>
+
         <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;Bounding box expected to be a list of the &#39;</span>
                <span class="s">&#39;form [W, S, E, N]. &#39;</span>
                <span class="s">&#39;Instead i got &quot;</span><span class="si">%s</span><span class="s">&quot;&#39;</span> <span class="o">%</span> <span class="nb">str</span><span class="p">(</span><span class="n">a</span><span class="p">))</span>
+
         <span class="k">try</span><span class="p">:</span>
             <span class="n">box</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
         <span class="k">except</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
-        <span class="n">verify</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">box</span><span class="p">)</span> <span class="o">==</span> <span class="mi">4</span><span class="p">,</span> <span class="n">msg</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">len</span><span class="p">(</span><span class="n">box</span><span class="p">)</span> <span class="o">==</span> <span class="mi">4</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">BoundingBoxError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
-        <span class="n">msg</span> <span class="o">=</span> <span class="s">&#39;Western boundary must be less than eastern. I got </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="n">box</span>
-        <span class="n">verify</span><span class="p">(</span><span class="n">box</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">box</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">msg</span><span class="p">)</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;Western boundary must be less than or equal to eastern. &#39;</span>
+               <span class="s">&#39;I got </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="n">box</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">box</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">box</span><span class="p">[</span><span class="mi">2</span><span class="p">]:</span>
+            <span class="k">raise</span> <span class="n">BoundingBoxError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
-        <span class="n">msg</span> <span class="o">=</span> <span class="s">&#39;Southern boundary must be less than northern. I got </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="n">box</span>
-        <span class="n">verify</span><span class="p">(</span><span class="n">box</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">box</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span> <span class="n">msg</span><span class="p">)</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;Southern boundary must be less than or equal to northern. &#39;</span>
+               <span class="s">&#39;I got </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="n">box</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">box</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">box</span><span class="p">[</span><span class="mi">3</span><span class="p">]:</span>
+            <span class="k">raise</span> <span class="n">BoundingBoxError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
         <span class="c"># Compute intersection</span>
 
@@ -550,7 +596,7 @@
             <span class="n">result</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">result</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">box</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
 
     <span class="c"># Check validity and return</span>
-    <span class="k">if</span> <span class="n">result</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">result</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="ow">and</span> <span class="n">result</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">result</span><span class="p">[</span><span class="mi">3</span><span class="p">]:</span>
+    <span class="k">if</span> <span class="n">result</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">result</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="ow">and</span> <span class="n">result</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">result</span><span class="p">[</span><span class="mi">3</span><span class="p">]:</span>
         <span class="k">return</span> <span class="n">result</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">return</span> <span class="bp">None</span>
@@ -650,7 +696,7 @@
 
 <span class="sd">    Returns:</span>
 <span class="sd">        * geometry_type: Either ogr.wkbPoint, ogr.wkbLineString or</span>
-<span class="sd">                        ogr.wkbPolygon</span>
+<span class="sd">                         ogr.wkbPolygon</span>
 
 <span class="sd">    Note:</span>
 <span class="sd">        If geometry type cannot be determined an Exception is raised.</span>
@@ -731,6 +777,74 @@
         <span class="k">return</span> <span class="bp">True</span>
 
 </div>
+<div class="viewcode-block" id="array2ring"><a class="viewcode-back" href="../../../api-docs/safe/storage/utilities.html#safe.storage.utilities.array2ring">[docs]</a><span class="k">def</span> <span class="nf">array2ring</span><span class="p">(</span><span class="n">A</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Convert coordinates to linear_ring</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        * A: Nx2 Array of coordinates representing either a polygon or a line.</span>
+<span class="sd">             A can be either a numpy array or a list of coordinates.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        * ring: OGR linear_ring</span>
+
+<span class="sd">    Note:</span>
+<span class="sd">    Based on http://www.packtpub.com/article/working-geospatial-data-python</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">A</span> <span class="o">=</span> <span class="n">ensure_numeric</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">float</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">Exception</span><span class="p">,</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;Array (</span><span class="si">%s</span><span class="s">) could not be converted to numeric array. &#39;</span>
+               <span class="s">&#39;I got type </span><span class="si">%s</span><span class="s">. Error message: </span><span class="si">%s</span><span class="s">&#39;</span>
+               <span class="o">%</span> <span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">A</span><span class="p">)),</span> <span class="n">e</span><span class="p">))</span>
+        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+    <span class="n">msg</span> <span class="o">=</span> <span class="s">&#39;Array must be a 2d array of vertices. I got </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">A</span><span class="o">.</span><span class="n">shape</span><span class="p">))</span>
+    <span class="n">verify</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">A</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">,</span> <span class="n">msg</span><span class="p">)</span>
+
+    <span class="n">msg</span> <span class="o">=</span> <span class="s">&#39;A array must have two columns. I got </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">A</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+    <span class="n">verify</span><span class="p">(</span><span class="n">A</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="mi">2</span><span class="p">,</span> <span class="n">msg</span><span class="p">)</span>
+
+    <span class="n">N</span> <span class="o">=</span> <span class="n">A</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>  <span class="c"># Number of vertices</span>
+
+    <span class="n">linearRing</span> <span class="o">=</span> <span class="n">ogr</span><span class="o">.</span><span class="n">Geometry</span><span class="p">(</span><span class="n">ogr</span><span class="o">.</span><span class="n">wkbLinearRing</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">N</span><span class="p">):</span>
+        <span class="n">linearRing</span><span class="o">.</span><span class="n">AddPoint</span><span class="p">(</span><span class="n">A</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">A</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+
+    <span class="k">return</span> <span class="n">linearRing</span>
+
+</div>
+<div class="viewcode-block" id="rings_equal"><a class="viewcode-back" href="../../../api-docs/safe/storage/utilities.html#safe.storage.utilities.rings_equal">[docs]</a><span class="k">def</span> <span class="nf">rings_equal</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">rtol</span><span class="o">=</span><span class="mf">1.0e-6</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1.0e-8</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Compares to linear rings as numpy arrays</span>
+
+<span class="sd">    Args</span>
+<span class="sd">        * x, y: Nx2 numpy arrays</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        * True if x == y or x&#39; == y (up to the specified tolerance)</span>
+
+<span class="sd">        where x&#39; is x reversed in the first dimension. This corresponds to</span>
+<span class="sd">        linear rings being seen as equal irrespective of whether ther are</span>
+<span class="sd">        organised in clock wise or counter clock wise order</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">x</span> <span class="o">=</span> <span class="n">ensure_numeric</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">float</span><span class="p">)</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">ensure_numeric</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">float</span><span class="p">)</span>
+
+    <span class="n">msg</span> <span class="o">=</span> <span class="s">&#39;Arrays must a 2d arrays of vertices. I got </span><span class="si">%s</span><span class="s"> and </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+    <span class="n">verify</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">y</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">,</span> <span class="n">msg</span><span class="p">)</span>
+
+    <span class="n">msg</span> <span class="o">=</span> <span class="s">&#39;Arrays must have two columns. I got </span><span class="si">%s</span><span class="s"> and </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+    <span class="n">verify</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="mi">2</span> <span class="ow">and</span> <span class="n">y</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="mi">2</span><span class="p">,</span> <span class="n">msg</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">rtol</span><span class="o">=</span><span class="n">rtol</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="n">atol</span><span class="p">)</span> <span class="ow">or</span>
+        <span class="n">numpy</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">rtol</span><span class="o">=</span><span class="n">rtol</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="n">atol</span><span class="p">)):</span>
+        <span class="k">return</span> <span class="bp">True</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">False</span>
+
+
+<span class="c"># FIXME (Ole): We can retire this messy function now</span></div>
 <div class="viewcode-block" id="array2wkt"><a class="viewcode-back" href="../../../api-docs/safe/storage/utilities.html#safe.storage.utilities.array2wkt">[docs]</a><span class="k">def</span> <span class="nf">array2wkt</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">geom_type</span><span class="o">=</span><span class="s">&#39;POLYGON&#39;</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Convert coordinates to wkt format</span>
 
@@ -963,7 +1077,44 @@
                 <span class="n">pts</span> <span class="o">=</span> <span class="n">pts</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
         <span class="n">points</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">pts</span><span class="p">)</span>
     <span class="n">C</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">points</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">C</span></div>
+    <span class="k">return</span> <span class="n">C</span>
+
+</div>
+<div class="viewcode-block" id="combine_polygon_and_point_layers"><a class="viewcode-back" href="../../../api-docs/safe/storage/utilities.html#safe.storage.utilities.combine_polygon_and_point_layers">[docs]</a><span class="k">def</span> <span class="nf">combine_polygon_and_point_layers</span><span class="p">(</span><span class="n">layers</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Combine polygon and point layers</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        layers: List of vector layers of type polygon or point</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        One point layer with all input point layers and centroids from all</span>
+<span class="sd">        input polygon layers.</span>
+<span class="sd">    Raises:</span>
+<span class="sd">        IneSAFEError in case a0ttribute names are not the same.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c"># This is to implement issue #276</span>
+    <span class="k">print</span> <span class="n">layers</span>
+
+</div>
+<div class="viewcode-block" id="get_ringdata"><a class="viewcode-back" href="../../../api-docs/safe/storage/utilities.html#safe.storage.utilities.get_ringdata">[docs]</a><span class="k">def</span> <span class="nf">get_ringdata</span><span class="p">(</span><span class="n">ring</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Extract coordinates from OGR ring object</span>
+
+<span class="sd">    Args</span>
+<span class="sd">        * OGR ring object</span>
+<span class="sd">    Returns</span>
+<span class="sd">        * Nx2 numpy array of vertex coordinates (lon, lat)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">N</span> <span class="o">=</span> <span class="n">ring</span><span class="o">.</span><span class="n">GetPointCount</span><span class="p">()</span>
+    <span class="n">A</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">N</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="s">&#39;d&#39;</span><span class="p">)</span>
+
+    <span class="c"># FIXME (Ole): Is there any way to get the entire data vectors?</span>
+    <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">N</span><span class="p">):</span>
+        <span class="n">A</span><span class="p">[</span><span class="n">j</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">ring</span><span class="o">.</span><span class="n">GetX</span><span class="p">(</span><span class="n">j</span><span class="p">),</span> <span class="n">ring</span><span class="o">.</span><span class="n">GetY</span><span class="p">(</span><span class="n">j</span><span class="p">)</span>
+
+    <span class="c"># Return ring as an Nx2 numpy array</span>
+    <span class="k">return</span> <span class="n">A</span></div>
 </pre></div>
 
           </div>
@@ -1012,7 +1163,8 @@
 
     <div class="footer">
         &copy; Copyright 2012, BNPB/AIFDR/GFDRR.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+      Last updated on Oct 18, 2012.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
     </div>
     <!-- cloud_sptheme 1.3 -->
   </body>

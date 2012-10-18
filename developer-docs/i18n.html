@@ -9,7 +9,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Internationalisation Support &mdash; InaSAFE 0.5.0-alpha documentation</title>
+    <title>Internationalisation Support &mdash; InaSAFE 0.5.1-final documentation</title>
     
     <link rel="stylesheet" href="../_static/cloud.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -18,7 +18,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.5.0-alpha',
+        VERSION:     '0.5.1-final',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -29,10 +29,11 @@
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <script type="text/javascript" src="../_static/jquery.cookie.js"></script>
     <script type="text/javascript" src="../_static/toggle_sections.js"></script>
-    <link rel="top" title="InaSAFE 0.5.0-alpha documentation" href="../index.html" />
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+    <link rel="top" title="InaSAFE 0.5.1-final documentation" href="../index.html" />
     <link rel="up" title="InaSAFE developer documentation" href="index.html" />
     <link rel="next" title="Version Control" href="version_control.html" />
-    <link rel="prev" title="Coding Standards" href="coding_standards.html" /> 
+    <link rel="prev" title="Logging" href="logging.html" /> 
   </head>
   <body>
     <div class="relbar-top">
@@ -50,7 +51,7 @@
           <a href="version_control.html" title="Version Control"
              accesskey="N">next</a> &nbsp; &nbsp;</li>
         <li class="right" >
-          <a href="coding_standards.html" title="Coding Standards"
+          <a href="logging.html" title="Logging"
              accesskey="P">previous</a> &nbsp; &nbsp;</li>
     <li><a href="../index.html">Home</a> &raquo;</li>
     <li><a href="../contents.html">Contents</a> &raquo;</li>
@@ -110,7 +111,7 @@ should use the format
 </div>
 </li>
 <li><p class="first">All strings should be wrapped using the _ helper e.g:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">_</span><span class="p">(</span><span class="s">&#39;Are there enough shelters available for </span><span class="si">%i</span><span class="s"> people?&#39;</span><span class="p">)</span> <span class="o">%</span> <span class="n">displaced</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">tr</span><span class="p">(</span><span class="s">&#39;Are there enough shelters available for </span><span class="si">%i</span><span class="s"> people?&#39;</span><span class="p">)</span> <span class="o">%</span> <span class="n">displaced</span>
 </pre></div>
 </div>
 </li>
@@ -135,7 +136,7 @@ using any libary functions if you want them to return translated strings e.g.:</
 <div class="highlight-python"><div class="highlight"><pre><span class="n">common</span><span class="o">/</span><span class="n">dynamic_translations</span><span class="o">.</span><span class="n">py</span>
 </pre></div>
 </div>
-<p>and add the name to the dictionary &#8220;names&#8221;. E.g. <tt class="samp docutils literal"><span class="pre">'college'</span> <span class="pre">=</span> <span class="pre">_('college')</span></tt></p>
+<p>and add the name to the dictionary &#8220;names&#8221;. E.g. <tt class="samp docutils literal"><span class="pre">'college'</span> <span class="pre">=</span> <span class="pre">tr('college')</span></tt></p>
 </li>
 <li><p class="first">Update the translation strings as described in the section below</p>
 </li>
@@ -388,8 +389,8 @@ for each supported locale.</p>
 </ul>
 
   <h4>Previous topic</h4>
-  <p class="topless"><a href="coding_standards.html"
-                        title="previous chapter">Coding Standards</a></p>
+  <p class="topless"><a href="logging.html"
+                        title="previous chapter">Logging</a></p>
   <h4>Next topic</h4>
   <p class="topless"><a href="version_control.html"
                         title="next chapter">Version Control</a></p>
@@ -430,7 +431,7 @@ for each supported locale.</p>
           <a href="version_control.html" title="Version Control"
              >next</a> &nbsp; &nbsp;</li>
         <li class="right" >
-          <a href="coding_standards.html" title="Coding Standards"
+          <a href="logging.html" title="Logging"
              >previous</a> &nbsp; &nbsp;</li>
     <li><a href="../index.html">Home</a> &raquo;</li>
     <li><a href="../contents.html">Contents</a> &raquo;</li>
@@ -442,7 +443,8 @@ for each supported locale.</p>
 
     <div class="footer">
         &copy; Copyright 2012, BNPB/AIFDR/GFDRR.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+      Last updated on Oct 18, 2012.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
     </div>
     <!-- cloud_sptheme 1.3 -->
   </body>

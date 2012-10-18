@@ -1,0 +1,227 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Module: safe.postprocessors.abstract_postprocessor &mdash; InaSAFE 0.5.1-final documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/cloud.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Noticia+Text|Droid+Sans+Mono" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '0.5.1-final',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../../_static/jquery.cookie.js"></script>
+    <script type="text/javascript" src="../../../_static/toggle_sections.js"></script>
+    <link rel="shortcut icon" href="../../../_static/favicon.ico"/>
+    <link rel="top" title="InaSAFE 0.5.1-final documentation" href="../../../index.html" />
+    <link rel="up" title="Package::safe.postprocessors" href="../postprocessors.html" />
+    <link rel="next" title="Module: safe.postprocessors.gender_postprocessor" href="gender_postprocessor.html" />
+    <link rel="prev" title="Module: safe.postprocessors.postprocessor_factory" href="postprocessor_factory.html" /> 
+  </head>
+  <body>
+    <div class="relbar-top">
+        
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> &nbsp; &nbsp;</li>
+        <li class="right" >
+          <a href="gender_postprocessor.html" title="Module: safe.postprocessors.gender_postprocessor"
+             accesskey="N">next</a> &nbsp; &nbsp;</li>
+        <li class="right" >
+          <a href="postprocessor_factory.html" title="Module: safe.postprocessors.postprocessor_factory"
+             accesskey="P">previous</a> &nbsp; &nbsp;</li>
+    <li><a href="../../../index.html">Home</a> &raquo;</li>
+    <li><a href="../../../contents.html">Contents</a> &raquo;</li>
+
+          <li><a href="../../index.html" >InaSAFE&#8217;s API documentation</a> &raquo;</li>
+          <li><a href="../../safe.html" >Package::safe</a> &raquo;</li>
+          <li><a href="../postprocessors.html" accesskey="U">Package::safe.postprocessors</a> &raquo;</li> 
+      </ul>
+    </div>
+    </div>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="module-safe.postprocessors.abstract_postprocessor">
+<span id="module-safe-postprocessors-abstract-postprocessor"></span><h1>Module:  safe.postprocessors.abstract_postprocessor<a class="headerlink" href="#module-safe.postprocessors.abstract_postprocessor" title="Permalink to this headline">¶</a></h1>
+<p><strong>Abstract postprocessor class, do not instantiate directly</strong></p>
+<dl class="class">
+<dt id="safe.postprocessors.abstract_postprocessor.AbstractPostprocessor">
+<em class="property">class </em><tt class="descclassname">safe.postprocessors.abstract_postprocessor.</tt><tt class="descname">AbstractPostprocessor</tt><a class="reference internal" href="../../../_modules/safe/postprocessors/abstract_postprocessor.html#AbstractPostprocessor"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe.postprocessors.abstract_postprocessor.AbstractPostprocessor" title="Permalink to this definition">¶</a></dt>
+<dd><p>Abstract postprocessor class, do not instantiate directly.
+but instantiate the PostprocessorFactory class which will take care of
+setting up many prostprocessors. Alternatively you can as well instantiate
+directly a sub class of AbstractPostprocessor.</p>
+<p>Each subclass has to overload the process method and call its parent
+like this: AbstractPostprocessor.process(self)
+if a postprocessor needs parmeters, then it should override the setup and
+clear methods as well and call respectively
+AbstractPostprocessor.setup(self) and AbstractPostprocessor.clear(self).</p>
+<p>for implementation examples see AgePostprocessor which uses mandatory and
+optional parameters</p>
+<dl class="method">
+<dt id="safe.postprocessors.abstract_postprocessor.AbstractPostprocessor.clear">
+<tt class="descname">clear</tt><big>(</big><big>)</big><a class="reference internal" href="../../../_modules/safe/postprocessors/abstract_postprocessor.html#AbstractPostprocessor.clear"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe.postprocessors.abstract_postprocessor.AbstractPostprocessor.clear" title="Permalink to this definition">¶</a></dt>
+<dd><p>Abstract method to be called from the concrete implementation
+with AbstractPostprocessor.process(self) it takes care of results
+being cleared</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>None</dd>
+<dt>Returns:</dt>
+<dd>None</dd>
+<dt>Raises:</dt>
+<dd>None</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="safe.postprocessors.abstract_postprocessor.AbstractPostprocessor.process">
+<tt class="descname">process</tt><big>(</big><big>)</big><a class="reference internal" href="../../../_modules/safe/postprocessors/abstract_postprocessor.html#AbstractPostprocessor.process"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe.postprocessors.abstract_postprocessor.AbstractPostprocessor.process" title="Permalink to this definition">¶</a></dt>
+<dd><p>Abstract method to be called from the concrete implementation
+with AbstractPostprocessor.process(self) it takes care of results
+being initialized</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>None</dd>
+<dt>Returns:</dt>
+<dd>None</dd>
+<dt>Raises:</dt>
+<dd>None</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="safe.postprocessors.abstract_postprocessor.AbstractPostprocessor.results">
+<tt class="descname">results</tt><big>(</big><big>)</big><a class="reference internal" href="../../../_modules/safe/postprocessors/abstract_postprocessor.html#AbstractPostprocessor.results"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe.postprocessors.abstract_postprocessor.AbstractPostprocessor.results" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the postprocessors results</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>None</dd>
+<dt>Returns:</dt>
+<dd>Odict of results</dd>
+<dt>Raises:</dt>
+<dd>None</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="safe.postprocessors.abstract_postprocessor.AbstractPostprocessor.setup">
+<tt class="descname">setup</tt><big>(</big><em>params</em><big>)</big><a class="reference internal" href="../../../_modules/safe/postprocessors/abstract_postprocessor.html#AbstractPostprocessor.setup"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe.postprocessors.abstract_postprocessor.AbstractPostprocessor.setup" title="Permalink to this definition">¶</a></dt>
+<dd><p>Abstract method to be called from the concrete implementation
+with AbstractPostprocessor.setup(self, None) it takes care of results
+being initialized</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>params: dict of parameters to pass to the post processor</dd>
+<dt>Returns:</dt>
+<dd>None</dd>
+<dt>Raises:</dt>
+<dd>None</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<p>This module forms part of the <a class="reference external" href="http://inasafe.org">InaSAFE</a> tool.</p>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+        <p class="logo"><a href="../../../contents.html">
+          <img class="logo" src="../../../_static/icon.png" alt="Logo"/>
+        </a></p>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="postprocessor_factory.html"
+                        title="previous chapter">Module:  safe.postprocessors.postprocessor_factory</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="gender_postprocessor.html"
+                        title="next chapter">Module:  safe.postprocessors.gender_postprocessor</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../../../_sources/api-docs/safe/postprocessors/abstract_postprocessor.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="relbar-bottom">
+        
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> &nbsp; &nbsp;</li>
+        <li class="right" >
+          <a href="gender_postprocessor.html" title="Module: safe.postprocessors.gender_postprocessor"
+             >next</a> &nbsp; &nbsp;</li>
+        <li class="right" >
+          <a href="postprocessor_factory.html" title="Module: safe.postprocessors.postprocessor_factory"
+             >previous</a> &nbsp; &nbsp;</li>
+    <li><a href="../../../index.html">Home</a> &raquo;</li>
+    <li><a href="../../../contents.html">Contents</a> &raquo;</li>
+
+          <li><a href="../../index.html" >InaSAFE&#8217;s API documentation</a> &raquo;</li>
+          <li><a href="../../safe.html" >Package::safe</a> &raquo;</li>
+          <li><a href="../postprocessors.html" >Package::safe.postprocessors</a> &raquo;</li> 
+      </ul>
+    </div>
+    </div>
+
+    <div class="footer">
+        &copy; Copyright 2012, BNPB/AIFDR/GFDRR.
+      Last updated on Oct 18, 2012.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+    </div>
+    <!-- cloud_sptheme 1.3 -->
+  </body>
+</html>

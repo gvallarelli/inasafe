@@ -9,7 +9,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>safe_qgis.keywords_dialog &mdash; InaSAFE 0.5.0-alpha documentation</title>
+    <title>safe_qgis.keywords_dialog &mdash; InaSAFE 0.5.1-final documentation</title>
     
     <link rel="stylesheet" href="../../_static/cloud.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -18,7 +18,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '0.5.0-alpha',
+        VERSION:     '0.5.1-final',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -29,7 +29,8 @@
     <script type="text/javascript" src="../../_static/doctools.js"></script>
     <script type="text/javascript" src="../../_static/jquery.cookie.js"></script>
     <script type="text/javascript" src="../../_static/toggle_sections.js"></script>
-    <link rel="top" title="InaSAFE 0.5.0-alpha documentation" href="../../index.html" />
+    <link rel="shortcut icon" href="../../_static/favicon.ico"/>
+    <link rel="top" title="InaSAFE 0.5.1-final documentation" href="../../index.html" />
     <link rel="up" title="Module code" href="../index.html" /> 
   </head>
   <body>
@@ -100,18 +101,12 @@
 <span class="kn">import</span> <span class="nn">safe_qgis.resources</span>  <span class="c"># pylint: disable=W0611</span>
 
 <span class="c">#see if we can import pydev - see development docs for details</span>
-<span class="k">try</span><span class="p">:</span>
-    <span class="kn">from</span> <span class="nn">pydevd</span> <span class="kn">import</span> <span class="o">*</span>  <span class="c"># pylint: disable=F0401</span>
-    <span class="k">print</span> <span class="s">&#39;Remote debugging is enabled.&#39;</span>
-    <span class="n">DEBUG</span> <span class="o">=</span> <span class="bp">True</span>
-<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
-    <span class="k">print</span> <span class="s">&#39;Debugging was disabled&#39;</span>
 
 
 <div class="viewcode-block" id="KeywordsDialog"><a class="viewcode-back" href="../../api-docs/safe_qgis/keywords_dialog.html#safe_qgis.keywords_dialog.KeywordsDialog">[docs]</a><span class="k">class</span> <span class="nc">KeywordsDialog</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QDialog</span><span class="p">,</span> <span class="n">Ui_KeywordsDialogBase</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Dialog implementation class for the Risk In A Box keywords editor.&quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">,</span> <span class="n">iface</span><span class="p">,</span> <span class="n">theDock</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">,</span> <span class="n">iface</span><span class="p">,</span> <span class="n">theDock</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">theLayer</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Constructor for the dialog.</span>
 <span class="sd">        .. note:: In QtDesigner the advanced editor&#39;s predefined keywords</span>
 <span class="sd">           list should be shown in english always, so when adding entries to</span>
@@ -139,42 +134,44 @@
         <span class="c"># english to the keywords file. The keys will be written as user data</span>
         <span class="c"># in the combo entries.</span>
         <span class="c"># .. seealso:: http://www.voidspace.org.uk/python/odict.html</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">standardExposureList</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">([(</span><span class="s">&#39;population [density]&#39;</span><span class="p">,</span>
-                                      <span class="bp">self</span><span class="o">.</span><span class="n">tr</span><span class="p">(</span><span class="s">&#39;population [density]&#39;</span><span class="p">)),</span>
-                                     <span class="p">(</span><span class="s">&#39;population [count]&#39;</span><span class="p">,</span>
-                                      <span class="bp">self</span><span class="o">.</span><span class="n">tr</span><span class="p">(</span><span class="s">&#39;population [count]&#39;</span><span class="p">)),</span>
-                                     <span class="p">(</span><span class="s">&#39;building&#39;</span><span class="p">,</span>
-                                      <span class="bp">self</span><span class="o">.</span><span class="n">tr</span><span class="p">(</span><span class="s">&#39;building&#39;</span><span class="p">)),</span>
-                                     <span class="p">(</span><span class="s">&#39;building [osm]&#39;</span><span class="p">,</span>
-                                      <span class="bp">self</span><span class="o">.</span><span class="n">tr</span><span class="p">(</span><span class="s">&#39;building [osm]&#39;</span><span class="p">)),</span>
-                                     <span class="p">(</span><span class="s">&#39;building [sigab]&#39;</span><span class="p">,</span>
-                                      <span class="bp">self</span><span class="o">.</span><span class="n">tr</span><span class="p">(</span><span class="s">&#39;building [sigab]&#39;</span><span class="p">)),</span>
-                                     <span class="p">(</span><span class="s">&#39;roads&#39;</span><span class="p">,</span>
-                                      <span class="bp">self</span><span class="o">.</span><span class="n">tr</span><span class="p">(</span><span class="s">&#39;roads&#39;</span><span class="p">))])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">standardExposureList</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">([(</span><span class="s">&#39;population&#39;</span><span class="p">,</span>
+                                      <span class="bp">self</span><span class="o">.</span><span class="n">tr</span><span class="p">(</span><span class="s">&#39;population&#39;</span><span class="p">)),</span>
+                                     <span class="p">(</span><span class="s">&#39;structure&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">tr</span><span class="p">(</span><span class="s">&#39;structure&#39;</span><span class="p">)),</span>
+                                     <span class="p">(</span><span class="s">&#39;roads&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">tr</span><span class="p">(</span><span class="s">&#39;roads&#39;</span><span class="p">)),</span>
+                                     <span class="p">(</span><span class="s">&#39;Not Set&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">tr</span><span class="p">(</span><span class="s">&#39;Not Set&#39;</span><span class="p">))])</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">standardHazardList</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">([(</span><span class="s">&#39;earthquake [MMI]&#39;</span><span class="p">,</span>
                                     <span class="bp">self</span><span class="o">.</span><span class="n">tr</span><span class="p">(</span><span class="s">&#39;earthquake [MMI]&#39;</span><span class="p">)),</span>
-                                     <span class="p">(</span><span class="s">&#39;tsunami [m]&#39;</span><span class="p">,</span>
-                                      <span class="bp">self</span><span class="o">.</span><span class="n">tr</span><span class="p">(</span><span class="s">&#39;tsunami [m]&#39;</span><span class="p">)),</span>
+                                     <span class="p">(</span><span class="s">&#39;tsunami [m]&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">tr</span><span class="p">(</span><span class="s">&#39;tsunami [m]&#39;</span><span class="p">)),</span>
                                      <span class="p">(</span><span class="s">&#39;tsunami [wet/dry]&#39;</span><span class="p">,</span>
                                       <span class="bp">self</span><span class="o">.</span><span class="n">tr</span><span class="p">(</span><span class="s">&#39;tsunami [wet/dry]&#39;</span><span class="p">)),</span>
                                      <span class="p">(</span><span class="s">&#39;tsunami [feet]&#39;</span><span class="p">,</span>
                                       <span class="bp">self</span><span class="o">.</span><span class="n">tr</span><span class="p">(</span><span class="s">&#39;tsunami [feet]&#39;</span><span class="p">)),</span>
-                                     <span class="p">(</span><span class="s">&#39;flood [m]&#39;</span><span class="p">,</span>
-                                      <span class="bp">self</span><span class="o">.</span><span class="n">tr</span><span class="p">(</span><span class="s">&#39;flood [m]&#39;</span><span class="p">)),</span>
+                                     <span class="p">(</span><span class="s">&#39;flood [m]&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">tr</span><span class="p">(</span><span class="s">&#39;flood [m]&#39;</span><span class="p">)),</span>
                                      <span class="p">(</span><span class="s">&#39;flood [wet/dry]&#39;</span><span class="p">,</span>
                                       <span class="bp">self</span><span class="o">.</span><span class="n">tr</span><span class="p">(</span><span class="s">&#39;flood [wet/dry]&#39;</span><span class="p">)),</span>
                                      <span class="p">(</span><span class="s">&#39;flood [feet]&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">tr</span><span class="p">(</span><span class="s">&#39;flood [feet]&#39;</span><span class="p">)),</span>
-                                     <span class="p">(</span><span class="s">&#39;tephra [kg2/m2&#39;</span><span class="p">,</span>
-                                      <span class="bp">self</span><span class="o">.</span><span class="n">tr</span><span class="p">(</span><span class="s">&#39;tephra [kg2/m2]&#39;</span><span class="p">))])</span>
+                                     <span class="p">(</span><span class="s">&#39;tephra [kg2/m2]&#39;</span><span class="p">,</span>
+                                      <span class="bp">self</span><span class="o">.</span><span class="n">tr</span><span class="p">(</span><span class="s">&#39;tephra [kg2/m2]&#39;</span><span class="p">)),</span>
+                                      <span class="p">(</span><span class="s">&#39;volcano&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">tr</span><span class="p">(</span><span class="s">&#39;volcano&#39;</span><span class="p">)),</span>
+                                     <span class="p">(</span><span class="s">&#39;Not Set&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">tr</span><span class="p">(</span><span class="s">&#39;Not Set&#39;</span><span class="p">))])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">standardPostprocessingList</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">([(</span><span class="s">&#39;aggregation&#39;</span><span class="p">,</span>
+                                    <span class="bp">self</span><span class="o">.</span><span class="n">tr</span><span class="p">(</span><span class="s">&#39;aggregation&#39;</span><span class="p">)),</span>
+                                    <span class="p">(</span><span class="s">&#39;Not Set&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">tr</span><span class="p">(</span><span class="s">&#39;Not Set&#39;</span><span class="p">))])</span>
         <span class="c"># Save reference to the QGIS interface and parent</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">iface</span> <span class="o">=</span> <span class="n">iface</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">parent</span> <span class="o">=</span> <span class="n">parent</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">dock</span> <span class="o">=</span> <span class="n">theDock</span>
-        <span class="c"># Set up things for context help</span>
+
+        <span class="n">QtCore</span><span class="o">.</span><span class="n">QObject</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">lstKeywords</span><span class="p">,</span>
+                               <span class="n">QtCore</span><span class="o">.</span><span class="n">SIGNAL</span><span class="p">(</span><span class="s">&quot;itemClicked(QListWidgetItem *)&quot;</span><span class="p">),</span>
+                               <span class="bp">self</span><span class="o">.</span><span class="n">makeKeyValueEditable</span><span class="p">)</span>
+
+        <span class="c"># Set up help dialog showing logic.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">helpDialog</span> <span class="o">=</span> <span class="bp">None</span>
         <span class="n">myButton</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">buttonBox</span><span class="o">.</span><span class="n">button</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QDialogButtonBox</span><span class="o">.</span><span class="n">Help</span><span class="p">)</span>
         <span class="n">QtCore</span><span class="o">.</span><span class="n">QObject</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">myButton</span><span class="p">,</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">SIGNAL</span><span class="p">(</span><span class="s">&#39;clicked()&#39;</span><span class="p">),</span>
                                <span class="bp">self</span><span class="o">.</span><span class="n">showHelp</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">helpDialog</span> <span class="o">=</span> <span class="bp">None</span>
+
         <span class="c"># set some inital ui state:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">pbnAdvanced</span><span class="o">.</span><span class="n">setChecked</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">pbnAdvanced</span><span class="o">.</span><span class="n">toggle</span><span class="p">()</span>
@@ -182,17 +179,66 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">adjustSize</span><span class="p">()</span>
         <span class="c">#myButton = self.buttonBox.button(QtGui.QDialogButtonBox.Ok)</span>
         <span class="c">#myButton.setEnabled(False)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">layer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">iface</span><span class="o">.</span><span class="n">activeLayer</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">theLayer</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">layer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">iface</span><span class="o">.</span><span class="n">activeLayer</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">layer</span> <span class="o">=</span> <span class="n">theLayer</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">layer</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">loadStateFromKeywords</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">showExtraWidgets</span><span class="p">()</span>
 
 <div class="viewcode-block" id="KeywordsDialog.showHelp"><a class="viewcode-back" href="../../api-docs/safe_qgis/keywords_dialog.html#safe_qgis.keywords_dialog.KeywordsDialog.showHelp">[docs]</a>    <span class="k">def</span> <span class="nf">showHelp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Load the help text for the keywords safe_qgis&quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">helpDialog</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">helpDialog</span> <span class="o">=</span> <span class="n">Help</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">iface</span><span class="o">.</span><span class="n">mainWindow</span><span class="p">(),</span> <span class="s">&#39;keywords&#39;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">helpDialog</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">helpDialog</span><span class="p">:</span>
+            <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">helpDialog</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">helpDialog</span> <span class="o">=</span> <span class="n">Help</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">iface</span><span class="o">.</span><span class="n">mainWindow</span><span class="p">(),</span> <span class="s">&#39;keywords&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">helpDialog</span><span class="o">.</span><span class="n">showMe</span><span class="p">()</span>
+</div>
+    <span class="k">def</span> <span class="nf">showExtraWidgets</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">radPostprocessing</span><span class="o">.</span><span class="n">isChecked</span><span class="p">()</span> <span class="ow">and</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cboSubcategory</span><span class="o">.</span><span class="n">currentText</span><span class="p">()</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">tr</span><span class="p">(</span><span class="s">&#39;aggregation&#39;</span><span class="p">)):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">showAggregationAttribute</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">showAggregationAttribute</span><span class="p">(</span><span class="bp">False</span><span class="p">)</span>
 
-    <span class="c"># prevents actions being handled twice</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">adjustSize</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">showAggregationAttribute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">theFlag</span><span class="p">):</span>
+        <span class="n">cboAggr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cboAggregationAttribute</span>
+        <span class="n">cboAggr</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+        <span class="n">fields</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">if</span> <span class="n">theFlag</span><span class="p">:</span>
+            <span class="n">vProvider</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">layer</span><span class="o">.</span><span class="n">dataProvider</span><span class="p">()</span>
+            <span class="n">vFields</span> <span class="o">=</span> <span class="n">vProvider</span><span class="o">.</span><span class="n">fields</span><span class="p">()</span>
+            <span class="n">currentKeyword</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">getValueForKey</span><span class="p">(</span><span class="s">&#39;aggregation attribute&#39;</span><span class="p">)</span>
+            <span class="n">selectedIndex</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">vFields</span><span class="p">:</span>
+                <span class="c"># show only int or string fields to be chosen as aggregation</span>
+                <span class="c"># attribute other possible would be float</span>
+                <span class="k">if</span> <span class="n">vFields</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">type</span><span class="p">()</span> <span class="ow">in</span> <span class="p">[</span>
+                    <span class="n">QtCore</span><span class="o">.</span><span class="n">QVariant</span><span class="o">.</span><span class="n">Int</span><span class="p">,</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">QVariant</span><span class="o">.</span><span class="n">String</span><span class="p">]:</span>
+                    <span class="n">curentFieldName</span> <span class="o">=</span> <span class="n">vFields</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">name</span><span class="p">()</span>
+                    <span class="n">fields</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">curentFieldName</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">currentKeyword</span> <span class="o">==</span> <span class="n">curentFieldName</span><span class="p">:</span>
+                        <span class="n">selectedIndex</span> <span class="o">=</span> <span class="n">i</span>
+                    <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+
+            <span class="n">cboAggr</span><span class="o">.</span><span class="n">addItems</span><span class="p">(</span><span class="n">fields</span><span class="p">)</span>
+            <span class="n">cboAggr</span><span class="o">.</span><span class="n">setCurrentIndex</span><span class="p">(</span><span class="n">selectedIndex</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">cboAggregationAttribute</span><span class="o">.</span><span class="n">setVisible</span><span class="p">(</span><span class="n">theFlag</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lblAggregationAttribute</span><span class="o">.</span><span class="n">setVisible</span><span class="p">(</span><span class="n">theFlag</span><span class="p">)</span>
+
+        <span class="c"># prevents actions being handled twice</span>
+
+    <span class="nd">@pyqtSignature</span><span class="p">(</span><span class="s">&#39;int&#39;</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">on_cboAggregationAttribute_currentIndexChanged</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">theIndex</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="k">del</span> <span class="n">theIndex</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">addListEntry</span><span class="p">(</span><span class="s">&#39;aggregation attribute&#39;</span><span class="p">,</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cboAggregationAttribute</span><span class="o">.</span><span class="n">currentText</span><span class="p">())</span>
+
+    <span class="c"># prevents actions being handled twice</span>
     <span class="nd">@pyqtSignature</span><span class="p">(</span><span class="s">&#39;bool&#39;</span><span class="p">)</span>
 <div class="viewcode-block" id="KeywordsDialog.on_pbnAdvanced_toggled"><a class="viewcode-back" href="../../api-docs/safe_qgis/keywords_dialog.html#safe_qgis.keywords_dialog.KeywordsDialog.on_pbnAdvanced_toggled">[docs]</a>    <span class="k">def</span> <span class="nf">on_pbnAdvanced_toggled</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">theFlag</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Automatic slot executed when the advanced button is toggled.</span>
@@ -207,13 +253,17 @@
 <span class="sd">           None.</span>
 <span class="sd">        Raises:</span>
 <span class="sd">           no exceptions explicitly raised.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">toggleAdvanced</span><span class="p">(</span><span class="n">theFlag</span><span class="p">)</span>
+</div>
+    <span class="k">def</span> <span class="nf">toggleAdvanced</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">theFlag</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">theFlag</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">pbnAdvanced</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tr</span><span class="p">(</span><span class="s">&#39;Hide advanced editor&#39;</span><span class="p">))</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">pbnAdvanced</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tr</span><span class="p">(</span><span class="s">&#39;Show advanced editor&#39;</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">grpAdvanced</span><span class="o">.</span><span class="n">setVisible</span><span class="p">(</span><span class="n">theFlag</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">adjustSize</span><span class="p">()</span>
 
-    <span class="c"># prevents actions being handled twice</span></div>
+    <span class="c"># prevents actions being handled twice</span>
     <span class="nd">@pyqtSignature</span><span class="p">(</span><span class="s">&#39;bool&#39;</span><span class="p">)</span>
 <div class="viewcode-block" id="KeywordsDialog.on_radHazard_toggled"><a class="viewcode-back" href="../../api-docs/safe_qgis/keywords_dialog.html#safe_qgis.keywords_dialog.KeywordsDialog.on_radHazard_toggled">[docs]</a>    <span class="k">def</span> <span class="nf">on_radHazard_toggled</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">theFlag</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Automatic slot executed when the hazard radio is toggled.</span>
@@ -246,6 +296,23 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">updateControlsFromList</span><span class="p">()</span>
 
     <span class="c"># prevents actions being handled twice</span></div>
+    <span class="nd">@pyqtSignature</span><span class="p">(</span><span class="s">&#39;bool&#39;</span><span class="p">)</span>
+<div class="viewcode-block" id="KeywordsDialog.on_radPostprocessing_toggled"><a class="viewcode-back" href="../../api-docs/safe_qgis/keywords_dialog.html#safe_qgis.keywords_dialog.KeywordsDialog.on_radPostprocessing_toggled">[docs]</a>    <span class="k">def</span> <span class="nf">on_radPostprocessing_toggled</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">theFlag</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Automatic slot executed when the hazard radio is toggled on.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">           theFlag - boolean indicating the new checked state of the button</span>
+<span class="sd">        Returns:</span>
+<span class="sd">           None.</span>
+<span class="sd">        Raises:</span>
+<span class="sd">           no exceptions explicitly raised.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">theFlag</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">removeItemByKey</span><span class="p">(</span><span class="s">&#39;aggregation attribute&#39;</span><span class="p">)</span>
+            <span class="k">return</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setCategory</span><span class="p">(</span><span class="s">&#39;postprocessing&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">updateControlsFromList</span><span class="p">()</span>
+
+    <span class="c"># prevents actions being handled twice</span></div>
     <span class="nd">@pyqtSignature</span><span class="p">(</span><span class="s">&#39;int&#39;</span><span class="p">)</span>
 <div class="viewcode-block" id="KeywordsDialog.on_cboSubcategory_currentIndexChanged"><a class="viewcode-back" href="../../api-docs/safe_qgis/keywords_dialog.html#safe_qgis.keywords_dialog.KeywordsDialog.on_cboSubcategory_currentIndexChanged">[docs]</a>    <span class="k">def</span> <span class="nf">on_cboSubcategory_currentIndexChanged</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">theIndex</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Automatic slot executed when the subcategory is changed.</span>
@@ -264,7 +331,9 @@
         <span class="n">myItem</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cboSubcategory</span><span class="o">.</span><span class="n">itemData</span><span class="p">(</span>
                             <span class="bp">self</span><span class="o">.</span><span class="n">cboSubcategory</span><span class="o">.</span><span class="n">currentIndex</span><span class="p">())</span><span class="o">.</span><span class="n">toString</span><span class="p">()</span>
         <span class="n">myText</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">myItem</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">myText</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">tr</span><span class="p">(</span><span class="s">&#39;Not Set&#39;</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">showExtraWidgets</span><span class="p">()</span>
+        <span class="c"># I found that myText is &#39;Not Set&#39; for every language</span>
+        <span class="k">if</span> <span class="n">myText</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">tr</span><span class="p">(</span><span class="s">&#39;Not Set&#39;</span><span class="p">)</span> <span class="ow">or</span> <span class="n">myText</span> <span class="o">==</span> <span class="s">&#39;Not Set&#39;</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">removeItemByKey</span><span class="p">(</span><span class="s">&#39;subcategory&#39;</span><span class="p">)</span>
             <span class="k">return</span>
         <span class="n">myTokens</span> <span class="o">=</span> <span class="n">myText</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39; &#39;</span><span class="p">)</span>
@@ -276,6 +345,8 @@
 
         <span class="c"># Some subcategories e.g. roads have no units or datatype</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">myTokens</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">return</span>
+        <span class="k">if</span> <span class="n">myTokens</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s">&#39;[&#39;</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
             <span class="k">return</span>
         <span class="n">myCategory</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">getValueForKey</span><span class="p">(</span><span class="s">&#39;category&#39;</span><span class="p">)</span>
         <span class="k">if</span> <span class="s">&#39;hazard&#39;</span> <span class="o">==</span> <span class="n">myCategory</span><span class="p">:</span>
@@ -335,11 +406,13 @@
 <span class="sd">           None.</span>
 <span class="sd">        Raises:</span>
 <span class="sd">           no exceptions explicitly raised.&quot;&quot;&quot;</span>
-
-        <span class="n">myCurrentKey</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cboKeyword</span><span class="o">.</span><span class="n">currentText</span><span class="p">())</span>
-        <span class="n">myCurrentValue</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">lePredefinedValue</span><span class="o">.</span><span class="n">text</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">addListEntry</span><span class="p">(</span><span class="n">myCurrentKey</span><span class="p">,</span> <span class="n">myCurrentValue</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">updateControlsFromList</span><span class="p">()</span>
+        <span class="k">if</span> <span class="p">(</span><span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">lePredefinedValue</span><span class="o">.</span><span class="n">text</span><span class="p">()</span><span class="o">.</span><span class="n">isEmpty</span><span class="p">()</span> <span class="ow">and</span> <span class="ow">not</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cboKeyword</span><span class="o">.</span><span class="n">currentText</span><span class="p">()</span><span class="o">.</span><span class="n">isEmpty</span><span class="p">()):</span>
+            <span class="n">myCurrentKey</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cboKeyword</span><span class="o">.</span><span class="n">currentText</span><span class="p">())</span>
+            <span class="n">myCurrentValue</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">lePredefinedValue</span><span class="o">.</span><span class="n">text</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">addListEntry</span><span class="p">(</span><span class="n">myCurrentKey</span><span class="p">,</span> <span class="n">myCurrentValue</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">lePredefinedValue</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="s">&#39;&#39;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">updateControlsFromList</span><span class="p">()</span>
 
     <span class="c"># prevents actions being handled twice</span></div>
     <span class="nd">@pyqtSignature</span><span class="p">(</span><span class="s">&#39;&#39;</span><span class="p">)</span>
@@ -369,6 +442,8 @@
             <span class="c">#.. todo:: notify the user their category is invalid</span>
             <span class="k">pass</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">addListEntry</span><span class="p">(</span><span class="n">myCurrentKey</span><span class="p">,</span> <span class="n">myCurrentValue</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">leKey</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="s">&#39;&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">leValue</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="s">&#39;&#39;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">updateControlsFromList</span><span class="p">()</span>
 
     <span class="c"># prevents actions being handled twice</span></div>
@@ -386,6 +461,8 @@
 <span class="sd">           no exceptions explicitly raised.&quot;&quot;&quot;</span>
         <span class="k">for</span> <span class="n">myItem</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">lstKeywords</span><span class="o">.</span><span class="n">selectedItems</span><span class="p">():</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">lstKeywords</span><span class="o">.</span><span class="n">takeItem</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">lstKeywords</span><span class="o">.</span><span class="n">row</span><span class="p">(</span><span class="n">myItem</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">leKey</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="s">&#39;&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">leValue</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="s">&#39;&#39;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">updateControlsFromList</span><span class="p">()</span>
 </div>
 <div class="viewcode-block" id="KeywordsDialog.addListEntry"><a class="viewcode-back" href="../../api-docs/safe_qgis/keywords_dialog.html#safe_qgis.keywords_dialog.KeywordsDialog.addListEntry">[docs]</a>    <span class="k">def</span> <span class="nf">addListEntry</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">theKey</span><span class="p">,</span> <span class="n">theValue</span><span class="p">):</span>
@@ -417,6 +494,9 @@
         <span class="k">if</span> <span class="n">theValue</span> <span class="ow">is</span> <span class="bp">None</span> <span class="ow">or</span> <span class="n">theValue</span> <span class="o">==</span> <span class="s">&#39;&#39;</span><span class="p">:</span>
             <span class="k">return</span>
 
+        <span class="c"># make sure that both key and value is string</span>
+        <span class="n">theKey</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">theKey</span><span class="p">)</span>
+        <span class="n">theValue</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">theValue</span><span class="p">)</span>
         <span class="n">myMessage</span> <span class="o">=</span> <span class="s">&#39;&#39;</span>
         <span class="k">if</span> <span class="s">&#39;:&#39;</span> <span class="ow">in</span> <span class="n">theKey</span><span class="p">:</span>
             <span class="n">theKey</span> <span class="o">=</span> <span class="n">theKey</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&#39;:&#39;</span><span class="p">,</span> <span class="s">&#39;.&#39;</span><span class="p">)</span>
@@ -431,7 +511,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">lblMessage</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">myMessage</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">lblMessage</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
         <span class="n">myItem</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QListWidgetItem</span><span class="p">(</span><span class="n">theKey</span> <span class="o">+</span> <span class="s">&#39;:&#39;</span> <span class="o">+</span> <span class="n">theValue</span><span class="p">)</span>
-        <span class="c"># we are going to replace, so remove it if it exists already</span>
+        <span class="c"># We are going to replace, so remove it if it exists already</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">removeItemByKey</span><span class="p">(</span><span class="n">theKey</span><span class="p">)</span>
         <span class="n">myData</span> <span class="o">=</span> <span class="n">theKey</span> <span class="o">+</span> <span class="s">&#39;|&#39;</span> <span class="o">+</span> <span class="n">theValue</span>
         <span class="n">myItem</span><span class="o">.</span><span class="n">setData</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">UserRole</span><span class="p">,</span> <span class="n">myData</span><span class="p">)</span>
@@ -441,7 +521,8 @@
         <span class="sd">&quot;&quot;&quot;Set the category radio button based on theCategory.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">           theCategory - a string which must be either &#39;hazard&#39; or &#39;exposure&#39;.</span>
+<span class="sd">           theCategory - a string which must be either &#39;hazard&#39; or &#39;exposure&#39;</span>
+<span class="sd">            or &#39;postprocessing&#39;.</span>
 <span class="sd">        Returns:</span>
 <span class="sd">           False if the radio button could not be updated</span>
 <span class="sd">        Raises:</span>
@@ -451,7 +532,7 @@
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">getValueForKey</span><span class="p">(</span><span class="s">&#39;category&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="n">myCategory</span><span class="p">:</span>
             <span class="c">#nothing to do, go home</span>
             <span class="k">return</span> <span class="bp">True</span>
-        <span class="k">if</span> <span class="n">myCategory</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s">&#39;hazard&#39;</span><span class="p">,</span> <span class="s">&#39;exposure&#39;</span><span class="p">]:</span>
+        <span class="k">if</span> <span class="n">myCategory</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s">&#39;hazard&#39;</span><span class="p">,</span> <span class="s">&#39;exposure&#39;</span><span class="p">,</span> <span class="s">&#39;postprocessing&#39;</span><span class="p">]:</span>
             <span class="c"># .. todo:: report an error to the user</span>
             <span class="k">return</span> <span class="bp">False</span>
         <span class="c"># Special case when category changes, we start on a new slate!</span>
@@ -470,7 +551,7 @@
             <span class="n">myList</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">standardHazardList</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">setSubcategoryList</span><span class="p">(</span><span class="n">myList</span><span class="p">)</span>
 
-        <span class="k">else</span><span class="p">:</span>
+        <span class="k">elif</span> <span class="n">myCategory</span> <span class="o">==</span> <span class="s">&#39;exposure&#39;</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">radExposure</span><span class="o">.</span><span class="n">blockSignals</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">radExposure</span><span class="o">.</span><span class="n">setChecked</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
@@ -479,6 +560,16 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">removeItemByKey</span><span class="p">(</span><span class="s">&#39;unit&#39;</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">addListEntry</span><span class="p">(</span><span class="s">&#39;category&#39;</span><span class="p">,</span> <span class="s">&#39;exposure&#39;</span><span class="p">)</span>
             <span class="n">myList</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">standardExposureList</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">setSubcategoryList</span><span class="p">(</span><span class="n">myList</span><span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">radPostprocessing</span><span class="o">.</span><span class="n">blockSignals</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">radPostprocessing</span><span class="o">.</span><span class="n">setChecked</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">radPostprocessing</span><span class="o">.</span><span class="n">blockSignals</span><span class="p">(</span><span class="bp">False</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">removeItemByKey</span><span class="p">(</span><span class="s">&#39;subcategory&#39;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">addListEntry</span><span class="p">(</span><span class="s">&#39;category&#39;</span><span class="p">,</span> <span class="s">&#39;postprocessing&#39;</span><span class="p">)</span>
+            <span class="n">myList</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">standardPostprocessingList</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">setSubcategoryList</span><span class="p">(</span><span class="n">myList</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="bp">True</span>
@@ -576,13 +667,16 @@
 <span class="sd">           None.</span>
 <span class="sd">        Raises:</span>
 <span class="sd">           no exceptions explicitly raised.&quot;&quot;&quot;</span>
+        <span class="c"># In case the layer has no keywords or any problem occurs reading them,</span>
+        <span class="c"># start with a blank slate so that subcategory gets populated nicely &amp;</span>
+        <span class="c"># we will assume exposure to start with.</span>
+        <span class="n">myKeywords</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;category&#39;</span><span class="p">:</span> <span class="s">&#39;exposure&#39;</span><span class="p">}</span>
+
         <span class="k">try</span><span class="p">:</span>
+            <span class="c"># Now read the layer with sub layer if needed</span>
             <span class="n">myKeywords</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">keywordIO</span><span class="o">.</span><span class="n">readKeywords</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">layer</span><span class="p">)</span>
-        <span class="k">except</span> <span class="p">(</span><span class="n">InvalidParameterException</span><span class="p">,</span> <span class="n">HashNotFoundException</span><span class="p">,</span> <span class="ne">Exception</span><span class="p">):</span>
-            <span class="c"># layer has no keywords file so just start with a blank slate</span>
-            <span class="c"># so that subcategory gets populated nicely &amp; we will assume</span>
-            <span class="c"># exposure to start with</span>
-            <span class="n">myKeywords</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;category&#39;</span><span class="p">:</span> <span class="s">&#39;exposure&#39;</span><span class="p">}</span>
+        <span class="k">except</span> <span class="p">(</span><span class="n">InvalidParameterException</span><span class="p">,</span> <span class="n">HashNotFoundException</span><span class="p">):</span>
+            <span class="k">pass</span>
 
         <span class="n">myLayerName</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">layer</span><span class="o">.</span><span class="n">name</span><span class="p">()</span>
         <span class="k">if</span> <span class="s">&#39;title&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">myKeywords</span><span class="p">:</span>
@@ -594,7 +688,7 @@
             <span class="n">myKeywords</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s">&#39;category&#39;</span><span class="p">)</span>
 
         <span class="k">for</span> <span class="n">myKey</span> <span class="ow">in</span> <span class="n">myKeywords</span><span class="o">.</span><span class="n">iterkeys</span><span class="p">():</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">addListEntry</span><span class="p">(</span><span class="n">myKey</span><span class="p">,</span> <span class="n">myKeywords</span><span class="p">[</span><span class="n">myKey</span><span class="p">])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">addListEntry</span><span class="p">(</span><span class="n">myKey</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">myKeywords</span><span class="p">[</span><span class="n">myKey</span><span class="p">]))</span>
         <span class="c"># now make the rest of the safe_qgis reflect the list entries</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">updateControlsFromList</span><span class="p">()</span>
 </div>
@@ -630,7 +724,7 @@
             <span class="k">else</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">setSubcategoryList</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">standardExposureList</span><span class="p">,</span>
                                         <span class="bp">self</span><span class="o">.</span><span class="n">tr</span><span class="p">(</span><span class="s">&#39;Not Set&#39;</span><span class="p">))</span>
-        <span class="k">else</span><span class="p">:</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">radHazard</span><span class="o">.</span><span class="n">isChecked</span><span class="p">():</span>
             <span class="k">if</span> <span class="n">mySubcategory</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="ow">and</span> <span class="n">myUnits</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">setSubcategoryList</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">standardHazardList</span><span class="p">,</span>
                                      <span class="n">mySubcategory</span> <span class="o">+</span> <span class="s">&#39; [&#39;</span> <span class="o">+</span> <span class="n">myUnits</span> <span class="o">+</span> <span class="s">&#39;]&#39;</span><span class="p">)</span>
@@ -639,6 +733,13 @@
                                         <span class="n">mySubcategory</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">setSubcategoryList</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">standardHazardList</span><span class="p">,</span>
+                                        <span class="bp">self</span><span class="o">.</span><span class="n">tr</span><span class="p">(</span><span class="s">&#39;Not Set&#39;</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">mySubcategory</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">setSubcategoryList</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">standardPostprocessingList</span><span class="p">,</span>
+                                        <span class="n">mySubcategory</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">setSubcategoryList</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">standardPostprocessingList</span><span class="p">,</span>
                                         <span class="bp">self</span><span class="o">.</span><span class="n">tr</span><span class="p">(</span><span class="s">&#39;Not Set&#39;</span><span class="p">))</span>
 
     <span class="c"># prevents actions being handled twice</span></div>
@@ -689,16 +790,60 @@
 <span class="sd">           None.</span>
 <span class="sd">        Raises:</span>
 <span class="sd">           no exceptions explicitly raised.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">applyPendingChanges</span><span class="p">()</span>
         <span class="n">myKeywords</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">getKeywords</span><span class="p">()</span>
         <span class="k">try</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">keywordIO</span><span class="o">.</span><span class="n">writeKeywords</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">layer</span><span class="p">,</span> <span class="n">myKeywords</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">keywordIO</span><span class="o">.</span><span class="n">writeKeywords</span><span class="p">(</span><span class="n">theLayer</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">layer</span><span class="p">,</span>
+                                         <span class="n">theKeywords</span><span class="o">=</span><span class="n">myKeywords</span><span class="p">)</span>
         <span class="k">except</span> <span class="n">InaSAFEError</span><span class="p">,</span> <span class="n">e</span><span class="p">:</span>
             <span class="n">QtGui</span><span class="o">.</span><span class="n">QMessageBox</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">tr</span><span class="p">(</span><span class="s">&#39;InaSAFE&#39;</span><span class="p">),</span>
             <span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">tr</span><span class="p">(</span><span class="s">&#39;An error was encountered when saving the keywords:</span><span class="se">\n</span><span class="s">&#39;</span>
                       <span class="s">&#39;</span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="nb">str</span><span class="p">(</span><span class="n">getExceptionWithStacktrace</span><span class="p">(</span><span class="n">e</span><span class="p">))))))</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">dock</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">dock</span><span class="o">.</span><span class="n">getLayers</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">done</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QDialog</span><span class="o">.</span><span class="n">Accepted</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="KeywordsDialog.applyPendingChanges"><a class="viewcode-back" href="../../api-docs/safe_qgis/keywords_dialog.html#safe_qgis.keywords_dialog.KeywordsDialog.applyPendingChanges">[docs]</a>    <span class="k">def</span> <span class="nf">applyPendingChanges</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Apply any pending changes e.g. keywords entered without being added.</span>
+<span class="sd">        See https://github.com/AIFDR/inasafe/issues/249</span>
+
+<span class="sd">        Args: None</span>
+
+<span class="sd">        Returns: None</span>
+
+<span class="sd">        Raises: None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">radPredefined</span><span class="o">.</span><span class="n">isChecked</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">on_pbnAddToList1_clicked</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">on_pbnAddToList2_clicked</span><span class="p">()</span>
+</div>
+<div class="viewcode-block" id="KeywordsDialog.makeKeyValueEditable"><a class="viewcode-back" href="../../api-docs/safe_qgis/keywords_dialog.html#safe_qgis.keywords_dialog.KeywordsDialog.makeKeyValueEditable">[docs]</a>    <span class="k">def</span> <span class="nf">makeKeyValueEditable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">theItem</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Set leKey and leValue to the clicked item in the lstKeywords.</span>
+
+<span class="sd">        Args: None</span>
+
+<span class="sd">        Returns: None</span>
+
+<span class="sd">        Raises: None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">myTempKey</span> <span class="o">=</span> <span class="n">theItem</span><span class="o">.</span><span class="n">text</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39;:&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">myTempValue</span> <span class="o">=</span> <span class="n">theItem</span><span class="o">.</span><span class="n">text</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39;:&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">myTempKey</span> <span class="o">==</span> <span class="s">&#39;category&#39;</span><span class="p">:</span>
+            <span class="k">return</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">radUserDefined</span><span class="o">.</span><span class="n">isChecked</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">leKey</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">myTempKey</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">leValue</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">myTempValue</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">radPredefined</span><span class="o">.</span><span class="n">isChecked</span><span class="p">():</span>
+            <span class="n">idxKey</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cboKeyword</span><span class="o">.</span><span class="n">findText</span><span class="p">(</span><span class="n">myTempKey</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">idxKey</span> <span class="o">&gt;</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">cboKeyword</span><span class="o">.</span><span class="n">setCurrentIndex</span><span class="p">(</span><span class="n">idxKey</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">lePredefinedValue</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">myTempValue</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">radUserDefined</span><span class="o">.</span><span class="n">setChecked</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">leKey</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">myTempKey</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">leValue</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">myTempValue</span><span class="p">)</span></div></div>
 </pre></div>
 
           </div>
@@ -747,7 +892,8 @@
 
     <div class="footer">
         &copy; Copyright 2012, BNPB/AIFDR/GFDRR.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+      Last updated on Oct 18, 2012.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
     </div>
     <!-- cloud_sptheme 1.3 -->
   </body>

@@ -9,7 +9,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>safe_qgis.dock &mdash; InaSAFE 0.5.0-alpha documentation</title>
+    <title>safe_qgis.dock &mdash; InaSAFE 0.5.1-final documentation</title>
     
     <link rel="stylesheet" href="../../_static/cloud.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -18,7 +18,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '0.5.0-alpha',
+        VERSION:     '0.5.1-final',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -29,7 +29,8 @@
     <script type="text/javascript" src="../../_static/doctools.js"></script>
     <script type="text/javascript" src="../../_static/jquery.cookie.js"></script>
     <script type="text/javascript" src="../../_static/toggle_sections.js"></script>
-    <link rel="top" title="InaSAFE 0.5.0-alpha documentation" href="../../index.html" />
+    <link rel="shortcut icon" href="../../_static/favicon.ico"/>
+    <link rel="top" title="InaSAFE 0.5.1-final documentation" href="../../index.html" />
     <link rel="up" title="Module code" href="../index.html" /> 
   </head>
   <body>
@@ -75,31 +76,41 @@
 <span class="kn">from</span> <span class="nn">safe.common.utilities</span> <span class="kn">import</span> <span class="n">temp_dir</span>
 
 <span class="n">__author__</span> <span class="o">=</span> <span class="s">&#39;tim@linfiniti.com&#39;</span>
-<span class="n">__version__</span> <span class="o">=</span> <span class="s">&#39;0.5.0&#39;</span>
+<span class="n">__version__</span> <span class="o">=</span> <span class="s">&#39;0.5.1&#39;</span>
 <span class="n">__revision__</span> <span class="o">=</span> <span class="s">&#39;$Format:%H$&#39;</span>
 <span class="n">__date__</span> <span class="o">=</span> <span class="s">&#39;10/01/2011&#39;</span>
 <span class="n">__copyright__</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;Copyright 2012, Australia Indonesia Facility for &#39;</span>
                  <span class="s">&#39;Disaster Reduction&#39;</span><span class="p">)</span>
-<span class="n">__type__</span> <span class="o">=</span> <span class="s">&#39;alpha&#39;</span>  <span class="c"># beta, final etc will be shown in dock title</span>
+<span class="n">__type__</span> <span class="o">=</span> <span class="s">&#39;final&#39;</span>  <span class="c"># beta, final etc will be shown in dock title</span>
 
 <span class="kn">import</span> <span class="nn">numpy</span>
+<span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">from</span> <span class="nn">PyQt4</span> <span class="kn">import</span> <span class="n">QtGui</span><span class="p">,</span> <span class="n">QtCore</span>
 <span class="kn">from</span> <span class="nn">PyQt4.QtCore</span> <span class="kn">import</span> <span class="n">pyqtSlot</span>
 <span class="kn">from</span> <span class="nn">safe_qgis.dock_base</span> <span class="kn">import</span> <span class="n">Ui_DockBase</span>
+
 <span class="kn">from</span> <span class="nn">safe_qgis.help</span> <span class="kn">import</span> <span class="n">Help</span>
-<span class="kn">from</span> <span class="nn">safe_qgis.utilities</span> <span class="kn">import</span> <span class="n">getExceptionWithStacktrace</span><span class="p">,</span> <span class="n">getWGS84resolution</span>
+<span class="kn">from</span> <span class="nn">safe_qgis.utilities</span> <span class="kn">import</span> <span class="p">(</span><span class="n">getExceptionWithStacktrace</span><span class="p">,</span>
+                                 <span class="n">getWGS84resolution</span><span class="p">,</span>
+                                 <span class="n">logOnQgsMessageLog</span><span class="p">)</span>
 <span class="kn">from</span> <span class="nn">qgis.core</span> <span class="kn">import</span> <span class="p">(</span><span class="n">QgsMapLayer</span><span class="p">,</span>
                        <span class="n">QgsVectorLayer</span><span class="p">,</span>
                        <span class="n">QgsRasterLayer</span><span class="p">,</span>
                        <span class="n">QgsMapLayerRegistry</span><span class="p">,</span>
                        <span class="n">QgsCoordinateReferenceSystem</span><span class="p">,</span>
-                       <span class="n">QgsCoordinateTransform</span><span class="p">)</span>
+                       <span class="n">QgsCoordinateTransform</span><span class="p">,</span>
+                       <span class="n">QGis</span><span class="p">,</span>
+                       <span class="n">QgsFeature</span><span class="p">,</span>
+                       <span class="n">QgsRectangle</span><span class="p">)</span>
+<span class="kn">from</span> <span class="nn">qgis.analysis</span> <span class="kn">import</span> <span class="n">QgsZonalStatistics</span>
 <span class="kn">from</span> <span class="nn">safe_qgis.impact_calculator</span> <span class="kn">import</span> <span class="n">ImpactCalculator</span>
 <span class="kn">from</span> <span class="nn">safe_qgis.safe_interface</span> <span class="kn">import</span> <span class="p">(</span><span class="n">availableFunctions</span><span class="p">,</span>
                                       <span class="n">getFunctionTitle</span><span class="p">,</span>
                                       <span class="n">getOptimalExtent</span><span class="p">,</span>
                                       <span class="n">getBufferedExtent</span><span class="p">,</span>
-                                      <span class="n">internationalisedNames</span><span class="p">)</span>
+                                      <span class="n">internationalisedNames</span><span class="p">,</span>
+                                      <span class="n">getSafeImpactFunctions</span><span class="p">,</span>
+                                      <span class="n">writeKeywordsToFile</span><span class="p">)</span>
 <span class="kn">from</span> <span class="nn">safe_qgis.keyword_io</span> <span class="kn">import</span> <span class="n">KeywordIO</span>
 <span class="kn">from</span> <span class="nn">safe_qgis.clipper</span> <span class="kn">import</span> <span class="n">clipLayer</span>
 <span class="kn">from</span> <span class="nn">safe_qgis.exceptions</span> <span class="kn">import</span> <span class="p">(</span><span class="n">KeywordNotFoundException</span><span class="p">,</span>
@@ -108,22 +119,20 @@
                                   <span class="n">InsufficientParametersException</span><span class="p">,</span>
                                   <span class="n">HashNotFoundException</span><span class="p">)</span>
 <span class="kn">from</span> <span class="nn">safe_qgis.map</span> <span class="kn">import</span> <span class="n">Map</span>
+<span class="kn">from</span> <span class="nn">safe.api</span> <span class="kn">import</span> <span class="n">write_keywords</span><span class="p">,</span> <span class="n">read_keywords</span><span class="p">,</span> <span class="n">ReadLayerError</span>
 <span class="kn">from</span> <span class="nn">safe_qgis.utilities</span> <span class="kn">import</span> <span class="p">(</span><span class="n">htmlHeader</span><span class="p">,</span>
                                  <span class="n">htmlFooter</span><span class="p">,</span>
                                  <span class="n">setVectorStyle</span><span class="p">,</span>
                                  <span class="n">setRasterStyle</span><span class="p">,</span>
                                  <span class="n">qgisVersion</span><span class="p">)</span>
+<span class="kn">from</span> <span class="nn">safe_qgis.configurable_impact_functions_dialog</span> <span class="kn">import</span>\
+   <span class="n">ConfigurableImpactFunctionsDialog</span>
+
+<span class="kn">from</span> <span class="nn">safe_qgis.keywords_dialog</span> <span class="kn">import</span> <span class="n">KeywordsDialog</span>
+
 <span class="c"># Don&#39;t remove this even if it is flagged as unused by your ide</span>
 <span class="c"># it is needed for qrc:/ url resolution. See Qt Resources docs.</span>
 <span class="kn">import</span> <span class="nn">safe_qgis.resources</span>  <span class="c"># pylint: disable=W0611</span>
-
-<span class="c">#see if we can import pydev - see development docs for details</span>
-<span class="k">try</span><span class="p">:</span>
-    <span class="kn">from</span> <span class="nn">pydevd</span> <span class="kn">import</span> <span class="o">*</span>  <span class="c"># pylint: disable=F0401</span>
-    <span class="k">print</span> <span class="s">&#39;Remote debugging is enabled.&#39;</span>
-    <span class="n">DEBUG</span> <span class="o">=</span> <span class="bp">True</span>
-<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
-    <span class="k">print</span> <span class="s">&#39;Debugging was disabled&#39;</span>
 
 
 <div class="viewcode-block" id="Dock"><a class="viewcode-back" href="../../api-docs/safe_qgis/dock.html#safe_qgis.dock.Dock">[docs]</a><span class="k">class</span> <span class="nc">Dock</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QDockWidget</span><span class="p">,</span> <span class="n">Ui_DockBase</span><span class="p">):</span>
@@ -173,6 +182,10 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">exposureLayers</span> <span class="o">=</span> <span class="bp">None</span>  <span class="c"># array of all exposure layers</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">readSettings</span><span class="p">()</span>  <span class="c"># getLayers called by this</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">setOkButtonStatus</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_aggregationPrefix</span> <span class="o">=</span> <span class="s">&#39;aggr_&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pbnPrint</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="bp">False</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">initPostprocessingOutput</span><span class="p">()</span>
 
         <span class="n">myButton</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pbnHelp</span>
         <span class="n">QtCore</span><span class="o">.</span><span class="n">QObject</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">myButton</span><span class="p">,</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">SIGNAL</span><span class="p">(</span><span class="s">&#39;clicked()&#39;</span><span class="p">),</span>
@@ -201,8 +214,8 @@
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="n">mySettings</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">QSettings</span><span class="p">()</span>
-        <span class="n">myFlag</span> <span class="o">=</span> <span class="n">mySettings</span><span class="o">.</span><span class="n">value</span><span class="p">(</span>
-                        <span class="s">&#39;inasafe/useThreadingFlag&#39;</span><span class="p">,</span> <span class="bp">False</span><span class="p">)</span><span class="o">.</span><span class="n">toBool</span><span class="p">()</span>
+        <span class="n">myFlag</span> <span class="o">=</span> <span class="n">mySettings</span><span class="o">.</span><span class="n">value</span><span class="p">(</span><span class="s">&#39;inasafe/useThreadingFlag&#39;</span><span class="p">,</span>
+                                  <span class="bp">False</span><span class="p">)</span><span class="o">.</span><span class="n">toBool</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">runInThreadFlag</span> <span class="o">=</span> <span class="n">myFlag</span>
 
         <span class="n">myFlag</span> <span class="o">=</span> <span class="n">mySettings</span><span class="o">.</span><span class="n">value</span><span class="p">(</span>
@@ -220,6 +233,16 @@
         <span class="n">myFlag</span> <span class="o">=</span> <span class="n">mySettings</span><span class="o">.</span><span class="n">value</span><span class="p">(</span>
                             <span class="s">&#39;inasafe/setHideExposureFlag&#39;</span><span class="p">,</span> <span class="bp">False</span><span class="p">)</span><span class="o">.</span><span class="n">toBool</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">hideExposureFlag</span> <span class="o">=</span> <span class="n">myFlag</span>
+
+        <span class="c"># whether to clip hazard and exposure layers to the viewport</span>
+        <span class="n">myFlag</span> <span class="o">=</span> <span class="n">mySettings</span><span class="o">.</span><span class="n">value</span><span class="p">(</span>
+                            <span class="s">&#39;inasafe/clipToViewport&#39;</span><span class="p">,</span> <span class="bp">True</span><span class="p">)</span><span class="o">.</span><span class="n">toBool</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">clipToViewport</span> <span class="o">=</span> <span class="n">myFlag</span>
+
+        <span class="c"># whether to show or not postprocessing generated layers</span>
+        <span class="n">myFlag</span> <span class="o">=</span> <span class="n">mySettings</span><span class="o">.</span><span class="n">value</span><span class="p">(</span>
+                            <span class="s">&#39;inasafe/showPostProcessingLayers&#39;</span><span class="p">,</span> <span class="bp">False</span><span class="p">)</span><span class="o">.</span><span class="n">toBool</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">showPostProcessingLayers</span> <span class="o">=</span> <span class="n">myFlag</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">getLayers</span><span class="p">()</span>
 </div>
@@ -395,6 +418,7 @@
         <span class="c"># Add any other logic you might like here...</span>
         <span class="k">del</span> <span class="n">theIndex</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">getFunctions</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_toggleCboAggregation</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">setOkButtonStatus</span><span class="p">()</span>
 </div>
 <div class="viewcode-block" id="Dock.on_cboExposure_currentIndexChanged"><a class="viewcode-back" href="../../api-docs/safe_qgis/dock.html#safe_qgis.dock.Dock.on_cboExposure_currentIndexChanged">[docs]</a>    <span class="k">def</span> <span class="nf">on_cboExposure_currentIndexChanged</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">theIndex</span><span class="p">):</span>
@@ -416,13 +440,13 @@
         <span class="c"># Add any other logic you mught like here...</span>
         <span class="k">del</span> <span class="n">theIndex</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">getFunctions</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_toggleCboAggregation</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">setOkButtonStatus</span><span class="p">()</span>
 </div>
+    <span class="nd">@pyqtSlot</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">QString</span><span class="p">)</span>
 <div class="viewcode-block" id="Dock.on_cboFunction_currentIndexChanged"><a class="viewcode-back" href="../../api-docs/safe_qgis/dock.html#safe_qgis.dock.Dock.on_cboFunction_currentIndexChanged">[docs]</a>    <span class="k">def</span> <span class="nf">on_cboFunction_currentIndexChanged</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">theIndex</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Automatic slot executed when the Function combo is changed</span>
 <span class="sd">        so that we can see if the ok button should be enabled.</span>
-
-<span class="sd">        .. note:: Don&#39;t use the @pyqtSlot() decorator for autoslots!</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">           None.</span>
@@ -431,11 +455,21 @@
 <span class="sd">           None.</span>
 
 <span class="sd">        Raises:</span>
-<span class="sd">           no exceptions explicitly raised.</span>
-
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">           no exceptions explicitly raised.&quot;&quot;&quot;</span>
         <span class="c"># Add any other logic you mught like here...</span>
-        <span class="k">del</span> <span class="n">theIndex</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">theIndex</span><span class="o">.</span><span class="n">isNull</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">theIndex</span> <span class="o">==</span> <span class="s">&#39;&#39;</span><span class="p">:</span>
+            <span class="n">myFunctionID</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">getFunctionID</span><span class="p">()</span>
+
+            <span class="n">myFunctions</span> <span class="o">=</span> <span class="n">getSafeImpactFunctions</span><span class="p">(</span><span class="n">myFunctionID</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">myFunction</span> <span class="o">=</span> <span class="n">myFunctions</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="n">myFunctionID</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">functionParams</span> <span class="o">=</span> <span class="bp">None</span>
+            <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">myFunction</span><span class="p">,</span> <span class="s">&#39;parameters&#39;</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">functionParams</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">myFunction</span><span class="o">.</span><span class="n">parameters</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">setToolFunctionOptionsButton</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">del</span> <span class="n">theIndex</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_toggleCboAggregation</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">setOkButtonStatus</span><span class="p">()</span>
 </div>
 <div class="viewcode-block" id="Dock.setOkButtonStatus"><a class="viewcode-back" href="../../api-docs/safe_qgis/dock.html#safe_qgis.dock.Dock.setOkButtonStatus">[docs]</a>    <span class="k">def</span> <span class="nf">setOkButtonStatus</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -453,6 +487,42 @@
         <span class="n">myButton</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="n">myFlag</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">myMessage</span> <span class="ow">is</span> <span class="ow">not</span> <span class="s">&#39;&#39;</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">displayHtml</span><span class="p">(</span><span class="n">myMessage</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="Dock.setToolFunctionOptionsButton"><a class="viewcode-back" href="../../api-docs/safe_qgis/dock.html#safe_qgis.dock.Dock.setToolFunctionOptionsButton">[docs]</a>    <span class="k">def</span> <span class="nf">setToolFunctionOptionsButton</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Helper function to set the tool function button</span>
+<span class="sd">        status if there is function parameters to configure</span>
+<span class="sd">        then enable it, otherwise disable it.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">           None.</span>
+<span class="sd">        Returns:</span>
+<span class="sd">           None.</span>
+<span class="sd">        Raises:</span>
+<span class="sd">           no exceptions explicitly raised.&quot;&quot;&quot;</span>
+        <span class="c"># Check if functionParams intialized</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">functionParams</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">toolFunctionOptions</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="bp">False</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">toolFunctionOptions</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
+</div>
+    <span class="nd">@pyqtSlot</span><span class="p">()</span>
+<div class="viewcode-block" id="Dock.on_toolFunctionOptions_clicked"><a class="viewcode-back" href="../../api-docs/safe_qgis/dock.html#safe_qgis.dock.Dock.on_toolFunctionOptions_clicked">[docs]</a>    <span class="k">def</span> <span class="nf">on_toolFunctionOptions_clicked</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Automatic slot executed when the tool button for configuring</span>
+<span class="sd">        impact functions is clicked (when available) to open the dialog</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">           None.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">           None.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">           no exceptions explicitly raised.&quot;&quot;&quot;</span>
+        <span class="n">conf</span> <span class="o">=</span> <span class="n">ConfigurableImpactFunctionsDialog</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="n">conf</span><span class="o">.</span><span class="n">setDialogInfo</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">getFunctionID</span><span class="p">())</span>
+        <span class="n">conf</span><span class="o">.</span><span class="n">buildFormFromImpactFunctionsParameter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">myFunction</span><span class="p">,</span>
+                                                   <span class="bp">self</span><span class="o">.</span><span class="n">functionParams</span><span class="p">)</span>
+        <span class="n">conf</span><span class="o">.</span><span class="n">showNormal</span><span class="p">()</span>
 </div>
 <div class="viewcode-block" id="Dock.canvasLayersetChanged"><a class="viewcode-back" href="../../api-docs/safe_qgis/dock.html#safe_qgis.dock.Dock.canvasLayersetChanged">[docs]</a>    <span class="k">def</span> <span class="nf">canvasLayersetChanged</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;A helper slot to update the dock combos if the canvas layerset</span>
@@ -517,11 +587,13 @@
 <div class="viewcode-block" id="Dock.getLayers"><a class="viewcode-back" href="../../api-docs/safe_qgis/dock.html#safe_qgis.dock.Dock.getLayers">[docs]</a>    <span class="k">def</span> <span class="nf">getLayers</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Helper function to obtain a list of layers currently loaded in QGIS.</span>
 
-<span class="sd">        On invocation, this method will populate cboHazard and</span>
-<span class="sd">        cboExposure on the dialog with a list of available layers. Only</span>
-<span class="sd">        **singleband raster** layers will be added to the hazard layer list,</span>
-<span class="sd">        and only **point vector** layers will be added to the exposure layer</span>
-<span class="sd">        list.</span>
+<span class="sd">        On invocation, this method will populate cboHazard,</span>
+<span class="sd">        cboExposure and cboAggregate on the dialog with a list of available</span>
+<span class="sd">        layers.</span>
+<span class="sd">        Only **singleband raster** layers will be added to the hazard layer</span>
+<span class="sd">        list,only **point vector** layers will be added to the exposure layer</span>
+<span class="sd">        list and Only **polygon vector** layers will be added to the aggregate</span>
+<span class="sd">        list</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">           None.</span>
@@ -535,8 +607,10 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">saveState</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">cboHazard</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">cboExposure</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cboAggregation</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">hazardLayers</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">exposureLayers</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">aggregationLayers</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="c"># Map registry may be invalid if QGIS is shutting down</span>
         <span class="n">myRegistry</span> <span class="o">=</span> <span class="bp">None</span>
         <span class="c"># pylint: disable=W0702</span>
@@ -575,6 +649,14 @@
             <span class="k">if</span> <span class="n">myTitle</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">setLayerNameFromTitleFlag</span><span class="p">:</span>
                 <span class="n">myLayer</span><span class="o">.</span><span class="n">setLayerName</span><span class="p">(</span><span class="n">myTitle</span><span class="p">)</span>
 
+            <span class="c">#check if layer is a vector polygon layer</span>
+            <span class="n">layer</span> <span class="o">=</span> <span class="n">myRegistry</span><span class="o">.</span><span class="n">mapLayer</span><span class="p">(</span><span class="n">mySource</span><span class="p">)</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">layer</span><span class="o">.</span><span class="n">type</span><span class="p">()</span> <span class="o">==</span> <span class="n">QgsMapLayer</span><span class="o">.</span><span class="n">VectorLayer</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span>
+                <span class="n">layer</span><span class="o">.</span><span class="n">geometryType</span><span class="p">()</span> <span class="o">==</span> <span class="n">QGis</span><span class="o">.</span><span class="n">Polygon</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">addComboItemInOrder</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cboAggregation</span><span class="p">,</span> <span class="n">myTitle</span><span class="p">,</span>
+                    <span class="n">mySource</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">aggregationLayers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">myLayer</span><span class="p">)</span>
+
             <span class="c"># Find out if the layer is a hazard or an exposure</span>
             <span class="c"># layer by querying its keywords. If the query fails,</span>
             <span class="c"># the layer will be ignored.</span>
@@ -591,6 +673,11 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">addComboItemInOrder</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cboExposure</span><span class="p">,</span> <span class="n">myTitle</span><span class="p">,</span> <span class="n">mySource</span><span class="p">)</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">exposureLayers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">myLayer</span><span class="p">)</span>
 
+        <span class="c">#handle the cboAggregation combo</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cboAggregation</span><span class="o">.</span><span class="n">insertItem</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">tr</span><span class="p">(</span><span class="s">&#39;No aggregation&#39;</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cboAggregation</span><span class="o">.</span><span class="n">setCurrentIndex</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_toggleCboAggregation</span><span class="p">()</span>
+
         <span class="c"># Now populate the functions list based on the layers loaded</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">getFunctions</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">restoreState</span><span class="p">()</span>
@@ -599,8 +686,35 @@
         <span class="c"># will be a lot of unneeded looping around as the signal is handled</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">connectLayerListener</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">blockSignals</span><span class="p">(</span><span class="bp">False</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">getAggregationLayer</span><span class="p">()</span>
         <span class="k">return</span>
 </div>
+    <span class="k">def</span> <span class="nf">_toggleCboAggregation</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Helper function to toggle the aggregation combo depending on the</span>
+<span class="sd">        current dock status</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">           None.</span>
+<span class="sd">        Returns:</span>
+<span class="sd">           None</span>
+<span class="sd">        Raises:</span>
+<span class="sd">           no</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c">#FIXME (MB) remove hazardlayer and exposure layer type check when</span>
+        <span class="c"># vector aggregation is supported</span>
+        <span class="n">selectedHazardLayer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">getHazardLayer</span><span class="p">()</span>
+        <span class="n">selectedExposureLayer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">getExposureLayer</span><span class="p">()</span>
+
+        <span class="c">#more than 1 because No aggregation is always there</span>
+        <span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cboAggregation</span><span class="o">.</span><span class="n">count</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="ow">and</span>
+           <span class="n">selectedHazardLayer</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="ow">and</span>
+           <span class="n">selectedExposureLayer</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="ow">and</span>
+           <span class="n">selectedHazardLayer</span><span class="o">.</span><span class="n">type</span><span class="p">()</span> <span class="o">==</span> <span class="n">QgsMapLayer</span><span class="o">.</span><span class="n">RasterLayer</span> <span class="ow">and</span>
+           <span class="n">selectedExposureLayer</span><span class="o">.</span><span class="n">type</span><span class="p">()</span> <span class="o">==</span> <span class="n">QgsMapLayer</span><span class="o">.</span><span class="n">RasterLayer</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cboAggregation</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cboAggregation</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="bp">False</span><span class="p">)</span>
+
 <div class="viewcode-block" id="Dock.getFunctions"><a class="viewcode-back" href="../../api-docs/safe_qgis/dock.html#safe_qgis.dock.Dock.getFunctions">[docs]</a>    <span class="k">def</span> <span class="nf">getFunctions</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Helper function to obtain a list of impact functions from</span>
 <span class="sd">        the impact calculator.</span>
@@ -687,6 +801,7 @@
         <span class="n">myFilename</span> <span class="o">=</span> <span class="n">myEngineImpactLayer</span><span class="o">.</span><span class="n">get_filename</span><span class="p">()</span>
         <span class="n">myName</span> <span class="o">=</span> <span class="n">myEngineImpactLayer</span><span class="o">.</span><span class="n">get_name</span><span class="p">()</span>
 
+        <span class="n">myQgisLayer</span> <span class="o">=</span> <span class="bp">None</span>
         <span class="c"># Read layer</span>
         <span class="k">if</span> <span class="n">myEngineImpactLayer</span><span class="o">.</span><span class="n">is_vector</span><span class="p">:</span>
             <span class="n">myQgisLayer</span> <span class="o">=</span> <span class="n">QgsVectorLayer</span><span class="p">(</span><span class="n">myFilename</span><span class="p">,</span> <span class="n">myName</span><span class="p">,</span> <span class="s">&#39;ogr&#39;</span><span class="p">)</span>
@@ -724,6 +839,36 @@
         <span class="n">myLayer</span> <span class="o">=</span> <span class="n">QgsMapLayerRegistry</span><span class="o">.</span><span class="n">instance</span><span class="p">()</span><span class="o">.</span><span class="n">mapLayer</span><span class="p">(</span><span class="n">myLayerId</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">myLayer</span>
 </div>
+<div class="viewcode-block" id="Dock.getAggregationLayer"><a class="viewcode-back" href="../../api-docs/safe_qgis/dock.html#safe_qgis.dock.Dock.getAggregationLayer">[docs]</a>    <span class="k">def</span> <span class="nf">getAggregationLayer</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Obtain the name of the path to the aggregation file from the</span>
+<span class="sd">        userrole of the QtCombo for aggregation.</span>
+
+<span class="sd">        Args: None</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            - None if no aggregation is selected or cboAggregation is</span>
+<span class="sd">        disabled</span>
+<span class="sd">            - else a polygon layer</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">myNoSelectionValue</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">myIndex</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cboAggregation</span><span class="o">.</span><span class="n">currentIndex</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">myIndex</span> <span class="o">&lt;=</span> <span class="n">myNoSelectionValue</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">None</span>
+        <span class="n">myLayerId</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cboAggregation</span><span class="o">.</span><span class="n">itemData</span><span class="p">(</span><span class="n">myIndex</span><span class="p">,</span>
+            <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">UserRole</span><span class="p">)</span><span class="o">.</span><span class="n">toString</span><span class="p">()</span>
+        <span class="n">myLayer</span> <span class="o">=</span> <span class="n">QgsMapLayerRegistry</span><span class="o">.</span><span class="n">instance</span><span class="p">()</span><span class="o">.</span><span class="n">mapLayer</span><span class="p">(</span><span class="n">myLayerId</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">myLayer</span>
+</div>
+    <span class="k">def</span> <span class="nf">getAggregationFieldNameCount</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_aggregationPrefix</span> <span class="o">+</span> <span class="s">&#39;count&#39;</span>
+
+    <span class="k">def</span> <span class="nf">getAggregationFieldNameMean</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_aggregationPrefix</span> <span class="o">+</span> <span class="s">&#39;mean&#39;</span>
+
+    <span class="k">def</span> <span class="nf">getAggregationFieldNameSum</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_aggregationPrefix</span> <span class="o">+</span> <span class="s">&#39;sum&#39;</span>
+
 <div class="viewcode-block" id="Dock.setupCalculator"><a class="viewcode-back" href="../../api-docs/safe_qgis/dock.html#safe_qgis.dock.Dock.setupCalculator">[docs]</a>    <span class="k">def</span> <span class="nf">setupCalculator</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Initialise the ImpactCalculator based on the current</span>
 <span class="sd">        state of the ui.</span>
@@ -752,7 +897,7 @@
 <div class="viewcode-block" id="Dock.accept"><a class="viewcode-back" href="../../api-docs/safe_qgis/dock.html#safe_qgis.dock.Dock.accept">[docs]</a>    <span class="k">def</span> <span class="nf">accept</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Execute analysis when ok button is clicked.&quot;&quot;&quot;</span>
         <span class="c">#.. todo:: FIXME (Tim) We may have to implement some polling logic</span>
-        <span class="c"># because the putton click accept() function and the updating</span>
+        <span class="c"># because the button click accept() function and the updating</span>
         <span class="c"># of the web view after model completion are asynchronous (when</span>
         <span class="c"># threading mode is enabled especially)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">showBusy</span><span class="p">()</span>
@@ -761,6 +906,23 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">displayHtml</span><span class="p">(</span><span class="n">myMessage</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">hideBusy</span><span class="p">()</span>
             <span class="k">return</span>
+
+        <span class="c">#check and generate keywords for the aggregation layer</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">aggregationLayer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">getAggregationLayer</span><span class="p">()</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">aggregationLayer</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">aggregationAttribute</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_checkAggregationAttribute</span><span class="p">()</span>
+            <span class="k">except</span> <span class="ne">Exception</span><span class="p">,</span> <span class="n">e</span><span class="p">:</span>  <span class="c"># pylint: disable=W0703</span>
+                <span class="c"># FIXME (MB): This branch is not covered by the tests</span>
+                <span class="n">QtGui</span><span class="o">.</span><span class="n">qApp</span><span class="o">.</span><span class="n">restoreOverrideCursor</span><span class="p">()</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">hideBusy</span><span class="p">()</span>
+                <span class="n">myMessage</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tr</span><span class="p">(</span><span class="s">&#39;An exception occurred when reading the &#39;</span>
+                                    <span class="s">&#39;aggregation attribute.&#39;</span><span class="p">)</span>
+                <span class="n">myMessage</span> <span class="o">=</span> <span class="n">getExceptionWithStacktrace</span><span class="p">(</span><span class="n">e</span><span class="p">,</span>
+                    <span class="n">html</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
+                    <span class="n">context</span><span class="o">=</span><span class="n">myMessage</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">displayHtml</span><span class="p">(</span><span class="n">myMessage</span><span class="p">)</span>
+                <span class="k">return</span>
 
         <span class="k">try</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">setupCalculator</span><span class="p">()</span>
@@ -784,10 +946,11 @@
             <span class="n">myMessage</span> <span class="o">=</span> <span class="n">getExceptionWithStacktrace</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">html</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
                                                    <span class="n">context</span><span class="o">=</span><span class="n">myContext</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">displayHtml</span><span class="p">(</span><span class="n">myMessage</span><span class="p">)</span>
+            <span class="k">return</span>
 
         <span class="n">QtCore</span><span class="o">.</span><span class="n">QObject</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">runner</span><span class="p">,</span>
-                           <span class="n">QtCore</span><span class="o">.</span><span class="n">SIGNAL</span><span class="p">(</span><span class="s">&#39;done()&#39;</span><span class="p">),</span>
-                           <span class="bp">self</span><span class="o">.</span><span class="n">completed</span><span class="p">)</span>
+                               <span class="n">QtCore</span><span class="o">.</span><span class="n">SIGNAL</span><span class="p">(</span><span class="s">&#39;done()&#39;</span><span class="p">),</span>
+                               <span class="bp">self</span><span class="o">.</span><span class="n">startPostprocessing</span><span class="p">)</span>
         <span class="n">QtGui</span><span class="o">.</span><span class="n">qApp</span><span class="o">.</span><span class="n">setOverrideCursor</span><span class="p">(</span>
                 <span class="n">QtGui</span><span class="o">.</span><span class="n">QCursor</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">WaitCursor</span><span class="p">))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">repaint</span><span class="p">()</span>
@@ -839,6 +1002,381 @@
         <span class="c"># Hide hour glass</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">hideBusy</span><span class="p">()</span>
 </div>
+<div class="viewcode-block" id="Dock.startPostprocessing"><a class="viewcode-back" href="../../api-docs/safe_qgis/dock.html#safe_qgis.dock.Dock.startPostprocessing">[docs]</a>    <span class="k">def</span> <span class="nf">startPostprocessing</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Called on self.runner SIGNAL(&#39;done()&#39;) starts all postprocessing steps</span>
+<span class="sd">        Args: None</span>
+
+<span class="sd">        Returns: None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">aggregationLayer</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">aggregateResults</span><span class="p">(</span><span class="mi">88</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">completed</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">initPostprocessingOutput</span><span class="p">()</span>
+</div>
+<div class="viewcode-block" id="Dock.initPostprocessingOutput"><a class="viewcode-back" href="../../api-docs/safe_qgis/dock.html#safe_qgis.dock.Dock.initPostprocessingOutput">[docs]</a>    <span class="k">def</span> <span class="nf">initPostprocessingOutput</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        initializes and clears self.postprocessingOutput. needs to run at the</span>
+<span class="sd">         end of startPostprocessing</span>
+
+<span class="sd">        Returns: None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c">#FIXME (MB) maybe this could be a {} to allow having a parseable</span>
+        <span class="c"># structure where each postprocessor adds a</span>
+        <span class="c"># postprocessorname:&#39;report string&#39; pair</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">postprocessingOutput</span> <span class="o">=</span> <span class="p">[]</span>
+</div>
+<div class="viewcode-block" id="Dock.addPostprocessingOutput"><a class="viewcode-back" href="../../api-docs/safe_qgis/dock.html#safe_qgis.dock.Dock.addPostprocessingOutput">[docs]</a>    <span class="k">def</span> <span class="nf">addPostprocessingOutput</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">output</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        adds text to the postprocessingOutput</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            * output: the output from a postprocessor to add to the global</span>
+<span class="sd">            output. It should be valid HTML but no checks are enforced.</span>
+
+<span class="sd">        Returns: None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">postprocessingOutput</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">output</span><span class="p">))</span>
+</div>
+<div class="viewcode-block" id="Dock.getPostprocessingOutput"><a class="viewcode-back" href="../../api-docs/safe_qgis/dock.html#safe_qgis.dock.Dock.getPostprocessingOutput">[docs]</a>    <span class="k">def</span> <span class="nf">getPostprocessingOutput</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        gets the of the postprocessingOutput</span>
+
+<span class="sd">        Args: None</span>
+
+<span class="sd">        Returns: a string concatenation of the list elements</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="s">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">postprocessingOutput</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="Dock.aggregateResults"><a class="viewcode-back" href="../../api-docs/safe_qgis/dock.html#safe_qgis.dock.Dock.aggregateResults">[docs]</a>    <span class="k">def</span> <span class="nf">aggregateResults</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">progress</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Aggregation postprocessing step, this delas with the gui stuff and</span>
+<span class="sd">        calls _aggregateResults to do the actual aggregation work</span>
+<span class="sd">        Args: progress %to show in the progressbar</span>
+
+<span class="sd">        Returns: None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">myTitle</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tr</span><span class="p">(</span><span class="s">&#39;Aggregating results...&#39;</span><span class="p">)</span>
+        <span class="n">myMessage</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tr</span><span class="p">(</span><span class="s">&#39;This may take a little while - we are &#39;</span>
+                            <span class="s">&#39; aggregating the hazards by %1&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">arg</span><span class="p">(</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">cboAggregation</span><span class="o">.</span><span class="n">currentText</span><span class="p">())</span>
+        <span class="n">myProgress</span> <span class="o">=</span> <span class="n">progress</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">showBusy</span><span class="p">(</span><span class="n">myTitle</span><span class="p">,</span> <span class="n">myMessage</span><span class="p">,</span> <span class="n">myProgress</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_aggregateResults</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_parseAggregationResults</span><span class="p">()</span>
+            <span class="n">QtGui</span><span class="o">.</span><span class="n">qApp</span><span class="o">.</span><span class="n">restoreOverrideCursor</span><span class="p">()</span>
+        <span class="k">except</span> <span class="ne">Exception</span><span class="p">,</span> <span class="n">e</span><span class="p">:</span>  <span class="c"># pylint: disable=W0703</span>
+            <span class="c"># FIXME (Ole): This branch is not covered by the tests</span>
+            <span class="n">QtGui</span><span class="o">.</span><span class="n">qApp</span><span class="o">.</span><span class="n">restoreOverrideCursor</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">hideBusy</span><span class="p">()</span>
+            <span class="n">myContext</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tr</span><span class="p">(</span>
+                <span class="s">&#39;An exception occurred when aggregating &#39;</span>
+                <span class="s">&#39;the results&#39;</span><span class="p">)</span>
+            <span class="n">myMessage</span> <span class="o">=</span> <span class="n">getExceptionWithStacktrace</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">html</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
+                <span class="n">context</span><span class="o">=</span><span class="n">myContext</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">displayHtml</span><span class="p">(</span><span class="n">myMessage</span><span class="p">)</span>
+</div>
+    <span class="k">def</span> <span class="nf">_aggregateResults</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Performs Aggregation postprocessing step by</span>
+<span class="sd">         - creating a copy of the dataset clipped by the impactlayer bounding</span>
+<span class="sd">          box</span>
+<span class="sd">         - stripping all attributes beside the aggregation attribute</span>
+<span class="sd">         - delegating to the appropriate aggregator for raster and vectors</span>
+
+<span class="sd">        Args: None</span>
+
+<span class="sd">        Returns: None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">impactLayer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">runner</span><span class="o">.</span><span class="n">impactLayer</span><span class="p">()</span>
+
+        <span class="n">myQgisImpactLayer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">readImpactLayer</span><span class="p">(</span><span class="n">impactLayer</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">myQgisImpactLayer</span><span class="o">.</span><span class="n">isValid</span><span class="p">():</span>
+            <span class="n">myMessage</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tr</span><span class="p">(</span><span class="s">&#39;Error when reading %1&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">arg</span><span class="p">(</span><span class="n">myQgisImpactLayer</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">ReadLayerError</span><span class="p">(</span><span class="n">myMessage</span><span class="p">)</span>
+
+        <span class="n">lName</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tr</span><span class="p">(</span><span class="s">&#39;%1 aggregated to %2&#39;</span><span class="p">)</span>
+                <span class="o">.</span><span class="n">arg</span><span class="p">(</span><span class="n">myQgisImpactLayer</span><span class="o">.</span><span class="n">name</span><span class="p">())</span>
+                <span class="o">.</span><span class="n">arg</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">aggregationLayer</span><span class="o">.</span><span class="n">name</span><span class="p">()))</span>
+
+        <span class="n">clippedAggregationLayerPath</span> <span class="o">=</span> <span class="n">clipLayer</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">aggregationLayer</span><span class="p">,</span>
+            <span class="n">impactLayer</span><span class="o">.</span><span class="n">get_bounding_box</span><span class="p">(),</span> <span class="n">explodeMultipart</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">aggregationLayer</span> <span class="o">=</span> <span class="n">QgsVectorLayer</span><span class="p">(</span>
+            <span class="n">clippedAggregationLayerPath</span><span class="p">,</span> <span class="n">lName</span><span class="p">,</span> <span class="s">&#39;ogr&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">aggregationLayer</span><span class="o">.</span><span class="n">isValid</span><span class="p">():</span>
+            <span class="n">myMessage</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tr</span><span class="p">(</span><span class="s">&#39;Error when reading %1&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">arg</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">aggregationLayer</span><span class="o">.</span><span class="n">lastError</span><span class="p">())</span>
+            <span class="k">raise</span> <span class="n">ReadLayerError</span><span class="p">(</span><span class="n">myMessage</span><span class="p">)</span>
+
+        <span class="c">#delete unwanted fields</span>
+        <span class="n">vProvider</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">aggregationLayer</span><span class="o">.</span><span class="n">dataProvider</span><span class="p">()</span>
+        <span class="n">vFields</span> <span class="o">=</span> <span class="n">vProvider</span><span class="o">.</span><span class="n">fields</span><span class="p">()</span>
+        <span class="n">toDel</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">vFields</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">vFields</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">name</span><span class="p">()</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">aggregationAttribute</span><span class="p">:</span>
+                <span class="n">toDel</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">vProvider</span><span class="o">.</span><span class="n">deleteAttributes</span><span class="p">(</span><span class="n">toDel</span><span class="p">)</span>
+        <span class="c"># FIXME (Ole): Disable pylint check for the moment</span>
+        <span class="c"># Need to work out what exceptions we will catch here, though.</span>
+        <span class="k">except</span><span class="p">:</span>  <span class="c"># pylint: disable=W0702</span>
+            <span class="n">myMessage</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tr</span><span class="p">(</span><span class="s">&#39;Could not remove the unneded fields&#39;</span><span class="p">)</span>
+            <span class="n">logOnQgsMessageLog</span><span class="p">(</span><span class="n">myMessage</span><span class="p">)</span>
+        <span class="k">del</span> <span class="n">toDel</span><span class="p">,</span> <span class="n">vProvider</span><span class="p">,</span> <span class="n">vFields</span>
+
+        <span class="n">writeKeywordsToFile</span><span class="p">(</span><span class="n">clippedAggregationLayerPath</span><span class="p">,</span> <span class="p">{</span><span class="s">&#39;title&#39;</span><span class="p">:</span> <span class="n">lName</span><span class="p">})</span>
+
+        <span class="k">if</span> <span class="n">myQgisImpactLayer</span><span class="o">.</span><span class="n">type</span><span class="p">()</span> <span class="o">==</span> <span class="n">QgsMapLayer</span><span class="o">.</span><span class="n">VectorLayer</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_aggregateResultsVector</span><span class="p">(</span><span class="n">myQgisImpactLayer</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">myQgisImpactLayer</span><span class="o">.</span><span class="n">type</span><span class="p">()</span> <span class="o">==</span> <span class="n">QgsMapLayer</span><span class="o">.</span><span class="n">RasterLayer</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_aggregateResultsRaster</span><span class="p">(</span><span class="n">myQgisImpactLayer</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">myMessage</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tr</span><span class="p">(</span><span class="s">&#39;%1 is %2 but it should be either vector or &#39;</span>
+                                <span class="s">&#39;raster&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">arg</span><span class="p">(</span><span class="n">myQgisImpactLayer</span><span class="o">.</span><span class="n">name</span><span class="p">())</span><span class="o">.</span><span class="n">arg</span><span class="p">(</span>
+                                <span class="n">myQgisImpactLayer</span><span class="o">.</span><span class="n">type</span><span class="p">())</span>
+            <span class="k">raise</span> <span class="n">ReadLayerError</span><span class="p">(</span><span class="n">myMessage</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_aggregateResultsVector</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">myQgisImpactLayer</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Performs Aggregation postprocessing step on vectorial impact layers</span>
+<span class="sd">        Args:</span>
+<span class="sd">            * myQgisImpactLayer a valid QgsRasterLayer</span>
+
+<span class="sd">        Returns: None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c">#TODO implement polygon to polygon aggregation (dissolve,</span>
+        <span class="c"># line in polygon, point in polygon)</span>
+        <span class="n">logOnQgsMessageLog</span><span class="p">(</span><span class="s">&#39;Vector aggregation not implemented yet. Called on&#39;</span>
+                           <span class="s">&#39; </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="n">myQgisImpactLayer</span><span class="o">.</span><span class="n">name</span><span class="p">())</span>
+        <span class="k">return</span>
+
+    <span class="k">def</span> <span class="nf">_aggregateResultsRaster</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">myQgisImpactLayer</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Performs Aggregation postprocessing step on raster impact layers by</span>
+<span class="sd">        calling QgsZonalStatistics</span>
+<span class="sd">        Args:</span>
+<span class="sd">            * myQgisImpactLayer a valid QgsVectorLayer</span>
+
+<span class="sd">        Returns: None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">zonStat</span> <span class="o">=</span> <span class="n">QgsZonalStatistics</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">aggregationLayer</span><span class="p">,</span>
+            <span class="n">myQgisImpactLayer</span><span class="o">.</span><span class="n">dataProvider</span><span class="p">()</span><span class="o">.</span><span class="n">dataSourceUri</span><span class="p">(),</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_aggregationPrefix</span><span class="p">)</span>
+        <span class="n">progressDialog</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QProgressDialog</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">tr</span><span class="p">(</span><span class="s">&#39;Calculating zonal statistics&#39;</span><span class="p">),</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">tr</span><span class="p">(</span><span class="s">&#39;Abort...&#39;</span><span class="p">),</span>
+            <span class="mi">0</span><span class="p">,</span>
+            <span class="mi">0</span><span class="p">)</span>
+        <span class="n">zonStat</span><span class="o">.</span><span class="n">calculateStatistics</span><span class="p">(</span><span class="n">progressDialog</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">progressDialog</span><span class="o">.</span><span class="n">wasCanceled</span><span class="p">():</span>
+            <span class="n">QtGui</span><span class="o">.</span><span class="n">QMessageBox</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">tr</span><span class="p">(</span><span class="s">&#39;ZonalStats: Error&#39;</span><span class="p">),</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">tr</span><span class="p">(</span>
+                    <span class="s">&#39;You aborted aggregation, &#39;</span>
+                    <span class="s">&#39;so there are no data for analysis. Exiting...&#39;</span><span class="p">))</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">showPostProcessingLayers</span><span class="p">:</span>
+            <span class="n">QgsMapLayerRegistry</span><span class="o">.</span><span class="n">instance</span><span class="p">()</span><span class="o">.</span><span class="n">addMapLayer</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">aggregationLayer</span><span class="p">)</span>
+        <span class="k">return</span>
+
+    <span class="k">def</span> <span class="nf">_parseAggregationResults</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">aggregationAttribute</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">aggrAttrTitle</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tr</span><span class="p">(</span><span class="s">&#39;Aggregation unit&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">aggrAttrTitle</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">aggregationAttribute</span>
+
+        <span class="c">#open table</span>
+        <span class="n">myHTML</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;&lt;table class=&quot;table table-striped condensed&quot;&gt;&#39;</span>
+                    <span class="s">&#39;  &lt;tbody&gt;&#39;</span>
+                    <span class="s">&#39;    &lt;tr&gt;&#39;</span>
+                    <span class="s">&#39;       &lt;td colspan=&quot;100%&quot;&gt;&#39;</span>
+                    <span class="s">&#39;         &lt;strong&gt;&#39;</span>
+                    <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">aggregationLayer</span><span class="o">.</span><span class="n">name</span><span class="p">()</span> <span class="o">+</span>
+                    <span class="s">&#39;         &lt;/strong&gt;&#39;</span>
+                    <span class="s">&#39;       &lt;/td&gt;&#39;</span>
+                    <span class="s">&#39;    &lt;/tr&gt;&#39;</span>
+                    <span class="s">&#39;    &lt;tr&gt;&#39;</span>
+                    <span class="s">&#39;      &lt;th width=&quot;35%&quot;&gt;&#39;</span>
+                    <span class="o">+</span> <span class="n">aggrAttrTitle</span> <span class="o">+</span>
+                    <span class="s">&#39;      &lt;/th&gt;&#39;</span>
+                    <span class="s">&#39;      &lt;th&gt;&#39;</span>
+                    <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">tr</span><span class="p">(</span><span class="s">&#39;Sum&#39;</span><span class="p">)</span> <span class="o">+</span>
+                    <span class="s">&#39;      &lt;/th&gt;&#39;</span>
+                    <span class="s">&#39;    &lt;/tr&gt;&#39;</span><span class="p">)</span>
+        <span class="c">#fill table</span>
+        <span class="n">provider</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">aggregationLayer</span><span class="o">.</span><span class="n">dataProvider</span><span class="p">()</span>
+        <span class="n">allAttrs</span> <span class="o">=</span> <span class="n">provider</span><span class="o">.</span><span class="n">attributeIndexes</span><span class="p">()</span>
+        <span class="c"># start data retreival: fetch no geometry and all attributes for each</span>
+        <span class="c"># feature</span>
+        <span class="n">provider</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="n">allAttrs</span><span class="p">,</span> <span class="n">QgsRectangle</span><span class="p">(),</span> <span class="bp">False</span><span class="p">)</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">nameFieldIndex</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">aggregationLayer</span><span class="o">.</span><span class="n">fieldNameIndex</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">aggregationAttribute</span><span class="p">)</span>
+        <span class="c"># FIXME (Ole): Disable pylint check for the moment</span>
+        <span class="c"># Need to work out what exceptions we will catch here, though.</span>
+        <span class="k">except</span><span class="p">:</span>  <span class="c"># pylint: disable=W0702</span>
+            <span class="n">nameFieldIndex</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">sumFieldIndex</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">aggregationLayer</span><span class="o">.</span><span class="n">fieldNameIndex</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">getAggregationFieldNameSum</span><span class="p">())</span>
+        <span class="k">except</span> <span class="n">ReadLayerError</span><span class="p">,</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">QtGui</span><span class="o">.</span><span class="n">qApp</span><span class="o">.</span><span class="n">restoreOverrideCursor</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">hideBusy</span><span class="p">()</span>
+            <span class="n">myMessage</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tr</span><span class="p">(</span><span class="s">&#39;An exception occurred when reading the&#39;</span>
+                                <span class="s">&#39;aggregation data. %1 not found in %2&#39;</span><span class="p">)</span>\
+            <span class="o">.</span><span class="n">arg</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">getAggregationFieldNameSum</span><span class="p">())</span>\
+            <span class="o">.</span><span class="n">arg</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">aggregationLayer</span><span class="o">.</span><span class="n">name</span><span class="p">())</span>
+            <span class="n">myMessage</span> <span class="o">=</span> <span class="n">getExceptionWithStacktrace</span><span class="p">(</span><span class="n">e</span><span class="p">,</span>
+                <span class="n">html</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
+                <span class="n">context</span><span class="o">=</span><span class="n">myMessage</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">displayHtml</span><span class="p">(</span><span class="n">myMessage</span><span class="p">)</span>
+            <span class="k">return</span>
+
+        <span class="n">feat</span> <span class="o">=</span> <span class="n">QgsFeature</span><span class="p">()</span>
+        <span class="k">while</span> <span class="n">provider</span><span class="o">.</span><span class="n">nextFeature</span><span class="p">(</span><span class="n">feat</span><span class="p">):</span>
+            <span class="n">attrMap</span> <span class="o">=</span> <span class="n">feat</span><span class="o">.</span><span class="n">attributeMap</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">nameFieldIndex</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+                <span class="n">name</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">feat</span><span class="o">.</span><span class="n">id</span><span class="p">())</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">name</span> <span class="o">=</span> <span class="n">attrMap</span><span class="p">[</span><span class="n">nameFieldIndex</span><span class="p">]</span><span class="o">.</span><span class="n">toString</span><span class="p">()</span>
+            <span class="n">aggrSum</span> <span class="o">=</span> <span class="n">attrMap</span><span class="p">[</span><span class="n">sumFieldIndex</span><span class="p">]</span><span class="o">.</span><span class="n">toString</span><span class="p">()</span>
+            <span class="n">aggrSum</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">aggrSum</span><span class="p">))))</span>
+
+            <span class="n">myHTML</span> <span class="o">+=</span> <span class="p">(</span><span class="s">&#39;    &lt;tr&gt;&#39;</span>
+                        <span class="s">&#39;      &lt;td&gt;&#39;</span>
+                        <span class="o">+</span> <span class="n">name</span> <span class="o">+</span>
+                        <span class="s">&#39;      &lt;/td&gt;&#39;</span>
+                        <span class="s">&#39;      &lt;td&gt;&#39;</span>
+                        <span class="o">+</span> <span class="n">aggrSum</span> <span class="o">+</span>
+                        <span class="s">&#39;      &lt;/td&gt;&#39;</span>
+                        <span class="s">&#39;    &lt;/tr&gt;&#39;</span><span class="p">)</span>
+        <span class="c">#close table</span>
+        <span class="n">myHTML</span> <span class="o">+=</span> <span class="p">(</span><span class="s">&#39;  &lt;/tbody&gt;&#39;</span>
+                   <span class="s">&#39;&lt;/table&gt;&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">addPostprocessingOutput</span><span class="p">(</span><span class="n">myHTML</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_checkAggregationAttribute</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;checks if the aggregation layer has a aggregation attribute</span>
+<span class="sd">        keyword. If not it calls _promptForAggregationAttribute to prompt for</span>
+<span class="sd">         an input</span>
+
+<span class="sd">        Args: None</span>
+
+<span class="sd">        Returns: the value of the aggregation attribute keyword</span>
+
+<span class="sd">        Raises: Propogates any error</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">myKeywordFilePath</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">aggregationLayer</span><span class="o">.</span><span class="n">source</span><span class="p">()))[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">myKeywordFilePath</span> <span class="o">+=</span> <span class="s">&#39;.keywords&#39;</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">keywords</span> <span class="o">=</span> <span class="n">read_keywords</span><span class="p">(</span><span class="n">myKeywordFilePath</span><span class="p">)</span>
+        <span class="c"># pylint: disable=W0703</span>
+        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+            <span class="n">keywords</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="c"># pylint: disable=W0703</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="s">&#39;category&#39;</span> <span class="ow">in</span> <span class="n">keywords</span> <span class="ow">and</span>
+            <span class="n">keywords</span><span class="p">[</span><span class="s">&#39;category&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;postprocessing&#39;</span> <span class="ow">and</span>
+            <span class="s">&#39;subcategory&#39;</span> <span class="ow">in</span> <span class="n">keywords</span> <span class="ow">and</span>
+            <span class="n">keywords</span><span class="p">[</span><span class="s">&#39;subcategory&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;aggregation&#39;</span> <span class="ow">and</span>
+            <span class="s">&#39;aggregation attribute&#39;</span> <span class="ow">in</span> <span class="n">keywords</span><span class="p">):</span>
+            <span class="c">#keywords are already complete</span>
+            <span class="n">myValue</span> <span class="o">=</span> <span class="n">keywords</span><span class="p">[</span><span class="s">&#39;aggregation attribute&#39;</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c">#set the default values by writing to the keywords</span>
+            <span class="n">keywords</span><span class="p">[</span><span class="s">&#39;category&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s">&#39;postprocessing&#39;</span>
+            <span class="n">keywords</span><span class="p">[</span><span class="s">&#39;subcategory&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s">&#39;aggregation&#39;</span>
+            <span class="n">write_keywords</span><span class="p">(</span><span class="n">keywords</span><span class="p">,</span> <span class="n">myKeywordFilePath</span><span class="p">)</span>
+
+            <span class="c">#prompt uset for a choice</span>
+            <span class="n">myValue</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_promptForAggregationAttribute</span><span class="p">(</span><span class="n">myKeywordFilePath</span><span class="p">)</span>
+            <span class="n">keywords</span><span class="p">[</span><span class="s">&#39;aggregation attribute&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">myValue</span>
+            <span class="n">write_keywords</span><span class="p">(</span><span class="n">keywords</span><span class="p">,</span> <span class="n">myKeywordFilePath</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">myValue</span>
+
+    <span class="k">def</span> <span class="nf">_promptForAggregationAttribute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">myKeywordFilePath</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;prompt user for a decision on which attribute has to be the key</span>
+<span class="sd">        attribute for the aggregated data and writes the keywords file</span>
+<span class="sd">        This could be swapped to a call to the keyword editor</span>
+
+<span class="sd">        Args: None</span>
+
+<span class="sd">        Returns: the value of the aggregation attribute keyword. None if no</span>
+<span class="sd">        usable attribute has been found</span>
+
+<span class="sd">        Raises: Propagates any error</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">vProvider</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">aggregationLayer</span><span class="o">.</span><span class="n">dataProvider</span><span class="p">()</span>
+        <span class="n">vFields</span> <span class="o">=</span> <span class="n">vProvider</span><span class="o">.</span><span class="n">fields</span><span class="p">()</span>
+        <span class="n">fields</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">vFields</span><span class="p">:</span>
+            <span class="c"># show only int or string fields to be chosen as aggregation</span>
+            <span class="c"># attribute other possible would be float</span>
+            <span class="k">if</span> <span class="n">vFields</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">type</span><span class="p">()</span> <span class="ow">in</span> <span class="p">[</span>
+               <span class="n">QtCore</span><span class="o">.</span><span class="n">QVariant</span><span class="o">.</span><span class="n">Int</span><span class="p">,</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">QVariant</span><span class="o">.</span><span class="n">String</span><span class="p">]:</span>
+                <span class="n">fields</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">vFields</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">name</span><span class="p">())</span>
+
+        <span class="c">#there is no usable attribute, use None</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">fields</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">aggrAttribute</span> <span class="o">=</span> <span class="bp">None</span>
+            <span class="n">logOnQgsMessageLog</span><span class="p">(</span>
+                <span class="s">&#39;there is no usable attribute, use None&#39;</span><span class="p">)</span>
+        <span class="c">#there is only one usable attribute, use it</span>
+        <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">fields</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">aggrAttribute</span> <span class="o">=</span> <span class="n">fields</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">logOnQgsMessageLog</span><span class="p">(</span><span class="s">&#39;there is only one usable attribute, &#39;</span>
+                               <span class="s">&#39;use it: &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">aggrAttribute</span><span class="p">))</span>
+        <span class="c">#there are multiple usable attribute, prompt for an answer</span>
+        <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">fields</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">myTitle</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tr</span><span class="p">(</span>
+                <span class="s">&#39;Waiting for aggregation attribute selection...&#39;</span><span class="p">)</span>
+            <span class="n">myMessage</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tr</span><span class="p">(</span><span class="s">&#39;Please select which attribute you want to&#39;</span>
+                                <span class="s">&#39; use as ID for the aggregated results&#39;</span><span class="p">)</span>
+            <span class="n">myProgress</span> <span class="o">=</span> <span class="mi">1</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">showBusy</span><span class="p">(</span><span class="n">myTitle</span><span class="p">,</span> <span class="n">myMessage</span><span class="p">,</span> <span class="n">myProgress</span><span class="p">)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">disableBusyCursor</span><span class="p">()</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">aggregationAttributeDialog</span> <span class="o">=</span> <span class="n">KeywordsDialog</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">iface</span><span class="o">.</span><span class="n">mainWindow</span><span class="p">(),</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">iface</span><span class="p">,</span>
+                <span class="bp">self</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">aggregationLayer</span><span class="p">)</span>
+
+            <span class="n">aggrAttribute</span> <span class="o">=</span> <span class="n">fields</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">aggregationAttributeDialog</span><span class="o">.</span><span class="n">exec_</span><span class="p">()</span> <span class="o">==</span> \
+               <span class="n">QtGui</span><span class="o">.</span><span class="n">QDialog</span><span class="o">.</span><span class="n">Accepted</span><span class="p">:</span>
+                <span class="n">keywords</span> <span class="o">=</span> <span class="n">read_keywords</span><span class="p">(</span><span class="n">myKeywordFilePath</span><span class="p">)</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">aggrAttribute</span> <span class="o">=</span> <span class="n">keywords</span><span class="p">[</span><span class="s">&#39;aggregation attribute&#39;</span><span class="p">]</span>
+                    <span class="n">logOnQgsMessageLog</span><span class="p">(</span><span class="s">&#39;User selected: &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">aggrAttribute</span><span class="p">)</span> <span class="o">+</span>
+                                       <span class="s">&#39; as aggregation attribute&#39;</span><span class="p">)</span>
+                <span class="c"># pylint: disable=W0703</span>
+                <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+                    <span class="n">logOnQgsMessageLog</span><span class="p">(</span><span class="s">&#39;User Accepted but did not select a &#39;</span>
+                                       <span class="s">&#39;value. Using default : &#39;</span>
+                                       <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">aggrAttribute</span><span class="p">)</span> <span class="o">+</span>
+                                       <span class="s">&#39; as aggregation attribute&#39;</span><span class="p">)</span>
+                <span class="c"># pylint: disable=W0703</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c"># The user cancelled, use the first attribute as default</span>
+                <span class="n">logOnQgsMessageLog</span><span class="p">(</span><span class="s">&#39;User cancelled, using default: &#39;</span>
+                                   <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">aggrAttribute</span><span class="p">)</span> <span class="o">+</span>
+                                   <span class="s">&#39; as aggregation attribute&#39;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">enableBusyCursor</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">aggrAttribute</span>
+
     <span class="k">def</span> <span class="nf">_completed</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Helper function for slot activated when the process is done.</span>
 
@@ -858,7 +1396,12 @@
         <span class="n">myProgress</span> <span class="o">=</span> <span class="mi">99</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">showBusy</span><span class="p">(</span><span class="n">myTitle</span><span class="p">,</span> <span class="n">myMessage</span><span class="p">,</span> <span class="n">myProgress</span><span class="p">)</span>
 
+        <span class="c"># FIXME (Ole): Marco and Ole saw situation where self.runner was None.</span>
+        <span class="c"># Could not be reproduced, but maybe an idea to put an error</span>
+        <span class="c"># message in that case</span>
         <span class="n">myMessage</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">runner</span><span class="o">.</span><span class="n">result</span><span class="p">()</span>
+
+        <span class="c"># FIXME (Ole): This branch is not covered by the tests</span>
         <span class="n">myEngineImpactLayer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">runner</span><span class="o">.</span><span class="n">impactLayer</span><span class="p">()</span>
 
         <span class="k">if</span> <span class="n">myEngineImpactLayer</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
@@ -875,6 +1418,11 @@
 
         <span class="c"># Load impact layer into QGIS</span>
         <span class="n">myQgisImpactLayer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">readImpactLayer</span><span class="p">(</span><span class="n">myEngineImpactLayer</span><span class="p">)</span>
+
+        <span class="n">myKeywords</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">keywordIO</span><span class="o">.</span><span class="n">readKeywords</span><span class="p">(</span><span class="n">myQgisImpactLayer</span><span class="p">)</span>
+        <span class="c">#write postprocessing report to keyword</span>
+        <span class="n">myKeywords</span><span class="p">[</span><span class="s">&#39;postprocessing_report&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">getPostprocessingOutput</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">keywordIO</span><span class="o">.</span><span class="n">writeKeywords</span><span class="p">(</span><span class="n">myQgisImpactLayer</span><span class="p">,</span> <span class="n">myKeywords</span><span class="p">)</span>
 
         <span class="c"># Get tabular information from impact layer</span>
         <span class="n">myReport</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">keywordIO</span><span class="o">.</span><span class="n">readKeywords</span><span class="p">(</span><span class="n">myQgisImpactLayer</span><span class="p">,</span>
@@ -902,7 +1450,7 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="n">myMessage</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tr</span><span class="p">(</span><span class="s">&#39;Impact layer </span><span class="si">%s</span><span class="s"> was neither a raster or a &#39;</span>
                    <span class="s">&#39;vector layer&#39;</span> <span class="o">%</span> <span class="n">myQgisImpactLayer</span><span class="o">.</span><span class="n">source</span><span class="p">())</span>
-            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="n">myMessage</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">ReadLayerError</span><span class="p">(</span><span class="n">myMessage</span><span class="p">)</span>
         <span class="c"># Add layer to QGIS</span>
         <span class="n">QgsMapLayerRegistry</span><span class="o">.</span><span class="n">instance</span><span class="p">()</span><span class="o">.</span><span class="n">addMapLayer</span><span class="p">(</span><span class="n">myQgisImpactLayer</span><span class="p">)</span>
         <span class="c"># then zoom to it</span>
@@ -913,14 +1461,40 @@
             <span class="n">myLegend</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">iface</span><span class="o">.</span><span class="n">legendInterface</span><span class="p">()</span>
             <span class="n">myLegend</span><span class="o">.</span><span class="n">setLayerVisible</span><span class="p">(</span><span class="n">myExposureLayer</span><span class="p">,</span> <span class="bp">False</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">restoreState</span><span class="p">()</span>
-        <span class="c"># Return text to display in report pane</span>
+
+        <span class="c">#append postprocessing report</span>
+        <span class="n">myReport</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">getPostprocessingOutput</span><span class="p">()</span>
+
+        <span class="c"># append properties of the result layer</span>
+        <span class="n">myReport</span> <span class="o">+=</span> <span class="p">(</span><span class="s">&#39;&lt;table class=&quot;table table-striped condensed&#39;</span>
+                        <span class="s">&#39; bordered-table&quot;&gt;&#39;</span><span class="p">)</span>
+        <span class="c"># Add this keyword to report</span>
+        <span class="n">myReport</span> <span class="o">+=</span> <span class="p">(</span><span class="s">&#39;&lt;tr&gt;&#39;</span>
+                        <span class="s">&#39;&lt;th&gt;&#39;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">tr</span><span class="p">(</span><span class="s">&#39;Time stamp&#39;</span><span class="p">)</span>
+                        <span class="o">+</span> <span class="s">&#39;&lt;/th&gt;&#39;</span>
+                        <span class="s">&#39;&lt;/tr&gt;&#39;</span>
+                        <span class="s">&#39;&lt;tr&gt;&#39;</span>
+                        <span class="s">&#39;&lt;td&gt;&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">myKeywords</span><span class="p">[</span><span class="s">&#39;time_stamp&#39;</span><span class="p">])</span> <span class="o">+</span> <span class="s">&#39;&lt;/td&gt;&#39;</span>
+                        <span class="s">&#39;&lt;/tr&gt;&#39;</span><span class="p">)</span>
+        <span class="n">myReport</span> <span class="o">+=</span> <span class="p">(</span><span class="s">&#39;&lt;tr&gt;&#39;</span>
+                        <span class="s">&#39;&lt;th&gt;&#39;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">tr</span><span class="p">(</span><span class="s">&#39;Elapsed time&#39;</span><span class="p">)</span>
+                        <span class="o">+</span> <span class="s">&#39;&lt;/th&gt;&#39;</span>
+                        <span class="s">&#39;&lt;/tr&gt;&#39;</span>
+                        <span class="s">&#39;&lt;tr&gt;&#39;</span>
+                        <span class="s">&#39;&lt;td&gt;&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">myKeywords</span><span class="p">[</span><span class="s">&#39;elapsed_time&#39;</span><span class="p">])</span>
+                        <span class="o">+</span> <span class="s">&#39; &#39;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">tr</span><span class="p">(</span><span class="s">&#39;seconds&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="s">&#39;&lt;/td&gt;&#39;</span>
+                        <span class="s">&#39;&lt;/tr&gt;&#39;</span><span class="p">)</span>
+        <span class="n">myReport</span> <span class="o">+=</span> <span class="s">&#39;&lt;/table&gt;&#39;</span>
+        <span class="c"># Return text to display in report panel</span>
         <span class="k">return</span> <span class="n">myReport</span>
 
 <div class="viewcode-block" id="Dock.showHelp"><a class="viewcode-back" href="../../api-docs/safe_qgis/dock.html#safe_qgis.dock.Dock.showHelp">[docs]</a>    <span class="k">def</span> <span class="nf">showHelp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Load the help text into the wvResults widget&quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">helpDialog</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">helpDialog</span> <span class="o">=</span> <span class="n">Help</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">iface</span><span class="o">.</span><span class="n">mainWindow</span><span class="p">(),</span> <span class="s">&#39;dock&#39;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">helpDialog</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">helpDialog</span><span class="p">:</span>
+            <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">helpDialog</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">helpDialog</span> <span class="o">=</span> <span class="n">Help</span><span class="p">(</span><span class="n">theParent</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">iface</span><span class="o">.</span><span class="n">mainWindow</span><span class="p">(),</span>
+                               <span class="n">theContext</span><span class="o">=</span><span class="s">&#39;dock&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">helpDialog</span><span class="o">.</span><span class="n">showMe</span><span class="p">()</span>
 </div>
 <div class="viewcode-block" id="Dock.showBusy"><a class="viewcode-back" href="../../api-docs/safe_qgis/dock.html#safe_qgis.dock.Dock.showBusy">[docs]</a>    <span class="k">def</span> <span class="nf">showBusy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">theTitle</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">theMessage</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">theProgress</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;A helper function to indicate the plugin is processing.</span>
@@ -975,8 +1549,7 @@
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">runner</span><span class="p">:</span>
             <span class="n">QtCore</span><span class="o">.</span><span class="n">QObject</span><span class="o">.</span><span class="n">disconnect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">runner</span><span class="p">,</span>
                                <span class="n">QtCore</span><span class="o">.</span><span class="n">SIGNAL</span><span class="p">(</span><span class="s">&#39;done()&#39;</span><span class="p">),</span>
-                               <span class="bp">self</span><span class="o">.</span><span class="n">completed</span><span class="p">)</span>
-            <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">runner</span>
+                               <span class="bp">self</span><span class="o">.</span><span class="n">startPostprocessing</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">runner</span> <span class="o">=</span> <span class="bp">None</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">grpQuestion</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
@@ -1038,29 +1611,38 @@
         <span class="k">try</span><span class="p">:</span>
             <span class="c"># Extent is returned as an array [xmin,ymin,xmax,ymax]</span>
             <span class="c"># We will convert it to a QgsRectangle afterwards.</span>
-            <span class="n">myGeoExtent</span> <span class="o">=</span> <span class="n">getOptimalExtent</span><span class="p">(</span><span class="n">myHazardGeoExtent</span><span class="p">,</span>
-                                           <span class="n">myExposureGeoExtent</span><span class="p">,</span>
-                                           <span class="n">myViewportGeoExtent</span><span class="p">)</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">clipToViewport</span><span class="p">:</span>
+                <span class="n">myGeoExtent</span> <span class="o">=</span> <span class="n">getOptimalExtent</span><span class="p">(</span><span class="n">myHazardGeoExtent</span><span class="p">,</span>
+                                               <span class="n">myExposureGeoExtent</span><span class="p">,</span>
+                                               <span class="n">myViewportGeoExtent</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">myGeoExtent</span> <span class="o">=</span> <span class="n">getOptimalExtent</span><span class="p">(</span><span class="n">myHazardGeoExtent</span><span class="p">,</span>
+                    <span class="n">myExposureGeoExtent</span><span class="p">)</span>
+
         <span class="k">except</span> <span class="n">InsufficientOverlapException</span><span class="p">,</span> <span class="n">e</span><span class="p">:</span>
+            <span class="c"># FIXME (MB): This branch is not covered by the tests</span>
             <span class="n">myMessage</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tr</span><span class="p">(</span><span class="s">&#39;&lt;p&gt;There &#39;</span>
                    <span class="s">&#39;was insufficient overlap between the input layers &#39;</span>
-                   <span class="s">&#39;and / or the layers and the viewport. Please select &#39;</span>
-                   <span class="s">&#39;two overlapping layers and zoom or pan to them. Full &#39;</span>
-                   <span class="s">&#39;details follow:&lt;/p&gt;&#39;</span>
+                   <span class="s">&#39;and / or the layers and the viewable area. Please select &#39;</span>
+                   <span class="s">&#39;two overlapping layers and zoom or pan to them or disable&#39;</span>
+                   <span class="s">&#39; viewable area clipping in the options dialog&#39;</span>
+                   <span class="s">&#39;. Full details follow:&lt;/p&gt;&#39;</span>
                    <span class="s">&#39;&lt;p&gt;Failed to obtain the optimal extent given:&lt;/p&gt;&#39;</span>
                    <span class="s">&#39;&lt;p&gt;Hazard: %1&lt;/p&gt;&#39;</span>
                    <span class="s">&#39;&lt;p&gt;Exposure: %2&lt;/p&gt;&#39;</span>
-                   <span class="s">&#39;&lt;p&gt;Viewport Geo Extent: %3&lt;/p&gt;&#39;</span>
+                   <span class="s">&#39;&lt;p&gt;Viewable area Geo Extent: %3&lt;/p&gt;&#39;</span>
                    <span class="s">&#39;&lt;p&gt;Hazard Geo Extent: %4&lt;/p&gt;&#39;</span>
                    <span class="s">&#39;&lt;p&gt;Exposure Geo Extent: %5&lt;/p&gt;&#39;</span>
-                   <span class="s">&#39;&lt;p&gt;Details: %6&lt;/p&gt;&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">arg</span><span class="p">(</span>
+                   <span class="s">&#39;&lt;p&gt;Viewable area clipping enabled: %6&lt;/p&gt;&#39;</span>
+                   <span class="s">&#39;&lt;p&gt;Details: %7&lt;/p&gt;&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">arg</span><span class="p">(</span>
                         <span class="n">myHazardLayer</span><span class="o">.</span><span class="n">source</span><span class="p">())</span><span class="o">.</span><span class="n">arg</span><span class="p">(</span>
                         <span class="n">myExposureLayer</span><span class="o">.</span><span class="n">source</span><span class="p">())</span><span class="o">.</span><span class="n">arg</span><span class="p">(</span>
                         <span class="n">QtCore</span><span class="o">.</span><span class="n">QString</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">myViewportGeoExtent</span><span class="p">)))</span><span class="o">.</span><span class="n">arg</span><span class="p">(</span>
                         <span class="n">QtCore</span><span class="o">.</span><span class="n">QString</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">myHazardGeoExtent</span><span class="p">)))</span><span class="o">.</span><span class="n">arg</span><span class="p">(</span>
                         <span class="n">QtCore</span><span class="o">.</span><span class="n">QString</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">myExposureGeoExtent</span><span class="p">)))</span><span class="o">.</span><span class="n">arg</span><span class="p">(</span>
+                        <span class="n">QtCore</span><span class="o">.</span><span class="n">QString</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">clipToViewport</span><span class="p">)))</span><span class="o">.</span><span class="n">arg</span><span class="p">(</span>
                         <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
-            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="n">myMessage</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">InsufficientOverlapException</span><span class="p">(</span><span class="n">myMessage</span><span class="p">)</span>
 
         <span class="c"># Next work out the ideal spatial resolution for rasters</span>
         <span class="c"># in the analysis. If layers are not native WGS84, we estimate</span>
@@ -1103,6 +1685,10 @@
             <span class="c"># Hazard layer is vector</span>
 
             <span class="c"># FIXME (Ole): Check that it is a polygon layer</span>
+
+            <span class="c"># FIXME (Ole): This should say something like this (issue #285)</span>
+            <span class="c">#if myHazardLayer.geometry() == QgsMapLayer.Point:</span>
+            <span class="c">#    myGeoExtent = myExposureGeoExtent</span>
             <span class="k">pass</span>
 
         <span class="c"># Make sure that we have EPSG:4326 versions of the input layers</span>
@@ -1123,9 +1709,10 @@
                             <span class="s">&#39;layer and the current view extents.&#39;</span><span class="p">)</span>
         <span class="n">myProgress</span> <span class="o">=</span> <span class="mi">44</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">showBusy</span><span class="p">(</span><span class="n">myTitle</span><span class="p">,</span> <span class="n">myMessage</span><span class="p">,</span> <span class="n">myProgress</span><span class="p">)</span>
-        <span class="n">myClippedExposurePath</span> <span class="o">=</span> <span class="n">clipLayer</span><span class="p">(</span><span class="n">myExposureLayer</span><span class="p">,</span>
-                                        <span class="n">myGeoExtent</span><span class="p">,</span> <span class="n">myCellSize</span><span class="p">,</span>
-                                        <span class="n">theExtraKeywords</span><span class="o">=</span><span class="n">extraExposureKeywords</span><span class="p">)</span>
+        <span class="n">myClippedExposurePath</span> <span class="o">=</span> <span class="n">clipLayer</span><span class="p">(</span>
+            <span class="n">myExposureLayer</span><span class="p">,</span>
+            <span class="n">myGeoExtent</span><span class="p">,</span> <span class="n">myCellSize</span><span class="p">,</span>
+            <span class="n">theExtraKeywords</span><span class="o">=</span><span class="n">extraExposureKeywords</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">myClippedHazardPath</span><span class="p">,</span> <span class="n">myClippedExposurePath</span>
 
@@ -1235,9 +1822,33 @@
         <span class="k">if</span> <span class="n">theLayer</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
             <span class="k">try</span><span class="p">:</span>
                 <span class="n">myKeywords</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">keywordIO</span><span class="o">.</span><span class="n">readKeywords</span><span class="p">(</span><span class="n">theLayer</span><span class="p">)</span>
+
                 <span class="k">if</span> <span class="s">&#39;impact_summary&#39;</span> <span class="ow">in</span> <span class="n">myKeywords</span><span class="p">:</span>
                     <span class="n">myReport</span> <span class="o">=</span> <span class="n">myKeywords</span><span class="p">[</span><span class="s">&#39;impact_summary&#39;</span><span class="p">]</span>
+                    <span class="k">if</span> <span class="s">&#39;postprocessing_report&#39;</span> <span class="ow">in</span> <span class="n">myKeywords</span><span class="p">:</span>
+                        <span class="n">myReport</span> <span class="o">+=</span> <span class="n">myKeywords</span><span class="p">[</span><span class="s">&#39;postprocessing_report&#39;</span><span class="p">]</span>
+                            <span class="c"># append properties of the result layer</span>
+                    <span class="n">myReport</span> <span class="o">+=</span> <span class="p">(</span><span class="s">&#39;&lt;table class=&quot;table table-striped condensed&#39;</span>
+                                    <span class="s">&#39; bordered-table&quot;&gt;&#39;</span><span class="p">)</span>
+                    <span class="c"># Add this keyword to report</span>
+                    <span class="n">myReport</span> <span class="o">+=</span> <span class="p">(</span><span class="s">&#39;&lt;tr&gt;&#39;</span>
+                            <span class="s">&#39;&lt;th&gt;&#39;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">tr</span><span class="p">(</span><span class="s">&#39;Time stamp&#39;</span><span class="p">)</span>
+                            <span class="o">+</span> <span class="s">&#39;&lt;/th&gt;&#39;</span>
+                            <span class="s">&#39;&lt;/tr&gt;&#39;</span>
+                            <span class="s">&#39;&lt;tr&gt;&#39;</span>
+                            <span class="s">&#39;&lt;td&gt;&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">myKeywords</span><span class="p">[</span><span class="s">&#39;time_stamp&#39;</span><span class="p">])</span> <span class="o">+</span> <span class="s">&#39;&lt;/td&gt;&#39;</span>
+                            <span class="s">&#39;&lt;/tr&gt;&#39;</span><span class="p">)</span>
+                    <span class="n">myReport</span> <span class="o">+=</span> <span class="p">(</span><span class="s">&#39;&lt;tr&gt;&#39;</span>
+                            <span class="s">&#39;&lt;th&gt;&#39;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">tr</span><span class="p">(</span><span class="s">&#39;Elapsed time&#39;</span><span class="p">)</span>
+                            <span class="o">+</span> <span class="s">&#39;&lt;/th&gt;&#39;</span>
+                            <span class="s">&#39;&lt;/tr&gt;&#39;</span>
+                            <span class="s">&#39;&lt;tr&gt;&#39;</span>
+                            <span class="s">&#39;&lt;td&gt;&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">myKeywords</span><span class="p">[</span><span class="s">&#39;elapsed_time&#39;</span><span class="p">])</span>
+                            <span class="o">+</span> <span class="s">&#39; &#39;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">tr</span><span class="p">(</span><span class="s">&#39;seconds&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="s">&#39;&lt;/td&gt;&#39;</span>
+                            <span class="s">&#39;&lt;/tr&gt;&#39;</span><span class="p">)</span>
+                    <span class="n">myReport</span> <span class="o">+=</span> <span class="s">&#39;&lt;/table&gt;&#39;</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">pbnPrint</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
+
                 <span class="k">else</span><span class="p">:</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">pbnPrint</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="bp">False</span><span class="p">)</span>
                     <span class="k">for</span> <span class="n">myKeyword</span> <span class="ow">in</span> <span class="n">myKeywords</span><span class="p">:</span>
@@ -1256,7 +1867,7 @@
                                        <span class="o">+</span> <span class="s">&#39;&lt;/th&gt;&#39;</span>
                                      <span class="s">&#39;&lt;/tr&gt;&#39;</span>
                                      <span class="s">&#39;&lt;tr&gt;&#39;</span>
-                                       <span class="s">&#39;&lt;td&gt;&#39;</span> <span class="o">+</span> <span class="n">myValue</span> <span class="o">+</span> <span class="s">&#39;&lt;/td&gt;&#39;</span>
+                                       <span class="s">&#39;&lt;td&gt;&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">myValue</span><span class="p">)</span> <span class="o">+</span> <span class="s">&#39;&lt;/td&gt;&#39;</span>
                                      <span class="s">&#39;&lt;/tr&gt;&#39;</span><span class="p">)</span>
                     <span class="n">myReport</span> <span class="o">+=</span> <span class="s">&#39;&lt;/table&gt;&#39;</span>
             <span class="k">except</span> <span class="p">(</span><span class="n">KeywordNotFoundException</span><span class="p">,</span> <span class="n">HashNotFoundException</span><span class="p">,</span>
@@ -1291,6 +1902,7 @@
         <span class="n">myStateDict</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;hazard&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">cboHazard</span><span class="o">.</span><span class="n">currentText</span><span class="p">(),</span>
                        <span class="s">&#39;exposure&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">cboExposure</span><span class="o">.</span><span class="n">currentText</span><span class="p">(),</span>
                        <span class="s">&#39;function&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">cboFunction</span><span class="o">.</span><span class="n">currentText</span><span class="p">(),</span>
+                       <span class="s">&#39;aggregation&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">cboAggregation</span><span class="o">.</span><span class="n">currentText</span><span class="p">(),</span>
                        <span class="s">&#39;report&#39;</span><span class="p">:</span>
                            <span class="bp">self</span><span class="o">.</span><span class="n">wvResults</span><span class="o">.</span><span class="n">page</span><span class="p">()</span><span class="o">.</span><span class="n">currentFrame</span><span class="p">()</span><span class="o">.</span><span class="n">toHtml</span><span class="p">()}</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">state</span> <span class="o">=</span> <span class="n">myStateDict</span>
@@ -1316,6 +1928,11 @@
             <span class="n">myItemText</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cboHazard</span><span class="o">.</span><span class="n">itemText</span><span class="p">(</span><span class="n">myCount</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">myItemText</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="p">[</span><span class="s">&#39;hazard&#39;</span><span class="p">]:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">cboHazard</span><span class="o">.</span><span class="n">setCurrentIndex</span><span class="p">(</span><span class="n">myCount</span><span class="p">)</span>
+                <span class="k">break</span>
+        <span class="k">for</span> <span class="n">myCount</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">cboAggregation</span><span class="o">.</span><span class="n">count</span><span class="p">()):</span>
+            <span class="n">myItemText</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cboAggregation</span><span class="o">.</span><span class="n">itemText</span><span class="p">(</span><span class="n">myCount</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">myItemText</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="p">[</span><span class="s">&#39;aggregation&#39;</span><span class="p">]:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">cboAggregation</span><span class="o">.</span><span class="n">setCurrentIndex</span><span class="p">(</span><span class="n">myCount</span><span class="p">)</span>
                 <span class="k">break</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">restoreFunctionState</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="p">[</span><span class="s">&#39;function&#39;</span><span class="p">])</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">wvResults</span><span class="o">.</span><span class="n">setHtml</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="p">[</span><span class="s">&#39;report&#39;</span><span class="p">])</span>
@@ -1347,11 +1964,11 @@
 <span class="sd">        Raises:</span>
 <span class="sd">            Any exceptions raised by the InaSAFE library will be propogated.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">myMap</span> <span class="o">=</span> <span class="n">Map</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">iface</span><span class="p">)</span>
         <span class="n">myFilename</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QFileDialog</span><span class="o">.</span><span class="n">getSaveFileName</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
                             <span class="bp">self</span><span class="o">.</span><span class="n">tr</span><span class="p">(</span><span class="s">&#39;Write to PDF&#39;</span><span class="p">),</span>
-                            <span class="n">temp_dir</span><span class="p">(),</span>
+                            <span class="n">temp_dir</span><span class="p">()</span> <span class="o">+</span> <span class="n">os</span><span class="o">.</span><span class="n">sep</span> <span class="o">+</span> <span class="n">myMap</span><span class="o">.</span><span class="n">getMapTitle</span><span class="p">()</span> <span class="o">+</span> <span class="s">&#39;.pdf&#39;</span><span class="p">,</span>
                             <span class="bp">self</span><span class="o">.</span><span class="n">tr</span><span class="p">(</span><span class="s">&#39;Pdf File (*.pdf)&#39;</span><span class="p">))</span>
-        <span class="n">myMap</span> <span class="o">=</span> <span class="n">Map</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">iface</span><span class="p">)</span>
         <span class="n">myMap</span><span class="o">.</span><span class="n">setImpactLayer</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">iface</span><span class="o">.</span><span class="n">activeLayer</span><span class="p">())</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">showBusy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tr</span><span class="p">(</span><span class="s">&#39;Map Creator&#39;</span><span class="p">),</span>
                       <span class="bp">self</span><span class="o">.</span><span class="n">tr</span><span class="p">(</span><span class="s">&#39;Generating your map as a PDF document...&#39;</span><span class="p">),</span>
@@ -1403,7 +2020,7 @@
         <span class="k">for</span> <span class="n">myCount</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">mySize</span><span class="p">):</span>
             <span class="n">myItemText</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">theCombo</span><span class="o">.</span><span class="n">itemText</span><span class="p">(</span><span class="n">myCount</span><span class="p">))</span>
             <span class="c"># see if theItemText alphabetically precedes myItemText</span>
-            <span class="k">if</span> <span class="nb">cmp</span><span class="p">(</span><span class="n">theItemText</span><span class="p">,</span> <span class="n">myItemText</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">cmp</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">theItemText</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">(),</span> <span class="n">myItemText</span><span class="o">.</span><span class="n">lower</span><span class="p">())</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
                 <span class="n">theCombo</span><span class="o">.</span><span class="n">insertItem</span><span class="p">(</span><span class="n">myCount</span><span class="p">,</span> <span class="n">theItemText</span><span class="p">,</span> <span class="n">theItemData</span><span class="p">)</span>
                 <span class="k">return</span>
         <span class="c">#otherwise just add it to the end</span>
@@ -1477,7 +2094,8 @@
 
     <div class="footer">
         &copy; Copyright 2012, BNPB/AIFDR/GFDRR.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+      Last updated on Oct 18, 2012.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
     </div>
     <!-- cloud_sptheme 1.3 -->
   </body>

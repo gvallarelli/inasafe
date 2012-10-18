@@ -1,0 +1,257 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>safe_qgis.function_options_dialog &mdash; InaSAFE 0.5.1-final documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/cloud.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Noticia+Text|Droid+Sans+Mono" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.5.1-final',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../_static/jquery.cookie.js"></script>
+    <script type="text/javascript" src="../../_static/toggle_sections.js"></script>
+    <link rel="shortcut icon" href="../../_static/favicon.ico"/>
+    <link rel="top" title="InaSAFE 0.5.1-final documentation" href="../../index.html" />
+    <link rel="up" title="Module code" href="../index.html" /> 
+  </head>
+  <body>
+    <div class="relbar-top">
+        
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> &nbsp; &nbsp;</li>
+    <li><a href="../../index.html">Home</a> &raquo;</li>
+    <li><a href="../../contents.html">Contents</a> &raquo;</li>
+
+          <li><a href="../index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    </div>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for safe_qgis.function_options_dialog</h1><div class="highlight"><pre>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">InaSAFE Disaster risk assessment tool developed by AusAid -</span>
+<span class="sd">**Impact Functions Dialog.**</span>
+
+<span class="sd">Contact : ole.moller.nielsen@gmail.com</span>
+
+<span class="sd">.. note:: This program is free software; you can redistribute it and/or modify</span>
+<span class="sd">     it under the terms of the GNU General Public License as published by</span>
+<span class="sd">     the Free Software Foundation; either version 2 of the License, or</span>
+<span class="sd">     (at your option) any later version.</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="n">__author__</span> <span class="o">=</span> <span class="s">&#39;oz@tanoshiistudio.com&#39;</span>
+<span class="n">__revision__</span> <span class="o">=</span> <span class="s">&#39;$Format:%H$&#39;</span>
+<span class="n">__date__</span> <span class="o">=</span> <span class="s">&#39;01/10/2012&#39;</span>
+<span class="n">__copyright__</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;Copyright 2012, Australia Indonesia Facility for &#39;</span>
+                 <span class="s">&#39;Disaster Reduction&#39;</span><span class="p">)</span>
+
+<span class="kn">import</span> <span class="nn">ast</span>
+<span class="kn">from</span> <span class="nn">PyQt4</span> <span class="kn">import</span> <span class="n">QtGui</span><span class="p">,</span> <span class="n">QtCore</span>
+<span class="kn">from</span> <span class="nn">function_options_dialog_base</span> <span class="kn">import</span> <span class="p">(</span>
+            <span class="n">Ui_FunctionOptionsDialogBase</span><span class="p">)</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="n">_fromUtf8</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">QString</span><span class="o">.</span><span class="n">fromUtf8</span>
+<span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+    <span class="n">_fromUtf8</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">s</span><span class="p">:</span> <span class="n">s</span>
+
+
+<span class="c"># FIXME (Tim and Ole): Change to ConfigurationDialog throughout</span>
+<span class="c">#                      Maybe also change filename and Base name accordingly.</span>
+<div class="viewcode-block" id="FunctionOptionsDialog"><a class="viewcode-back" href="../../api-docs/safe_qgis/function_options_dialog.html#safe_qgis.function_options_dialog.FunctionOptionsDialog">[docs]</a><span class="k">class</span> <span class="nc">FunctionOptionsDialog</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QDialog</span><span class="p">,</span>
+                <span class="n">Ui_FunctionOptionsDialogBase</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;ConfigurableImpactFunctions Dialog for InaSAFE.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">theParent</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Constructor for the dialog.</span>
+
+<span class="sd">                This dialog will show the user the form for editing</span>
+<span class="sd">                impact functions parameters if any.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">           * theParent - Optional widget to use as parent</span>
+<span class="sd">        Returns:</span>
+<span class="sd">           not applicable</span>
+<span class="sd">        Raises:</span>
+<span class="sd">           no exceptions explicitly raised</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">QtGui</span><span class="o">.</span><span class="n">QDialog</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">theParent</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setupUi</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setWindowTitle</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tr</span><span class="p">(</span><span class="s">&#39;Impact function configuration&#39;</span><span class="p">))</span>
+
+<div class="viewcode-block" id="FunctionOptionsDialog.buildForm"><a class="viewcode-back" href="../../api-docs/safe_qgis/function_options_dialog.html#safe_qgis.function_options_dialog.FunctionOptionsDialog.buildForm">[docs]</a>    <span class="k">def</span> <span class="nf">buildForm</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">theFunction</span><span class="p">,</span> <span class="n">params</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;we build a form from impact functions parameter</span>
+
+<span class="sd">        .. note:: see http://tinyurl.com/pyqt-differences</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">           theFunction - theFunction to be modified</span>
+<span class="sd">           params - parameters to be edited</span>
+<span class="sd">        Returns:</span>
+<span class="sd">           not applicable</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">theFunction</span> <span class="o">=</span> <span class="n">theFunction</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">formItemCounters</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">keys</span> <span class="o">=</span> <span class="n">params</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">keys</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_addFormItem</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">params</span><span class="p">[</span><span class="n">key</span><span class="p">])</span>
+</div>
+    <span class="k">def</span> <span class="nf">_addFormItem</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">theParameterKey</span><span class="p">,</span> <span class="n">theParameterValue</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Add a new form element dynamically from a key value pair.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            * theParameterKey: str Mandatory string referencing the key in the</span>
+<span class="sd">                function configurable parameters dictionary.</span>
+<span class="sd">            * theParameterValue: object Mandatory representing the value</span>
+<span class="sd">                referenced by the key.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            None</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            None</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">myLabel</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QLabel</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">formLayoutWidget</span><span class="p">)</span>
+        <span class="n">myLabel</span><span class="o">.</span><span class="n">setObjectName</span><span class="p">(</span><span class="n">_fromUtf8</span><span class="p">(</span><span class="n">theParameterKey</span> <span class="o">+</span> <span class="s">&quot;Label&quot;</span><span class="p">))</span>
+        <span class="n">myKey</span> <span class="o">=</span> <span class="n">theParameterKey</span>
+        <span class="n">myKey</span> <span class="o">=</span> <span class="n">myKey</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&#39;_&#39;</span><span class="p">,</span> <span class="s">&#39; &#39;</span><span class="p">)</span>
+        <span class="n">myKey</span> <span class="o">=</span> <span class="n">myKey</span><span class="o">.</span><span class="n">capitalize</span><span class="p">()</span>
+        <span class="n">myLabel</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">myKey</span><span class="p">)</span>
+        <span class="n">myLabel</span><span class="o">.</span><span class="n">setToolTip</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">theParameterValue</span><span class="p">)))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">editableImpactFunctionsFormLayout</span><span class="o">.</span><span class="n">setWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">formItemCounters</span><span class="p">,</span>
+                                        <span class="n">QtGui</span><span class="o">.</span><span class="n">QFormLayout</span><span class="o">.</span><span class="n">LabelRole</span><span class="p">,</span> <span class="n">myLabel</span><span class="p">)</span>
+        <span class="n">myLineEdit</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QLineEdit</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">formLayoutWidget</span><span class="p">)</span>
+        <span class="n">myLineEdit</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">theParameterValue</span><span class="p">))</span>
+        <span class="n">myLineEdit</span><span class="o">.</span><span class="n">setObjectName</span><span class="p">(</span><span class="n">_fromUtf8</span><span class="p">(</span><span class="n">theParameterKey</span> <span class="o">+</span> <span class="s">&#39;LineEdit&#39;</span><span class="p">))</span>
+        <span class="n">myLineEdit</span><span class="o">.</span><span class="n">setCursorPosition</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">editableImpactFunctionsFormLayout</span><span class="o">.</span><span class="n">setWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">formItemCounters</span><span class="p">,</span>
+                                        <span class="n">QtGui</span><span class="o">.</span><span class="n">QFormLayout</span><span class="o">.</span><span class="n">FieldRole</span><span class="p">,</span>
+                                        <span class="n">myLineEdit</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">formItemCounters</span> <span class="o">+=</span> <span class="mi">1</span>
+
+    <span class="k">def</span> <span class="nf">setDialogInfo</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">theFunctionID</span><span class="p">):</span>
+        <span class="n">myText</span> <span class="o">=</span> <span class="s">&#39;&#39;</span>
+        <span class="n">impactFunctionName</span> <span class="o">=</span> <span class="n">theFunctionID</span>
+        <span class="n">myText</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tr</span><span class="p">(</span><span class="s">&#39;Parameters for impact function &quot;%1&quot; that can be &#39;</span>
+                          <span class="s">&#39;modified are:&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">arg</span><span class="p">(</span><span class="n">impactFunctionName</span><span class="p">)</span>
+        <span class="n">myLabel</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">impFuncConfLabel</span>
+        <span class="n">myLabel</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">myText</span><span class="p">)</span>
+
+<div class="viewcode-block" id="FunctionOptionsDialog.accept"><a class="viewcode-back" href="../../api-docs/safe_qgis/function_options_dialog.html#safe_qgis.function_options_dialog.FunctionOptionsDialog.accept">[docs]</a>    <span class="k">def</span> <span class="nf">accept</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Override the default accept function</span>
+
+<span class="sd">        .. note:: see http://tinyurl.com/pyqt-differences</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">           theFunction - theFunction to be modified</span>
+<span class="sd">           params - parameters to be edited</span>
+<span class="sd">        Returns:</span>
+<span class="sd">           not applicable</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">noError</span> <span class="o">=</span> <span class="bp">False</span>
+        <span class="n">myFunction</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">theFunction</span>
+        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">keys</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">lineEdit</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">findChild</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QLineEdit</span><span class="p">,</span>
+                                          <span class="n">_fromUtf8</span><span class="p">(</span><span class="n">key</span> <span class="o">+</span> <span class="s">&quot;LineEdit&quot;</span><span class="p">))</span>
+                <span class="n">lineEditText</span> <span class="o">=</span> <span class="n">lineEdit</span><span class="o">.</span><span class="n">text</span><span class="p">()</span>
+                <span class="n">convText</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">lineEditText</span><span class="p">)</span>
+                <span class="n">myFunction</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">ast</span><span class="o">.</span><span class="n">literal_eval</span><span class="p">(</span><span class="n">convText</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+                <span class="n">text</span> <span class="o">=</span> <span class="p">(</span><span class="s">&quot;Unexpected error: ValueError&quot;</span> <span class="o">+</span>
+                <span class="s">&quot;. Please consult Python language reference for correct &quot;</span> <span class="o">+</span>
+                <span class="s">&quot;format of data type.&quot;</span><span class="p">)</span>
+                <span class="n">label</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">impFuncConfErrLabel</span>
+                <span class="n">label</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+                <span class="n">noError</span> <span class="o">=</span> <span class="bp">True</span>
+        <span class="k">if</span> <span class="p">(</span><span class="ow">not</span> <span class="n">noError</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+        <p class="logo"><a href="../../contents.html">
+          <img class="logo" src="../../_static/icon.png" alt="Logo"/>
+        </a></p>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="relbar-bottom">
+        
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> &nbsp; &nbsp;</li>
+    <li><a href="../../index.html">Home</a> &raquo;</li>
+    <li><a href="../../contents.html">Contents</a> &raquo;</li>
+
+          <li><a href="../index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    </div>
+
+    <div class="footer">
+        &copy; Copyright 2012, BNPB/AIFDR/GFDRR.
+      Last updated on Oct 18, 2012.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+    </div>
+    <!-- cloud_sptheme 1.3 -->
+  </body>
+</html>

@@ -1,0 +1,346 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>safe_qgis.html_renderer &mdash; InaSAFE 0.5.1-final documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/cloud.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Noticia+Text|Droid+Sans+Mono" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.5.1-final',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../_static/jquery.cookie.js"></script>
+    <script type="text/javascript" src="../../_static/toggle_sections.js"></script>
+    <link rel="shortcut icon" href="../../_static/favicon.ico"/>
+    <link rel="top" title="InaSAFE 0.5.1-final documentation" href="../../index.html" />
+    <link rel="up" title="Module code" href="../index.html" /> 
+  </head>
+  <body>
+    <div class="relbar-top">
+        
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> &nbsp; &nbsp;</li>
+    <li><a href="../../index.html">Home</a> &raquo;</li>
+    <li><a href="../../contents.html">Contents</a> &raquo;</li>
+
+          <li><a href="../index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    </div>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for safe_qgis.html_renderer</h1><div class="highlight"><pre>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">InaSAFE Disaster risk assessment tool developed by AusAid -</span>
+<span class="sd">  **InaSAFE map making module.**</span>
+
+<span class="sd">Contact : ole.moller.nielsen@gmail.com</span>
+
+<span class="sd">.. note:: This program is free software; you can redistribute it and/or modify</span>
+<span class="sd">     it under the terms of the GNU General Public License as published by</span>
+<span class="sd">     the Free Software Foundation; either version 2 of the License, or</span>
+<span class="sd">     (at your option) any later version.</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="n">__author__</span> <span class="o">=</span> <span class="s">&#39;tim@linfiniti.com&#39;</span>
+<span class="n">__version__</span> <span class="o">=</span> <span class="s">&#39;0.5.1&#39;</span>
+<span class="n">__revision__</span> <span class="o">=</span> <span class="s">&#39;$Format:%H$&#39;</span>
+<span class="n">__date__</span> <span class="o">=</span> <span class="s">&#39;10/01/2011&#39;</span>
+<span class="n">__copyright__</span> <span class="o">=</span> <span class="s">&#39;Copyright 2012, Australia Indonesia Facility for &#39;</span>
+<span class="n">__copyright__</span> <span class="o">+=</span> <span class="s">&#39;Disaster Reduction&#39;</span>
+
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+
+<span class="kn">from</span> <span class="nn">PyQt4</span> <span class="kn">import</span> <span class="n">QtCore</span><span class="p">,</span> <span class="n">QtGui</span><span class="p">,</span> <span class="n">QtWebKit</span>
+<span class="kn">from</span> <span class="nn">safe_qgis.utilities</span> <span class="kn">import</span> <span class="p">(</span><span class="n">htmlHeader</span><span class="p">,</span>
+                                 <span class="n">htmlFooter</span><span class="p">,</span>
+                                 <span class="n">mmToPoints</span><span class="p">,</span>
+                                 <span class="n">setupPrinter</span><span class="p">)</span>
+<span class="kn">from</span> <span class="nn">safe_interface</span> <span class="kn">import</span> <span class="n">unique_filename</span><span class="p">,</span> <span class="n">temp_dir</span>
+<span class="kn">from</span> <span class="nn">safe_qgis.exceptions</span> <span class="kn">import</span> <span class="n">KeywordNotFoundException</span>
+<span class="kn">from</span> <span class="nn">keyword_io</span> <span class="kn">import</span> <span class="n">KeywordIO</span>
+<span class="n">LOGGER</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s">&#39;InaSAFE&#39;</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="HtmlRenderer"><a class="viewcode-back" href="../../api-docs/safe_qgis/html_renderer.html#safe_qgis.html_renderer.HtmlRenderer">[docs]</a><span class="k">class</span> <span class="nc">HtmlRenderer</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;A class for creating a map.&quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">thePageDpi</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Constructor for the Map class.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            None</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            None</span>
+<span class="sd">        Raises:</span>
+<span class="sd">            Any exceptions will be propagated.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">LOGGER</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&#39;InaSAFE HtmlRenderer class initialised&#39;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">pageDpi</span> <span class="o">=</span> <span class="n">thePageDpi</span>
+        <span class="c"># Need to keep state here for loadCompleted signals</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">webView</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">htmlLoadedFlag</span> <span class="o">=</span> <span class="bp">False</span>
+
+<div class="viewcode-block" id="HtmlRenderer.tr"><a class="viewcode-back" href="../../api-docs/safe_qgis/html_renderer.html#safe_qgis.html_renderer.HtmlRenderer.tr">[docs]</a>    <span class="k">def</span> <span class="nf">tr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">theString</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;We implement this since we do not inherit QObject.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">           theString - string for translation.</span>
+<span class="sd">        Returns:</span>
+<span class="sd">           Translated version of theString.</span>
+<span class="sd">        Raises:</span>
+<span class="sd">           no exceptions explicitly raised.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">QCoreApplication</span><span class="o">.</span><span class="n">translate</span><span class="p">(</span><span class="s">&#39;HtmlRenderer&#39;</span><span class="p">,</span> <span class="n">theString</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="HtmlRenderer.renderHtmlToPixmap"><a class="viewcode-back" href="../../api-docs/safe_qgis/html_renderer.html#safe_qgis.html_renderer.HtmlRenderer.renderHtmlToPixmap">[docs]</a>    <span class="k">def</span> <span class="nf">renderHtmlToPixmap</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">theHtml</span><span class="p">,</span> <span class="n">theWidthMM</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Render some HTML to a pixmap.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            * theHtml - HTML to be rendered. It is assumed that the html</span>
+<span class="sd">              is a snippet only, containing no body element - a standard</span>
+<span class="sd">              header and footer will be appended.</span>
+<span class="sd">            * theWidthMM- width of the table in mm - will be converted to</span>
+<span class="sd">              points based on the resolution of our page.</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            QPixmap</span>
+<span class="sd">        Raises:</span>
+<span class="sd">            Any exceptions raised by the InaSAFE library will be propagated.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">LOGGER</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&#39;InaSAFE Map renderHtmlToPixmap called&#39;</span><span class="p">)</span>
+        <span class="c"># Using 150dpi as the baseline, work out a standard text size</span>
+        <span class="c"># multiplier so that page renders equally well at different print</span>
+        <span class="c"># resolutions.</span>
+        <span class="n">myBaselineDpi</span> <span class="o">=</span> <span class="mi">150</span>
+        <span class="n">myFactor</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pageDpi</span><span class="p">)</span> <span class="o">/</span> <span class="n">myBaselineDpi</span>
+        <span class="n">myWidthPx</span> <span class="o">=</span> <span class="n">mmToPoints</span><span class="p">(</span><span class="n">theWidthMM</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">pageDpi</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">loadAndWait</span><span class="p">(</span><span class="n">theHtmlSnippet</span><span class="o">=</span><span class="n">theHtml</span><span class="p">)</span>
+        <span class="n">myFrame</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">webView</span><span class="o">.</span><span class="n">page</span><span class="p">()</span><span class="o">.</span><span class="n">mainFrame</span><span class="p">()</span>
+        <span class="n">myFrame</span><span class="o">.</span><span class="n">setTextSizeMultiplier</span><span class="p">(</span><span class="n">myFactor</span><span class="p">)</span>
+
+        <span class="n">mySize</span> <span class="o">=</span> <span class="n">myFrame</span><span class="o">.</span><span class="n">contentsSize</span><span class="p">()</span>
+        <span class="n">mySize</span><span class="o">.</span><span class="n">setWidth</span><span class="p">(</span><span class="n">myWidthPx</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">webView</span><span class="o">.</span><span class="n">page</span><span class="p">()</span><span class="o">.</span><span class="n">setViewportSize</span><span class="p">(</span><span class="n">mySize</span><span class="p">)</span>
+
+        <span class="n">myPixmap</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QPixmap</span><span class="p">(</span><span class="n">mySize</span><span class="p">)</span>
+        <span class="n">myPixmap</span><span class="o">.</span><span class="n">fill</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QColor</span><span class="p">(</span><span class="mi">255</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">255</span><span class="p">))</span>
+        <span class="n">myPainter</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QPainter</span><span class="p">(</span><span class="n">myPixmap</span><span class="p">)</span>
+        <span class="n">myFrame</span><span class="o">.</span><span class="n">render</span><span class="p">(</span><span class="n">myPainter</span><span class="p">)</span>
+        <span class="n">myPainter</span><span class="o">.</span><span class="n">end</span><span class="p">()</span>
+        <span class="n">myPixmap</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="s">&#39;/tmp/test.png&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">myPixmap</span>
+</div>
+<div class="viewcode-block" id="HtmlRenderer.printToPdf"><a class="viewcode-back" href="../../api-docs/safe_qgis/html_renderer.html#safe_qgis.html_renderer.HtmlRenderer.printToPdf">[docs]</a>    <span class="k">def</span> <span class="nf">printToPdf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">theHtml</span><span class="p">,</span> <span class="n">theFilename</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Render an html snippet into the printer, paginating as needed.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            * theHtml: str A string containing an html snippet. It will have a</span>
+<span class="sd">                header and footer appended to it in order to make it a valid</span>
+<span class="sd">                html document. The header will also apply the bootstrap theme</span>
+<span class="sd">                to the document.</span>
+<span class="sd">            * theFilename: str String containing a pdf file path that the</span>
+<span class="sd">                output will be written to.</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            str: The file path of the output pdf (which is the same as the</span>
+<span class="sd">                theFilename parameter if it was specified.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&#39;InaSAFE Map printToPdf called&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">theFilename</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">myHtmlPdfPath</span> <span class="o">=</span> <span class="n">unique_filename</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="s">&#39;table&#39;</span><span class="p">,</span>
+                                           <span class="n">suffix</span><span class="o">=</span><span class="s">&#39;.pdf&#39;</span><span class="p">,</span>
+                                           <span class="nb">dir</span><span class="o">=</span><span class="n">temp_dir</span><span class="p">(</span><span class="s">&#39;work&#39;</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c"># We need to cast to python string in case we receive a QString</span>
+            <span class="n">myHtmlPdfPath</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">theFilename</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">printer</span> <span class="o">=</span> <span class="n">setupPrinter</span><span class="p">(</span><span class="n">myHtmlPdfPath</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">loadAndWait</span><span class="p">(</span><span class="n">theHtmlSnippet</span><span class="o">=</span><span class="n">theHtml</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">webView</span><span class="o">.</span><span class="n">print_</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">printer</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">myHtmlPdfPath</span>
+</div>
+<div class="viewcode-block" id="HtmlRenderer.loadAndWait"><a class="viewcode-back" href="../../api-docs/safe_qgis/html_renderer.html#safe_qgis.html_renderer.HtmlRenderer.loadAndWait">[docs]</a>    <span class="k">def</span> <span class="nf">loadAndWait</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">theHtmlPath</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">theHtmlSnippet</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Load some html to a web view and wait till it is done.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">theHtmlSnippet</span><span class="p">:</span>
+            <span class="n">myHeader</span> <span class="o">=</span> <span class="n">htmlHeader</span><span class="p">()</span>
+            <span class="n">myFooter</span> <span class="o">=</span> <span class="n">htmlFooter</span><span class="p">()</span>
+            <span class="n">myHtml</span> <span class="o">=</span> <span class="n">myHeader</span> <span class="o">+</span> <span class="n">theHtmlSnippet</span> <span class="o">+</span> <span class="n">myFooter</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">myFile</span> <span class="o">=</span> <span class="nb">file</span><span class="p">(</span><span class="n">theHtmlPath</span><span class="p">,</span> <span class="s">&#39;rt&#39;</span><span class="p">)</span>
+            <span class="n">myHtml</span> <span class="o">=</span> <span class="n">myFile</span><span class="o">.</span><span class="n">readlines</span><span class="p">()</span>
+            <span class="n">myFile</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">webView</span> <span class="o">=</span> <span class="n">QtWebKit</span><span class="o">.</span><span class="n">QWebView</span><span class="p">()</span>
+        <span class="n">myFrame</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">webView</span><span class="o">.</span><span class="n">page</span><span class="p">()</span><span class="o">.</span><span class="n">mainFrame</span><span class="p">()</span>
+        <span class="n">myFrame</span><span class="o">.</span><span class="n">setScrollBarPolicy</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">Vertical</span><span class="p">,</span>
+                                   <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">ScrollBarAlwaysOff</span><span class="p">)</span>
+        <span class="n">myFrame</span><span class="o">.</span><span class="n">setScrollBarPolicy</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">Horizontal</span><span class="p">,</span>
+                                   <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">ScrollBarAlwaysOff</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">webView</span><span class="o">.</span><span class="n">loadFinished</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">htmlLoadedSlot</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">webView</span><span class="o">.</span><span class="n">setHtml</span><span class="p">(</span><span class="n">myHtml</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">htmlLoadedFlag</span> <span class="o">=</span> <span class="bp">False</span>
+        <span class="n">myTimeOut</span> <span class="o">=</span> <span class="mi">20</span>
+        <span class="n">myCounter</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">mySleepPeriod</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="k">while</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">htmlLoadedFlag</span> <span class="ow">and</span> <span class="n">myCounter</span> <span class="o">&lt;</span> <span class="n">myTimeOut</span><span class="p">:</span>
+            <span class="c"># Block until the event loop is done printing the page</span>
+            <span class="n">myCounter</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="n">mySleepPeriod</span><span class="p">)</span>
+            <span class="n">QtCore</span><span class="o">.</span><span class="n">QCoreApplication</span><span class="o">.</span><span class="n">processEvents</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">htmlLoadedFlag</span><span class="p">:</span>
+            <span class="n">LOGGER</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s">&#39;Failed to load html&#39;</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="HtmlRenderer.htmlLoadedSlot"><a class="viewcode-back" href="../../api-docs/safe_qgis/html_renderer.html#safe_qgis.html_renderer.HtmlRenderer.htmlLoadedSlot">[docs]</a>    <span class="k">def</span> <span class="nf">htmlLoadedSlot</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Slot called when the page is loaded.</span>
+
+<span class="sd">        Args: None</span>
+<span class="sd">        Returns: None</span>
+<span class="sd">        Raises: None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">htmlLoadedFlag</span> <span class="o">=</span> <span class="bp">True</span>
+        <span class="n">LOGGER</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&#39;htmlLoadedSlot slot called&#39;</span><span class="p">)</span>
+        <span class="n">QtCore</span><span class="o">.</span><span class="n">QObject</span><span class="o">.</span><span class="n">disconnect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">webView</span><span class="p">,</span>
+                                  <span class="n">QtCore</span><span class="o">.</span><span class="n">SIGNAL</span><span class="p">(</span><span class="s">&quot;loadFinished(bool)&quot;</span><span class="p">),</span>
+                                  <span class="bp">self</span><span class="o">.</span><span class="n">htmlLoadedSlot</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="HtmlRenderer.printImpactTable"><a class="viewcode-back" href="../../api-docs/safe_qgis/html_renderer.html#safe_qgis.html_renderer.HtmlRenderer.printImpactTable">[docs]</a>    <span class="k">def</span> <span class="nf">printImpactTable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">theLayer</span><span class="p">,</span> <span class="n">theFilename</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;High level table generator to print layer keywords.</span>
+
+<span class="sd">        It gets the summary and impact table from a QgsMapLayer&#39;s keywords and</span>
+<span class="sd">        renders to pdf, returning the resulting PDF file path.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            * theLayer: QgsMapLayer instance (required)</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">myFilePath</span> <span class="o">=</span> <span class="n">theFilename</span>
+        <span class="k">if</span> <span class="n">theFilename</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">myFilePath</span> <span class="o">=</span> <span class="n">unique_filename</span><span class="p">(</span><span class="n">suffix</span><span class="o">=</span><span class="s">&#39;.pdf&#39;</span><span class="p">,</span> <span class="nb">dir</span><span class="o">=</span><span class="n">temp_dir</span><span class="p">())</span>
+
+        <span class="n">myKeywordIO</span> <span class="o">=</span> <span class="n">KeywordIO</span><span class="p">()</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">mySummaryTable</span> <span class="o">=</span> <span class="n">myKeywordIO</span><span class="o">.</span><span class="n">readKeywords</span><span class="p">(</span>
+                <span class="n">theLayer</span><span class="p">,</span> <span class="s">&#39;impact_summary&#39;</span><span class="p">)</span>
+        <span class="k">except</span> <span class="n">KeywordNotFoundException</span><span class="p">:</span>
+            <span class="n">mySummaryTable</span> <span class="o">=</span> <span class="bp">None</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">myFullTable</span> <span class="o">=</span> <span class="n">myKeywordIO</span><span class="o">.</span><span class="n">readKeywords</span><span class="p">(</span>
+                <span class="n">theLayer</span><span class="p">,</span> <span class="s">&#39;impact_table&#39;</span><span class="p">)</span>
+        <span class="k">except</span> <span class="n">KeywordNotFoundException</span><span class="p">:</span>
+            <span class="n">myFullTable</span> <span class="o">=</span> <span class="bp">None</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">myAggregationTable</span> <span class="o">=</span> <span class="n">myKeywordIO</span><span class="o">.</span><span class="n">readKeywords</span><span class="p">(</span>
+                <span class="n">theLayer</span><span class="p">,</span> <span class="s">&#39;postprocessing_report&#39;</span><span class="p">)</span>
+        <span class="k">except</span> <span class="n">KeywordNotFoundException</span><span class="p">:</span>
+            <span class="n">myAggregationTable</span> <span class="o">=</span> <span class="bp">None</span>
+
+        <span class="n">myHtml</span> <span class="o">=</span> <span class="s">&#39;&#39;</span>
+        <span class="k">if</span> <span class="n">mySummaryTable</span> <span class="o">!=</span> <span class="n">myFullTable</span> <span class="ow">and</span> <span class="n">mySummaryTable</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">myHtml</span> <span class="o">=</span> <span class="s">&#39;&lt;h2&gt;</span><span class="si">%s</span><span class="s">&lt;/h2&gt;&#39;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">tr</span><span class="p">(</span><span class="s">&#39;Summary Table&#39;</span><span class="p">)</span>
+            <span class="n">myHtml</span> <span class="o">+=</span> <span class="n">mySummaryTable</span>
+            <span class="k">if</span> <span class="n">myAggregationTable</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+                <span class="n">myHtml</span> <span class="o">+=</span> <span class="n">myAggregationTable</span>
+            <span class="n">myHtml</span> <span class="o">+=</span> <span class="s">&#39;&lt;h2&gt;</span><span class="si">%s</span><span class="s">&lt;/h2&gt;&#39;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">tr</span><span class="p">(</span><span class="s">&#39;Detailed Table&#39;</span><span class="p">)</span>
+            <span class="n">myHtml</span> <span class="o">+=</span> <span class="n">myFullTable</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">myAggregationTable</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+                <span class="n">myHtml</span> <span class="o">=</span> <span class="n">myAggregationTable</span>
+            <span class="k">if</span> <span class="n">myFullTable</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+                <span class="n">myHtml</span> <span class="o">+=</span> <span class="n">myFullTable</span>
+
+        <span class="c"># myNewFilePath should be the same as myFilePath</span>
+        <span class="n">myNewFilePath</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">printToPdf</span><span class="p">(</span><span class="n">myHtml</span><span class="p">,</span> <span class="n">myFilePath</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">myNewFilePath</span></div></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+        <p class="logo"><a href="../../contents.html">
+          <img class="logo" src="../../_static/icon.png" alt="Logo"/>
+        </a></p>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="relbar-bottom">
+        
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> &nbsp; &nbsp;</li>
+    <li><a href="../../index.html">Home</a> &raquo;</li>
+    <li><a href="../../contents.html">Contents</a> &raquo;</li>
+
+          <li><a href="../index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    </div>
+
+    <div class="footer">
+        &copy; Copyright 2012, BNPB/AIFDR/GFDRR.
+      Last updated on Oct 18, 2012.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+    </div>
+    <!-- cloud_sptheme 1.3 -->
+  </body>
+</html>

@@ -9,7 +9,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>safe.storage.test_io &mdash; InaSAFE 0.5.0-alpha documentation</title>
+    <title>safe.storage.test_io &mdash; InaSAFE 0.5.1-final documentation</title>
     
     <link rel="stylesheet" href="../../../_static/cloud.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
@@ -18,7 +18,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../',
-        VERSION:     '0.5.0-alpha',
+        VERSION:     '0.5.1-final',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -29,7 +29,8 @@
     <script type="text/javascript" src="../../../_static/doctools.js"></script>
     <script type="text/javascript" src="../../../_static/jquery.cookie.js"></script>
     <script type="text/javascript" src="../../../_static/toggle_sections.js"></script>
-    <link rel="top" title="InaSAFE 0.5.0-alpha documentation" href="../../../index.html" />
+    <link rel="shortcut icon" href="../../../_static/favicon.ico"/>
+    <link rel="top" title="InaSAFE 0.5.1-final documentation" href="../../../index.html" />
     <link rel="up" title="Module code" href="../../index.html" /> 
   </head>
   <body>
@@ -89,6 +90,7 @@
 <span class="kn">from</span> <span class="nn">core</span> <span class="kn">import</span> <span class="n">bboxlist2string</span><span class="p">,</span> <span class="n">bboxstring2list</span>
 <span class="kn">from</span> <span class="nn">core</span> <span class="kn">import</span> <span class="n">check_bbox_string</span>
 <span class="kn">from</span> <span class="nn">utilities_test</span> <span class="kn">import</span> <span class="n">same_API</span>
+<span class="kn">from</span> <span class="nn">geometry</span> <span class="kn">import</span> <span class="n">Polygon</span>
 <span class="kn">from</span> <span class="nn">safe.common.numerics</span> <span class="kn">import</span> <span class="n">nanallclose</span>
 <span class="kn">from</span> <span class="nn">safe.common.testing</span> <span class="kn">import</span> <span class="n">TESTDATA</span><span class="p">,</span> <span class="n">HAZDATA</span><span class="p">,</span> <span class="n">EXPDATA</span><span class="p">,</span> <span class="n">DATADIR</span>
 <span class="kn">from</span> <span class="nn">safe.common.testing</span> <span class="kn">import</span> <span class="n">FEATURE_COUNTS</span>
@@ -96,7 +98,7 @@
 <span class="kn">from</span> <span class="nn">safe.common.utilities</span> <span class="kn">import</span> <span class="n">ugettext</span> <span class="k">as</span> <span class="n">_</span><span class="p">,</span> <span class="n">unique_filename</span>
 <span class="kn">from</span> <span class="nn">safe.common.polygon</span> <span class="kn">import</span> <span class="n">is_inside_polygon</span>
 <span class="kn">from</span> <span class="nn">safe.common.exceptions</span> <span class="kn">import</span> <span class="n">BoundingBoxError</span><span class="p">,</span> <span class="n">ReadLayerError</span>
-<span class="kn">from</span> <span class="nn">safe.common.exceptions</span> <span class="kn">import</span> <span class="n">VerificationError</span>
+<span class="kn">from</span> <span class="nn">safe.common.exceptions</span> <span class="kn">import</span> <span class="n">VerificationError</span><span class="p">,</span> <span class="n">InaSAFEError</span>
 
 
 <span class="c"># Auxiliary function for raster test</span>
@@ -182,18 +184,12 @@
         <span class="k">for</span> <span class="n">vectorname</span> <span class="ow">in</span> <span class="p">[</span><span class="s">&#39;test_buildings.shp&#39;</span><span class="p">,</span>
                            <span class="s">&#39;tsunami_building_exposure.shp&#39;</span><span class="p">,</span>
                            <span class="s">&#39;Padang_WGS84.shp&#39;</span><span class="p">,</span>
-                           <span class="s">&#39;nan_here.shp&#39;</span><span class="p">]:</span>
+                           <span class="p">]:</span>
 
             <span class="n">filename</span> <span class="o">=</span> <span class="s">&#39;</span><span class="si">%s</span><span class="s">/</span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">TESTDATA</span><span class="p">,</span> <span class="n">vectorname</span><span class="p">)</span>
             <span class="n">layer</span> <span class="o">=</span> <span class="n">read_layer</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
             <span class="n">coords</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">layer</span><span class="o">.</span><span class="n">get_geometry</span><span class="p">())</span>
             <span class="n">attributes</span> <span class="o">=</span> <span class="n">layer</span><span class="o">.</span><span class="n">get_data</span><span class="p">()</span>
-
-            <span class="c"># Check NaN is read as NaN</span>
-            <span class="k">if</span> <span class="n">vectorname</span> <span class="o">==</span> <span class="s">&#39;nan_here.shp&#39;</span><span class="p">:</span>
-                <span class="n">msg</span> <span class="o">=</span> <span class="s">&#39;It should be NaN but found </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="n">attributes</span><span class="p">[</span><span class="mo">00</span><span class="p">][</span><span class="s">&#39;DEPTH&#39;</span><span class="p">]</span>
-                <span class="k">assert</span> <span class="n">numpy</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">attributes</span><span class="p">[</span><span class="mo">00</span><span class="p">][</span><span class="s">&#39;DEPTH&#39;</span><span class="p">]),</span> <span class="n">msg</span>
-                <span class="k">continue</span>
 
             <span class="c"># Check basic data integrity</span>
             <span class="n">N</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">layer</span><span class="p">)</span>
@@ -285,6 +281,35 @@
 </div>
     <span class="n">test_reading_and_writing_of_vector_point_data</span><span class="o">.</span><span class="n">slow</span> <span class="o">=</span> <span class="bp">True</span>
 
+<div class="viewcode-block" id="Test_IO.Xtest_reading_and_writing_of_sqlite_vector_data"><a class="viewcode-back" href="../../../api-docs/safe/storage/test_io.html#safe.storage.test_io.Test_IO.Xtest_reading_and_writing_of_sqlite_vector_data">[docs]</a>    <span class="k">def</span> <span class="nf">Xtest_reading_and_writing_of_sqlite_vector_data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;SQLite vector data can be read and written correctly</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c"># First test that some error conditions are caught</span>
+        <span class="n">filename</span> <span class="o">=</span> <span class="s">&#39;</span><span class="si">%s</span><span class="s">/</span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">TESTDATA</span><span class="p">,</span> <span class="s">&#39;lembang_osm_20121003.sqlite&#39;</span><span class="p">)</span>
+        <span class="n">L</span> <span class="o">=</span> <span class="n">read_layer</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+        <span class="k">print</span> <span class="n">L</span><span class="o">.</span><span class="n">get_attribute_names</span><span class="p">()</span>
+</div>
+<div class="viewcode-block" id="Test_IO.test_donut_polygons"><a class="viewcode-back" href="../../../api-docs/safe/storage/test_io.html#safe.storage.test_io.Test_IO.test_donut_polygons">[docs]</a>    <span class="k">def</span> <span class="nf">test_donut_polygons</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Donut polygon can be read, interpreted and written correctly</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c"># Read real polygon with holes</span>
+        <span class="n">filename</span> <span class="o">=</span> <span class="s">&#39;</span><span class="si">%s</span><span class="s">/</span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">TESTDATA</span><span class="p">,</span> <span class="s">&#39;donut.shp&#39;</span><span class="p">)</span>
+        <span class="n">L</span> <span class="o">=</span> <span class="n">read_layer</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+
+        <span class="c"># Write this new object, read it again and check</span>
+        <span class="n">tmp_filename</span> <span class="o">=</span> <span class="n">unique_filename</span><span class="p">(</span><span class="n">suffix</span><span class="o">=</span><span class="s">&#39;.shp&#39;</span><span class="p">)</span>
+        <span class="n">L</span><span class="o">.</span><span class="n">write_to_file</span><span class="p">(</span><span class="n">tmp_filename</span><span class="p">)</span>
+
+        <span class="c"># Read back</span>
+        <span class="n">R</span> <span class="o">=</span> <span class="n">read_layer</span><span class="p">(</span><span class="n">tmp_filename</span><span class="p">)</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;Geometry of polygon was not preserved after reading &#39;</span>
+               <span class="s">&#39;and re-writing&#39;</span><span class="p">)</span>
+
+        <span class="c"># Check</span>
+        <span class="k">assert</span> <span class="n">R</span> <span class="o">==</span> <span class="n">L</span><span class="p">,</span> <span class="n">msg</span>
+</div>
 <div class="viewcode-block" id="Test_IO.test_analysis_of_vector_data_top_N"><a class="viewcode-back" href="../../../api-docs/safe/storage/test_io.html#safe.storage.test_io.Test_IO.test_analysis_of_vector_data_top_N">[docs]</a>    <span class="k">def</span> <span class="nf">test_analysis_of_vector_data_top_N</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Analysis of vector data - get top N of an attribute</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -416,12 +441,111 @@
         <span class="k">assert</span> <span class="ow">not</span> <span class="n">V_tmp</span> <span class="o">==</span> <span class="n">V_ref</span>
         <span class="k">assert</span> <span class="n">V_tmp</span> <span class="o">!=</span> <span class="n">V_ref</span>
 </div>
+<div class="viewcode-block" id="Test_IO.test_ordering_polygon_vertices"><a class="viewcode-back" href="../../../api-docs/safe/storage/test_io.html#safe.storage.test_io.Test_IO.test_ordering_polygon_vertices">[docs]</a>    <span class="k">def</span> <span class="nf">test_ordering_polygon_vertices</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Ordering of polygon vertices is preserved when writing and reading</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c"># So far the admissible classes are Point, Line and Polygon</span>
+        <span class="n">tmp_filename</span> <span class="o">=</span> <span class="n">unique_filename</span><span class="p">(</span><span class="n">suffix</span><span class="o">=</span><span class="s">&#39;.shp&#39;</span><span class="p">)</span>
+
+        <span class="c"># Simple polygon (in clock wise order)</span>
+        <span class="n">P</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mf">106.79</span><span class="p">,</span> <span class="o">-</span><span class="mf">6.23</span><span class="p">],</span>
+                         <span class="p">[</span><span class="mf">106.80</span><span class="p">,</span> <span class="o">-</span><span class="mf">6.24</span><span class="p">],</span>
+                         <span class="p">[</span><span class="mf">106.78</span><span class="p">,</span> <span class="o">-</span><span class="mf">6.23</span><span class="p">],</span>
+                         <span class="p">[</span><span class="mf">106.77</span><span class="p">,</span> <span class="o">-</span><span class="mf">6.21</span><span class="p">]])</span>
+
+        <span class="n">v_ref</span> <span class="o">=</span> <span class="n">Vector</span><span class="p">(</span><span class="n">geometry</span><span class="o">=</span><span class="p">[</span><span class="n">P</span><span class="p">],</span> <span class="n">geometry_type</span><span class="o">=</span><span class="s">&#39;polygon&#39;</span><span class="p">)</span>
+        <span class="n">v_ref</span><span class="o">.</span><span class="n">write_to_file</span><span class="p">(</span><span class="n">tmp_filename</span><span class="p">)</span>
+        <span class="k">print</span> <span class="s">&#39;Written to&#39;</span><span class="p">,</span> <span class="n">tmp_filename</span>
+        <span class="n">v_file</span> <span class="o">=</span> <span class="n">read_layer</span><span class="p">(</span><span class="n">tmp_filename</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">v_ref</span><span class="p">)):</span>
+            <span class="n">x</span> <span class="o">=</span> <span class="n">v_ref</span><span class="o">.</span><span class="n">get_geometry</span><span class="p">()[</span><span class="n">i</span><span class="p">]</span>
+            <span class="n">y</span> <span class="o">=</span> <span class="n">v_file</span><span class="o">.</span><span class="n">get_geometry</span><span class="p">()[</span><span class="n">i</span><span class="p">]</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s">&#39;Read geometry </span><span class="si">%s</span><span class="s">, but expected </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
+            <span class="k">assert</span> <span class="n">numpy</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">),</span> <span class="n">msg</span>
+
+        <span class="k">assert</span> <span class="n">v_file</span> <span class="o">==</span> <span class="n">v_ref</span>
+        <span class="k">assert</span> <span class="n">v_ref</span> <span class="o">==</span> <span class="n">v_file</span>
+        <span class="k">assert</span> <span class="n">v_file</span><span class="o">.</span><span class="n">is_polygon_data</span>
+        <span class="k">assert</span> <span class="n">v_file</span><span class="o">.</span><span class="n">geometry_type</span> <span class="o">==</span> <span class="mi">3</span>
+
+        <span class="c"># Reversed order (OGR will swap back to clockwise)</span>
+        <span class="n">P</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mf">106.77</span><span class="p">,</span> <span class="o">-</span><span class="mf">6.21</span><span class="p">],</span>
+                         <span class="p">[</span><span class="mf">106.78</span><span class="p">,</span> <span class="o">-</span><span class="mf">6.23</span><span class="p">],</span>
+                         <span class="p">[</span><span class="mf">106.80</span><span class="p">,</span> <span class="o">-</span><span class="mf">6.24</span><span class="p">],</span>
+                         <span class="p">[</span><span class="mf">106.79</span><span class="p">,</span> <span class="o">-</span><span class="mf">6.23</span><span class="p">]])</span>
+
+        <span class="n">v_ref</span> <span class="o">=</span> <span class="n">Vector</span><span class="p">(</span><span class="n">geometry</span><span class="o">=</span><span class="p">[</span><span class="n">P</span><span class="p">],</span> <span class="n">geometry_type</span><span class="o">=</span><span class="s">&#39;polygon&#39;</span><span class="p">)</span>
+        <span class="n">v_ref</span><span class="o">.</span><span class="n">write_to_file</span><span class="p">(</span><span class="n">tmp_filename</span><span class="p">)</span>
+        <span class="n">v_file</span> <span class="o">=</span> <span class="n">read_layer</span><span class="p">(</span><span class="n">tmp_filename</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">v_ref</span><span class="p">)):</span>
+            <span class="n">x</span> <span class="o">=</span> <span class="n">v_ref</span><span class="o">.</span><span class="n">get_geometry</span><span class="p">()[</span><span class="n">i</span><span class="p">]</span>
+            <span class="n">x</span> <span class="o">=</span> <span class="n">x</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">:]</span>  <span class="c"># Flip Up-Down to get order clockwise</span>
+            <span class="n">y</span> <span class="o">=</span> <span class="n">v_file</span><span class="o">.</span><span class="n">get_geometry</span><span class="p">()[</span><span class="n">i</span><span class="p">]</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s">&#39;Read geometry </span><span class="si">%s</span><span class="s">, but expected </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
+            <span class="k">assert</span> <span class="n">numpy</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">),</span> <span class="n">msg</span>
+
+        <span class="k">assert</span> <span class="n">v_file</span> <span class="o">==</span> <span class="n">v_ref</span>
+        <span class="k">assert</span> <span class="n">v_ref</span> <span class="o">==</span> <span class="n">v_file</span>
+        <span class="k">assert</span> <span class="n">v_file</span><span class="o">.</span><span class="n">is_polygon_data</span>
+        <span class="k">assert</span> <span class="n">v_file</span><span class="o">.</span><span class="n">geometry_type</span> <span class="o">==</span> <span class="mi">3</span>
+
+        <span class="c"># Self intersecting polygon (in this case order will be flipped)</span>
+        <span class="n">P</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mf">106.79</span><span class="p">,</span> <span class="o">-</span><span class="mf">6.23</span><span class="p">],</span>
+                         <span class="p">[</span><span class="mf">106.80</span><span class="p">,</span> <span class="o">-</span><span class="mf">6.24</span><span class="p">],</span>
+                         <span class="p">[</span><span class="mf">106.78</span><span class="p">,</span> <span class="o">-</span><span class="mf">6.23</span><span class="p">],</span>
+                         <span class="p">[</span><span class="mf">106.79</span><span class="p">,</span> <span class="o">-</span><span class="mf">6.22</span><span class="p">],</span>
+                         <span class="p">[</span><span class="mf">106.77</span><span class="p">,</span> <span class="o">-</span><span class="mf">6.21</span><span class="p">]])</span>
+
+        <span class="n">v_ref</span> <span class="o">=</span> <span class="n">Vector</span><span class="p">(</span><span class="n">geometry</span><span class="o">=</span><span class="p">[</span><span class="n">P</span><span class="p">],</span> <span class="n">geometry_type</span><span class="o">=</span><span class="s">&#39;polygon&#39;</span><span class="p">)</span>
+        <span class="n">v_ref</span><span class="o">.</span><span class="n">write_to_file</span><span class="p">(</span><span class="n">tmp_filename</span><span class="p">)</span>
+        <span class="n">v_file</span> <span class="o">=</span> <span class="n">read_layer</span><span class="p">(</span><span class="n">tmp_filename</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">v_ref</span><span class="p">)):</span>
+            <span class="n">x</span> <span class="o">=</span> <span class="n">v_ref</span><span class="o">.</span><span class="n">get_geometry</span><span class="p">()[</span><span class="n">i</span><span class="p">]</span>
+            <span class="n">x</span> <span class="o">=</span> <span class="n">x</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">:]</span>  <span class="c"># Flip Up-Down to get order clockwise</span>
+            <span class="n">y</span> <span class="o">=</span> <span class="n">v_file</span><span class="o">.</span><span class="n">get_geometry</span><span class="p">()[</span><span class="n">i</span><span class="p">]</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s">&#39;Read geometry </span><span class="si">%s</span><span class="s">, but expected </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
+            <span class="k">assert</span> <span class="n">numpy</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">),</span> <span class="n">msg</span>
+
+        <span class="k">assert</span> <span class="n">v_file</span> <span class="o">==</span> <span class="n">v_ref</span>
+        <span class="k">assert</span> <span class="n">v_ref</span> <span class="o">==</span> <span class="n">v_file</span>
+        <span class="k">assert</span> <span class="n">v_file</span><span class="o">.</span><span class="n">is_polygon_data</span>
+        <span class="k">assert</span> <span class="n">v_file</span><span class="o">.</span><span class="n">geometry_type</span> <span class="o">==</span> <span class="mi">3</span>
+</div>
 <div class="viewcode-block" id="Test_IO.test_vector_class_geometry_types"><a class="viewcode-back" href="../../../api-docs/safe/storage/test_io.html#safe.storage.test_io.Test_IO.test_vector_class_geometry_types">[docs]</a>    <span class="k">def</span> <span class="nf">test_vector_class_geometry_types</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Admissible geometry types work in vector class</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="c"># So far the admissible classes are Point, Line and Polygon</span>
+        <span class="n">tmp_filename</span> <span class="o">=</span> <span class="n">unique_filename</span><span class="p">(</span><span class="n">suffix</span><span class="o">=</span><span class="s">&#39;.shp&#39;</span><span class="p">)</span>
 
+        <span class="c"># Check that one single polygon works</span>
+        <span class="n">P</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mf">106.79</span><span class="p">,</span> <span class="o">-</span><span class="mf">6.23</span><span class="p">],</span>
+                         <span class="p">[</span><span class="mf">106.80</span><span class="p">,</span> <span class="o">-</span><span class="mf">6.24</span><span class="p">],</span>
+                         <span class="p">[</span><span class="mf">106.78</span><span class="p">,</span> <span class="o">-</span><span class="mf">6.23</span><span class="p">],</span>
+                         <span class="p">[</span><span class="mf">106.77</span><span class="p">,</span> <span class="o">-</span><span class="mf">6.21</span><span class="p">]])</span>
+        <span class="n">v</span> <span class="o">=</span> <span class="n">Vector</span><span class="p">(</span><span class="n">geometry</span><span class="o">=</span><span class="p">[</span><span class="n">P</span><span class="p">])</span>
+        <span class="k">assert</span> <span class="n">v</span><span class="o">.</span><span class="n">is_polygon_data</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span>
+
+        <span class="n">v_ref</span> <span class="o">=</span> <span class="n">Vector</span><span class="p">(</span><span class="n">geometry</span><span class="o">=</span><span class="p">[</span><span class="n">P</span><span class="p">],</span> <span class="n">geometry_type</span><span class="o">=</span><span class="s">&#39;polygon&#39;</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">v_ref</span><span class="o">.</span><span class="n">is_polygon_data</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">v_ref</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span>
+
+        <span class="n">v_ref</span><span class="o">.</span><span class="n">write_to_file</span><span class="p">(</span><span class="n">tmp_filename</span><span class="p">)</span>
+        <span class="n">v_file</span> <span class="o">=</span> <span class="n">read_layer</span><span class="p">(</span><span class="n">tmp_filename</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">v_ref</span><span class="p">)):</span>
+            <span class="n">x</span> <span class="o">=</span> <span class="n">v_ref</span><span class="o">.</span><span class="n">get_geometry</span><span class="p">()[</span><span class="n">i</span><span class="p">]</span>
+            <span class="n">y</span> <span class="o">=</span> <span class="n">v_file</span><span class="o">.</span><span class="n">get_geometry</span><span class="p">()[</span><span class="n">i</span><span class="p">]</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s">&#39;Read geometry </span><span class="si">%s</span><span class="s">, but expected </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
+            <span class="k">assert</span> <span class="n">numpy</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">),</span> <span class="n">msg</span>
+
+        <span class="k">assert</span> <span class="n">v_file</span> <span class="o">==</span> <span class="n">v_ref</span>
+        <span class="k">assert</span> <span class="n">v_ref</span> <span class="o">==</span> <span class="n">v_file</span>
+        <span class="k">assert</span> <span class="n">v_file</span><span class="o">.</span><span class="n">is_polygon_data</span>
+        <span class="k">assert</span> <span class="n">v_file</span><span class="o">.</span><span class="n">geometry_type</span> <span class="o">==</span> <span class="mi">3</span>
+
+        <span class="c"># Then a more complex dataset</span>
         <span class="n">test_data</span> <span class="o">=</span> <span class="p">[</span><span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mf">122.226889</span><span class="p">,</span> <span class="o">-</span><span class="mf">8.625599</span><span class="p">],</span>
                                   <span class="p">[</span><span class="mf">122.227299</span><span class="p">,</span> <span class="o">-</span><span class="mf">8.624500</span><span class="p">],</span>
                                   <span class="p">[</span><span class="mf">122.227409</span><span class="p">,</span> <span class="o">-</span><span class="mf">8.624221</span><span class="p">],</span>
@@ -432,13 +556,24 @@
                                   <span class="p">[</span><span class="mf">122.231021</span><span class="p">,</span> <span class="o">-</span><span class="mf">8.626557</span><span class="p">]]),</span>
                      <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mf">122.247938</span><span class="p">,</span> <span class="o">-</span><span class="mf">8.632926</span><span class="p">],</span>
                                   <span class="p">[</span><span class="mf">122.247940</span><span class="p">,</span> <span class="o">-</span><span class="mf">8.633560</span><span class="p">],</span>
-                                  <span class="p">[</span><span class="mf">122.247390</span><span class="p">,</span> <span class="o">-</span><span class="mf">8.636220</span><span class="p">]])]</span>
+                                  <span class="p">[</span><span class="mf">122.247390</span><span class="p">,</span> <span class="o">-</span><span class="mf">8.636220</span><span class="p">]]),</span>
+                     <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mf">122.22</span><span class="p">,</span> <span class="o">-</span><span class="mf">8.6256</span><span class="p">],</span>
+                                  <span class="p">[</span><span class="mf">122.23</span><span class="p">,</span> <span class="o">-</span><span class="mf">8.6245</span><span class="p">],</span>
+                                  <span class="p">[</span><span class="mf">122.24</span><span class="p">,</span> <span class="o">-</span><span class="mf">8.6242</span><span class="p">],</span>
+                                  <span class="p">[</span><span class="mf">122.22</span><span class="p">,</span> <span class="o">-</span><span class="mf">8.6240</span><span class="p">]]),</span>
+                     <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mf">122.24</span><span class="p">,</span> <span class="o">-</span><span class="mf">8.63</span><span class="p">],</span>
+                                  <span class="p">[</span><span class="mf">122.23</span><span class="p">,</span> <span class="o">-</span><span class="mf">8.63</span><span class="p">],</span>
+                                  <span class="p">[</span><span class="mf">122.23</span><span class="p">,</span> <span class="o">-</span><span class="mf">8.62</span><span class="p">],</span>
+                                  <span class="p">[</span><span class="mf">122.23</span><span class="p">,</span> <span class="o">-</span><span class="mf">8.61</span><span class="p">]]),</span>
+                     <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mf">122.25</span><span class="p">,</span> <span class="o">-</span><span class="mf">8.63</span><span class="p">],</span>
+                                  <span class="p">[</span><span class="mf">122.24</span><span class="p">,</span> <span class="o">-</span><span class="mf">8.633</span><span class="p">],</span>
+                                  <span class="p">[</span><span class="mf">122.23</span><span class="p">,</span> <span class="o">-</span><span class="mf">8.64</span><span class="p">]])]</span>
+
         <span class="c"># Point data</span>
         <span class="n">v_ref</span> <span class="o">=</span> <span class="n">Vector</span><span class="p">(</span><span class="n">geometry</span><span class="o">=</span><span class="n">test_data</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
         <span class="k">assert</span> <span class="n">v_ref</span><span class="o">.</span><span class="n">is_point_data</span>
         <span class="k">assert</span> <span class="n">v_ref</span><span class="o">.</span><span class="n">geometry_type</span> <span class="o">==</span> <span class="mi">1</span>
 
-        <span class="n">tmp_filename</span> <span class="o">=</span> <span class="n">unique_filename</span><span class="p">(</span><span class="n">suffix</span><span class="o">=</span><span class="s">&#39;.shp&#39;</span><span class="p">)</span>
         <span class="n">v_ref</span><span class="o">.</span><span class="n">write_to_file</span><span class="p">(</span><span class="n">tmp_filename</span><span class="p">)</span>
         <span class="n">v_file</span> <span class="o">=</span> <span class="n">read_layer</span><span class="p">(</span><span class="n">tmp_filename</span><span class="p">)</span>
         <span class="k">assert</span> <span class="n">v_file</span> <span class="o">==</span> <span class="n">v_ref</span>
@@ -453,6 +588,21 @@
         <span class="n">v</span> <span class="o">=</span> <span class="n">Vector</span><span class="p">(</span><span class="n">geometry</span><span class="o">=</span><span class="n">test_data</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">geometry_type</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
         <span class="k">assert</span> <span class="n">v</span><span class="o">.</span><span class="n">is_point_data</span>
         <span class="k">assert</span> <span class="n">v_ref</span> <span class="o">==</span> <span class="n">v</span>
+
+        <span class="c"># Line data</span>
+        <span class="n">v_ref</span> <span class="o">=</span> <span class="n">Vector</span><span class="p">(</span><span class="n">geometry</span><span class="o">=</span><span class="n">test_data</span><span class="p">,</span> <span class="n">geometry_type</span><span class="o">=</span><span class="s">&#39;line&#39;</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">v_ref</span><span class="o">.</span><span class="n">is_line_data</span>
+        <span class="k">assert</span> <span class="n">v_ref</span><span class="o">.</span><span class="n">geometry_type</span> <span class="o">==</span> <span class="mi">2</span>
+
+        <span class="n">v_ref</span><span class="o">.</span><span class="n">write_to_file</span><span class="p">(</span><span class="n">tmp_filename</span><span class="p">)</span>
+        <span class="n">v_file</span> <span class="o">=</span> <span class="n">read_layer</span><span class="p">(</span><span class="n">tmp_filename</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">v_file</span> <span class="o">==</span> <span class="n">v_ref</span>
+        <span class="k">assert</span> <span class="n">v_ref</span> <span class="o">==</span> <span class="n">v_file</span>
+        <span class="k">assert</span> <span class="n">v_file</span><span class="o">.</span><span class="n">is_line_data</span>
+        <span class="k">assert</span> <span class="n">v_file</span><span class="o">.</span><span class="n">geometry_type</span> <span class="o">==</span> <span class="mi">2</span>
+
+        <span class="n">v</span> <span class="o">=</span> <span class="n">Vector</span><span class="p">(</span><span class="n">geometry</span><span class="o">=</span><span class="n">test_data</span><span class="p">,</span> <span class="n">geometry_type</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">v</span> <span class="o">==</span> <span class="n">v_ref</span>
 
         <span class="c"># Polygon data</span>
         <span class="n">v_ref</span> <span class="o">=</span> <span class="n">Vector</span><span class="p">(</span><span class="n">geometry</span><span class="o">=</span><span class="n">test_data</span><span class="p">)</span>
@@ -471,21 +621,94 @@
 
         <span class="n">v</span> <span class="o">=</span> <span class="n">Vector</span><span class="p">(</span><span class="n">geometry</span><span class="o">=</span><span class="n">test_data</span><span class="p">,</span> <span class="n">geometry_type</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
         <span class="k">assert</span> <span class="n">v</span> <span class="o">==</span> <span class="n">v_ref</span>
+</div>
+<div class="viewcode-block" id="Test_IO.test_polygons_with_inner_rings"><a class="viewcode-back" href="../../../api-docs/safe/storage/test_io.html#safe.storage.test_io.Test_IO.test_polygons_with_inner_rings">[docs]</a>    <span class="k">def</span> <span class="nf">test_polygons_with_inner_rings</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Polygons with inner rings can be written and read</span>
+<span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="c"># Line data</span>
-        <span class="n">v_ref</span> <span class="o">=</span> <span class="n">Vector</span><span class="p">(</span><span class="n">geometry</span><span class="o">=</span><span class="n">test_data</span><span class="p">,</span> <span class="n">geometry_type</span><span class="o">=</span><span class="s">&#39;line&#39;</span><span class="p">)</span>
-        <span class="k">assert</span> <span class="n">v_ref</span><span class="o">.</span><span class="n">is_line_data</span>
-        <span class="k">assert</span> <span class="n">v_ref</span><span class="o">.</span><span class="n">geometry_type</span> <span class="o">==</span> <span class="mi">2</span>
+        <span class="c"># Define two (closed) outer rings - clock wise direction</span>
+        <span class="n">outer_rings</span> <span class="o">=</span> <span class="p">[</span><span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mf">106.79</span><span class="p">,</span> <span class="o">-</span><span class="mf">6.233</span><span class="p">],</span>
+                                    <span class="p">[</span><span class="mf">106.80</span><span class="p">,</span> <span class="o">-</span><span class="mf">6.24</span><span class="p">],</span>
+                                    <span class="p">[</span><span class="mf">106.78</span><span class="p">,</span> <span class="o">-</span><span class="mf">6.23</span><span class="p">],</span>
+                                    <span class="p">[</span><span class="mf">106.77</span><span class="p">,</span> <span class="o">-</span><span class="mf">6.21</span><span class="p">],</span>
+                                    <span class="p">[</span><span class="mf">106.79</span><span class="p">,</span> <span class="o">-</span><span class="mf">6.233</span><span class="p">]]),</span>
+                       <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mf">106.76</span><span class="p">,</span> <span class="o">-</span><span class="mf">6.23</span><span class="p">],</span>
+                                    <span class="p">[</span><span class="mf">106.72</span><span class="p">,</span> <span class="o">-</span><span class="mf">6.23</span><span class="p">],</span>
+                                    <span class="p">[</span><span class="mf">106.72</span><span class="p">,</span> <span class="o">-</span><span class="mf">6.22</span><span class="p">],</span>
+                                    <span class="p">[</span><span class="mf">106.72</span><span class="p">,</span> <span class="o">-</span><span class="mf">6.21</span><span class="p">],</span>
+                                    <span class="p">[</span><span class="mf">106.76</span><span class="p">,</span> <span class="o">-</span><span class="mf">6.23</span><span class="p">]])]</span>
+
+        <span class="n">tmp_filename</span> <span class="o">=</span> <span class="n">unique_filename</span><span class="p">(</span><span class="n">suffix</span><span class="o">=</span><span class="s">&#39;.shp&#39;</span><span class="p">)</span>
+
+        <span class="c"># Do outer rings first (use default geometry type polygon)</span>
+        <span class="n">v_ref</span> <span class="o">=</span> <span class="n">Vector</span><span class="p">(</span><span class="n">geometry</span><span class="o">=</span><span class="n">outer_rings</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">v_ref</span><span class="o">.</span><span class="n">is_polygon_data</span>
 
         <span class="n">v_ref</span><span class="o">.</span><span class="n">write_to_file</span><span class="p">(</span><span class="n">tmp_filename</span><span class="p">)</span>
         <span class="n">v_file</span> <span class="o">=</span> <span class="n">read_layer</span><span class="p">(</span><span class="n">tmp_filename</span><span class="p">)</span>
         <span class="k">assert</span> <span class="n">v_file</span> <span class="o">==</span> <span class="n">v_ref</span>
-        <span class="k">assert</span> <span class="n">v_ref</span> <span class="o">==</span> <span class="n">v_file</span>
-        <span class="k">assert</span> <span class="n">v_file</span><span class="o">.</span><span class="n">is_line_data</span>
-        <span class="k">assert</span> <span class="n">v_file</span><span class="o">.</span><span class="n">geometry_type</span> <span class="o">==</span> <span class="mi">2</span>
+        <span class="k">assert</span> <span class="n">v_file</span><span class="o">.</span><span class="n">is_polygon_data</span>
 
-        <span class="n">v</span> <span class="o">=</span> <span class="n">Vector</span><span class="p">(</span><span class="n">geometry</span><span class="o">=</span><span class="n">test_data</span><span class="p">,</span> <span class="n">geometry_type</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
-        <span class="k">assert</span> <span class="n">v</span> <span class="o">==</span> <span class="n">v_ref</span>
+        <span class="c"># Do it again but with (closed) inner rings as well</span>
+
+        <span class="c"># Define inner rings (counter clock wise)</span>
+        <span class="n">inner_rings</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="c"># 2 rings for feature 0</span>
+            <span class="p">[</span><span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mf">106.77827</span><span class="p">,</span> <span class="o">-</span><span class="mf">6.2252</span><span class="p">],</span>
+                          <span class="p">[</span><span class="mf">106.77775</span><span class="p">,</span> <span class="o">-</span><span class="mf">6.22378</span><span class="p">],</span>
+                          <span class="p">[</span><span class="mf">106.78</span><span class="p">,</span> <span class="o">-</span><span class="mf">6.22311</span><span class="p">],</span>
+                          <span class="p">[</span><span class="mf">106.78017</span><span class="p">,</span> <span class="o">-</span><span class="mf">6.22530</span><span class="p">],</span>
+                          <span class="p">[</span><span class="mf">106.77827</span><span class="p">,</span> <span class="o">-</span><span class="mf">6.2252</span><span class="p">]])[::</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span>
+             <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mf">106.78652</span><span class="p">,</span> <span class="o">-</span><span class="mf">6.23215</span><span class="p">],</span>
+                          <span class="p">[</span><span class="mf">106.78642</span><span class="p">,</span> <span class="o">-</span><span class="mf">6.23075</span><span class="p">],</span>
+                          <span class="p">[</span><span class="mf">106.78746</span><span class="p">,</span> <span class="o">-</span><span class="mf">6.23143</span><span class="p">],</span>
+                          <span class="p">[</span><span class="mf">106.78831</span><span class="p">,</span> <span class="o">-</span><span class="mf">6.23307</span><span class="p">],</span>
+                          <span class="p">[</span><span class="mf">106.78652</span><span class="p">,</span> <span class="o">-</span><span class="mf">6.23215</span><span class="p">]])[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]],</span>
+            <span class="c"># 1 ring for feature 1</span>
+            <span class="p">[</span><span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mf">106.73709</span><span class="p">,</span> <span class="o">-</span><span class="mf">6.22752</span><span class="p">],</span>
+                          <span class="p">[</span><span class="mf">106.73911</span><span class="p">,</span> <span class="o">-</span><span class="mf">6.22585</span><span class="p">],</span>
+                          <span class="p">[</span><span class="mf">106.74265</span><span class="p">,</span> <span class="o">-</span><span class="mf">6.22814</span><span class="p">],</span>
+                          <span class="p">[</span><span class="mf">106.73971</span><span class="p">,</span> <span class="o">-</span><span class="mf">6.22926</span><span class="p">],</span>
+                          <span class="p">[</span><span class="mf">106.73709</span><span class="p">,</span> <span class="o">-</span><span class="mf">6.22752</span><span class="p">]])[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]]]</span>
+
+        <span class="n">polygons</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">outer_ring</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">outer_rings</span><span class="p">):</span>
+            <span class="n">p</span> <span class="o">=</span> <span class="n">Polygon</span><span class="p">(</span><span class="n">outer_ring</span><span class="o">=</span><span class="n">outer_ring</span><span class="p">,</span> <span class="n">inner_rings</span><span class="o">=</span><span class="n">inner_rings</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+            <span class="n">polygons</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+
+        <span class="n">v_ref</span> <span class="o">=</span> <span class="n">Vector</span><span class="p">(</span><span class="n">geometry</span><span class="o">=</span><span class="n">polygons</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">v_ref</span><span class="o">.</span><span class="n">is_polygon_data</span>
+
+        <span class="c"># Check data from Vector object</span>
+        <span class="n">geometry</span> <span class="o">=</span> <span class="n">v_ref</span><span class="o">.</span><span class="n">get_geometry</span><span class="p">(</span><span class="n">as_geometry_objects</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">g</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">geometry</span><span class="p">):</span>
+            <span class="k">assert</span> <span class="n">numpy</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">outer_ring</span><span class="p">,</span> <span class="n">outer_rings</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+            <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">inner_rings</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">inner_rings</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span>
+
+            <span class="k">for</span> <span class="n">j</span><span class="p">,</span> <span class="n">ring</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">inner_rings</span><span class="p">[</span><span class="n">i</span><span class="p">]):</span>
+                <span class="k">assert</span> <span class="n">numpy</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">ring</span><span class="p">,</span> <span class="n">g</span><span class="o">.</span><span class="n">inner_rings</span><span class="p">[</span><span class="n">j</span><span class="p">])</span>
+
+        <span class="c"># Write to file and read again</span>
+        <span class="n">v_ref</span><span class="o">.</span><span class="n">write_to_file</span><span class="p">(</span><span class="n">tmp_filename</span><span class="p">)</span>
+        <span class="c">#print &#39;With inner rings, written to &#39;, tmp_filename</span>
+        <span class="n">v_file</span> <span class="o">=</span> <span class="n">read_layer</span><span class="p">(</span><span class="n">tmp_filename</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">v_file</span> <span class="o">==</span> <span class="n">v_ref</span>
+        <span class="k">assert</span> <span class="n">v_file</span><span class="o">.</span><span class="n">is_polygon_data</span>
+
+        <span class="c"># Check data from file</span>
+        <span class="n">geometry</span> <span class="o">=</span> <span class="n">v_file</span><span class="o">.</span><span class="n">get_geometry</span><span class="p">(</span><span class="n">as_geometry_objects</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">g</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">geometry</span><span class="p">):</span>
+            <span class="k">assert</span> <span class="n">numpy</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">outer_ring</span><span class="p">,</span> <span class="n">outer_rings</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+            <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">inner_rings</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">inner_rings</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span>
+
+            <span class="k">for</span> <span class="n">j</span><span class="p">,</span> <span class="n">ring</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">inner_rings</span><span class="p">[</span><span class="n">i</span><span class="p">]):</span>
+                <span class="k">assert</span> <span class="n">numpy</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">ring</span><span class="p">,</span> <span class="n">g</span><span class="o">.</span><span class="n">inner_rings</span><span class="p">[</span><span class="n">j</span><span class="p">])</span>
 </div>
 <div class="viewcode-block" id="Test_IO.test_attribute_types"><a class="viewcode-back" href="../../../api-docs/safe/storage/test_io.html#safe.storage.test_io.Test_IO.test_attribute_types">[docs]</a>    <span class="k">def</span> <span class="nf">test_attribute_types</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Different attribute types are handled correctly in vector data</span>
@@ -730,6 +953,9 @@
             <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">numlon</span><span class="p">):</span>
                 <span class="n">A1</span><span class="p">[</span><span class="n">numlat</span> <span class="o">-</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">linear_function</span><span class="p">(</span><span class="n">lon</span><span class="p">[</span><span class="n">j</span><span class="p">],</span> <span class="n">lat</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
 
+        <span class="c"># Throw in a nodata element</span>
+        <span class="n">A1</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">6</span><span class="p">]</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">nan</span>
+
         <span class="c"># Upper left corner</span>
         <span class="k">assert</span> <span class="n">A1</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mf">105.25</span>
         <span class="k">assert</span> <span class="n">A1</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">linear_function</span><span class="p">(</span><span class="n">lon</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">lat</span><span class="p">[</span><span class="mi">4</span><span class="p">])</span>
@@ -788,9 +1014,17 @@
         <span class="c"># Write back to new (tif) file</span>
         <span class="n">out_filename</span> <span class="o">=</span> <span class="n">unique_filename</span><span class="p">(</span><span class="n">suffix</span><span class="o">=</span><span class="s">&#39;.tif&#39;</span><span class="p">)</span>
         <span class="n">R1</span><span class="o">.</span><span class="n">write_to_file</span><span class="p">(</span><span class="n">out_filename</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">R1</span><span class="o">.</span><span class="n">filename</span> <span class="o">==</span> <span class="n">out_filename</span>
+
+        <span class="c"># Check nodata in original layer</span>
+        <span class="k">assert</span> <span class="n">numpy</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">R1</span><span class="o">.</span><span class="n">get_nodata_value</span><span class="p">())</span>
 
         <span class="c"># Read again and check consistency</span>
         <span class="n">R2</span> <span class="o">=</span> <span class="n">read_layer</span><span class="p">(</span><span class="n">out_filename</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">R2</span><span class="o">.</span><span class="n">filename</span> <span class="o">==</span> <span class="n">out_filename</span>
+
+        <span class="c"># Check nodata in read layer</span>
+        <span class="k">assert</span> <span class="n">numpy</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">R2</span><span class="o">.</span><span class="n">get_nodata_value</span><span class="p">())</span>
 
         <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;Dimensions of written raster array do not match those &#39;</span>
                <span class="s">&#39;of input raster file</span><span class="se">\n</span><span class="s">&#39;</span><span class="p">)</span>
@@ -804,11 +1038,11 @@
 
         <span class="n">A2</span> <span class="o">=</span> <span class="n">R2</span><span class="o">.</span><span class="n">get_data</span><span class="p">()</span>
 
-        <span class="k">assert</span> <span class="n">numpy</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">A1</span><span class="p">),</span> <span class="n">numpy</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">A2</span><span class="p">))</span>
-        <span class="k">assert</span> <span class="n">numpy</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">A1</span><span class="p">),</span> <span class="n">numpy</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">A2</span><span class="p">))</span>
+        <span class="k">assert</span> <span class="n">numpy</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">nanmin</span><span class="p">(</span><span class="n">A1</span><span class="p">),</span> <span class="n">numpy</span><span class="o">.</span><span class="n">nanmin</span><span class="p">(</span><span class="n">A2</span><span class="p">))</span>
+        <span class="k">assert</span> <span class="n">numpy</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">nanmax</span><span class="p">(</span><span class="n">A1</span><span class="p">),</span> <span class="n">numpy</span><span class="o">.</span><span class="n">nanmax</span><span class="p">(</span><span class="n">A2</span><span class="p">))</span>
 
         <span class="n">msg</span> <span class="o">=</span> <span class="s">&#39;Array values of written raster array were not as expected&#39;</span>
-        <span class="k">assert</span> <span class="n">numpy</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">A1</span><span class="p">,</span> <span class="n">A2</span><span class="p">),</span> <span class="n">msg</span>
+        <span class="k">assert</span> <span class="n">nanallclose</span><span class="p">(</span><span class="n">A1</span><span class="p">,</span> <span class="n">A2</span><span class="p">),</span> <span class="n">msg</span>
 
         <span class="n">msg</span> <span class="o">=</span> <span class="s">&#39;Geotransforms were different&#39;</span>
         <span class="k">assert</span> <span class="n">R1</span><span class="o">.</span><span class="n">get_geotransform</span><span class="p">()</span> <span class="o">==</span> <span class="n">R2</span><span class="o">.</span><span class="n">get_geotransform</span><span class="p">(),</span> <span class="n">msg</span>
@@ -848,6 +1082,7 @@
 
             <span class="n">filename</span> <span class="o">=</span> <span class="s">&#39;</span><span class="si">%s</span><span class="s">/</span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">TESTDATA</span><span class="p">,</span> <span class="n">rastername</span><span class="p">)</span>
             <span class="n">R1</span> <span class="o">=</span> <span class="n">read_layer</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+            <span class="k">assert</span> <span class="n">R1</span><span class="o">.</span><span class="n">filename</span> <span class="o">==</span> <span class="n">filename</span>
 
             <span class="c"># Check consistency of raster</span>
             <span class="n">A1</span> <span class="o">=</span> <span class="n">R1</span><span class="o">.</span><span class="n">get_data</span><span class="p">()</span>
@@ -878,6 +1113,7 @@
 
                 <span class="c"># Read again and check consistency</span>
                 <span class="n">R2</span> <span class="o">=</span> <span class="n">read_layer</span><span class="p">(</span><span class="n">out_filename</span><span class="p">)</span>
+                <span class="k">assert</span> <span class="n">R2</span><span class="o">.</span><span class="n">filename</span> <span class="o">==</span> <span class="n">out_filename</span>
 
                 <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;Dimensions of written raster array do not match those &#39;</span>
                        <span class="s">&#39;of input raster file</span><span class="se">\n</span><span class="s">&#39;</span><span class="p">)</span>
@@ -982,7 +1218,7 @@
     <span class="n">test_bad_ascii_data</span><span class="o">.</span><span class="n">slow</span> <span class="o">=</span> <span class="bp">True</span>
 
 <div class="viewcode-block" id="Test_IO.test_nodata_value"><a class="viewcode-back" href="../../../api-docs/safe/storage/test_io.html#safe.storage.test_io.Test_IO.test_nodata_value">[docs]</a>    <span class="k">def</span> <span class="nf">test_nodata_value</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;NODATA value is correctly recorded in GDAL</span>
+        <span class="sd">&quot;&quot;&quot;NODATA value is correctly handled for GDAL layers</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="c"># Read files with -9999 as nominated nodata value</span>
@@ -1006,6 +1242,39 @@
             <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;File </span><span class="si">%s</span><span class="s"> should have registered nodata &#39;</span>
                    <span class="s">&#39;value </span><span class="si">%i</span><span class="s"> but it was </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">Amin</span><span class="p">,</span> <span class="n">nodata</span><span class="p">))</span>
             <span class="k">assert</span> <span class="n">nodata</span> <span class="o">==</span> <span class="n">Amin</span><span class="p">,</span> <span class="n">msg</span>
+
+            <span class="k">if</span> <span class="n">filename</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s">&#39;Earthquake_Ground_Shaking.asc&#39;</span><span class="p">):</span>
+                <span class="c"># Slow</span>
+                <span class="k">continue</span>
+
+            <span class="c"># Then try using numpy.nan</span>
+            <span class="n">A</span> <span class="o">=</span> <span class="n">R</span><span class="o">.</span><span class="n">get_data</span><span class="p">(</span><span class="n">nan</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+
+            <span class="c"># Verify nodata value</span>
+            <span class="n">Amin</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">nanmin</span><span class="p">(</span><span class="n">A</span><span class="o">.</span><span class="n">flat</span><span class="p">[:])</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;True raster minimum must exceed -9999. &#39;</span>
+                   <span class="s">&#39;We got </span><span class="si">%f</span><span class="s"> for file </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">Amin</span><span class="p">,</span> <span class="n">filename</span><span class="p">))</span>
+            <span class="k">assert</span> <span class="n">Amin</span> <span class="o">&gt;</span> <span class="o">-</span><span class="mi">9999</span><span class="p">,</span> <span class="n">msg</span>
+
+            <span class="c"># Then try with a number</span>
+            <span class="n">A</span> <span class="o">=</span> <span class="n">R</span><span class="o">.</span><span class="n">get_data</span><span class="p">(</span><span class="n">nan</span><span class="o">=-</span><span class="mi">100000</span><span class="p">)</span>
+
+            <span class="c"># Verify nodata value</span>
+            <span class="n">Amin</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">nanmin</span><span class="p">(</span><span class="n">A</span><span class="o">.</span><span class="n">flat</span><span class="p">[:])</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;Raster must have -100000 as its minimum for this test. &#39;</span>
+                   <span class="s">&#39;We got </span><span class="si">%f</span><span class="s"> for file </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">Amin</span><span class="p">,</span> <span class="n">filename</span><span class="p">))</span>
+            <span class="k">assert</span> <span class="n">Amin</span> <span class="o">==</span> <span class="o">-</span><span class="mi">100000</span><span class="p">,</span> <span class="n">msg</span>
+
+            <span class="c"># Try with illegal nan values</span>
+            <span class="k">for</span> <span class="n">illegal</span> <span class="ow">in</span> <span class="p">[{},</span> <span class="p">(),</span> <span class="p">[],</span> <span class="bp">None</span><span class="p">,</span> <span class="s">&#39;a&#39;</span><span class="p">,</span> <span class="s">&#39;oeuu&#39;</span><span class="p">]:</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">R</span><span class="o">.</span><span class="n">get_data</span><span class="p">(</span><span class="n">nan</span><span class="o">=</span><span class="n">illegal</span><span class="p">)</span>
+                <span class="k">except</span> <span class="n">InaSAFEError</span><span class="p">:</span>
+                    <span class="k">pass</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;Illegal nan value </span><span class="si">%s</span><span class="s"> should have raised &#39;</span>
+                           <span class="s">&#39;exception&#39;</span> <span class="o">%</span> <span class="n">illegal</span><span class="p">)</span>
+                    <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 </div>
     <span class="n">test_nodata_value</span><span class="o">.</span><span class="n">slow</span> <span class="o">=</span> <span class="bp">True</span>
 
@@ -1241,6 +1510,7 @@
 
                 <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
 </div>
+    <span class="nd">@unittest.expectedFailure</span>
 <div class="viewcode-block" id="Test_IO.test_get_bounding_box"><a class="viewcode-back" href="../../../api-docs/safe/storage/test_io.html#safe.storage.test_io.Test_IO.test_get_bounding_box">[docs]</a>    <span class="k">def</span> <span class="nf">test_get_bounding_box</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Bounding box is correctly extracted from file.</span>
 
@@ -1316,7 +1586,8 @@
 
         <span class="k">for</span> <span class="n">filename</span> <span class="ow">in</span> <span class="p">[</span><span class="s">&#39;Earthquake_Ground_Shaking_clip.tif&#39;</span><span class="p">,</span>
                          <span class="s">&#39;tsunami_building_exposure.shp&#39;</span><span class="p">]:</span>
-            <span class="n">bbox</span> <span class="o">=</span> <span class="n">get_bounding_box</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">TESTDATA</span><span class="p">,</span> <span class="n">filename</span><span class="p">))</span>
+            <span class="n">abspath</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">TESTDATA</span><span class="p">,</span> <span class="n">filename</span><span class="p">)</span>
+            <span class="n">bbox</span> <span class="o">=</span> <span class="n">get_bounding_box</span><span class="p">(</span><span class="n">abspath</span><span class="p">)</span>
             <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;Got bbox </span><span class="si">%s</span><span class="s"> from filename </span><span class="si">%s</span><span class="s">, but expected </span><span class="si">%s</span><span class="s"> &#39;</span>
                    <span class="o">%</span> <span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">bbox</span><span class="p">),</span> <span class="n">filename</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">ref_bbox</span><span class="p">[</span><span class="n">filename</span><span class="p">])))</span>
             <span class="k">assert</span> <span class="n">numpy</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">bbox</span><span class="p">,</span> <span class="n">ref_bbox</span><span class="p">[</span><span class="n">filename</span><span class="p">]),</span> <span class="n">msg</span>
@@ -1326,6 +1597,32 @@
 
             <span class="c"># Check the check :-)</span>
             <span class="n">check_bbox_string</span><span class="p">(</span><span class="n">bbox_string</span><span class="p">)</span>
+
+            <span class="c"># Check that it works for layer objects instantiated from file</span>
+            <span class="n">L</span> <span class="o">=</span> <span class="n">read_layer</span><span class="p">(</span><span class="n">abspath</span><span class="p">)</span>
+            <span class="n">L_bbox</span> <span class="o">=</span> <span class="n">L</span><span class="o">.</span><span class="n">get_bounding_box</span><span class="p">()</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;Got bbox </span><span class="si">%s</span><span class="s"> from filename </span><span class="si">%s</span><span class="s">, but expected </span><span class="si">%s</span><span class="s"> &#39;</span>
+                   <span class="o">%</span> <span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">L_bbox</span><span class="p">),</span> <span class="n">filename</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">ref_bbox</span><span class="p">[</span><span class="n">filename</span><span class="p">])))</span>
+            <span class="k">assert</span> <span class="n">numpy</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">L_bbox</span><span class="p">,</span> <span class="n">ref_bbox</span><span class="p">[</span><span class="n">filename</span><span class="p">]),</span> <span class="n">msg</span>
+
+            <span class="c"># Check that it works for layer objects instantiated from data</span>
+            <span class="k">if</span> <span class="n">L</span><span class="o">.</span><span class="n">is_raster</span><span class="p">:</span>
+                <span class="n">D</span> <span class="o">=</span> <span class="n">Raster</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">L</span><span class="o">.</span><span class="n">get_data</span><span class="p">(),</span>
+                           <span class="n">projection</span><span class="o">=</span><span class="n">L</span><span class="o">.</span><span class="n">get_projection</span><span class="p">(),</span>
+                           <span class="n">geotransform</span><span class="o">=</span><span class="n">L</span><span class="o">.</span><span class="n">get_geotransform</span><span class="p">())</span>
+            <span class="k">elif</span> <span class="n">L</span><span class="o">.</span><span class="n">is_vector</span><span class="p">:</span>
+                <span class="n">D</span> <span class="o">=</span> <span class="n">Vector</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">L</span><span class="o">.</span><span class="n">get_data</span><span class="p">(),</span>
+                           <span class="n">projection</span><span class="o">=</span><span class="n">L</span><span class="o">.</span><span class="n">get_projection</span><span class="p">(),</span>
+                           <span class="n">geometry</span><span class="o">=</span><span class="n">L</span><span class="o">.</span><span class="n">get_geometry</span><span class="p">())</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">msg</span> <span class="o">=</span> <span class="s">&#39;Unexpected layer object: </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="nb">str</span><span class="p">(</span><span class="n">L</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+            <span class="c"># Check that get_bounding_box works for data instantiated layers</span>
+            <span class="n">D_bbox</span> <span class="o">=</span> <span class="n">D</span><span class="o">.</span><span class="n">get_bounding_box</span><span class="p">()</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;Got bbox </span><span class="si">%s</span><span class="s"> from layer </span><span class="si">%s</span><span class="s">, but expected </span><span class="si">%s</span><span class="s"> &#39;</span>
+                   <span class="o">%</span> <span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">D_bbox</span><span class="p">),</span> <span class="nb">str</span><span class="p">(</span><span class="n">D</span><span class="p">),</span> <span class="nb">str</span><span class="p">(</span><span class="n">L_bbox</span><span class="p">)))</span>
+            <span class="k">assert</span> <span class="n">numpy</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">D_bbox</span><span class="p">,</span> <span class="n">L_bbox</span><span class="p">),</span> <span class="n">msg</span>
 </div>
 <div class="viewcode-block" id="Test_IO.test_layer_API"><a class="viewcode-back" href="../../../api-docs/safe/storage/test_io.html#safe.storage.test_io.Test_IO.test_layer_API">[docs]</a>    <span class="k">def</span> <span class="nf">test_layer_API</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Vector and Raster instances have a similar API</span>
@@ -1367,10 +1664,19 @@
                     <span class="s">&#39;subcategory&#39;</span><span class="p">:</span> <span class="s">&#39;flood&#39;</span><span class="p">,</span>
                     <span class="s">&#39;layer&#39;</span><span class="p">:</span> <span class="bp">None</span><span class="p">,</span>
                     <span class="s">&#39;kw&#39;</span><span class="p">:</span> <span class="s">&#39;with:colon&#39;</span><span class="p">,</span>
-                    <span class="s">&#39;number&#39;</span><span class="p">:</span> <span class="mi">31</span><span class="p">,</span>
                     <span class="s">&#39;with spaces&#39;</span><span class="p">:</span> <span class="s">&#39;trailing_ws &#39;</span><span class="p">,</span>
-                    <span class="s">&#39;trailing_ws &#39;</span><span class="p">:</span> <span class="mf">13.42</span><span class="p">,</span>
-                    <span class="s">&#39; preceding_ws&#39;</span><span class="p">:</span> <span class="s">&#39; mixed spaces &#39;</span><span class="p">}</span>
+                    <span class="s">&#39; preceding_ws&#39;</span><span class="p">:</span> <span class="s">&#39; mixed spaces &#39;</span><span class="p">,</span>
+                    <span class="s">&#39;number&#39;</span><span class="p">:</span> <span class="mi">31</span><span class="p">,</span>
+                    <span class="s">&#39;a_float &#39;</span><span class="p">:</span> <span class="mf">13.42</span><span class="p">,</span>
+                    <span class="s">&#39;a_tuple&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="s">&#39;a&#39;</span><span class="p">),</span>
+                    <span class="s">&#39;a_list&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="s">&#39;b&#39;</span><span class="p">],</span>
+                    <span class="s">&#39;a_dict&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s">&#39;I&#39;</span><span class="p">:</span> <span class="s">&#39;love&#39;</span><span class="p">,</span> <span class="s">&#39;cheese&#39;</span><span class="p">:</span> <span class="s">&#39;cake&#39;</span><span class="p">,</span> <span class="s">&#39;number&#39;</span><span class="p">:</span> <span class="mi">5</span><span class="p">},</span>
+                    <span class="s">&#39;a_nested_thing&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="p">{</span><span class="s">&#39;k&#39;</span><span class="p">:</span> <span class="mf">17.8</span><span class="p">},</span> <span class="s">&#39;b&#39;</span><span class="p">,</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)],</span>
+                    <span class="s">&#39;an_expression&#39;</span><span class="p">:</span> <span class="s">&#39;37 + 5&#39;</span><span class="p">,</span>  <span class="c"># Evaluate to &#39;37 + 5&#39;, not 42</span>
+                    <span class="c"># Potentially dangerous - e.g. if calling rm</span>
+                    <span class="s">&#39;dangerous&#39;</span><span class="p">:</span> <span class="s">&#39;__import__(&quot;os&quot;).system(&quot;ls -l&quot;)&#39;</span><span class="p">,</span>
+                    <span class="s">&#39;yes&#39;</span><span class="p">:</span> <span class="bp">True</span><span class="p">,</span>
+                    <span class="s">&#39;no&#39;</span><span class="p">:</span> <span class="bp">False</span><span class="p">}</span>
 
         <span class="n">write_keywords</span><span class="p">(</span><span class="n">keywords</span><span class="p">,</span> <span class="n">kwd_filename</span><span class="p">)</span>
         <span class="n">msg</span> <span class="o">=</span> <span class="s">&#39;Keywords file </span><span class="si">%s</span><span class="s"> was not created&#39;</span> <span class="o">%</span> <span class="n">kwd_filename</span>
@@ -1408,14 +1714,31 @@
 
         <span class="c"># Check keyword values</span>
         <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">keywords</span><span class="p">:</span>
-            <span class="n">refval</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">keywords</span><span class="p">[</span><span class="n">key</span><span class="p">])</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
-            <span class="n">newval</span> <span class="o">=</span> <span class="n">x</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+            <span class="n">refval</span> <span class="o">=</span> <span class="n">keywords</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>  <span class="c"># Expected value</span>
+            <span class="n">newval</span> <span class="o">=</span> <span class="n">x</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>  <span class="c"># Value from keywords file</span>
 
+            <span class="c"># Catch all - comparing string reprentations</span>
             <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;Expected value &quot;</span><span class="si">%s</span><span class="s">&quot; was not read from &quot;</span><span class="si">%s</span><span class="s">&quot;. &#39;</span>
                    <span class="s">&#39;I got &quot;</span><span class="si">%s</span><span class="s">&quot;&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">refval</span><span class="p">,</span> <span class="n">kwd_filename</span><span class="p">,</span> <span class="n">newval</span><span class="p">))</span>
-            <span class="k">assert</span> <span class="n">refval</span> <span class="o">==</span> <span class="n">newval</span><span class="p">,</span> <span class="n">msg</span>
+            <span class="k">assert</span> <span class="nb">str</span><span class="p">(</span><span class="n">refval</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="o">==</span> <span class="nb">str</span><span class="p">(</span><span class="n">newval</span><span class="p">),</span> <span class="n">msg</span>
 
-        <span class="c"># Check catching of wrong extension</span>
+            <span class="c"># Check None</span>
+            <span class="k">if</span> <span class="n">refval</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+                <span class="k">assert</span> <span class="n">newval</span> <span class="ow">is</span> <span class="bp">None</span>
+
+            <span class="c"># Check Booleans - explicitly</span>
+            <span class="k">if</span> <span class="n">refval</span> <span class="ow">is</span> <span class="bp">True</span><span class="p">:</span>
+                <span class="k">assert</span> <span class="n">newval</span> <span class="ow">is</span> <span class="bp">True</span>
+
+            <span class="k">if</span> <span class="n">refval</span> <span class="ow">is</span> <span class="bp">False</span><span class="p">:</span>
+                <span class="k">assert</span> <span class="n">newval</span> <span class="ow">is</span> <span class="bp">False</span>
+
+            <span class="c"># Check equality of python structures</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">refval</span><span class="p">,</span> <span class="nb">basestring</span><span class="p">):</span>
+                <span class="n">msg</span> <span class="o">=</span> <span class="s">&#39;Expected </span><span class="si">%s</span><span class="s"> but got </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">refval</span><span class="p">,</span> <span class="n">newval</span><span class="p">)</span>
+                <span class="k">assert</span> <span class="n">newval</span> <span class="o">==</span> <span class="n">refval</span><span class="p">,</span> <span class="n">msg</span>
+
+        <span class="c"># Check catching wrong extensions</span>
         <span class="n">kwd_filename</span> <span class="o">=</span> <span class="n">unique_filename</span><span class="p">(</span><span class="n">suffix</span><span class="o">=</span><span class="s">&#39;.xxxx&#39;</span><span class="p">)</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">write_keywords</span><span class="p">(</span><span class="n">keywords</span><span class="p">,</span> <span class="n">kwd_filename</span><span class="p">)</span>
@@ -1538,6 +1861,10 @@
         <span class="c"># Test inclusion</span>
         <span class="k">assert</span> <span class="n">numpy</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">bbox_intersection</span><span class="p">(</span><span class="n">west_java</span><span class="p">,</span> <span class="n">jakarta</span><span class="p">),</span> <span class="n">jakarta</span><span class="p">)</span>
 
+        <span class="c"># Ignore Bounding Boxes that are None</span>
+        <span class="k">assert</span> <span class="n">numpy</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">bbox_intersection</span><span class="p">(</span><span class="n">west_java</span><span class="p">,</span> <span class="n">jakarta</span><span class="p">,</span> <span class="bp">None</span><span class="p">),</span>
+            <span class="n">jakarta</span><span class="p">)</span>
+
         <span class="c"># Realistic ones</span>
         <span class="n">bbox1</span> <span class="o">=</span> <span class="p">[</span><span class="mf">94.972335</span><span class="p">,</span> <span class="o">-</span><span class="mf">11.009721</span><span class="p">,</span> <span class="mf">141.014</span><span class="p">,</span> <span class="mf">6.073612333333</span><span class="p">]</span>
         <span class="n">bbox2</span> <span class="o">=</span> <span class="p">[</span><span class="mf">105.3</span><span class="p">,</span> <span class="o">-</span><span class="mf">8.5</span><span class="p">,</span> <span class="mf">110.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">5.5</span><span class="p">]</span>
@@ -1584,7 +1911,7 @@
         <span class="c"># Deal with invalid boxes</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">bbox_intersection</span><span class="p">(</span><span class="n">bbox1</span><span class="p">,</span> <span class="p">[</span><span class="mi">53</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">40</span><span class="p">,</span> <span class="mi">4</span><span class="p">])</span>
-        <span class="k">except</span> <span class="n">VerificationError</span><span class="p">:</span>
+        <span class="k">except</span> <span class="n">BoundingBoxError</span><span class="p">:</span>
             <span class="k">pass</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">msg</span> <span class="o">=</span> <span class="s">&#39;Should have raised exception&#39;</span>
@@ -1592,7 +1919,7 @@
 
         <span class="k">try</span><span class="p">:</span>
             <span class="n">bbox_intersection</span><span class="p">(</span><span class="n">bbox1</span><span class="p">,</span> <span class="p">[</span><span class="mi">50</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">53</span><span class="p">,</span> <span class="mi">4</span><span class="p">])</span>
-        <span class="k">except</span> <span class="n">VerificationError</span><span class="p">:</span>
+        <span class="k">except</span> <span class="n">BoundingBoxError</span><span class="p">:</span>
             <span class="k">pass</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">msg</span> <span class="o">=</span> <span class="s">&#39;Should have raised exception&#39;</span>
@@ -1600,7 +1927,7 @@
 
         <span class="k">try</span><span class="p">:</span>
             <span class="n">bbox_intersection</span><span class="p">(</span><span class="n">bbox1</span><span class="p">,</span> <span class="s">&#39;blko ho skrle&#39;</span><span class="p">)</span>
-        <span class="k">except</span> <span class="n">VerificationError</span><span class="p">:</span>
+        <span class="k">except</span> <span class="n">BoundingBoxError</span><span class="p">:</span>
             <span class="k">pass</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">msg</span> <span class="o">=</span> <span class="s">&#39;Should have raised exception&#39;</span>
@@ -2056,10 +2383,14 @@
             <span class="n">read_layer</span><span class="p">(</span><span class="n">hazard_filename</span><span class="p">)</span>
         <span class="k">except</span> <span class="n">ReadLayerError</span><span class="p">,</span> <span class="n">e</span><span class="p">:</span>
             <span class="n">msg</span> <span class="o">=</span> <span class="s">&#39;Wrong error message: </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="n">e</span>
-            <span class="k">assert</span> <span class="s">&#39;convert multipart&#39;</span> <span class="ow">in</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">),</span> <span class="n">msg</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">msg</span> <span class="o">=</span> <span class="s">&#39;Multipart polygon should have raised exception&#39;</span>
-            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+            <span class="k">assert</span> <span class="s">&#39;convert multipart&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">),</span> <span class="n">msg</span>
+        <span class="c"># I (Sunni) added function for forcing multipolygon to be</span>
+        <span class="c"># single polygon. So it will not raise any exception</span>
+        <span class="c">#======================================================================</span>
+        <span class="c"># else:</span>
+        <span class="c">#    msg = &#39;Multipart polygon should not have raised exception&#39;</span>
+        <span class="c">#    raise Exception(msg)</span>
+        <span class="c">#======================================================================</span>
 </div>
 <div class="viewcode-block" id="Test_IO.test_projection_comparisons"><a class="viewcode-back" href="../../../api-docs/safe/storage/test_io.html#safe.storage.test_io.Test_IO.test_projection_comparisons">[docs]</a>    <span class="k">def</span> <span class="nf">test_projection_comparisons</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Projection information can be correctly compared</span>
@@ -2095,7 +2426,28 @@
         <span class="k">assert</span> <span class="n">Hp</span> <span class="o">==</span> <span class="n">Ep</span><span class="p">,</span> <span class="n">msg</span>
 </div>
     <span class="n">test_projection_comparisons</span><span class="o">.</span><span class="n">slow</span> <span class="o">=</span> <span class="bp">True</span>
-</div>
+
+<div class="viewcode-block" id="Test_IO.Xtest_reading_and_writing_of_multiband_rasters"><a class="viewcode-back" href="../../../api-docs/safe/storage/test_io.html#safe.storage.test_io.Test_IO.Xtest_reading_and_writing_of_multiband_rasters">[docs]</a>    <span class="k">def</span> <span class="nf">Xtest_reading_and_writing_of_multiband_rasters</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Multiband rasters can be read and written correctly</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c"># FIXME (Ole, Sep 2012): WORK IN PROGRESS</span>
+        <span class="n">rastername</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;201208140700_Jakarta_200m_Sobek_Hypothetical_&#39;</span>
+                      <span class="s">&#39;Scenario_ACCESSA.nc&#39;</span><span class="p">)</span>
+
+        <span class="n">filename</span> <span class="o">=</span> <span class="s">&#39;</span><span class="si">%s</span><span class="s">/</span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">TESTDATA</span><span class="p">,</span> <span class="n">rastername</span><span class="p">)</span>
+        <span class="n">R1</span> <span class="o">=</span> <span class="n">read_layer</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+
+        <span class="c"># Check consistency of raster</span>
+        <span class="n">A1</span> <span class="o">=</span> <span class="n">R1</span><span class="o">.</span><span class="n">get_data</span><span class="p">()</span>
+        <span class="n">M</span><span class="p">,</span> <span class="n">N</span> <span class="o">=</span> <span class="n">A1</span><span class="o">.</span><span class="n">shape</span>
+
+        <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;Dimensions of raster array do not match those of &#39;</span>
+               <span class="s">&#39;raster file </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="n">R1</span><span class="o">.</span><span class="n">filename</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">M</span> <span class="o">==</span> <span class="n">R1</span><span class="o">.</span><span class="n">rows</span><span class="p">,</span> <span class="n">msg</span>
+        <span class="k">assert</span> <span class="n">N</span> <span class="o">==</span> <span class="n">R1</span><span class="o">.</span><span class="n">columns</span><span class="p">,</span> <span class="n">msg</span>
+        <span class="c"># More...</span>
+</div></div>
 <span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&#39;__main__&#39;</span><span class="p">:</span>
     <span class="n">suite</span> <span class="o">=</span> <span class="n">unittest</span><span class="o">.</span><span class="n">makeSuite</span><span class="p">(</span><span class="n">Test_IO</span><span class="p">,</span> <span class="s">&#39;test&#39;</span><span class="p">)</span>
     <span class="n">runner</span> <span class="o">=</span> <span class="n">unittest</span><span class="o">.</span><span class="n">TextTestRunner</span><span class="p">(</span><span class="n">verbosity</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
@@ -2148,7 +2500,8 @@
 
     <div class="footer">
         &copy; Copyright 2012, BNPB/AIFDR/GFDRR.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+      Last updated on Oct 18, 2012.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
     </div>
     <!-- cloud_sptheme 1.3 -->
   </body>

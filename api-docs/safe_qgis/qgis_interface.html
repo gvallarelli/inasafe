@@ -9,7 +9,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Module: safe_qgis.qgis_interface &mdash; InaSAFE 0.5.0-alpha documentation</title>
+    <title>Module: safe_qgis.qgis_interface &mdash; InaSAFE 0.5.1-final documentation</title>
     
     <link rel="stylesheet" href="../../_static/cloud.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -18,7 +18,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '0.5.0-alpha',
+        VERSION:     '0.5.1-final',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -29,10 +29,11 @@
     <script type="text/javascript" src="../../_static/doctools.js"></script>
     <script type="text/javascript" src="../../_static/jquery.cookie.js"></script>
     <script type="text/javascript" src="../../_static/toggle_sections.js"></script>
-    <link rel="top" title="InaSAFE 0.5.0-alpha documentation" href="../../index.html" />
+    <link rel="shortcut icon" href="../../_static/favicon.ico"/>
+    <link rel="top" title="InaSAFE 0.5.1-final documentation" href="../../index.html" />
     <link rel="up" title="Package::safe_qgis" href="../safe_qgis.html" />
-    <link rel="next" title="Module: safe_qgis.map" href="map.html" />
-    <link rel="prev" title="Module: safe_qgis.utilities" href="utilities.html" /> 
+    <link rel="next" title="Module: safe_qgis.options_dialog" href="options_dialog.html" />
+    <link rel="prev" title="Module: safe_qgis.keyword_io" href="keyword_io.html" /> 
   </head>
   <body>
     <div class="relbar-top">
@@ -47,10 +48,10 @@
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
         <li class="right" >
-          <a href="map.html" title="Module: safe_qgis.map"
+          <a href="options_dialog.html" title="Module: safe_qgis.options_dialog"
              accesskey="N">next</a> &nbsp; &nbsp;</li>
         <li class="right" >
-          <a href="utilities.html" title="Module: safe_qgis.utilities"
+          <a href="keyword_io.html" title="Module: safe_qgis.keyword_io"
              accesskey="P">previous</a> &nbsp; &nbsp;</li>
     <li><a href="../../index.html">Home</a> &raquo;</li>
     <li><a href="../../contents.html">Contents</a> &raquo;</li>
@@ -102,6 +103,34 @@ so most methods are simply stubs.</p>
 <dt id="safe_qgis.qgis_interface.QgisInterface.addDockWidget">
 <tt class="descname">addDockWidget</tt><big>(</big><em>area</em>, <em>dockwidget</em><big>)</big><a class="reference internal" href="../../_modules/safe_qgis/qgis_interface.html#QgisInterface.addDockWidget"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe_qgis.qgis_interface.QgisInterface.addDockWidget" title="Permalink to this definition">¶</a></dt>
 <dd><p>Add a dock widget to the main window</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="safe_qgis.qgis_interface.QgisInterface.addLayer">
+<tt class="descname">addLayer</tt><big>(</big><em>theLayer</em><big>)</big><a class="reference internal" href="../../_modules/safe_qgis/qgis_interface.html#QgisInterface.addLayer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe_qgis.qgis_interface.QgisInterface.addLayer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Handle a layer being added to the registry so it shows up in canvas.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>theLayers: list&lt;QgsMapLayer&gt; list of map layers that were added</dd>
+<dt>Returns:</dt>
+<dd>None</dd>
+<dt>Raises:</dt>
+<dd>None</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="safe_qgis.qgis_interface.QgisInterface.addLayers">
+<tt class="descname">addLayers</tt><big>(</big><em>theLayers</em><big>)</big><a class="reference internal" href="../../_modules/safe_qgis/qgis_interface.html#QgisInterface.addLayers"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe_qgis.qgis_interface.QgisInterface.addLayers" title="Permalink to this definition">¶</a></dt>
+<dd><p>Handle layers being added to the registry so they show up in canvas.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>theLayers: list&lt;QgsMapLayer&gt; list of map layers that were added</dd>
+<dt>Returns:</dt>
+<dd>None</dd>
+<dt>Raises:</dt>
+<dd>None</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
@@ -186,11 +215,11 @@ so most methods are simply stubs.</p>
           <img class="logo" src="../../_static/icon.png" alt="Logo"/>
         </a></p>
   <h4>Previous topic</h4>
-  <p class="topless"><a href="utilities.html"
-                        title="previous chapter">Module:  safe_qgis.utilities</a></p>
+  <p class="topless"><a href="keyword_io.html"
+                        title="previous chapter">Module:  safe_qgis.keyword_io</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="map.html"
-                        title="next chapter">Module:  safe_qgis.map</a></p>
+  <p class="topless"><a href="options_dialog.html"
+                        title="next chapter">Module:  safe_qgis.options_dialog</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="../../_sources/api-docs/safe_qgis/qgis_interface.txt"
@@ -225,10 +254,10 @@ so most methods are simply stubs.</p>
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
         <li class="right" >
-          <a href="map.html" title="Module: safe_qgis.map"
+          <a href="options_dialog.html" title="Module: safe_qgis.options_dialog"
              >next</a> &nbsp; &nbsp;</li>
         <li class="right" >
-          <a href="utilities.html" title="Module: safe_qgis.utilities"
+          <a href="keyword_io.html" title="Module: safe_qgis.keyword_io"
              >previous</a> &nbsp; &nbsp;</li>
     <li><a href="../../index.html">Home</a> &raquo;</li>
     <li><a href="../../contents.html">Contents</a> &raquo;</li>
@@ -241,7 +270,8 @@ so most methods are simply stubs.</p>
 
     <div class="footer">
         &copy; Copyright 2012, BNPB/AIFDR/GFDRR.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+      Last updated on Oct 18, 2012.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
     </div>
     <!-- cloud_sptheme 1.3 -->
   </body>

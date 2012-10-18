@@ -9,7 +9,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>safe.impact_functions.core &mdash; InaSAFE 0.5.0-alpha documentation</title>
+    <title>safe.impact_functions.core &mdash; InaSAFE 0.5.1-final documentation</title>
     
     <link rel="stylesheet" href="../../../_static/cloud.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
@@ -18,7 +18,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../',
-        VERSION:     '0.5.0-alpha',
+        VERSION:     '0.5.1-final',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -29,7 +29,8 @@
     <script type="text/javascript" src="../../../_static/doctools.js"></script>
     <script type="text/javascript" src="../../../_static/jquery.cookie.js"></script>
     <script type="text/javascript" src="../../../_static/toggle_sections.js"></script>
-    <link rel="top" title="InaSAFE 0.5.0-alpha documentation" href="../../../index.html" />
+    <link rel="shortcut icon" href="../../../_static/favicon.ico"/>
+    <link rel="top" title="InaSAFE 0.5.1-final documentation" href="../../../index.html" />
     <link rel="up" title="Module code" href="../../index.html" /> 
   </head>
   <body>
@@ -73,6 +74,7 @@
 <span class="kn">from</span> <span class="nn">safe.common.polygon</span> <span class="kn">import</span> <span class="n">inside_polygon</span>
 <span class="kn">from</span> <span class="nn">safe.common.utilities</span> <span class="kn">import</span> <span class="n">ugettext</span> <span class="k">as</span> <span class="n">_</span>
 <span class="kn">from</span> <span class="nn">safe.common.tables</span> <span class="kn">import</span> <span class="n">Table</span><span class="p">,</span> <span class="n">TableCell</span><span class="p">,</span> <span class="n">TableRow</span>
+<span class="kn">from</span> <span class="nn">utilities</span> <span class="kn">import</span> <span class="n">pretty_string</span><span class="p">,</span> <span class="n">remove_double_spaces</span>
 
 <span class="n">LOGGER</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s">&#39;InaSAFE&#39;</span><span class="p">)</span>
 
@@ -421,8 +423,8 @@
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">if</span> <span class="s">&#39;thresholds&#39;</span> <span class="ow">in</span> <span class="n">layer</span><span class="o">.</span><span class="n">keywords</span><span class="p">:</span>
-        <span class="n">s</span> <span class="o">=</span> <span class="n">layer</span><span class="o">.</span><span class="n">keywords</span><span class="p">[</span><span class="s">&#39;thresholds&#39;</span><span class="p">]</span>
-        <span class="n">thresholds</span> <span class="o">=</span> <span class="p">[</span><span class="nb">float</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">s</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39;,&#39;</span><span class="p">)]</span>
+        <span class="n">t_list</span> <span class="o">=</span> <span class="n">layer</span><span class="o">.</span><span class="n">keywords</span><span class="p">[</span><span class="s">&#39;thresholds&#39;</span><span class="p">]</span>
+        <span class="n">thresholds</span> <span class="o">=</span> <span class="p">[</span><span class="nb">float</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">t_list</span><span class="p">]</span>
         <span class="n">thresholds</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">thresholds</span> <span class="o">=</span> <span class="p">[]</span>
@@ -583,56 +585,240 @@
     <span class="k">return</span> <span class="n">admissible_plugins</span>
 
 </div>
-<div class="viewcode-block" id="get_plugins_as_table"><a class="viewcode-back" href="../../../api-docs/safe/impact_functions/core.html#safe.impact_functions.core.get_plugins_as_table">[docs]</a><span class="k">def</span> <span class="nf">get_plugins_as_table</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+<div class="viewcode-block" id="parse_single_requirement"><a class="viewcode-back" href="../../../api-docs/safe/impact_functions/core.html#safe.impact_functions.core.parse_single_requirement">[docs]</a><span class="k">def</span> <span class="nf">parse_single_requirement</span><span class="p">(</span><span class="n">requirement</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;Parse single requirement from impact function&#39;s doc to category,</span>
+<span class="sd">        subcategory, layertype, datatype, unit, and disabled.&#39;&#39;&#39;</span>
+    <span class="n">retval</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">parts</span> <span class="o">=</span> <span class="n">requirement</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39; and &#39;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">part</span> <span class="ow">in</span> <span class="n">parts</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">part</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s">&#39;==&#39;</span><span class="p">)</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+            <span class="n">myKey</span> <span class="o">=</span> <span class="n">part</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39;==&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">myValue</span> <span class="o">=</span> <span class="n">part</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39;==&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">retval</span><span class="p">[</span><span class="n">myKey</span><span class="p">]</span> <span class="o">=</span> <span class="n">myValue</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>  <span class="c"># Removing single quote</span>
+        <span class="k">elif</span> <span class="n">part</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s">&#39; in &#39;</span><span class="p">)</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+            <span class="n">myKey</span> <span class="o">=</span> <span class="n">part</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39; in &#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">myListString</span> <span class="o">=</span> <span class="n">part</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39; in &#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>  <span class="c"># Removing &#39;[&#39;</span>
+            <span class="n">elmtList</span> <span class="o">=</span> <span class="n">myListString</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39;, &#39;</span><span class="p">)</span>
+            <span class="n">myList</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">elmt</span> <span class="ow">in</span> <span class="n">elmtList</span><span class="p">:</span>
+                <span class="n">myList</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">elmt</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>  <span class="c"># Removing single quote</span>
+            <span class="n">retval</span><span class="p">[</span><span class="n">myKey</span><span class="p">]</span> <span class="o">=</span> <span class="n">myList</span>
+        <span class="k">elif</span> <span class="n">part</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s">&#39;.startswith&#39;</span><span class="p">)</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+            <span class="k">pass</span>  <span class="c"># Not yet implemented</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">pass</span>
+
+    <span class="k">return</span> <span class="n">retval</span>
+
+</div>
+<div class="viewcode-block" id="get_plugins_as_table"><a class="viewcode-back" href="../../../api-docs/safe/impact_functions/core.html#safe.impact_functions.core.get_plugins_as_table">[docs]</a><span class="k">def</span> <span class="nf">get_plugins_as_table</span><span class="p">(</span><span class="n">dict_filter</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Retrieve a table listing all plugins and their requirements.</span>
 
 <span class="sd">       Or just a single plugin if name is passed.</span>
 
-<span class="sd">       Args: name str optional name of a specific plugin.</span>
+<span class="sd">       Args:</span>
+<span class="sd">           * dict_filter = dictionary that contains filters</span>
+<span class="sd">               - id = list_id</span>
+<span class="sd">               - title = list_title</span>
+<span class="sd">               - category : list_category</span>
+<span class="sd">               - subcategory : list_subcategory</span>
+<span class="sd">               - layertype : list_layertype</span>
+<span class="sd">               - datatype : list_datatype</span>
+<span class="sd">               - unit: list_unit</span>
+<span class="sd">               - disabled : list_disabled # not included</span>
 
-<span class="sd">       Returns: table instance containing plugin descriptive data</span>
+<span class="sd">       Returns:</span>
+<span class="sd">           * table contains plugins match with dict_filter</span>
 
 <span class="sd">       Raises: None</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
+    <span class="k">if</span> <span class="n">dict_filter</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="n">dict_filter</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;id&#39;</span><span class="p">:</span> <span class="p">[],</span>
+                       <span class="s">&#39;title&#39;</span><span class="p">:</span> <span class="p">[],</span>
+                       <span class="s">&#39;category&#39;</span><span class="p">:</span> <span class="p">[],</span>
+                       <span class="s">&#39;subcategory&#39;</span><span class="p">:</span> <span class="p">[],</span>
+                       <span class="s">&#39;layertype&#39;</span><span class="p">:</span> <span class="p">[],</span>
+                       <span class="s">&#39;datatype&#39;</span><span class="p">:</span> <span class="p">[],</span>
+                       <span class="s">&#39;unit&#39;</span><span class="p">:</span> <span class="p">[]}</span>
+
     <span class="n">table_body</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="n">header</span> <span class="o">=</span> <span class="n">TableRow</span><span class="p">([</span><span class="n">_</span><span class="p">(</span><span class="s">&#39;Title&#39;</span><span class="p">),</span> <span class="n">_</span><span class="p">(</span><span class="s">&#39;ID&#39;</span><span class="p">),</span> <span class="n">_</span><span class="p">(</span><span class="s">&#39;Requirements&#39;</span><span class="p">)],</span> <span class="n">header</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+    <span class="c"># use this list for avoiding wrong order in dict</span>
+    <span class="n">atts</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;category&#39;</span><span class="p">,</span> <span class="s">&#39;subcategory&#39;</span><span class="p">,</span> <span class="s">&#39;layertype&#39;</span><span class="p">,</span>
+                           <span class="s">&#39;datatype&#39;</span><span class="p">,</span> <span class="s">&#39;unit&#39;</span><span class="p">]</span>
+    <span class="n">header</span> <span class="o">=</span> <span class="n">TableRow</span><span class="p">([</span><span class="n">_</span><span class="p">(</span><span class="s">&#39;Title&#39;</span><span class="p">),</span> <span class="n">_</span><span class="p">(</span><span class="s">&#39;ID&#39;</span><span class="p">),</span> <span class="n">_</span><span class="p">(</span><span class="s">&#39;Category&#39;</span><span class="p">),</span>
+                       <span class="n">_</span><span class="p">(</span><span class="s">&#39;Sub Category&#39;</span><span class="p">),</span> <span class="n">_</span><span class="p">(</span><span class="s">&#39;Layer type&#39;</span><span class="p">),</span> <span class="n">_</span><span class="p">(</span><span class="s">&#39;Data type&#39;</span><span class="p">),</span>
+                       <span class="n">_</span><span class="p">(</span><span class="s">&#39;Unit&#39;</span><span class="p">)],</span>
+                      <span class="n">header</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
     <span class="n">table_body</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">header</span><span class="p">)</span>
 
     <span class="n">plugins_dict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">([(</span><span class="n">pretty_function_name</span><span class="p">(</span><span class="n">p</span><span class="p">),</span> <span class="n">p</span><span class="p">)</span>
                          <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">FunctionProvider</span><span class="o">.</span><span class="n">plugins</span><span class="p">])</span>
 
-    <span class="k">if</span> <span class="n">name</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="nb">basestring</span><span class="p">):</span>
-            <span class="c"># Add the names</span>
-            <span class="n">plugins_dict</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="nb">dict</span><span class="p">([(</span><span class="n">p</span><span class="o">.</span><span class="n">__name__</span><span class="p">,</span> <span class="n">p</span><span class="p">)</span>
-                                      <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">FunctionProvider</span><span class="o">.</span><span class="n">plugins</span><span class="p">]))</span>
-
-            <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;No plugin named &quot;</span><span class="si">%s</span><span class="s">&quot; was found. &#39;</span>
-                   <span class="s">&#39;List of available plugins is: </span><span class="si">%s</span><span class="s">&#39;</span>
-                   <span class="o">%</span> <span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="s">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">plugins_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">())))</span>
-            <span class="k">if</span> <span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">plugins_dict</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
-
-            <span class="n">plugins_dict</span> <span class="o">=</span> <span class="p">{</span><span class="n">name</span><span class="p">:</span> <span class="n">plugins_dict</span><span class="p">[</span><span class="n">name</span><span class="p">]}</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;get_plugins expects either no parameters or a string &#39;</span>
-                   <span class="s">&#39;with the name of the plugin, you passed: &#39;</span>
-                   <span class="s">&#39;</span><span class="si">%s</span><span class="s"> which is a </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="n">name</span><span class="p">)))</span>
-            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
-    <span class="c"># Now loop through the plugins adding them to the table</span>
+    <span class="n">not_found_value</span> <span class="o">=</span> <span class="s">&#39;N/A&#39;</span>
     <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">func</span> <span class="ow">in</span> <span class="n">plugins_dict</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
         <span class="k">for</span> <span class="n">requirement</span> <span class="ow">in</span> <span class="n">requirements_collect</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
-            <span class="n">row</span> <span class="o">=</span> <span class="p">[]</span>
-            <span class="n">row</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">TableCell</span><span class="p">(</span><span class="n">get_function_title</span><span class="p">(</span><span class="n">func</span><span class="p">),</span> <span class="n">header</span><span class="o">=</span><span class="bp">True</span><span class="p">))</span>
-            <span class="n">row</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
-            <span class="n">row</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">requirement</span><span class="p">)</span>
-            <span class="n">table_body</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">TableRow</span><span class="p">(</span><span class="n">row</span><span class="p">))</span>
+            <span class="n">dict_found</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;title&#39;</span><span class="p">:</span> <span class="bp">False</span><span class="p">,</span>
+                          <span class="s">&#39;id&#39;</span><span class="p">:</span> <span class="bp">False</span><span class="p">,</span>
+                          <span class="s">&#39;category&#39;</span><span class="p">:</span> <span class="bp">False</span><span class="p">,</span>
+                          <span class="s">&#39;subcategory&#39;</span><span class="p">:</span> <span class="bp">False</span><span class="p">,</span>
+                          <span class="s">&#39;layertype&#39;</span><span class="p">:</span> <span class="bp">False</span><span class="p">,</span>
+                          <span class="s">&#39;datatype&#39;</span><span class="p">:</span> <span class="bp">False</span><span class="p">,</span>
+                          <span class="s">&#39;unit&#39;</span><span class="p">:</span> <span class="bp">False</span><span class="p">}</span>
 
-    <span class="n">table</span> <span class="o">=</span> <span class="n">Table</span><span class="p">(</span><span class="n">table_body</span><span class="p">)</span>
+            <span class="n">dict_req</span> <span class="o">=</span> <span class="n">parse_single_requirement</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">requirement</span><span class="p">))</span>
+
+            <span class="k">for</span> <span class="n">myKey</span> <span class="ow">in</span> <span class="n">dict_found</span><span class="o">.</span><span class="n">iterkeys</span><span class="p">():</span>
+                <span class="n">myFilter</span> <span class="o">=</span> <span class="n">dict_filter</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">myKey</span><span class="p">,</span> <span class="p">[])</span>
+                <span class="k">if</span> <span class="n">myKey</span> <span class="o">==</span> <span class="s">&#39;title&#39;</span><span class="p">:</span>
+                    <span class="n">myValue</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">get_function_title</span><span class="p">(</span><span class="n">func</span><span class="p">))</span>
+                <span class="k">elif</span> <span class="n">myKey</span> <span class="o">==</span> <span class="s">&#39;id&#39;</span><span class="p">:</span>
+                    <span class="n">myValue</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">myValue</span> <span class="o">=</span> <span class="n">dict_req</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">myKey</span><span class="p">,</span> <span class="n">not_found_value</span><span class="p">)</span>
+
+                <span class="k">if</span> <span class="n">myFilter</span> <span class="o">!=</span> <span class="p">[]:</span>
+                    <span class="k">for</span> <span class="n">myKeyword</span> <span class="ow">in</span> <span class="n">myFilter</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">myValue</span><span class="p">)</span> <span class="o">==</span> <span class="nb">type</span><span class="p">(</span><span class="nb">str</span><span class="p">()):</span>
+                            <span class="k">if</span> <span class="n">myValue</span> <span class="o">==</span> <span class="n">myKeyword</span><span class="p">:</span>
+                                <span class="n">dict_found</span><span class="p">[</span><span class="n">myKey</span><span class="p">]</span> <span class="o">=</span> <span class="bp">True</span>
+                                <span class="k">break</span>
+                        <span class="k">elif</span> <span class="nb">type</span><span class="p">(</span><span class="n">myValue</span><span class="p">)</span> <span class="o">==</span> <span class="nb">type</span><span class="p">(</span><span class="nb">list</span><span class="p">()):</span>
+                            <span class="k">if</span> <span class="n">myKeyword</span> <span class="ow">in</span> <span class="n">myValue</span><span class="p">:</span>
+                                <span class="n">dict_found</span><span class="p">[</span><span class="n">myKey</span><span class="p">]</span> <span class="o">=</span> <span class="bp">True</span>
+                                <span class="k">break</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="k">if</span> <span class="n">myValue</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">myKeyword</span><span class="p">))</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+                                <span class="n">dict_found</span><span class="p">[</span><span class="n">myKey</span><span class="p">]</span> <span class="o">=</span> <span class="bp">True</span>
+                                <span class="k">break</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">dict_found</span><span class="p">[</span><span class="n">myKey</span><span class="p">]</span> <span class="o">=</span> <span class="bp">True</span>
+
+            <span class="n">add_row</span> <span class="o">=</span> <span class="bp">True</span>
+            <span class="k">for</span> <span class="n">found_value</span> <span class="ow">in</span> <span class="n">dict_found</span><span class="o">.</span><span class="n">itervalues</span><span class="p">():</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">found_value</span><span class="p">:</span>
+                    <span class="n">add_row</span> <span class="o">=</span> <span class="bp">False</span>
+                    <span class="k">break</span>
+
+            <span class="k">if</span> <span class="n">add_row</span><span class="p">:</span>
+                <span class="n">row</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="n">row</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">TableCell</span><span class="p">(</span><span class="n">get_function_title</span><span class="p">(</span><span class="n">func</span><span class="p">),</span> <span class="n">header</span><span class="o">=</span><span class="bp">True</span><span class="p">))</span>
+                <span class="n">row</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">myKey</span> <span class="ow">in</span> <span class="n">atts</span><span class="p">:</span>
+                    <span class="n">myValue</span> <span class="o">=</span> <span class="n">pretty_string</span><span class="p">(</span><span class="n">dict_req</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">myKey</span><span class="p">,</span>
+                                                <span class="n">not_found_value</span><span class="p">))</span>
+                    <span class="n">row</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">myValue</span><span class="p">)</span>
+                <span class="n">table_body</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">TableRow</span><span class="p">(</span><span class="n">row</span><span class="p">))</span>
+
+    <span class="n">cw</span> <span class="o">=</span> <span class="mi">100</span> <span class="o">/</span> <span class="mi">7</span>
+    <span class="n">table_col_width</span> <span class="o">=</span> <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">cw</span><span class="p">)</span> <span class="o">+</span> <span class="s">&#39;%&#39;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">cw</span><span class="p">)</span> <span class="o">+</span> <span class="s">&#39;%&#39;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">cw</span><span class="p">)</span> <span class="o">+</span> <span class="s">&#39;%&#39;</span><span class="p">,</span>
+                       <span class="nb">str</span><span class="p">(</span><span class="n">cw</span><span class="p">)</span> <span class="o">+</span> <span class="s">&#39;%&#39;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">cw</span><span class="p">)</span> <span class="o">+</span> <span class="s">&#39;%&#39;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">cw</span><span class="p">)</span> <span class="o">+</span> <span class="s">&#39;%&#39;</span><span class="p">,</span>
+                       <span class="nb">str</span><span class="p">(</span><span class="n">cw</span><span class="p">)</span> <span class="o">+</span> <span class="s">&#39;%&#39;</span><span class="p">]</span>
+    <span class="n">table</span> <span class="o">=</span> <span class="n">Table</span><span class="p">(</span><span class="n">table_body</span><span class="p">,</span> <span class="n">col_width</span><span class="o">=</span><span class="n">table_col_width</span><span class="p">)</span>
     <span class="n">table</span><span class="o">.</span><span class="n">caption</span> <span class="o">=</span> <span class="n">_</span><span class="p">(</span><span class="s">&#39;Available Impact Functions&#39;</span><span class="p">)</span>
 
-    <span class="k">return</span> <span class="n">table</span></div>
+    <span class="k">return</span> <span class="n">table</span>
+
+</div>
+<div class="viewcode-block" id="get_unique_values"><a class="viewcode-back" href="../../../api-docs/safe/impact_functions/core.html#safe.impact_functions.core.get_unique_values">[docs]</a><span class="k">def</span> <span class="nf">get_unique_values</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Get unique possible value for each column in impact functions doc</span>
+<span class="sd">        table.</span>
+
+<span class="sd">        Args: None</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            * Dictionary contains list unique value for each column</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+    <span class="n">atts</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;category&#39;</span><span class="p">,</span> <span class="s">&#39;subcategory&#39;</span><span class="p">,</span> <span class="s">&#39;layertype&#39;</span><span class="p">,</span> <span class="s">&#39;datatype&#39;</span><span class="p">,</span> <span class="s">&#39;unit&#39;</span><span class="p">]</span>
+    <span class="n">dict_retval</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;category&#39;</span><span class="p">:</span> <span class="nb">set</span><span class="p">(),</span>
+                   <span class="s">&#39;subcategory&#39;</span><span class="p">:</span> <span class="nb">set</span><span class="p">(),</span>
+                   <span class="s">&#39;layertype&#39;</span><span class="p">:</span> <span class="nb">set</span><span class="p">(),</span>
+                   <span class="s">&#39;datatype&#39;</span><span class="p">:</span> <span class="nb">set</span><span class="p">(),</span>
+                   <span class="s">&#39;unit&#39;</span><span class="p">:</span> <span class="nb">set</span><span class="p">(),</span>
+                   <span class="s">&#39;id&#39;</span><span class="p">:</span> <span class="nb">set</span><span class="p">(),</span>
+                   <span class="s">&#39;title&#39;</span><span class="p">:</span> <span class="nb">set</span><span class="p">()}</span>
+
+    <span class="n">plugins_dict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">([(</span><span class="n">pretty_function_name</span><span class="p">(</span><span class="n">p</span><span class="p">),</span> <span class="n">p</span><span class="p">)</span>
+                         <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">FunctionProvider</span><span class="o">.</span><span class="n">plugins</span><span class="p">])</span>
+    <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">func</span> <span class="ow">in</span> <span class="n">plugins_dict</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
+        <span class="n">dict_retval</span><span class="p">[</span><span class="s">&#39;title&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">get_function_title</span><span class="p">(</span><span class="n">func</span><span class="p">))</span>
+        <span class="n">dict_retval</span><span class="p">[</span><span class="s">&#39;id&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">requirement</span> <span class="ow">in</span> <span class="n">requirements_collect</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+            <span class="n">dict_req</span> <span class="o">=</span> <span class="n">parse_single_requirement</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">requirement</span><span class="p">))</span>
+            <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">dict_req</span><span class="o">.</span><span class="n">iterkeys</span><span class="p">():</span>
+                <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">atts</span><span class="p">:</span>
+                    <span class="k">break</span>
+                <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">dict_req</span><span class="p">[</span><span class="n">key</span><span class="p">])</span> <span class="o">==</span> <span class="nb">type</span><span class="p">(</span><span class="nb">str</span><span class="p">()):</span>
+                    <span class="n">dict_retval</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">dict_req</span><span class="p">[</span><span class="n">key</span><span class="p">])</span>
+                <span class="k">elif</span> <span class="nb">type</span><span class="p">(</span><span class="n">dict_req</span><span class="p">[</span><span class="n">key</span><span class="p">])</span> <span class="o">==</span> <span class="nb">type</span><span class="p">(</span><span class="nb">list</span><span class="p">()):</span>
+                    <span class="n">dict_retval</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">|=</span> <span class="nb">set</span><span class="p">(</span><span class="n">dict_req</span><span class="p">[</span><span class="n">key</span><span class="p">])</span>
+
+    <span class="c"># convert to list</span>
+    <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">dict_retval</span><span class="o">.</span><span class="n">iterkeys</span><span class="p">():</span>
+        <span class="n">dict_retval</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">dict_retval</span><span class="p">[</span><span class="n">key</span><span class="p">])</span>
+    <span class="k">return</span> <span class="n">dict_retval</span>
+
+</div>
+<div class="viewcode-block" id="get_dict_doc_func"><a class="viewcode-back" href="../../../api-docs/safe/impact_functions/core.html#safe.impact_functions.core.get_dict_doc_func">[docs]</a><span class="k">def</span> <span class="nf">get_dict_doc_func</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Collect all doc string of func and return a beatiuful format of them</span>
+<span class="sd">    in a dictionary format.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            * func : name of function</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            * Dictionary contains:</span>
+<span class="sd">                synopsis : string (first line)</span>
+<span class="sd">                author : string (identified by :author)</span>
+<span class="sd">                rating : integer (identified by :rating)</span>
+<span class="sd">                param_req : list of param (identified by :param requires)</span>
+<span class="sd">                detail : detail description (identified by :detail)</span>
+<span class="sd">                citation : list of citation in string (identified by :citation)</span>
+<span class="sd">                limitation : string (identified by :limitation)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">retval</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;synopsis&#39;</span><span class="p">:</span> <span class="s">&#39;&#39;</span><span class="p">,</span>
+              <span class="s">&#39;author&#39;</span><span class="p">:</span> <span class="s">&#39;&#39;</span><span class="p">,</span>
+              <span class="s">&#39;rating&#39;</span><span class="p">:</span> <span class="s">&#39;&#39;</span><span class="p">,</span>
+              <span class="s">&#39;param_req&#39;</span><span class="p">:</span> <span class="p">[],</span>
+              <span class="s">&#39;detail&#39;</span><span class="p">:</span> <span class="s">&#39;&#39;</span><span class="p">,</span>
+              <span class="s">&#39;citation&#39;</span><span class="p">:</span> <span class="p">[],</span>
+              <span class="s">&#39;limitaion&#39;</span><span class="p">:</span> <span class="s">&#39;&#39;</span><span class="p">}</span>
+
+    <span class="n">plugins_dict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">([(</span><span class="n">pretty_function_name</span><span class="p">(</span><span class="n">p</span><span class="p">),</span> <span class="n">p</span><span class="p">)</span>
+                         <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">FunctionProvider</span><span class="o">.</span><span class="n">plugins</span><span class="p">])</span>
+    <span class="k">if</span> <span class="n">func</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">plugins_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+        <span class="k">return</span> <span class="n">retval</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">func</span> <span class="o">=</span> <span class="n">plugins_dict</span><span class="p">[</span><span class="n">func</span><span class="p">]</span>
+
+    <span class="n">author_tag</span> <span class="o">=</span> <span class="s">&#39;:author&#39;</span>
+    <span class="n">rating_tag</span> <span class="o">=</span> <span class="s">&#39;:rating&#39;</span>
+    <span class="n">param_req_tag</span> <span class="o">=</span> <span class="s">&#39;:param requires&#39;</span>
+    <span class="n">detail_tag</span> <span class="o">=</span> <span class="s">&#39;:detail&#39;</span>
+    <span class="n">citation_tag</span> <span class="o">=</span> <span class="s">&#39;:citation&#39;</span>
+    <span class="n">limitation_tag</span> <span class="o">=</span> <span class="s">&#39;:limitation&#39;</span>
+
+    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="s">&#39;__doc__&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">func</span><span class="o">.</span><span class="n">__doc__</span><span class="p">:</span>
+        <span class="n">doc_str</span> <span class="o">=</span> <span class="n">func</span><span class="o">.</span><span class="n">__doc__</span>
+        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">doc_str</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span><span class="p">):</span>
+            <span class="n">doc_line</span> <span class="o">=</span> <span class="n">remove_double_spaces</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+            <span class="n">doc_line</span> <span class="o">=</span> <span class="n">doc_line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+
+            <span class="k">if</span> <span class="n">doc_line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">author_tag</span><span class="p">):</span>
+                <span class="n">retval</span><span class="p">[</span><span class="s">&#39;author&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">doc_line</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">author_tag</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">:]</span>
+            <span class="k">elif</span> <span class="n">doc_line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">rating_tag</span><span class="p">):</span>
+                <span class="n">retval</span><span class="p">[</span><span class="s">&#39;rating&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">doc_line</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">rating_tag</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">:])</span>
+            <span class="k">elif</span> <span class="n">doc_line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">detail_tag</span><span class="p">):</span>
+                <span class="n">retval</span><span class="p">[</span><span class="s">&#39;detail&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">doc_line</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">detail_tag</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">:]</span>
+            <span class="k">elif</span> <span class="n">doc_line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">limitation_tag</span><span class="p">):</span>
+                <span class="n">retval</span><span class="p">[</span><span class="s">&#39;limitation&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">doc_line</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">limitation_tag</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">:]</span>
+            <span class="k">elif</span> <span class="n">doc_line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">param_req_tag</span><span class="p">):</span>
+                <span class="n">retval</span><span class="p">[</span><span class="s">&#39;param_req&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">doc_line</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">param_req_tag</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">:])</span>
+            <span class="k">elif</span> <span class="n">doc_line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">citation_tag</span><span class="p">):</span>
+                <span class="n">retval</span><span class="p">[</span><span class="s">&#39;citation&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">doc_line</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">citation_tag</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">:])</span>
+
+        <span class="n">retval</span><span class="p">[</span><span class="s">&#39;synopsis&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">remove_double_spaces</span><span class="p">(</span><span class="n">doc_str</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>
+
+    <span class="k">return</span> <span class="n">retval</span></div>
 </pre></div>
 
           </div>
@@ -681,7 +867,8 @@
 
     <div class="footer">
         &copy; Copyright 2012, BNPB/AIFDR/GFDRR.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+      Last updated on Oct 18, 2012.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
     </div>
     <!-- cloud_sptheme 1.3 -->
   </body>
