@@ -4,17 +4,14 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
-
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>safe_qgis.utilities &mdash; InaSAFE 0.5.1-final documentation</title>
-    
+    <title>safe_qgis.utilities &mdash; InaSAFE v0.5.1-final documentation</title>
     <link rel="stylesheet" href="../../_static/cloud.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-    <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Noticia+Text|Droid+Sans+Mono" type="text/css" />
-    
+    <link rel="stylesheet" href="../../http://fonts.googleapis.com/css?family=Noticia+Text|Droid+Sans+Mono" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
@@ -30,7 +27,7 @@
     <script type="text/javascript" src="../../_static/jquery.cookie.js"></script>
     <script type="text/javascript" src="../../_static/toggle_sections.js"></script>
     <link rel="shortcut icon" href="../../_static/favicon.ico"/>
-    <link rel="top" title="InaSAFE 0.5.1-final documentation" href="../../index.html" />
+    <link rel="top" title="InaSAFE v0.5.1-final documentation" href="../../index.html" />
     <link rel="up" title="Module code" href="../index.html" /> 
   </head>
   <body>
@@ -80,7 +77,6 @@
 <span class="n">__copyright__</span> <span class="o">=</span> <span class="s">&#39;Copyright 2012, Australia Indonesia Facility for &#39;</span>
 <span class="n">__copyright__</span> <span class="o">+=</span> <span class="s">&#39;Disaster Reduction&#39;</span>
 
-<span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">sys</span>
 <span class="kn">import</span> <span class="nn">traceback</span>
 <span class="kn">import</span> <span class="nn">logging</span>
@@ -88,7 +84,6 @@
 
 <span class="kn">from</span> <span class="nn">PyQt4</span> <span class="kn">import</span> <span class="n">QtCore</span><span class="p">,</span> <span class="n">QtGui</span>
 <span class="kn">from</span> <span class="nn">PyQt4.QtCore</span> <span class="kn">import</span> <span class="n">QCoreApplication</span>
-
 <span class="kn">from</span> <span class="nn">qgis.core</span> <span class="kn">import</span> <span class="p">(</span><span class="n">QGis</span><span class="p">,</span>
                        <span class="n">QgsRasterLayer</span><span class="p">,</span>
                        <span class="n">QgsMapLayer</span><span class="p">,</span>
@@ -101,16 +96,14 @@
                        <span class="n">QgsColorRampShader</span><span class="p">,</span>
                        <span class="n">QgsRasterTransparency</span><span class="p">,</span>
                        <span class="p">)</span>
-
-<span class="kn">from</span> <span class="nn">safe_interface</span> <span class="kn">import</span> <span class="n">temp_dir</span>
 <span class="kn">from</span> <span class="nn">safe_qgis.exceptions</span> <span class="kn">import</span> <span class="n">StyleError</span><span class="p">,</span> <span class="n">MethodUnavailableError</span>
-
 <span class="c">#do not remove this even if it is marked as unused by your IDE</span>
 <span class="c">#resources are used by htmlfooter and header the comment will mark it unused</span>
 <span class="c">#for pylint</span>
 <span class="kn">import</span> <span class="nn">safe_qgis.resources</span>  <span class="c"># pylint: disable=W0611</span>
 
 <span class="n">LOGGER</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s">&#39;InaSAFE&#39;</span><span class="p">)</span>
+
 
 <div class="viewcode-block" id="setVectorStyle"><a class="viewcode-back" href="../../api-docs/safe_qgis/utilities.html#safe_qgis.utilities.setVectorStyle">[docs]</a><span class="k">def</span> <span class="nf">setVectorStyle</span><span class="p">(</span><span class="n">theQgisVectorLayer</span><span class="p">,</span> <span class="n">theStyle</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Set QGIS vector style based on InaSAFE style dictionary</span>
@@ -574,137 +567,27 @@
         <span class="n">myVersion</span> <span class="o">=</span> <span class="nb">unicode</span><span class="p">(</span><span class="n">QGis</span><span class="o">.</span><span class="n">qgisVersion</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
     <span class="n">myVersion</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">myVersion</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">myVersion</span>
-</div>
-<span class="k">try</span><span class="p">:</span>
-    <span class="c"># Available from qgis 1.8</span>
-    <span class="kn">from</span> <span class="nn">qgis.core</span> <span class="kn">import</span> <span class="n">QgsMessageLog</span>  <span class="c"># pylint: disable=E0611</span>
-<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
 
-    <span class="c"># Define vanilla version</span>
+</div>
+<span class="k">def</span> <span class="nf">logOnQgsMessageLog</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="n">tag</span><span class="o">=</span><span class="s">&#39;inaSAFE&#39;</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">qgisVersion</span><span class="p">()</span> <span class="o">&gt;=</span> <span class="mi">10800</span><span class="p">:</span>
+        <span class="c">#available from qgis 1.8</span>
+        <span class="kn">from</span> <span class="nn">qgis.core</span> <span class="kn">import</span> <span class="n">QgsMessageLog</span>
+        <span class="n">QgsMessageLog</span><span class="o">.</span><span class="n">logMessage</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">msg</span><span class="p">),</span> <span class="n">tag</span><span class="p">,</span> <span class="n">level</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">print</span> <span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">msg</span><span class="p">),</span> <span class="n">tag</span><span class="p">,</span> <span class="n">level</span><span class="p">)</span>
+
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="c">#available from qgis 1.8</span>
+    <span class="kn">from</span> <span class="nn">qgis.core</span> <span class="kn">import</span> <span class="n">QgsMessageLog</span>
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
     <span class="k">def</span> <span class="nf">logOnQgsMessageLog</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="n">tag</span><span class="o">=</span><span class="s">&#39;inaSAFE&#39;</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
         <span class="k">print</span> <span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">msg</span><span class="p">),</span> <span class="n">tag</span><span class="p">,</span> <span class="n">level</span><span class="p">)</span>
 <span class="k">else</span><span class="p">:</span>
-
-    <span class="c"># Use QGIS message log from versions &gt;= 1.8</span>
     <span class="k">def</span> <span class="nf">logOnQgsMessageLog</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="n">tag</span><span class="o">=</span><span class="s">&#39;inaSAFE&#39;</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
         <span class="n">QgsMessageLog</span><span class="o">.</span><span class="n">logMessage</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">msg</span><span class="p">),</span> <span class="n">tag</span><span class="p">,</span> <span class="n">level</span><span class="p">)</span>
 
-
-<span class="c"># TODO: move this to its own file? TS</span>
-<div class="viewcode-block" id="QgsLogHandler"><a class="viewcode-back" href="../../api-docs/safe_qgis/utilities.html#safe_qgis.utilities.QgsLogHandler">[docs]</a><span class="k">class</span> <span class="nc">QgsLogHandler</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">Handler</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;A logging handler that will log messages to the QGIS logging console.&quot;&quot;&quot;</span>
-
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="n">logging</span><span class="o">.</span><span class="n">NOTSET</span><span class="p">):</span>
-        <span class="n">logging</span><span class="o">.</span><span class="n">Handler</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
-
-<div class="viewcode-block" id="QgsLogHandler.emit"><a class="viewcode-back" href="../../api-docs/safe_qgis/utilities.html#safe_qgis.utilities.QgsLogHandler.emit">[docs]</a>    <span class="k">def</span> <span class="nf">emit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">theRecord</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Try to log the message to QGIS if available, otherwise do nothing.</span>
-
-<span class="sd">        Args:</span>
-<span class="sd">            theRecord: logging record containing whatever info needs to be</span>
-<span class="sd">                logged.</span>
-<span class="sd">        Returns:</span>
-<span class="sd">            None</span>
-<span class="sd">        Raises:</span>
-<span class="sd">            None</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">try</span><span class="p">:</span>
-            <span class="c">#available from qgis 1.8</span>
-            <span class="kn">from</span> <span class="nn">qgis.core</span> <span class="kn">import</span> <span class="n">QgsMessageLog</span>
-            <span class="c"># Check logging.LogRecord properties for lots of other goodies</span>
-            <span class="c"># like line number etc. you can get from the log message.</span>
-            <span class="n">QgsMessageLog</span><span class="o">.</span><span class="n">logMessage</span><span class="p">(</span><span class="n">theRecord</span><span class="o">.</span><span class="n">getMessage</span><span class="p">(),</span> <span class="s">&#39;InaSAFE&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
-
-        <span class="k">except</span> <span class="n">MethodUnavailableError</span><span class="p">:</span>
-            <span class="k">pass</span>
-</div></div>
-<div class="viewcode-block" id="setup_logger"><a class="viewcode-back" href="../../api-docs/safe_qgis/utilities.html#safe_qgis.utilities.setup_logger">[docs]</a><span class="k">def</span> <span class="nf">setup_logger</span><span class="p">():</span>
-    <span class="sd">&quot;&quot;&quot;Run once when the module is loaded and enable logging</span>
-
-<span class="sd">    Args: None</span>
-
-<span class="sd">    Returns: None</span>
-
-<span class="sd">    Raises: None</span>
-
-<span class="sd">    Borrowed heavily from this:</span>
-<span class="sd">    http://docs.python.org/howto/logging-cookbook.html</span>
-
-<span class="sd">    Use this to first initialise the logger (see safe/__init__.py)::</span>
-
-<span class="sd">       from safe_qgis import utilities</span>
-<span class="sd">       utilities.setupLogger()</span>
-
-<span class="sd">    You would typically only need to do the above once ever as the</span>
-<span class="sd">    safe modle is initialised early and will set up the logger</span>
-<span class="sd">    globally so it is available to all packages / subpackages as</span>
-<span class="sd">    shown below.</span>
-
-<span class="sd">    In a module that wants to do logging then use this example as</span>
-<span class="sd">    a guide to get the initialised logger instance::</span>
-
-<span class="sd">       # The LOGGER is intialised in utilities.py by init</span>
-<span class="sd">       import logging</span>
-<span class="sd">       LOGGER = logging.getLogger(&#39;InaSAFE&#39;)</span>
-
-<span class="sd">    Now to log a message do::</span>
-
-<span class="sd">       LOGGER.debug(&#39;Some debug message&#39;)</span>
-
-<span class="sd">    .. note:: The file logs are written to the inasafe user tmp dir e.g.:</span>
-<span class="sd">       /tmp/inasafe/23-08-2012/timlinux/logs/inasafe.log</span>
-
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">myLogger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s">&#39;InaSAFE&#39;</span><span class="p">)</span>
-    <span class="n">myLogger</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">DEBUG</span><span class="p">)</span>
-    <span class="c"># create syslog handler which logs even debug messages</span>
-    <span class="c"># (ariel): Make this log to /var/log/safe.log instead of</span>
-    <span class="c">#               /var/log/syslog</span>
-    <span class="c"># (Tim) Ole and I discussed this - we prefer to log into the</span>
-    <span class="c"># user&#39;s temporary working directory.</span>
-    <span class="n">myTempDir</span> <span class="o">=</span> <span class="n">temp_dir</span><span class="p">(</span><span class="s">&#39;logs&#39;</span><span class="p">)</span>
-    <span class="n">myFilename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">myTempDir</span><span class="p">,</span> <span class="s">&#39;inasafe.log&#39;</span><span class="p">)</span>
-    <span class="n">myFileHandler</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">FileHandler</span><span class="p">(</span><span class="n">myFilename</span><span class="p">)</span>
-    <span class="n">myFileHandler</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">DEBUG</span><span class="p">)</span>
-    <span class="c"># create console handler with a higher log level</span>
-    <span class="n">myConsoleHandler</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">StreamHandler</span><span class="p">()</span>
-    <span class="n">myConsoleHandler</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">ERROR</span><span class="p">)</span>
-
-    <span class="n">myQgisHandler</span> <span class="o">=</span> <span class="n">QgsLogHandler</span><span class="p">()</span>
-    <span class="n">myFileHandler</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">DEBUG</span><span class="p">)</span>
-
-    <span class="c"># TODO: User opt in before we enable email based logging.</span>
-    <span class="c"># Email handler for errors</span>
-    <span class="c">#myEmailServer = &#39;localhost&#39;</span>
-    <span class="c">#myEmailServerPort = 25</span>
-    <span class="c">#mySenderAddress = &#39;logs@inasafe.org&#39;</span>
-    <span class="c">#myRecipientAddresses = [&#39;tim@linfiniti.com&#39;]</span>
-    <span class="c">#mySubject = &#39;Error&#39;</span>
-    <span class="c">#myEmailHandler = logging.handlers.SMTPHandler(</span>
-    <span class="c">#    (myEmailServer, myEmailServerPort),</span>
-    <span class="c">#                                      mySenderAddress,</span>
-    <span class="c">#                                      myRecipientAddresses,</span>
-    <span class="c">#                                      mySubject)</span>
-    <span class="c">#myEmailHandler.setLevel(logging.ERROR)</span>
-
-
-    <span class="c"># create formatter and add it to the handlers</span>
-    <span class="n">myFormatter</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">Formatter</span><span class="p">(</span>
-        <span class="s">&#39;</span><span class="si">%(asctime)s</span><span class="s"> - </span><span class="si">%(name)s</span><span class="s"> - </span><span class="si">%(levelname)s</span><span class="s"> - </span><span class="si">%(message)s</span><span class="s">&#39;</span><span class="p">)</span>
-    <span class="n">myFileHandler</span><span class="o">.</span><span class="n">setFormatter</span><span class="p">(</span><span class="n">myFormatter</span><span class="p">)</span>
-    <span class="n">myConsoleHandler</span><span class="o">.</span><span class="n">setFormatter</span><span class="p">(</span><span class="n">myFormatter</span><span class="p">)</span>
-    <span class="c">#myEmailHandler.setFormatter(myFormatter)</span>
-    <span class="n">myQgisHandler</span><span class="o">.</span><span class="n">setFormatter</span><span class="p">(</span><span class="n">myFormatter</span><span class="p">)</span>
-
-    <span class="c"># add the handlers to the logger</span>
-    <span class="n">myLogger</span><span class="o">.</span><span class="n">addHandler</span><span class="p">(</span><span class="n">myFileHandler</span><span class="p">)</span>
-    <span class="n">myLogger</span><span class="o">.</span><span class="n">addHandler</span><span class="p">(</span><span class="n">myConsoleHandler</span><span class="p">)</span>
-    <span class="c">#myLogger.addHandler(myEmailHandler)</span>
-    <span class="n">myLogger</span><span class="o">.</span><span class="n">addHandler</span><span class="p">(</span><span class="n">myQgisHandler</span><span class="p">)</span>
-
-    <span class="n">myLogger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&#39;Safe Logger Module Loaded&#39;</span><span class="p">)</span>
-    <span class="n">myLogger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&#39;----------------------&#39;</span><span class="p">)</span>
-    <span class="n">myLogger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&#39;CWD: </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">curdir</span><span class="p">))</span>
 
 <span class="c">#def copyInMemory(vLayer, copyName=&#39;&#39;):</span>
 <span class="c">#    &quot;&quot;&quot;Return a memory copy of a layer</span>
@@ -848,7 +731,7 @@
 <span class="c">#        mySourceQml = os.path.join(mySourceQmlPath, &#39;%s.qml&#39; % theFileName)</span>
 <span class="c">#        shutil.copyfile(mySourceQml, myQmlPath)</span>
 <span class="c">#</span>
-<span class="c">#    return myOutputFile</span></div>
+<span class="c">#    return myOutputFile</span>
 </pre></div>
 
           </div>
@@ -862,7 +745,7 @@
 <div id="searchbox" style="display: none">
   <h3>Quick search</h3>
     <form class="search" action="../../search.html" method="get">
-      <input type="text" name="q" />
+      <input type="text" name="q" size="18" />
       <input type="submit" value="Go" />
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
@@ -897,8 +780,8 @@
 
     <div class="footer">
         &copy; Copyright 2012, BNPB/AIFDR/GFDRR.
-      Last updated on Oct 18, 2012.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+      Last updated on Oct 20, 2012.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.1.
     </div>
     <!-- cloud_sptheme 1.3 -->
   </body>

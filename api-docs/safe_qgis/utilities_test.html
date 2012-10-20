@@ -4,17 +4,14 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
-
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Module: safe_qgis.utilities_test &mdash; InaSAFE 0.5.1-final documentation</title>
-    
+    <title>Module: safe_qgis.utilities_test &mdash; InaSAFE v0.5.1-final documentation</title>
     <link rel="stylesheet" href="../../_static/cloud.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-    <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Noticia+Text|Droid+Sans+Mono" type="text/css" />
-    
+    <link rel="stylesheet" href="../../http://fonts.googleapis.com/css?family=Noticia+Text|Droid+Sans+Mono" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
@@ -30,10 +27,10 @@
     <script type="text/javascript" src="../../_static/jquery.cookie.js"></script>
     <script type="text/javascript" src="../../_static/toggle_sections.js"></script>
     <link rel="shortcut icon" href="../../_static/favicon.ico"/>
-    <link rel="top" title="InaSAFE 0.5.1-final documentation" href="../../index.html" />
+    <link rel="top" title="InaSAFE v0.5.1-final documentation" href="../../index.html" />
     <link rel="up" title="Package::safe_qgis" href="../safe_qgis.html" />
-    <link rel="next" title="Module: safe_qgis.exceptions" href="exceptions.html" />
-    <link rel="prev" title="Module: safe_qgis.html_renderer" href="html_renderer.html" /> 
+    <link rel="next" title="Module: safe_qgis.safe_interface" href="safe_interface.html" />
+    <link rel="prev" title="Module: safe_qgis.impact_functions_doc" href="impact_functions_doc.html" /> 
   </head>
   <body>
     <div class="relbar-top">
@@ -48,10 +45,10 @@
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
         <li class="right" >
-          <a href="exceptions.html" title="Module: safe_qgis.exceptions"
+          <a href="safe_interface.html" title="Module: safe_qgis.safe_interface"
              accesskey="N">next</a> &nbsp; &nbsp;</li>
         <li class="right" >
-          <a href="html_renderer.html" title="Module: safe_qgis.html_renderer"
+          <a href="impact_functions_doc.html" title="Module: safe_qgis.impact_functions_doc"
              accesskey="P">previous</a> &nbsp; &nbsp;</li>
     <li><a href="../../index.html">Home</a> &raquo;</li>
     <li><a href="../../contents.html">Contents</a> &raquo;</li>
@@ -129,7 +126,6 @@ print(&#8216;Fubar&#8217;)</p>
 <dt>Returns:</dt>
 <dd>(bool, str, str) where:
 * bool is success or failure indicator
-* str is the file path of the resulting difference image
 * str is a message providing analysis comparison notes</dd>
 <dt>Raises:</dt>
 <dd>None</dd>
@@ -194,14 +190,14 @@ print(&#8216;Fubar&#8217;)</p>
 
 <dl class="function">
 <dt id="safe_qgis.utilities_test.loadLayer">
-<tt class="descclassname">safe_qgis.utilities_test.</tt><tt class="descname">loadLayer</tt><big>(</big><em>theLayerFile</em>, <em>theDirectory='/home/timlinux/dev/python/inasafe_data/test'</em><big>)</big><a class="reference internal" href="../../_modules/safe_qgis/utilities_test.html#loadLayer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe_qgis.utilities_test.loadLayer" title="Permalink to this definition">¶</a></dt>
+<tt class="descclassname">safe_qgis.utilities_test.</tt><tt class="descname">loadLayer</tt><big>(</big><em>theLayerFile</em>, <em>theDirectory='/home/nielso/sandpit/inasafe_data/test'</em><big>)</big><a class="reference internal" href="../../_modules/safe_qgis/utilities_test.html#loadLayer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe_qgis.utilities_test.loadLayer" title="Permalink to this definition">¶</a></dt>
 <dd><p>Helper to load and return a single QGIS layer</p>
 <dl class="docutils">
 <dt>Args:</dt>
 <dd><p class="first">theLayerFile: Pathname to raster or vector file
 DIR: Optional parameter stating the parent dir. If None,</p>
 <blockquote class="last">
-<div>pathname is assumed to be absolute</div></blockquote>
+pathname is assumed to be absolute</blockquote>
 </dd>
 </dl>
 <p>Returns: QgsMapLayer, str (for layer type)</p>
@@ -220,7 +216,7 @@ layers in geo crs</p>
 <dd><p>Helper to set the crs for the CANVAS before a test is run.</p>
 <p>Args:</p>
 <blockquote>
-<div><ul>
+<ul>
 <li><p class="first">theEpsgId  - Valid EPSG identifier (int)</p>
 </li>
 <li><dl class="first docutils">
@@ -230,7 +226,7 @@ layers in geo crs</p>
 </dl>
 </li>
 </ul>
-</div></blockquote>
+</blockquote>
 </dd></dl>
 
 <dl class="function">
@@ -296,11 +292,11 @@ testing and the datasets live in the same repo as the code.</p>
           <img class="logo" src="../../_static/icon.png" alt="Logo"/>
         </a></p>
   <h4>Previous topic</h4>
-  <p class="topless"><a href="html_renderer.html"
-                        title="previous chapter">Module:  safe_qgis.html_renderer</a></p>
+  <p class="topless"><a href="impact_functions_doc.html"
+                        title="previous chapter">Module:  safe_qgis.impact_functions_doc</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="exceptions.html"
-                        title="next chapter">Module:  safe_qgis.exceptions</a></p>
+  <p class="topless"><a href="safe_interface.html"
+                        title="next chapter">Module:  safe_qgis.safe_interface</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="../../_sources/api-docs/safe_qgis/utilities_test.txt"
@@ -309,7 +305,7 @@ testing and the datasets live in the same repo as the code.</p>
 <div id="searchbox" style="display: none">
   <h3>Quick search</h3>
     <form class="search" action="../../search.html" method="get">
-      <input type="text" name="q" />
+      <input type="text" name="q" size="18" />
       <input type="submit" value="Go" />
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
@@ -335,10 +331,10 @@ testing and the datasets live in the same repo as the code.</p>
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
         <li class="right" >
-          <a href="exceptions.html" title="Module: safe_qgis.exceptions"
+          <a href="safe_interface.html" title="Module: safe_qgis.safe_interface"
              >next</a> &nbsp; &nbsp;</li>
         <li class="right" >
-          <a href="html_renderer.html" title="Module: safe_qgis.html_renderer"
+          <a href="impact_functions_doc.html" title="Module: safe_qgis.impact_functions_doc"
              >previous</a> &nbsp; &nbsp;</li>
     <li><a href="../../index.html">Home</a> &raquo;</li>
     <li><a href="../../contents.html">Contents</a> &raquo;</li>
@@ -351,8 +347,8 @@ testing and the datasets live in the same repo as the code.</p>
 
     <div class="footer">
         &copy; Copyright 2012, BNPB/AIFDR/GFDRR.
-      Last updated on Oct 18, 2012.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+      Last updated on Oct 20, 2012.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.1.
     </div>
     <!-- cloud_sptheme 1.3 -->
   </body>

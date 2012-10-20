@@ -4,17 +4,14 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
-
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Module: safe_qgis.keyword_io &mdash; InaSAFE 0.5.1-final documentation</title>
-    
+    <title>Module: safe_qgis.keyword_io &mdash; InaSAFE v0.5.1-final documentation</title>
     <link rel="stylesheet" href="../../_static/cloud.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-    <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Noticia+Text|Droid+Sans+Mono" type="text/css" />
-    
+    <link rel="stylesheet" href="../../http://fonts.googleapis.com/css?family=Noticia+Text|Droid+Sans+Mono" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
@@ -30,10 +27,10 @@
     <script type="text/javascript" src="../../_static/jquery.cookie.js"></script>
     <script type="text/javascript" src="../../_static/toggle_sections.js"></script>
     <link rel="shortcut icon" href="../../_static/favicon.ico"/>
-    <link rel="top" title="InaSAFE 0.5.1-final documentation" href="../../index.html" />
+    <link rel="top" title="InaSAFE v0.5.1-final documentation" href="../../index.html" />
     <link rel="up" title="Package::safe_qgis" href="../safe_qgis.html" />
-    <link rel="next" title="Module: safe_qgis.qgis_interface" href="qgis_interface.html" />
-    <link rel="prev" title="Module: safe_qgis.dock_base" href="dock_base.html" /> 
+    <link rel="next" title="Module: safe_qgis.resources_rc" href="resources_rc.html" />
+    <link rel="prev" title="Module: safe_qgis.dock" href="dock.html" /> 
   </head>
   <body>
     <div class="relbar-top">
@@ -48,10 +45,10 @@
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
         <li class="right" >
-          <a href="qgis_interface.html" title="Module: safe_qgis.qgis_interface"
+          <a href="resources_rc.html" title="Module: safe_qgis.resources_rc"
              accesskey="N">next</a> &nbsp; &nbsp;</li>
         <li class="right" >
-          <a href="dock_base.html" title="Module: safe_qgis.dock_base"
+          <a href="dock.html" title="Module: safe_qgis.dock"
              accesskey="P">previous</a> &nbsp; &nbsp;</li>
     <li><a href="../../index.html">Home</a> &raquo;</li>
     <li><a href="../../contents.html">Contents</a> &raquo;</li>
@@ -86,7 +83,7 @@ library.</p>
 sqlite db used for supporting keywords for remote datasources.</p>
 <dl class="method">
 <dt id="safe_qgis.keyword_io.KeywordIO.appendKeywords">
-<tt class="descname">appendKeywords</tt><big>(</big><em>theLayer</em>, <em>theKeywords</em><big>)</big><a class="reference internal" href="../../_modules/safe_qgis/keyword_io.html#KeywordIO.appendKeywords"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe_qgis.keyword_io.KeywordIO.appendKeywords" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">appendKeywords</tt><big>(</big><em>theLayer</em>, <em>theKeywords</em><big>)</big><a class="headerlink" href="#safe_qgis.keyword_io.KeywordIO.appendKeywords" title="Permalink to this definition">¶</a></dt>
 <dd><p>Write keywords for a datasource.</p>
 <dl class="docutils">
 <dt>Args:</dt>
@@ -106,9 +103,9 @@ for the layer.</li>
 <dl class="method">
 <dt id="safe_qgis.keyword_io.KeywordIO.areKeywordsFileBased">
 <tt class="descname">areKeywordsFileBased</tt><big>(</big><em>theLayer</em><big>)</big><a class="reference internal" href="../../_modules/safe_qgis/keyword_io.html#KeywordIO.areKeywordsFileBased"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe_qgis.keyword_io.KeywordIO.areKeywordsFileBased" title="Permalink to this definition">¶</a></dt>
-<dd><p>Find out if keywords should be read/written to file or our keywords
-db.</p>
-<dl class="docutils">
+<dd><dl class="docutils">
+<dt>Find out if keywords should be read/written to file or our keywords</dt>
+<dd>db.</dd>
 <dt>Args:</dt>
 <dd><ul class="first last simple">
 <li>theLayer - A QGIS QgsMapLayer instance.</li>
@@ -241,12 +238,12 @@ record for the hash, the entire record will be erased.</p>
 </div>
 <p>Args:</p>
 <blockquote>
-<div><ul class="simple">
+<ul class="simple">
 <li>theUri -  a str representing a layer uri as parameter.
 .e.g. &#8216;dbname=&#8217;osm&#8217; host=localhost port=5432 user=&#8217;foo&#8217;
 password=&#8217;bar&#8217; sslmode=disable key=&#8217;id&#8217; srid=4326</li>
 </ul>
-</div></blockquote>
+</blockquote>
 <dl class="docutils">
 <dt>Returns:</dt>
 <dd>None</dd>
@@ -318,13 +315,13 @@ record it will be returned, if not and error will be thrown.</p>
 </div>
 <p>Args:</p>
 <blockquote>
-<div><ul class="simple">
+<ul class="simple">
 <li>theUri -  a str representing a layer uri as parameter.
 .e.g. &#8216;dbname=&#8217;osm&#8217; host=localhost port=5432 user=&#8217;foo&#8217;
 password=&#8217;bar&#8217; sslmode=disable key=&#8217;id&#8217; srid=4326</li>
 <li>keyword - optional - the metadata keyword to retrieve e.g. &#8216;title&#8217;</li>
 </ul>
-</div></blockquote>
+</blockquote>
 <dl class="docutils">
 <dt>Returns:</dt>
 <dd>A string containing the retrieved value for the keyword if
@@ -430,14 +427,14 @@ record it will be updated, if not, a new one will be created.</p>
 </div>
 <p>Args:</p>
 <blockquote>
-<div><ul class="simple">
+<ul class="simple">
 <li>theUri -  a str representing a layer uri as parameter.
 .e.g. &#8216;dbname=&#8217;osm&#8217; host=localhost port=5432 user=&#8217;foo&#8217;
 password=&#8217;bar&#8217; sslmode=disable key=&#8217;id&#8217; srid=4326</li>
 <li>keywords - mandatory - the metadata keyword to retrieve e.g.
 &#8216;title&#8217;</li>
 </ul>
-</div></blockquote>
+</blockquote>
 <dl class="docutils">
 <dt>Returns:</dt>
 <dd>A string containing the retrieved value for the keyword if
@@ -463,11 +460,11 @@ complete keywords dictionary is returned.</dd>
           <img class="logo" src="../../_static/icon.png" alt="Logo"/>
         </a></p>
   <h4>Previous topic</h4>
-  <p class="topless"><a href="dock_base.html"
-                        title="previous chapter">Module:  safe_qgis.dock_base</a></p>
+  <p class="topless"><a href="dock.html"
+                        title="previous chapter">Module:  safe_qgis.dock</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="qgis_interface.html"
-                        title="next chapter">Module:  safe_qgis.qgis_interface</a></p>
+  <p class="topless"><a href="resources_rc.html"
+                        title="next chapter">Module:  safe_qgis.resources_rc</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="../../_sources/api-docs/safe_qgis/keyword_io.txt"
@@ -476,7 +473,7 @@ complete keywords dictionary is returned.</dd>
 <div id="searchbox" style="display: none">
   <h3>Quick search</h3>
     <form class="search" action="../../search.html" method="get">
-      <input type="text" name="q" />
+      <input type="text" name="q" size="18" />
       <input type="submit" value="Go" />
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
@@ -502,10 +499,10 @@ complete keywords dictionary is returned.</dd>
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
         <li class="right" >
-          <a href="qgis_interface.html" title="Module: safe_qgis.qgis_interface"
+          <a href="resources_rc.html" title="Module: safe_qgis.resources_rc"
              >next</a> &nbsp; &nbsp;</li>
         <li class="right" >
-          <a href="dock_base.html" title="Module: safe_qgis.dock_base"
+          <a href="dock.html" title="Module: safe_qgis.dock"
              >previous</a> &nbsp; &nbsp;</li>
     <li><a href="../../index.html">Home</a> &raquo;</li>
     <li><a href="../../contents.html">Contents</a> &raquo;</li>
@@ -518,8 +515,8 @@ complete keywords dictionary is returned.</dd>
 
     <div class="footer">
         &copy; Copyright 2012, BNPB/AIFDR/GFDRR.
-      Last updated on Oct 18, 2012.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+      Last updated on Oct 20, 2012.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.1.
     </div>
     <!-- cloud_sptheme 1.3 -->
   </body>

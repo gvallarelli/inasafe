@@ -4,17 +4,14 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
-
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>safe_qgis.plugin &mdash; InaSAFE 0.5.1-final documentation</title>
-    
+    <title>safe_qgis.plugin &mdash; InaSAFE v0.5.1-final documentation</title>
     <link rel="stylesheet" href="../../_static/cloud.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-    <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Noticia+Text|Droid+Sans+Mono" type="text/css" />
-    
+    <link rel="stylesheet" href="../../http://fonts.googleapis.com/css?family=Noticia+Text|Droid+Sans+Mono" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
@@ -30,7 +27,7 @@
     <script type="text/javascript" src="../../_static/jquery.cookie.js"></script>
     <script type="text/javascript" src="../../_static/toggle_sections.js"></script>
     <link rel="shortcut icon" href="../../_static/favicon.ico"/>
-    <link rel="top" title="InaSAFE 0.5.1-final documentation" href="../../index.html" />
+    <link rel="top" title="InaSAFE v0.5.1-final documentation" href="../../index.html" />
     <link rel="up" title="Module code" href="../index.html" /> 
   </head>
   <body>
@@ -93,7 +90,15 @@
                           <span class="n">QVariant</span><span class="p">)</span>
 <span class="kn">from</span> <span class="nn">PyQt4.QtGui</span> <span class="kn">import</span> <span class="n">QAction</span><span class="p">,</span> <span class="n">QIcon</span><span class="p">,</span> <span class="n">QApplication</span>
 <span class="kn">from</span> <span class="nn">safe_qgis.exceptions</span> <span class="kn">import</span> <span class="n">TranslationLoadException</span>
-<span class="kn">import</span> <span class="nn">utilities</span>
+
+
+<span class="c"># See if we can import pydev - see development docs for details</span>
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">pydevd</span> <span class="kn">import</span> <span class="o">*</span>  <span class="c"># pylint: disable=F0401</span>
+    <span class="k">print</span> <span class="s">&#39;Remote debugging is enabled.&#39;</span>
+    <span class="n">DEBUG</span> <span class="o">=</span> <span class="bp">True</span>
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+    <span class="k">print</span> <span class="s">&#39;Debugging was disabled&#39;</span>
 
 
 <div class="viewcode-block" id="Plugin"><a class="viewcode-back" href="../../api-docs/safe_qgis/plugin.html#safe_qgis.plugin.Plugin">[docs]</a><span class="k">class</span> <span class="nc">Plugin</span><span class="p">:</span>
@@ -126,7 +131,6 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">translator</span> <span class="o">=</span> <span class="bp">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">setupI18n</span><span class="p">()</span>
         <span class="c">#print self.tr(&#39;InaSAFE&#39;)</span>
-        <span class="n">utilities</span><span class="o">.</span><span class="n">setup_logger</span><span class="p">()</span>
 
 <div class="viewcode-block" id="Plugin.setupI18n"><a class="viewcode-back" href="../../api-docs/safe_qgis/plugin.html#safe_qgis.plugin.Plugin.setupI18n">[docs]</a>    <span class="k">def</span> <span class="nf">setupI18n</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">thePreferredLocale</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Setup internationalisation for the plugin.</span>
@@ -205,7 +209,6 @@
         <span class="c"># pylint: disable=W0201</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">actionDock</span> <span class="o">=</span> <span class="n">QAction</span><span class="p">(</span><span class="n">QIcon</span><span class="p">(</span><span class="s">&#39;:/plugins/inasafe/icon.png&#39;</span><span class="p">),</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">tr</span><span class="p">(</span><span class="s">&#39;Toggle InaSAFE Dock&#39;</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">iface</span><span class="o">.</span><span class="n">mainWindow</span><span class="p">())</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">actionDock</span><span class="o">.</span><span class="n">setObjectName</span><span class="p">(</span><span class="s">&#39;InaSAFEDockToggle&#39;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">actionDock</span><span class="o">.</span><span class="n">setStatusTip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tr</span><span class="p">(</span>
                             <span class="s">&#39;Show/hide InaSAFE dock widget&#39;</span><span class="p">))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">actionDock</span><span class="o">.</span><span class="n">setWhatsThis</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tr</span><span class="p">(</span>
@@ -303,11 +306,11 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">dockWidget</span> <span class="o">=</span> <span class="n">Dock</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">iface</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">iface</span><span class="o">.</span><span class="n">addDockWidget</span><span class="p">(</span><span class="n">Qt</span><span class="o">.</span><span class="n">LeftDockWidgetArea</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dockWidget</span><span class="p">)</span>
         <span class="n">myLegendTab</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">iface</span><span class="o">.</span><span class="n">mainWindow</span><span class="p">()</span><span class="o">.</span><span class="n">findChild</span><span class="p">(</span><span class="n">QApplication</span><span class="p">,</span> <span class="s">&#39;Legend&#39;</span><span class="p">)</span>
-
         <span class="k">if</span> <span class="n">myLegendTab</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">iface</span><span class="o">.</span><span class="n">mainWindow</span><span class="p">()</span><span class="o">.</span><span class="n">tabifyDockWidget</span><span class="p">(</span>
                                             <span class="n">myLegendTab</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dockWidget</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">dockWidget</span><span class="o">.</span><span class="n">raise_</span><span class="p">()</span>
+
         <span class="c">#</span>
         <span class="c"># Hook up a slot for when the current layer is changed</span>
         <span class="c">#</span>
@@ -525,7 +528,7 @@
 <div id="searchbox" style="display: none">
   <h3>Quick search</h3>
     <form class="search" action="../../search.html" method="get">
-      <input type="text" name="q" />
+      <input type="text" name="q" size="18" />
       <input type="submit" value="Go" />
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
@@ -560,8 +563,8 @@
 
     <div class="footer">
         &copy; Copyright 2012, BNPB/AIFDR/GFDRR.
-      Last updated on Oct 18, 2012.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+      Last updated on Oct 20, 2012.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.1.
     </div>
     <!-- cloud_sptheme 1.3 -->
   </body>

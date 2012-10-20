@@ -4,17 +4,14 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
-
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Postprocessors &mdash; InaSAFE 0.5.1-final documentation</title>
-    
+    <title>Post-processors &mdash; InaSAFE v0.5.1-final documentation</title>
     <link rel="stylesheet" href="../_static/cloud.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Noticia+Text|Droid+Sans+Mono" type="text/css" />
-    
+    <link rel="stylesheet" href="../http://fonts.googleapis.com/css?family=Noticia+Text|Droid+Sans+Mono" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
@@ -30,7 +27,7 @@
     <script type="text/javascript" src="../_static/jquery.cookie.js"></script>
     <script type="text/javascript" src="../_static/toggle_sections.js"></script>
     <link rel="shortcut icon" href="../_static/favicon.ico"/>
-    <link rel="top" title="InaSAFE 0.5.1-final documentation" href="../index.html" />
+    <link rel="top" title="InaSAFE v0.5.1-final documentation" href="../index.html" />
     <link rel="up" title="InaSAFE user documentation" href="index.html" />
     <link rel="next" title="Demo projects" href="inasafe_projects.html" />
     <link rel="prev" title="Impact Functions" href="impact_functions.html" /> 
@@ -67,46 +64,42 @@
         <div class="bodywrapper">
           <div class="body">
             
-  <div class="section" id="postprocessors">
-<h1>Postprocessors<a class="headerlink" href="#postprocessors" title="Permalink to this headline">¶</a></h1>
-<p>This document explains the purpose of postprocessors and lists the
-different available postprocessor and the requirements each has to be
+  <div class="section" id="post-processors">
+<h1>Post-processors<a class="headerlink" href="#post-processors" title="Permalink to this headline">¶</a></h1>
+<p>This document explains the purpose of post-processors and lists the
+different available post-processors and the requirements each has to be
 used effectively.</p>
-<div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">This document is still a work in progress.</p>
-</div>
-<div class="section" id="what-is-a-postprocessor">
-<h2>What is a postprocessor?<a class="headerlink" href="#what-is-a-postprocessor" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="what-is-a-post-processor">
+<h2>What is a post-processor?<a class="headerlink" href="#what-is-a-post-processor" title="Permalink to this headline">¶</a></h2>
 <p>A postprocessor is a function that takes the results from the impact function
 and calculates derivative indicators, for example if you have an affected
-population total, the Gender postprocessor will calculate gender specific
+population total, the <strong>Gender</strong> post-processor will calculate gender specific
 indicators such as additional nutritional requirements for pregnant women</p>
 </div>
-<div class="section" id="selecting-a-postprocessor">
-<h2>Selecting a postprocessor<a class="headerlink" href="#selecting-a-postprocessor" title="Permalink to this headline">¶</a></h2>
-<p>Postprocessors and their settings can be edited in the user configurable
-function parameters dialog.
-To disable a postprocessor simply  change the &#8220;&#8216;on&#8217;: True&#8221; to &#8220;&#8216;on&#8217;: False&#8221;.
+<div class="section" id="selecting-a-post-processor">
+<h2>Selecting a post-processor<a class="headerlink" href="#selecting-a-post-processor" title="Permalink to this headline">¶</a></h2>
+<p>Post-processors and their settings can be edited in the user configurable
+function parameters dialog. To disable a post-processor simply change the
+<em class="guilabel">Postprocessors</em> <tt class="samp docutils literal"><span class="pre">&quot;'on':</span> <span class="pre">True&quot;</span> <span class="pre">to</span> <span class="pre">&quot;'on':</span> <span class="pre">False&quot;</span></tt>.
 The same is valid for any other setting you might encounter there.
-If you don&#8217;t see a postprocessors field, it means that the impact function
+If you don&#8217;t see a post-processors field, it means that the impact function
 you are trying to use does not support any post processor</p>
 <div class="figure align-center">
-<img alt="../_images/postprocessor-config.png" src="../_images/postprocessor-config.png" />
+<img alt="../_images/postprocessor-config1.png" src="../_images/postprocessor-config1.png" />
 </div>
-<p>Each activated postprocessor will create an additional report in the dock and in
-the printout. If problems arise while post processing, the system will gracefully
-inform you and will skip postprocessing.</p>
+<p>Each activated post-processor will create an additional report in the dock and
+in the printout. If problems arise while post processing, the system will
+inform you and will skip post-processing.</p>
 </div>
-<div class="section" id="creating-postprocessors">
-<h2>Creating postprocessors<a class="headerlink" href="#creating-postprocessors" title="Permalink to this headline">¶</a></h2>
-<p>If you feel there is an important postprocessor which is missing, there are two
+<div class="section" id="creating-post-processors">
+<h2>Creating post-processors<a class="headerlink" href="#creating-post-processors" title="Permalink to this headline">¶</a></h2>
+<p>If you feel there is an important post-processor which is missing, there are two
 avenues you can follow:</p>
 <ul class="simple">
-<li>You can develop it yourself or with the aid of a programmer who has a good understanding
-of the python programming language.</li>
-<li>You can file a ticket on our <a class="reference external" href="https://github.com/AIFDR/inasafe/issues">issue tracking system</a>,
-and if time and resources allow we will implement it for you.</li>
+<li>You can develop it yourself or with the aid of a programmer who has a good
+understanding of the python programming language.</li>
+<li>You can file a ticket on our <a class="reference external" href="https://github.com/AIFDR/inasafe/issues">issue tracking system</a>, and if time and resources allow
+we will implement it for you.</li>
 </ul>
 </div>
 </div>
@@ -122,10 +115,10 @@ and if time and resources allow we will implement it for you.</li>
         </a></p>
   <h3><a href="../contents.html">Table Of Contents</a></h3>
   <ul>
-<li><a class="reference internal" href="#">Postprocessors</a><ul>
-<li><a class="reference internal" href="#what-is-a-postprocessor">What is a postprocessor?</a></li>
-<li><a class="reference internal" href="#selecting-a-postprocessor">Selecting a postprocessor</a></li>
-<li><a class="reference internal" href="#creating-postprocessors">Creating postprocessors</a></li>
+<li><a class="reference internal" href="#">Post-processors</a><ul>
+<li><a class="reference internal" href="#what-is-a-post-processor">What is a post-processor?</a></li>
+<li><a class="reference internal" href="#selecting-a-post-processor">Selecting a post-processor</a></li>
+<li><a class="reference internal" href="#creating-post-processors">Creating post-processors</a></li>
 </ul>
 </li>
 </ul>
@@ -144,7 +137,7 @@ and if time and resources allow we will implement it for you.</li>
 <div id="searchbox" style="display: none">
   <h3>Quick search</h3>
     <form class="search" action="../search.html" method="get">
-      <input type="text" name="q" />
+      <input type="text" name="q" size="18" />
       <input type="submit" value="Go" />
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
@@ -186,7 +179,7 @@ and if time and resources allow we will implement it for you.</li>
     <div class="footer">
         &copy; Copyright 2012, BNPB/AIFDR/GFDRR.
       Last updated on Oct 18, 2012.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.1.
     </div>
     <!-- cloud_sptheme 1.3 -->
   </body>

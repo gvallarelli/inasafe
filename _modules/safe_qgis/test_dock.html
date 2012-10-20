@@ -4,17 +4,14 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
-
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>safe_qgis.test_dock &mdash; InaSAFE 0.5.1-final documentation</title>
-    
+    <title>safe_qgis.test_dock &mdash; InaSAFE v0.5.1-final documentation</title>
     <link rel="stylesheet" href="../../_static/cloud.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-    <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Noticia+Text|Droid+Sans+Mono" type="text/css" />
-    
+    <link rel="stylesheet" href="../../http://fonts.googleapis.com/css?family=Noticia+Text|Droid+Sans+Mono" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
@@ -30,7 +27,7 @@
     <script type="text/javascript" src="../../_static/jquery.cookie.js"></script>
     <script type="text/javascript" src="../../_static/toggle_sections.js"></script>
     <link rel="shortcut icon" href="../../_static/favicon.ico"/>
-    <link rel="top" title="InaSAFE 0.5.1-final documentation" href="../../index.html" />
+    <link rel="top" title="InaSAFE v0.5.1-final documentation" href="../../index.html" />
     <link rel="up" title="Module code" href="../index.html" /> 
   </head>
   <body>
@@ -82,24 +79,18 @@
 <span class="kn">import</span> <span class="nn">unittest</span>
 <span class="kn">import</span> <span class="nn">sys</span>
 <span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">import</span> <span class="nn">logging</span>
-<span class="kn">from</span> <span class="nn">unittest</span> <span class="kn">import</span> <span class="n">expectedFailure</span>
 
-<span class="kn">from</span> <span class="nn">os.path</span> <span class="kn">import</span> <span class="n">join</span>
 <span class="c"># Add PARENT directory to path to make test aware of other modules</span>
-<span class="n">pardir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">__file__</span><span class="p">),</span> <span class="s">&#39;..&#39;</span><span class="p">))</span>
+<span class="n">pardir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">__file__</span><span class="p">),</span> <span class="s">&#39;..&#39;</span><span class="p">))</span>
 <span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pardir</span><span class="p">)</span>
 
+<span class="kn">from</span> <span class="nn">os.path</span> <span class="kn">import</span> <span class="n">join</span>
 <span class="kn">from</span> <span class="nn">PyQt4</span> <span class="kn">import</span> <span class="n">QtCore</span>
 <span class="kn">from</span> <span class="nn">PyQt4.QtTest</span> <span class="kn">import</span> <span class="n">QTest</span>
-
 <span class="kn">from</span> <span class="nn">qgis.core</span> <span class="kn">import</span> <span class="p">(</span><span class="n">QgsRasterLayer</span><span class="p">,</span>
-                       <span class="n">QgsVectorLayer</span><span class="p">,</span>
                        <span class="n">QgsMapLayerRegistry</span><span class="p">,</span>
                        <span class="n">QgsRectangle</span><span class="p">)</span>
-
-<span class="kn">from</span> <span class="nn">safe.common.testing</span> <span class="kn">import</span> <span class="n">HAZDATA</span><span class="p">,</span> <span class="n">EXPDATA</span><span class="p">,</span> <span class="n">TESTDATA</span><span class="p">,</span> <span class="n">UNITDATA</span>
-
+<span class="kn">from</span> <span class="nn">qgis.gui</span> <span class="kn">import</span> <span class="n">QgsMapCanvasLayer</span>
 <span class="kn">from</span> <span class="nn">safe_qgis.utilities_test</span> <span class="kn">import</span> <span class="p">(</span><span class="n">getQgisTestApp</span><span class="p">,</span>
                                 <span class="n">setCanvasCrs</span><span class="p">,</span>
                                 <span class="n">setPadangGeoExtent</span><span class="p">,</span>
@@ -116,7 +107,9 @@
 <span class="kn">from</span> <span class="nn">safe_qgis.utilities</span> <span class="kn">import</span> <span class="p">(</span><span class="n">setRasterStyle</span><span class="p">,</span>
                           <span class="n">qgisVersion</span><span class="p">)</span>
 
+<span class="kn">from</span> <span class="nn">unittest</span> <span class="kn">import</span> <span class="n">expectedFailure</span>
 
+<span class="kn">from</span> <span class="nn">safe.common.testing</span> <span class="kn">import</span> <span class="n">HAZDATA</span><span class="p">,</span> <span class="n">EXPDATA</span><span class="p">,</span> <span class="n">TESTDATA</span><span class="p">,</span> <span class="n">UNITDATA</span>
 <span class="c"># Retired impact function for characterisation (Ole)</span>
 <span class="c"># So ignore unused import errors for these? (Tim)</span>
 <span class="c"># pylint: disable=W0611</span>
@@ -125,7 +118,12 @@
 <span class="kn">from</span> <span class="nn">safe.engine.impact_functions_for_testing</span> <span class="kn">import</span> <span class="n">BNPB_earthquake_guidelines</span>
 <span class="c"># pylint: enable=W0611</span>
 
-<span class="n">LOGGER</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s">&#39;InaSAFE&#39;</span><span class="p">)</span>
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">pydevd</span> <span class="kn">import</span> <span class="o">*</span>  <span class="c"># pylint: disable=F0401</span>
+    <span class="k">print</span> <span class="s">&#39;Remote debugging is enabled.&#39;</span>
+    <span class="n">DEBUG</span> <span class="o">=</span> <span class="bp">True</span>
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">,</span> <span class="n">e</span><span class="p">:</span>
+    <span class="k">print</span> <span class="s">&#39;Debugging was disabled&#39;</span>
 
 <span class="n">QGISAPP</span><span class="p">,</span> <span class="n">CANVAS</span><span class="p">,</span> <span class="n">IFACE</span><span class="p">,</span> <span class="n">PARENT</span> <span class="o">=</span> <span class="n">getQgisTestApp</span><span class="p">()</span>
 <span class="n">DOCK</span> <span class="o">=</span> <span class="n">Dock</span><span class="p">(</span><span class="n">IFACE</span><span class="p">)</span>
@@ -215,8 +213,7 @@
 
 </div>
 <div class="viewcode-block" id="setupScenario"><a class="viewcode-back" href="../../api-docs/safe_qgis_tests/test_dock.html#safe_qgis.test_dock.setupScenario">[docs]</a><span class="k">def</span> <span class="nf">setupScenario</span><span class="p">(</span><span class="n">theHazard</span><span class="p">,</span> <span class="n">theExposure</span><span class="p">,</span> <span class="n">theFunction</span><span class="p">,</span> <span class="n">theFunctionId</span><span class="p">,</span>
-                  <span class="n">theOkButtonFlag</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">theAggregation</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
-                  <span class="n">theAggregationEnabledFlag</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+                  <span class="n">theOkButtonFlag</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">theAggregation</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Helper function to set the gui state to a given scenario.</span>
 
 <span class="sd">    Args:</span>
@@ -270,12 +267,6 @@
         <span class="k">if</span> <span class="n">myIndex</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">False</span><span class="p">,</span> <span class="n">myMessage</span>
         <span class="n">DOCK</span><span class="o">.</span><span class="n">cboAggregation</span><span class="o">.</span><span class="n">setCurrentIndex</span><span class="p">(</span><span class="n">myIndex</span><span class="p">)</span>
-
-    <span class="k">if</span> <span class="n">theAggregationEnabledFlag</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">DOCK</span><span class="o">.</span><span class="n">cboAggregation</span><span class="o">.</span><span class="n">isEnabled</span><span class="p">()</span> <span class="o">!=</span> <span class="n">theAggregationEnabledFlag</span><span class="p">:</span>
-            <span class="n">myMessage</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;The aggregation combobox should be </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span>
-                <span class="p">(</span><span class="s">&#39;enabled&#39;</span> <span class="k">if</span> <span class="n">theAggregationEnabledFlag</span> <span class="k">else</span> <span class="s">&#39;disabled&#39;</span><span class="p">))</span>
-            <span class="k">return</span> <span class="bp">False</span><span class="p">,</span> <span class="n">myMessage</span>
 
     <span class="c"># Check that layers and impact function are correct</span>
     <span class="n">myDict</span> <span class="o">=</span> <span class="n">getUiState</span><span class="p">(</span><span class="n">DOCK</span><span class="p">)</span>
@@ -351,11 +342,13 @@
     <span class="sd">&quot;&quot;&quot;Helper function to load layers as defined in a python list.&quot;&quot;&quot;</span>
     <span class="c"># First unload any layers that may already be loaded</span>
     <span class="k">if</span> <span class="n">theClearFlag</span><span class="p">:</span>
-        <span class="n">QgsMapLayerRegistry</span><span class="o">.</span><span class="n">instance</span><span class="p">()</span><span class="o">.</span><span class="n">removeAllMapLayers</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">myLayer</span> <span class="ow">in</span> <span class="n">QgsMapLayerRegistry</span><span class="o">.</span><span class="n">instance</span><span class="p">()</span><span class="o">.</span><span class="n">mapLayers</span><span class="p">():</span>
+            <span class="n">QgsMapLayerRegistry</span><span class="o">.</span><span class="n">instance</span><span class="p">()</span><span class="o">.</span><span class="n">removeMapLayer</span><span class="p">(</span><span class="n">myLayer</span><span class="p">)</span>
 
     <span class="c"># Now go ahead and load our layers</span>
     <span class="n">myExposureLayerCount</span> <span class="o">=</span> <span class="mi">0</span>
     <span class="n">myHazardLayerCount</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">myCanvasLayers</span> <span class="o">=</span> <span class="p">[]</span>
 
     <span class="c"># Now create our new layers</span>
     <span class="k">for</span> <span class="n">myFile</span> <span class="ow">in</span> <span class="n">theLayerList</span><span class="p">:</span>
@@ -365,14 +358,49 @@
             <span class="n">myHazardLayerCount</span> <span class="o">+=</span> <span class="mi">1</span>
         <span class="k">elif</span> <span class="n">myType</span> <span class="o">==</span> <span class="s">&#39;exposure&#39;</span><span class="p">:</span>
             <span class="n">myExposureLayerCount</span> <span class="o">+=</span> <span class="mi">1</span>
-        <span class="c"># Add layer to the registry (that QGis knows about) a slot</span>
-        <span class="c"># in qgis_interface will also ensure it gets added to the canvas</span>
+        <span class="c"># Add layer to the registry (that QGis knows about)</span>
         <span class="n">QgsMapLayerRegistry</span><span class="o">.</span><span class="n">instance</span><span class="p">()</span><span class="o">.</span><span class="n">addMapLayer</span><span class="p">(</span><span class="n">myLayer</span><span class="p">)</span>
 
+        <span class="c"># Create Map Canvas Layer Instance and add to list</span>
+        <span class="n">myCanvasLayers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">QgsMapCanvasLayer</span><span class="p">(</span><span class="n">myLayer</span><span class="p">))</span>
+
+    <span class="c"># Quickly add any existing CANVAS layers to our list first</span>
+    <span class="k">for</span> <span class="n">myLayer</span> <span class="ow">in</span> <span class="n">CANVAS</span><span class="o">.</span><span class="n">layers</span><span class="p">():</span>
+        <span class="n">myCanvasLayers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">QgsMapCanvasLayer</span><span class="p">(</span><span class="n">myLayer</span><span class="p">))</span>
+    <span class="c"># now load all these layers in the CANVAS</span>
+    <span class="n">CANVAS</span><span class="o">.</span><span class="n">setLayerSet</span><span class="p">(</span><span class="n">myCanvasLayers</span><span class="p">)</span>
     <span class="n">DOCK</span><span class="o">.</span><span class="n">getLayers</span><span class="p">()</span>
 
     <span class="c"># Add MCL&#39;s to the CANVAS</span>
     <span class="k">return</span> <span class="n">myHazardLayerCount</span><span class="p">,</span> <span class="n">myExposureLayerCount</span>
+
+
+<span class="c">#def loadLayer(theLayerFile):</span>
+<span class="c">#    &quot;&quot;&quot;Helper to load and return a single QGIS layer&quot;&quot;&quot;</span>
+<span class="c">#    # Extract basename and absolute path</span>
+<span class="c">#    myBaseName, myExt = os.path.splitext(theLayerFile)</span>
+<span class="c">#    myPath = os.path.join(TESTDATA, theLayerFile)</span>
+<span class="c">#    myKeywordPath = myPath[:-4] + &#39;.keywords&#39;</span>
+<span class="c">#    # Determine if layer is hazard or exposure</span>
+<span class="c">#    myKeywords = read_keywords(myKeywordPath)</span>
+<span class="c">#    myType = &#39;undefined&#39;</span>
+<span class="c">#    if &#39;category&#39; in myKeywords:</span>
+<span class="c">#        myType = myKeywords[&#39;category&#39;]</span>
+<span class="c">#    myMessage = &#39;Could not read %s&#39; % myKeywordPath</span>
+<span class="c">#    assert myKeywords is not None, myMessage#</span>
+<span class="c">#</span>
+<span class="c">#    # Create QGis Layer Instance</span>
+<span class="c">#    if myExt in [&#39;.asc&#39;, &#39;.tif&#39;]:</span>
+<span class="c">#        myLayer = QgsRasterLayer(myPath, myBaseName)</span>
+<span class="c">#    elif myExt in [&#39;.shp&#39;]:</span>
+<span class="c">#        myLayer = QgsVectorLayer(myPath, myBaseName, &#39;ogr&#39;)</span>
+<span class="c">#    else:</span>
+<span class="c">#        myMessage = &#39;File %s had illegal extension&#39; % myPath</span>
+<span class="c">#        raise Exception(myMessage)#</span>
+<span class="c">#</span>
+<span class="c">#    myMessage = &#39;Layer &quot;%s&quot; is not valid&#39; % str(myLayer.source())</span>
+<span class="c">#    assert myLayer.isValid(), myMessage</span>
+<span class="c">#    return myLayer, myType</span>
 
 </div>
 <div class="viewcode-block" id="DockTest"><a class="viewcode-back" href="../../api-docs/safe_qgis_tests/test_dock.html#safe_qgis.test_dock.DockTest">[docs]</a><span class="k">class</span> <span class="nc">DockTest</span><span class="p">(</span><span class="n">unittest</span><span class="o">.</span><span class="n">TestCase</span><span class="p">):</span>
@@ -390,7 +418,6 @@
         <span class="n">DOCK</span><span class="o">.</span><span class="n">setLayerNameFromTitleFlag</span> <span class="o">=</span> <span class="bp">False</span>
         <span class="n">DOCK</span><span class="o">.</span><span class="n">zoomToImpactFlag</span> <span class="o">=</span> <span class="bp">False</span>
         <span class="n">DOCK</span><span class="o">.</span><span class="n">hideExposureFlag</span> <span class="o">=</span> <span class="bp">False</span>
-        <span class="n">DOCK</span><span class="o">.</span><span class="n">showPostProcessingLayers</span> <span class="o">=</span> <span class="bp">False</span>
 </div>
 <div class="viewcode-block" id="DockTest.tearDown"><a class="viewcode-back" href="../../api-docs/safe_qgis_tests/test_dock.html#safe_qgis.test_dock.DockTest.tearDown">[docs]</a>    <span class="k">def</span> <span class="nf">tearDown</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Fixture run after each test&quot;&quot;&quot;</span>
@@ -457,8 +484,9 @@
 <div class="viewcode-block" id="DockTest.test_cboAggregationLoadedProject"><a class="viewcode-back" href="../../api-docs/safe_qgis_tests/test_dock.html#safe_qgis.test_dock.DockTest.test_cboAggregationLoadedProject">[docs]</a>    <span class="k">def</span> <span class="nf">test_cboAggregationLoadedProject</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 
         <span class="n">myLayerList</span> <span class="o">=</span> <span class="p">[</span><span class="n">DOCK</span><span class="o">.</span><span class="n">tr</span><span class="p">(</span><span class="s">&#39;No aggregation&#39;</span><span class="p">),</span>
-                       <span class="n">DOCK</span><span class="o">.</span><span class="n">tr</span><span class="p">(</span><span class="s">&#39;A flood in Jakarta&#39;</span><span class="p">),</span>
-                       <span class="n">DOCK</span><span class="o">.</span><span class="n">tr</span><span class="p">(</span><span class="s">&#39;Essential buildings&#39;</span><span class="p">),</span>
+                       <span class="n">DOCK</span><span class="o">.</span><span class="n">tr</span><span class="p">(</span><span class="s">&#39;A flood in Jakarta in RW areas identified as &#39;</span>
+                               <span class="s">&#39;flood prone&#39;</span><span class="p">),</span>
+                       <span class="n">DOCK</span><span class="o">.</span><span class="n">tr</span><span class="p">(</span><span class="s">&#39;DKI buildings&#39;</span><span class="p">),</span>
                        <span class="n">DOCK</span><span class="o">.</span><span class="n">tr</span><span class="p">(</span><span class="s">&#39;kabupaten jakarta singlepart&#39;</span><span class="p">),</span>
                        <span class="n">DOCK</span><span class="o">.</span><span class="n">tr</span><span class="p">(</span><span class="s">&#39;OSM Building Polygons&#39;</span><span class="p">)]</span>
         <span class="n">currentLayers</span> <span class="o">=</span> <span class="p">[</span><span class="n">DOCK</span><span class="o">.</span><span class="n">cboAggregation</span><span class="o">.</span><span class="n">itemText</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">DOCK</span>
@@ -468,8 +496,7 @@
                      <span class="o">%</span> <span class="p">(</span><span class="n">myLayerList</span><span class="p">,</span> <span class="n">currentLayers</span><span class="p">))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">assertEquals</span><span class="p">(</span><span class="n">currentLayers</span><span class="p">,</span> <span class="n">myLayerList</span><span class="p">,</span> <span class="n">myMessage</span><span class="p">)</span>
 
-    <span class="c">#FIXME (MB) this is actually wrong, when calling the test directly it works</span>
-    <span class="c"># in nosetest it fails at the second assert</span></div>
+    <span class="c">#FIXME (MB) this is actually wrong</span></div>
     <span class="nd">@expectedFailure</span>
 <div class="viewcode-block" id="DockTest.test_cboAggregationToggle"><a class="viewcode-back" href="../../api-docs/safe_qgis_tests/test_dock.html#safe_qgis.test_dock.DockTest.test_cboAggregationToggle">[docs]</a>    <span class="k">def</span> <span class="nf">test_cboAggregationToggle</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Aggregation Combobox toggles on and off as expected.&quot;&quot;&quot;</span>
@@ -479,21 +506,24 @@
             <span class="n">theHazard</span><span class="o">=</span><span class="s">&#39;A flood in Jakarta like in 2007&#39;</span><span class="p">,</span>
             <span class="n">theExposure</span><span class="o">=</span><span class="s">&#39;People&#39;</span><span class="p">,</span>
             <span class="n">theFunction</span><span class="o">=</span><span class="s">&#39;Need evacuation&#39;</span><span class="p">,</span>
-            <span class="n">theFunctionId</span><span class="o">=</span><span class="s">&#39;Flood Evacuation Function&#39;</span><span class="p">,</span>
-            <span class="n">theAggregationEnabledFlag</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
-        <span class="n">myMessage</span> <span class="o">+=</span> <span class="s">&#39; when the when hazard and exposure layer are raster&#39;</span>
+            <span class="n">theFunctionId</span><span class="o">=</span><span class="s">&#39;Flood Evacuation Function&#39;</span><span class="p">)</span>
         <span class="k">assert</span> <span class="n">myResult</span><span class="p">,</span> <span class="n">myMessage</span>
+
+        <span class="k">assert</span> <span class="n">DOCK</span><span class="o">.</span><span class="n">cboAggregation</span><span class="o">.</span><span class="n">isEnabled</span><span class="p">(),</span> <span class="s">&#39;The aggregation combobox &#39;</span> \
+                <span class="s">&#39;should be enabled when hazard and exposure layer are raster&#39;</span>
 
         <span class="c">#vector hazard</span>
         <span class="c">#raster exposure</span>
         <span class="n">myResult</span><span class="p">,</span> <span class="n">myMessage</span> <span class="o">=</span> <span class="n">setupScenario</span><span class="p">(</span>
-            <span class="n">theHazard</span><span class="o">=</span><span class="p">(</span><span class="s">&#39;A flood in Jakarta&#39;</span><span class="p">),</span>
+            <span class="n">theHazard</span><span class="o">=</span><span class="p">(</span><span class="s">&#39;A flood in Jakarta in RW areas identified&#39;</span>
+                       <span class="s">&#39; as flood prone&#39;</span><span class="p">),</span>
             <span class="n">theExposure</span><span class="o">=</span><span class="s">&#39;People&#39;</span><span class="p">,</span>
             <span class="n">theFunction</span><span class="o">=</span><span class="s">&#39;Need evacuation&#39;</span><span class="p">,</span>
-            <span class="n">theFunctionId</span><span class="o">=</span><span class="s">&#39;Flood Evacuation Function Vector Hazard&#39;</span><span class="p">,</span>
-            <span class="n">theAggregationEnabledFlag</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
-        <span class="n">myMessage</span> <span class="o">+=</span> <span class="s">&#39; when the when hazard is vector and exposure is raster&#39;</span>
+            <span class="n">theFunctionId</span><span class="o">=</span><span class="s">&#39;Flood Evacuation Function Vector Hazard&#39;</span><span class="p">)</span>
         <span class="k">assert</span> <span class="n">myResult</span><span class="p">,</span> <span class="n">myMessage</span>
+
+        <span class="k">assert</span> <span class="ow">not</span> <span class="n">DOCK</span><span class="o">.</span><span class="n">cboAggregation</span><span class="o">.</span><span class="n">isEnabled</span><span class="p">(),</span> <span class="s">&#39;The aggregation &#39;</span> \
+            <span class="s">&#39;combobox should be disabled when hazard layer is vectorial&#39;</span>
 
         <span class="c">#raster hazard</span>
         <span class="c">#vector exposure</span>
@@ -501,21 +531,25 @@
             <span class="n">theHazard</span><span class="o">=</span><span class="s">&#39;Tsunami Max Inundation&#39;</span><span class="p">,</span>
             <span class="n">theExposure</span><span class="o">=</span><span class="s">&#39;Tsunami Building Exposure&#39;</span><span class="p">,</span>
             <span class="n">theFunction</span><span class="o">=</span><span class="s">&#39;Be temporarily closed&#39;</span><span class="p">,</span>
-            <span class="n">theFunctionId</span><span class="o">=</span><span class="s">&#39;Flood Building Impact Function&#39;</span><span class="p">,</span>
-            <span class="n">theAggregationEnabledFlag</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
-        <span class="n">myMessage</span> <span class="o">+=</span> <span class="s">&#39; when the when hazard is raster and exposure is vector&#39;</span>
+            <span class="n">theFunctionId</span><span class="o">=</span><span class="s">&#39;Flood Building Impact Function&#39;</span><span class="p">)</span>
         <span class="k">assert</span> <span class="n">myResult</span><span class="p">,</span> <span class="n">myMessage</span>
+
+        <span class="k">assert</span> <span class="ow">not</span> <span class="n">DOCK</span><span class="o">.</span><span class="n">cboAggregation</span><span class="o">.</span><span class="n">isEnabled</span><span class="p">(),</span> <span class="s">&#39;The aggregation &#39;</span> \
+                <span class="s">&#39;combobox should be disabled when exposure layer is vectorial&#39;</span>
 
         <span class="c">#vector hazard</span>
         <span class="c">#vector exposure</span>
         <span class="n">myResult</span><span class="p">,</span> <span class="n">myMessage</span> <span class="o">=</span> <span class="n">setupScenario</span><span class="p">(</span>
-            <span class="n">theHazard</span><span class="o">=</span><span class="s">&#39;A flood in Jakarta&#39;</span><span class="p">,</span>
-            <span class="n">theExposure</span><span class="o">=</span><span class="s">&#39;Essential buildings&#39;</span><span class="p">,</span>
+            <span class="n">theHazard</span><span class="o">=</span><span class="s">&#39;A flood in Jakarta in RW areas identified&#39;</span>
+                      <span class="s">&#39; as flood prone&#39;</span><span class="p">,</span>
+            <span class="n">theExposure</span><span class="o">=</span><span class="s">&#39;DKI buildings&#39;</span><span class="p">,</span>
             <span class="n">theFunction</span><span class="o">=</span><span class="s">&#39;Be temporarily closed&#39;</span><span class="p">,</span>
-            <span class="n">theFunctionId</span><span class="o">=</span><span class="s">&#39;Flood Building Impact Function&#39;</span><span class="p">,</span>
-            <span class="n">theAggregationEnabledFlag</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
-        <span class="n">myMessage</span> <span class="o">+=</span> <span class="s">&#39; when the when hazard and exposure layer are vector&#39;</span>
+            <span class="n">theFunctionId</span><span class="o">=</span><span class="s">&#39;Flood Building Impact Function&#39;</span><span class="p">)</span>
         <span class="k">assert</span> <span class="n">myResult</span><span class="p">,</span> <span class="n">myMessage</span>
+
+        <span class="k">assert</span> <span class="ow">not</span> <span class="n">DOCK</span><span class="o">.</span><span class="n">cboAggregation</span><span class="o">.</span><span class="n">isEnabled</span><span class="p">(),</span> <span class="s">&#39;The aggregation &#39;</span> \
+                <span class="s">&#39;combobox should be disabled when hazard and exposure layer&#39;</span> \
+                <span class="s">&#39; are vectorial&#39;</span>
 </div>
     <span class="k">def</span> <span class="nf">test_checkAggregationAttribute</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">myRunButton</span> <span class="o">=</span> <span class="n">DOCK</span><span class="o">.</span><span class="n">pbnRunStop</span>
@@ -556,20 +590,20 @@
                      <span class="p">(</span><span class="n">DOCK</span><span class="o">.</span><span class="n">aggregationAttribute</span><span class="p">))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">DOCK</span><span class="o">.</span><span class="n">aggregationAttribute</span><span class="p">,</span> <span class="s">&#39;KAB_NAME&#39;</span><span class="p">,</span> <span class="n">myMessage</span><span class="p">)</span>
 
-        <span class="c">#TODO: MOVE to test_keywords_dialog.py</span>
         <span class="c"># with 3 good aggregation attribute using</span>
         <span class="c"># kabupaten_jakarta_singlepart_3_good_attr.shp</span>
-<span class="c">#        myResult, myMessage = setupScenario(</span>
-<span class="c">#            theHazard=&#39;A flood in Jakarta like in 2007&#39;,</span>
-<span class="c">#            theExposure=&#39;People&#39;,</span>
-<span class="c">#            theFunction=&#39;Need evacuation&#39;,</span>
-<span class="c">#            theFunctionId=&#39;Flood Evacuation Function&#39;,</span>
-<span class="c">#            theAggregation=&#39;kabupaten jakarta singlepart 3 good attr&#39;)</span>
-<span class="c">#        assert myResult, myMessage</span>
-<span class="c">#        # Press RUN</span>
+        <span class="n">myResult</span><span class="p">,</span> <span class="n">myMessage</span> <span class="o">=</span> <span class="n">setupScenario</span><span class="p">(</span>
+            <span class="n">theHazard</span><span class="o">=</span><span class="s">&#39;A flood in Jakarta like in 2007&#39;</span><span class="p">,</span>
+            <span class="n">theExposure</span><span class="o">=</span><span class="s">&#39;People&#39;</span><span class="p">,</span>
+            <span class="n">theFunction</span><span class="o">=</span><span class="s">&#39;Need evacuation&#39;</span><span class="p">,</span>
+            <span class="n">theFunctionId</span><span class="o">=</span><span class="s">&#39;Flood Evacuation Function&#39;</span><span class="p">,</span>
+            <span class="n">theAggregation</span><span class="o">=</span><span class="s">&#39;kabupaten jakarta singlepart 3 good attr&#39;</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">myResult</span><span class="p">,</span> <span class="n">myMessage</span>
+        <span class="c"># Press RUN</span>
 <span class="c">#        QTest.mouseClick(myRunButton, QtCore.Qt.LeftButton)</span>
 <span class="c">#        myMessage = (&#39;The aggregation should be TEST_INT. Found: %s&#39; %</span>
 <span class="c">#                     (DOCK.aggregationAttribute))</span>
+<span class="c">#        #TODO (MB) automate the selection of the second attribute in gui</span>
 <span class="c">#</span>
 <span class="c">#        self.assertEqual(DOCK.aggregationAttribute, &#39;TEST_INT&#39;, myMessage)</span>
 
@@ -602,46 +636,6 @@
         <span class="n">myMessage</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;The aggregation should be None. Found: </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span>
                      <span class="p">(</span><span class="n">DOCK</span><span class="o">.</span><span class="n">aggregationAttribute</span><span class="p">))</span>
         <span class="k">assert</span> <span class="n">DOCK</span><span class="o">.</span><span class="n">aggregationAttribute</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">,</span> <span class="n">myMessage</span>
-
-    <span class="k">def</span> <span class="nf">test_checkPostProcessingLayersVisibility</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="n">myRunButton</span> <span class="o">=</span> <span class="n">DOCK</span><span class="o">.</span><span class="n">pbnRunStop</span>
-
-        <span class="c"># with KAB_NAME aggregation attribute defined in .keyword using</span>
-        <span class="c"># kabupaten_jakarta_singlepart.shp</span>
-        <span class="n">myResult</span><span class="p">,</span> <span class="n">myMessage</span> <span class="o">=</span> <span class="n">setupScenario</span><span class="p">(</span>
-            <span class="n">theHazard</span><span class="o">=</span><span class="s">&#39;A flood in Jakarta like in 2007&#39;</span><span class="p">,</span>
-            <span class="n">theExposure</span><span class="o">=</span><span class="s">&#39;People&#39;</span><span class="p">,</span>
-            <span class="n">theFunction</span><span class="o">=</span><span class="s">&#39;Need evacuation&#39;</span><span class="p">,</span>
-            <span class="n">theFunctionId</span><span class="o">=</span><span class="s">&#39;Flood Evacuation Function&#39;</span><span class="p">,</span>
-            <span class="n">theAggregation</span><span class="o">=</span><span class="s">&#39;kabupaten jakarta singlepart&#39;</span><span class="p">,</span>
-            <span class="n">theOkButtonFlag</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
-        <span class="k">assert</span> <span class="n">myResult</span><span class="p">,</span> <span class="n">myMessage</span>
-        <span class="n">myBeforeCount</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">CANVAS</span><span class="o">.</span><span class="n">layers</span><span class="p">())</span>
-        <span class="c">#LOGGER.info(&quot;Canvas list before:\n%s&quot; % canvasList())</span>
-        <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;Registry list before:</span><span class="se">\n</span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span>
-                    <span class="nb">len</span><span class="p">(</span><span class="n">QgsMapLayerRegistry</span><span class="o">.</span><span class="n">instance</span><span class="p">()</span><span class="o">.</span><span class="n">mapLayers</span><span class="p">()))</span>
-        <span class="c"># Press RUN</span>
-        <span class="n">QTest</span><span class="o">.</span><span class="n">mouseClick</span><span class="p">(</span><span class="n">myRunButton</span><span class="p">,</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">LeftButton</span><span class="p">)</span>
-        <span class="n">myAfterCount</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">CANVAS</span><span class="o">.</span><span class="n">layers</span><span class="p">())</span>
-        <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;Registry list after:</span><span class="se">\n</span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span>
-                    <span class="nb">len</span><span class="p">(</span><span class="n">QgsMapLayerRegistry</span><span class="o">.</span><span class="n">instance</span><span class="p">()</span><span class="o">.</span><span class="n">mapLayers</span><span class="p">()))</span>
-        <span class="c">#LOGGER.info(&quot;Canvas list after:\n%s&quot; % canvasList())</span>
-        <span class="n">myMessage</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;Expected </span><span class="si">%s</span><span class="s"> items in canvas, got </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span>
-                     <span class="p">(</span><span class="n">myBeforeCount</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">myAfterCount</span><span class="p">))</span>
-        <span class="k">assert</span> <span class="n">myBeforeCount</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">==</span> <span class="n">myAfterCount</span><span class="p">,</span> <span class="n">myMessage</span>
-
-        <span class="c"># Now run again showing intermediate layers</span>
-
-        <span class="n">DOCK</span><span class="o">.</span><span class="n">showPostProcessingLayers</span> <span class="o">=</span> <span class="bp">True</span>
-        <span class="n">myBeforeCount</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">CANVAS</span><span class="o">.</span><span class="n">layers</span><span class="p">())</span>
-        <span class="c"># Press RUN</span>
-        <span class="n">QTest</span><span class="o">.</span><span class="n">mouseClick</span><span class="p">(</span><span class="n">myRunButton</span><span class="p">,</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">LeftButton</span><span class="p">)</span>
-        <span class="n">myAfterCount</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">CANVAS</span><span class="o">.</span><span class="n">layers</span><span class="p">())</span>
-        <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;Canvas list after:</span><span class="se">\n</span><span class="s"> </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">canvasList</span><span class="p">())</span>
-        <span class="n">myMessage</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;Expected </span><span class="si">%s</span><span class="s"> items in canvas, got </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span>
-                     <span class="p">(</span><span class="n">myBeforeCount</span> <span class="o">+</span> <span class="mi">2</span><span class="p">,</span> <span class="n">myAfterCount</span><span class="p">))</span>
-        <span class="c"># We expect two more since we enabled showing intermedate layers</span>
-        <span class="k">assert</span> <span class="n">myBeforeCount</span> <span class="o">+</span> <span class="mi">2</span> <span class="o">==</span> <span class="n">myAfterCount</span><span class="p">,</span> <span class="n">myMessage</span>
 
 <div class="viewcode-block" id="DockTest.test_runEarthQuakeGuidelinesFunction"><a class="viewcode-back" href="../../api-docs/safe_qgis_tests/test_dock.html#safe_qgis.test_dock.DockTest.test_runEarthQuakeGuidelinesFunction">[docs]</a>    <span class="k">def</span> <span class="nf">test_runEarthQuakeGuidelinesFunction</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;GUI runs with Shakemap 2009 and Padang Buildings&quot;&quot;&quot;</span>
@@ -831,7 +825,7 @@
         <span class="n">myResult</span><span class="p">,</span> <span class="n">myMessage</span> <span class="o">=</span> <span class="n">setupScenario</span><span class="p">(</span>
             <span class="n">theHazard</span><span class="o">=</span><span class="s">&#39;Tsunami Max Inundation&#39;</span><span class="p">,</span>
             <span class="n">theExposure</span><span class="o">=</span><span class="s">&#39;Tsunami Building Exposure&#39;</span><span class="p">,</span>
-            <span class="n">theFunction</span><span class="o">=</span><span class="s">&#39;Be flooded&#39;</span><span class="p">,</span>
+            <span class="n">theFunction</span><span class="o">=</span><span class="s">&#39;Be temporarily closed&#39;</span><span class="p">,</span>
             <span class="n">theFunctionId</span><span class="o">=</span><span class="s">&#39;Flood Building Impact Function&#39;</span><span class="p">)</span>
         <span class="k">assert</span> <span class="n">myResult</span><span class="p">,</span> <span class="n">myMessage</span>
 
@@ -921,7 +915,8 @@
 <span class="sd">           Uses population raster exposure layer&quot;&quot;&quot;</span>
 
         <span class="n">myResult</span><span class="p">,</span> <span class="n">myMessage</span> <span class="o">=</span> <span class="n">setupScenario</span><span class="p">(</span>
-            <span class="n">theHazard</span><span class="o">=</span><span class="p">(</span><span class="s">&#39;A flood in Jakarta&#39;</span><span class="p">),</span>
+            <span class="n">theHazard</span><span class="o">=</span><span class="p">(</span><span class="s">&#39;A flood in Jakarta in RW areas identified&#39;</span>
+                      <span class="s">&#39; as flood prone&#39;</span><span class="p">),</span>
             <span class="n">theExposure</span><span class="o">=</span><span class="s">&#39;Penduduk Jakarta&#39;</span><span class="p">,</span>
             <span class="n">theFunction</span><span class="o">=</span><span class="s">&#39;Need evacuation&#39;</span><span class="p">,</span>
             <span class="n">theFunctionId</span><span class="o">=</span><span class="s">&#39;Flood Evacuation Function Vector Hazard&#39;</span><span class="p">)</span>
@@ -946,7 +941,7 @@
 
         <span class="n">myResult</span><span class="p">,</span> <span class="n">myMessage</span> <span class="o">=</span> <span class="n">setupScenario</span><span class="p">(</span>
             <span class="n">theHazard</span><span class="o">=</span><span class="s">&#39;Flood in Jakarta&#39;</span><span class="p">,</span>
-            <span class="n">theExposure</span><span class="o">=</span><span class="s">&#39;Essential buildings&#39;</span><span class="p">,</span>
+            <span class="n">theExposure</span><span class="o">=</span><span class="s">&#39;DKI buildings&#39;</span><span class="p">,</span>
             <span class="n">theFunction</span><span class="o">=</span><span class="s">&#39;Be affected&#39;</span><span class="p">,</span>
             <span class="n">theFunctionId</span><span class="o">=</span><span class="s">&#39;Categorised Hazard Building Impact Function&#39;</span><span class="p">)</span>
         <span class="k">assert</span> <span class="n">myResult</span><span class="p">,</span> <span class="n">myMessage</span>
@@ -1240,7 +1235,7 @@
         <span class="n">myResult</span><span class="p">,</span> <span class="n">myMessage</span> <span class="o">=</span> <span class="n">setupScenario</span><span class="p">(</span>
             <span class="n">theHazard</span><span class="o">=</span><span class="s">&#39;multipart_polygons_osm_4326&#39;</span><span class="p">,</span>
             <span class="n">theExposure</span><span class="o">=</span><span class="s">&#39;buildings_osm_4326&#39;</span><span class="p">,</span>
-            <span class="n">theFunction</span><span class="o">=</span><span class="s">&#39;Be flooded&#39;</span><span class="p">,</span>
+            <span class="n">theFunction</span><span class="o">=</span><span class="s">&#39;Be temporarily closed&#39;</span><span class="p">,</span>
             <span class="n">theFunctionId</span><span class="o">=</span><span class="s">&#39;Flood Building Impact Function&#39;</span><span class="p">)</span>
         <span class="k">assert</span> <span class="n">myResult</span><span class="p">,</span> <span class="n">myMessage</span>
 
@@ -1334,23 +1329,12 @@
                                 <span class="n">myHtml</span><span class="p">,</span>
                                 <span class="n">myExpectedString</span><span class="p">)</span>
         <span class="k">assert</span> <span class="n">myExpectedString</span> <span class="ow">in</span> <span class="n">myHtml</span><span class="p">,</span> <span class="n">myMessage</span>
-</div>
-<div class="viewcode-block" id="DockTest.test_newLayersShowInCanvas"><a class="viewcode-back" href="../../api-docs/safe_qgis_tests/test_dock.html#safe_qgis.test_dock.DockTest.test_newLayersShowInCanvas">[docs]</a>    <span class="k">def</span> <span class="nf">test_newLayersShowInCanvas</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Check that when we add a layer we can see it in the canvas list.&quot;&quot;&quot;</span>
-        <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;Canvas list before:</span><span class="se">\n</span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">canvasList</span><span class="p">())</span>
-        <span class="n">myBeforeCount</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">CANVAS</span><span class="o">.</span><span class="n">layers</span><span class="p">())</span>
-        <span class="n">myPath</span> <span class="o">=</span> <span class="n">join</span><span class="p">(</span><span class="n">TESTDATA</span><span class="p">,</span> <span class="s">&#39;polygon_0.shp&#39;</span><span class="p">)</span>
-        <span class="n">myLayer</span> <span class="o">=</span> <span class="n">QgsVectorLayer</span><span class="p">(</span><span class="n">myPath</span><span class="p">,</span> <span class="s">&#39;foo&#39;</span><span class="p">,</span> <span class="s">&#39;ogr&#39;</span><span class="p">)</span>
-        <span class="n">QgsMapLayerRegistry</span><span class="o">.</span><span class="n">instance</span><span class="p">()</span><span class="o">.</span><span class="n">addMapLayer</span><span class="p">(</span><span class="n">myLayer</span><span class="p">)</span>
-        <span class="n">myAfterCount</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">CANVAS</span><span class="o">.</span><span class="n">layers</span><span class="p">())</span>
-        <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;Canvas list after:</span><span class="se">\n</span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">canvasList</span><span class="p">())</span>
-        <span class="n">myMessage</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;Layer was not added to canvas (</span><span class="si">%s</span><span class="s"> before, </span><span class="si">%s</span><span class="s"> after)&#39;</span> <span class="o">%</span>
-                     <span class="p">(</span><span class="n">myBeforeCount</span><span class="p">,</span> <span class="n">myAfterCount</span><span class="p">))</span>
-        <span class="k">assert</span> <span class="n">myBeforeCount</span> <span class="o">==</span> <span class="n">myAfterCount</span><span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">myMessage</span>
-        <span class="n">QgsMapLayerRegistry</span><span class="o">.</span><span class="n">instance</span><span class="p">()</span><span class="o">.</span><span class="n">removeMapLayer</span><span class="p">(</span><span class="n">myLayer</span><span class="o">.</span><span class="n">id</span><span class="p">())</span>
 </div></div>
 <span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&#39;__main__&#39;</span><span class="p">:</span>
     <span class="n">suite</span> <span class="o">=</span> <span class="n">unittest</span><span class="o">.</span><span class="n">makeSuite</span><span class="p">(</span><span class="n">DockTest</span><span class="p">,</span> <span class="s">&#39;test&#39;</span><span class="p">)</span>
+    <span class="c">#suite = unittest.makeSuite(DockTest,</span>
+    <span class="c">#                    &#39;test_cboAggregationToggle&#39;)</span>
+
     <span class="n">runner</span> <span class="o">=</span> <span class="n">unittest</span><span class="o">.</span><span class="n">TextTestRunner</span><span class="p">(</span><span class="n">verbosity</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
     <span class="n">runner</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">suite</span><span class="p">)</span>
 </pre></div>
@@ -1366,7 +1350,7 @@
 <div id="searchbox" style="display: none">
   <h3>Quick search</h3>
     <form class="search" action="../../search.html" method="get">
-      <input type="text" name="q" />
+      <input type="text" name="q" size="18" />
       <input type="submit" value="Go" />
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
@@ -1401,8 +1385,8 @@
 
     <div class="footer">
         &copy; Copyright 2012, BNPB/AIFDR/GFDRR.
-      Last updated on Oct 18, 2012.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+      Last updated on Oct 20, 2012.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.1.
     </div>
     <!-- cloud_sptheme 1.3 -->
   </body>

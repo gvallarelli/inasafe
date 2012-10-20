@@ -4,17 +4,14 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
-
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Module: safe_qgis.utilities &mdash; InaSAFE 0.5.1-final documentation</title>
-    
+    <title>Module: safe_qgis.utilities &mdash; InaSAFE v0.5.1-final documentation</title>
     <link rel="stylesheet" href="../../_static/cloud.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-    <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Noticia+Text|Droid+Sans+Mono" type="text/css" />
-    
+    <link rel="stylesheet" href="../../http://fonts.googleapis.com/css?family=Noticia+Text|Droid+Sans+Mono" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
@@ -30,10 +27,10 @@
     <script type="text/javascript" src="../../_static/jquery.cookie.js"></script>
     <script type="text/javascript" src="../../_static/toggle_sections.js"></script>
     <link rel="shortcut icon" href="../../_static/favicon.ico"/>
-    <link rel="top" title="InaSAFE 0.5.1-final documentation" href="../../index.html" />
+    <link rel="top" title="InaSAFE v0.5.1-final documentation" href="../../index.html" />
     <link rel="up" title="Package::safe_qgis" href="../safe_qgis.html" />
-    <link rel="next" title="Module: safe_qgis.help" href="help.html" />
-    <link rel="prev" title="Module: safe_qgis.dock" href="dock.html" /> 
+    <link rel="next" title="Module: safe_qgis.options_dialog_base" href="options_dialog_base.html" />
+    <link rel="prev" title="Module: safe_qgis.impact_functions_doc_base" href="impact_functions_doc_base.html" /> 
   </head>
   <body>
     <div class="relbar-top">
@@ -48,10 +45,10 @@
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
         <li class="right" >
-          <a href="help.html" title="Module: safe_qgis.help"
+          <a href="options_dialog_base.html" title="Module: safe_qgis.options_dialog_base"
              accesskey="N">next</a> &nbsp; &nbsp;</li>
         <li class="right" >
-          <a href="dock.html" title="Module: safe_qgis.dock"
+          <a href="impact_functions_doc_base.html" title="Module: safe_qgis.impact_functions_doc_base"
              accesskey="P">previous</a> &nbsp; &nbsp;</li>
     <li><a href="../../index.html">Home</a> &raquo;</li>
     <li><a href="../../contents.html">Contents</a> &raquo;</li>
@@ -84,11 +81,11 @@ the Free Software Foundation; either version 2 of the License, or
 </div>
 <dl class="class">
 <dt id="safe_qgis.utilities.QgsLogHandler">
-<em class="property">class </em><tt class="descclassname">safe_qgis.utilities.</tt><tt class="descname">QgsLogHandler</tt><big>(</big><em>level=0</em><big>)</big><a class="reference internal" href="../../_modules/safe_qgis/utilities.html#QgsLogHandler"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe_qgis.utilities.QgsLogHandler" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><tt class="descclassname">safe_qgis.utilities.</tt><tt class="descname">QgsLogHandler</tt><big>(</big><em>level=0</em><big>)</big><a class="headerlink" href="#safe_qgis.utilities.QgsLogHandler" title="Permalink to this definition">¶</a></dt>
 <dd><p>A logging handler that will log messages to the QGIS logging console.</p>
 <dl class="method">
 <dt id="safe_qgis.utilities.QgsLogHandler.emit">
-<tt class="descname">emit</tt><big>(</big><em>theRecord</em><big>)</big><a class="reference internal" href="../../_modules/safe_qgis/utilities.html#QgsLogHandler.emit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe_qgis.utilities.QgsLogHandler.emit" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">emit</tt><big>(</big><em>theRecord</em><big>)</big><a class="headerlink" href="#safe_qgis.utilities.QgsLogHandler.emit" title="Permalink to this definition">¶</a></dt>
 <dd><p>Try to log the message to QGIS if available, otherwise do nothing.</p>
 <dl class="docutils">
 <dt>Args:</dt>
@@ -133,11 +130,10 @@ the Free Software Foundation; either version 2 of the License, or
 <dl class="function">
 <dt id="safe_qgis.utilities.getDefaults">
 <tt class="descclassname">safe_qgis.utilities.</tt><tt class="descname">getDefaults</tt><big>(</big><em>theDefault=None</em><big>)</big><a class="headerlink" href="#safe_qgis.utilities.getDefaults" title="Permalink to this definition">¶</a></dt>
-<dd><p>returns a dictionary of defaults values to be used
-it takes the DEFAULTS from safe and modifies them according to qgis</p>
-<blockquote>
-<div>QSettings</div></blockquote>
-<dl class="docutils">
+<dd><dl class="docutils">
+<dt>returns a dictionary of defaults values to be used</dt>
+<dd>it takes the DEFAULTS from safe and modifies them according to qgis
+QSettings</dd>
 <dt>Args:</dt>
 <dd><ul class="first last simple">
 <li>theDefault: a key of the defaults dictionary</li>
@@ -172,11 +168,10 @@ context: Optional context message</dd>
 <dl class="function">
 <dt id="safe_qgis.utilities.getLayerAttributeNames">
 <tt class="descclassname">safe_qgis.utilities.</tt><tt class="descname">getLayerAttributeNames</tt><big>(</big><em>theLayer</em>, <em>theAllowedTypes</em>, <em>theCurrentKeyword=None</em><big>)</big><a class="headerlink" href="#safe_qgis.utilities.getLayerAttributeNames" title="Permalink to this definition">¶</a></dt>
-<dd><p>iterates over self.layer and returns all the attribute names of
-attributes that have int or string as field type and the position</p>
-<blockquote>
-<div>of the theCurrentKeyword in the attribute names list</div></blockquote>
-<dl class="docutils">
+<dd><dl class="docutils">
+<dt>iterates over self.layer and returns all the attribute names of</dt>
+<dd>attributes that have int or string as field type and the position
+of the theCurrentKeyword in the attribute names list</dd>
 <dt>Args:</dt>
 <dd><ul class="first last">
 <li><dl class="first docutils">
@@ -258,18 +253,49 @@ provided.</p>
 </dd></dl>
 
 <dl class="function">
+<dt id="safe_qgis.utilities.impactLayerAttribution">
+<tt class="descclassname">safe_qgis.utilities.</tt><tt class="descname">impactLayerAttribution</tt><big>(</big><em>theKeywords</em>, <em>theInaSAFEFlag=False</em><big>)</big><a class="headerlink" href="#safe_qgis.utilities.impactLayerAttribution" title="Permalink to this definition">¶</a></dt>
+<dd><p>Make a little table for attribution of data sources used in impact.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><ul class="first last">
+<li><p class="first">theKeywords: dict{} - a keywords dict for an impact layer.</p>
+</li>
+<li><dl class="first docutils">
+<dt>theInaSAFEFlag: bool - whether to show a little InaSAFE promotional</dt>
+<dd><p class="first last">text in the attribution output. Defaults to False.</p>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+<dt>Returns:</dt>
+<dd><dl class="first last docutils">
+<dt>str: an html snippet containing attribution information for the impact</dt>
+<dd>layer. If no keywords are present or no appropriate keywords are
+present, None is returned.</dd>
+</dl>
+</dd>
+<dt>Raises:</dt>
+<dd>None</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
 <dt id="safe_qgis.utilities.isLayerPolygonal">
 <tt class="descclassname">safe_qgis.utilities.</tt><tt class="descname">isLayerPolygonal</tt><big>(</big><em>theLayer</em><big>)</big><a class="headerlink" href="#safe_qgis.utilities.isLayerPolygonal" title="Permalink to this definition">¶</a></dt>
 <dd><p>tell if a qgis theLayer is vectorial and d its geometries polygons
 Args:</p>
 <blockquote>
-<div>the theLayer</div></blockquote>
+<blockquote>
+the theLayer</blockquote>
 <dl class="docutils">
 <dt>Returns:</dt>
 <dd>bool - true if the theLayer contains polygons</dd>
 <dt>Raises:</dt>
 <dd>None</dd>
 </dl>
+</blockquote>
 </dd></dl>
 
 <dl class="function">
@@ -314,13 +340,15 @@ Args:</p>
 <dd><p>Get the version of QGIS
 Args:</p>
 <blockquote>
-<div>None</div></blockquote>
+<blockquote>
+None</blockquote>
 <dl class="docutils">
 <dt>Returns:</dt>
 <dd>QGIS Version where 10700 represents QGIS 1.7 etc.</dd>
 <dt>Raises:</dt>
 <dd>None</dd>
 </dl>
+</blockquote>
 </dd></dl>
 
 <dl class="function">
@@ -375,11 +403,11 @@ transparency level to between 0 and 100.</p>
 </dl>
 <p>Example:</p>
 <blockquote>
-<div><p>{&#8216;target_field&#8217;: &#8216;DMGLEVEL&#8217;,
+<p>{&#8216;target_field&#8217;: &#8216;DMGLEVEL&#8217;,
 &#8216;style_classes&#8217;:
 [{&#8216;transparency&#8217;: 1, &#8216;max&#8217;: 1.5, &#8216;colour&#8217;: &#8216;#fecc5c&#8217;,</p>
 <blockquote>
-<div>&#8216;min&#8217;: 0.5, &#8216;label&#8217;: &#8216;Low damage&#8217;, &#8216;size&#8217; : 1},</div></blockquote>
+&#8216;min&#8217;: 0.5, &#8216;label&#8217;: &#8216;Low damage&#8217;, &#8216;size&#8217; : 1},</blockquote>
 <dl class="docutils">
 <dt>{&#8216;transparency&#8217;: 55, &#8216;max&#8217;: 2.5, &#8216;colour&#8217;: &#8216;#fd8d3c&#8217;,</dt>
 <dd>&#8216;min&#8217;: 1.5, &#8216;label&#8217;: &#8216;Medium damage&#8217;, &#8216;size&#8217; : 1},</dd>
@@ -391,7 +419,7 @@ transparency level to between 0 and 100.</p>
 <p class="last">The transparency and size keys are optional. Size applies
 to points only.</p>
 </div>
-</div></blockquote>
+</blockquote>
 </dd></dl>
 
 <dl class="function">
@@ -452,7 +480,7 @@ is not a class and does not inherit from QObject.
 .. note:: see <a class="reference external" href="http://tinyurl.com/pyqt-differences">http://tinyurl.com/pyqt-differences</a>
 Args:</p>
 <blockquote>
-<div>theText - string to be translated</div></blockquote>
+theText - string to be translated</blockquote>
 <dl class="docutils">
 <dt>Returns:</dt>
 <dd>Translated version of the given string if available, otherwise
@@ -473,11 +501,11 @@ the original string.</dd>
           <img class="logo" src="../../_static/icon.png" alt="Logo"/>
         </a></p>
   <h4>Previous topic</h4>
-  <p class="topless"><a href="dock.html"
-                        title="previous chapter">Module:  safe_qgis.dock</a></p>
+  <p class="topless"><a href="impact_functions_doc_base.html"
+                        title="previous chapter">Module:  safe_qgis.impact_functions_doc_base</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="help.html"
-                        title="next chapter">Module:  safe_qgis.help</a></p>
+  <p class="topless"><a href="options_dialog_base.html"
+                        title="next chapter">Module:  safe_qgis.options_dialog_base</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="../../_sources/api-docs/safe_qgis/utilities.txt"
@@ -486,7 +514,7 @@ the original string.</dd>
 <div id="searchbox" style="display: none">
   <h3>Quick search</h3>
     <form class="search" action="../../search.html" method="get">
-      <input type="text" name="q" />
+      <input type="text" name="q" size="18" />
       <input type="submit" value="Go" />
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
@@ -512,10 +540,10 @@ the original string.</dd>
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
         <li class="right" >
-          <a href="help.html" title="Module: safe_qgis.help"
+          <a href="options_dialog_base.html" title="Module: safe_qgis.options_dialog_base"
              >next</a> &nbsp; &nbsp;</li>
         <li class="right" >
-          <a href="dock.html" title="Module: safe_qgis.dock"
+          <a href="impact_functions_doc_base.html" title="Module: safe_qgis.impact_functions_doc_base"
              >previous</a> &nbsp; &nbsp;</li>
     <li><a href="../../index.html">Home</a> &raquo;</li>
     <li><a href="../../contents.html">Contents</a> &raquo;</li>
@@ -528,8 +556,8 @@ the original string.</dd>
 
     <div class="footer">
         &copy; Copyright 2012, BNPB/AIFDR/GFDRR.
-      Last updated on Oct 18, 2012.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+      Last updated on Oct 20, 2012.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.1.
     </div>
     <!-- cloud_sptheme 1.3 -->
   </body>

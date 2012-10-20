@@ -4,17 +4,14 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
-
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>safe.impact_functions.earthquake.earthquake_building_impact &mdash; InaSAFE 0.5.1-final documentation</title>
-    
+    <title>safe.impact_functions.earthquake.earthquake_building_impact &mdash; InaSAFE v0.5.1-final documentation</title>
     <link rel="stylesheet" href="../../../../_static/cloud.css" type="text/css" />
     <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
-    <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Noticia+Text|Droid+Sans+Mono" type="text/css" />
-    
+    <link rel="stylesheet" href="../../../../http://fonts.googleapis.com/css?family=Noticia+Text|Droid+Sans+Mono" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../../',
@@ -30,7 +27,7 @@
     <script type="text/javascript" src="../../../../_static/jquery.cookie.js"></script>
     <script type="text/javascript" src="../../../../_static/toggle_sections.js"></script>
     <link rel="shortcut icon" href="../../../../_static/favicon.ico"/>
-    <link rel="top" title="InaSAFE 0.5.1-final documentation" href="../../../../index.html" />
+    <link rel="top" title="InaSAFE v0.5.1-final documentation" href="../../../../index.html" />
     <link rel="up" title="Module code" href="../../../index.html" /> 
   </head>
   <body>
@@ -134,11 +131,11 @@
         <span class="n">lo</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="n">me</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="n">hi</span> <span class="o">=</span> <span class="mi">0</span>
-        <span class="n">building_costs</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="n">contents_costs</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">building_values</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">contents_values</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">4</span><span class="p">):</span>
-            <span class="n">building_costs</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
-            <span class="n">contents_costs</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="n">building_values</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="n">contents_values</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
 
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">N</span><span class="p">):</span>
             <span class="c"># Classify building according to shake level</span>
@@ -151,19 +148,19 @@
                 <span class="n">area</span> <span class="o">=</span> <span class="mf">0.0</span>
 
             <span class="k">try</span><span class="p">:</span>
-                <span class="n">building_cost_density</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">attributes</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="s">&#39;BUILDING_C&#39;</span><span class="p">])</span>
+                <span class="n">building_value_density</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">attributes</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="s">&#39;BUILDING_C&#39;</span><span class="p">])</span>
             <span class="k">except</span> <span class="p">(</span><span class="ne">ValueError</span><span class="p">,</span> <span class="ne">KeyError</span><span class="p">):</span>
-                <span class="c">#print &#39;Got bld cost&#39;, attributes[i][&#39;BUILDING_C&#39;]</span>
-                <span class="n">building_cost_density</span> <span class="o">=</span> <span class="mf">0.0</span>
+                <span class="c">#print &#39;Got bld value&#39;, attributes[i][&#39;BUILDING_C&#39;]</span>
+                <span class="n">building_value_density</span> <span class="o">=</span> <span class="mf">0.0</span>
 
             <span class="k">try</span><span class="p">:</span>
-                <span class="n">contents_cost_density</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">attributes</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="s">&#39;CONTENTS_C&#39;</span><span class="p">])</span>
+                <span class="n">contents_value_density</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">attributes</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="s">&#39;CONTENTS_C&#39;</span><span class="p">])</span>
             <span class="k">except</span> <span class="p">(</span><span class="ne">ValueError</span><span class="p">,</span> <span class="ne">KeyError</span><span class="p">):</span>
-                <span class="c">#print &#39;Got cont cost&#39;, attributes[i][&#39;CONTENTS_C&#39;]</span>
-                <span class="n">contents_cost_density</span> <span class="o">=</span> <span class="mf">0.0</span>
+                <span class="c">#print &#39;Got cont value&#39;, attributes[i][&#39;CONTENTS_C&#39;]</span>
+                <span class="n">contents_value_density</span> <span class="o">=</span> <span class="mf">0.0</span>
 
-            <span class="n">building_cost</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">building_cost_density</span> <span class="o">*</span> <span class="n">area</span><span class="p">)</span>
-            <span class="n">contents_cost</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">contents_cost_density</span> <span class="o">*</span> <span class="n">area</span><span class="p">)</span>
+            <span class="n">building_value</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">building_value_density</span> <span class="o">*</span> <span class="n">area</span><span class="p">)</span>
+            <span class="n">contents_value</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">contents_value_density</span> <span class="o">*</span> <span class="n">area</span><span class="p">)</span>
 
             <span class="n">x</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">attributes</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">hazard_attribute</span><span class="p">])</span>  <span class="c"># MMI</span>
             <span class="k">if</span> <span class="n">t0</span> <span class="o">&lt;=</span> <span class="n">x</span> <span class="o">&lt;</span> <span class="n">t1</span><span class="p">:</span>
@@ -181,26 +178,26 @@
 
             <span class="n">attributes</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="bp">self</span><span class="o">.</span><span class="n">target_field</span><span class="p">]</span> <span class="o">=</span> <span class="n">cls</span>
 
-            <span class="c"># Accumulate costs in 1M dollar units</span>
-            <span class="n">building_costs</span><span class="p">[</span><span class="n">cls</span><span class="p">]</span> <span class="o">+=</span> <span class="p">(</span><span class="n">building_cost</span> <span class="o">/</span> <span class="mi">1000000</span><span class="p">)</span>
-            <span class="n">contents_costs</span><span class="p">[</span><span class="n">cls</span><span class="p">]</span> <span class="o">+=</span> <span class="p">(</span><span class="n">contents_cost</span> <span class="o">/</span> <span class="mi">1000000</span><span class="p">)</span>
+            <span class="c"># Accumulate values in 1M dollar units</span>
+            <span class="n">building_values</span><span class="p">[</span><span class="n">cls</span><span class="p">]</span> <span class="o">+=</span> <span class="p">(</span><span class="n">building_value</span> <span class="o">/</span> <span class="mi">1000000</span><span class="p">)</span>
+            <span class="n">contents_values</span><span class="p">[</span><span class="n">cls</span><span class="p">]</span> <span class="o">+=</span> <span class="p">(</span><span class="n">contents_value</span> <span class="o">/</span> <span class="mi">1000000</span><span class="p">)</span>
 
         <span class="c"># Generate simple impact report</span>
         <span class="n">table_body</span> <span class="o">=</span> <span class="p">[</span><span class="n">question</span><span class="p">,</span>
                       <span class="n">TableRow</span><span class="p">([</span><span class="n">tr</span><span class="p">(</span><span class="s">&#39;Hazard Level&#39;</span><span class="p">),</span>
                                 <span class="n">tr</span><span class="p">(</span><span class="s">&#39;Buildings Affected&#39;</span><span class="p">),</span>
-                                <span class="n">tr</span><span class="p">(</span><span class="s">&#39;Building costs&#39;</span><span class="p">),</span>
-                                <span class="n">tr</span><span class="p">(</span><span class="s">&#39;Contents costs&#39;</span><span class="p">)],</span>
+                                <span class="n">tr</span><span class="p">(</span><span class="s">&#39;Buildings value ($M)&#39;</span><span class="p">),</span>
+                                <span class="n">tr</span><span class="p">(</span><span class="s">&#39;Contents value ($M)&#39;</span><span class="p">)],</span>
                                <span class="n">header</span><span class="o">=</span><span class="bp">True</span><span class="p">),</span>
                       <span class="n">TableRow</span><span class="p">([</span><span class="n">class_1</span><span class="p">,</span> <span class="n">lo</span><span class="p">,</span>
-                                <span class="n">building_costs</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
-                                <span class="n">contents_costs</span><span class="p">[</span><span class="mi">1</span><span class="p">]]),</span>
+                                <span class="n">building_values</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+                                <span class="n">contents_values</span><span class="p">[</span><span class="mi">1</span><span class="p">]]),</span>
                       <span class="n">TableRow</span><span class="p">([</span><span class="n">class_2</span><span class="p">,</span> <span class="n">me</span><span class="p">,</span>
-                                <span class="n">building_costs</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span>
-                                <span class="n">contents_costs</span><span class="p">[</span><span class="mi">2</span><span class="p">]]),</span>
+                                <span class="n">building_values</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span>
+                                <span class="n">contents_values</span><span class="p">[</span><span class="mi">2</span><span class="p">]]),</span>
                       <span class="n">TableRow</span><span class="p">([</span><span class="n">class_3</span><span class="p">,</span> <span class="n">hi</span><span class="p">,</span>
-                                <span class="n">building_costs</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span>
-                                <span class="n">contents_costs</span><span class="p">[</span><span class="mi">3</span><span class="p">]])]</span>
+                                <span class="n">building_values</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span>
+                                <span class="n">contents_values</span><span class="p">[</span><span class="mi">3</span><span class="p">]])]</span>
 
         <span class="n">table_body</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">TableRow</span><span class="p">(</span><span class="n">tr</span><span class="p">(</span><span class="s">&#39;Notes&#39;</span><span class="p">),</span> <span class="n">header</span><span class="o">=</span><span class="bp">True</span><span class="p">))</span>
         <span class="n">table_body</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tr</span><span class="p">(</span><span class="s">&#39;High hazard is defined as shake levels greater &#39;</span>
@@ -209,7 +206,7 @@
                              <span class="s">&#39;between </span><span class="si">%i</span><span class="s"> and </span><span class="si">%i</span><span class="s"> on the MMI scale.&#39;</span><span class="p">)</span> <span class="o">%</span> <span class="p">(</span><span class="n">t1</span><span class="p">,</span> <span class="n">t2</span><span class="p">))</span>
         <span class="n">table_body</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tr</span><span class="p">(</span><span class="s">&#39;Low hazard is defined as shake levels &#39;</span>
                              <span class="s">&#39;between </span><span class="si">%i</span><span class="s"> and </span><span class="si">%i</span><span class="s"> on the MMI scale.&#39;</span><span class="p">)</span> <span class="o">%</span> <span class="p">(</span><span class="n">t0</span><span class="p">,</span> <span class="n">t1</span><span class="p">))</span>
-        <span class="n">table_body</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tr</span><span class="p">(</span><span class="s">&#39;Costs are in units of 1 million Australian &#39;</span>
+        <span class="n">table_body</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tr</span><span class="p">(</span><span class="s">&#39;Values are in units of 1 million Australian &#39;</span>
                              <span class="s">&#39;Dollars&#39;</span><span class="p">))</span>
 
         <span class="n">impact_summary</span> <span class="o">=</span> <span class="n">Table</span><span class="p">(</span><span class="n">table_body</span><span class="p">)</span><span class="o">.</span><span class="n">toNewlineFreeString</span><span class="p">()</span>
@@ -252,7 +249,7 @@
 <div id="searchbox" style="display: none">
   <h3>Quick search</h3>
     <form class="search" action="../../../../search.html" method="get">
-      <input type="text" name="q" />
+      <input type="text" name="q" size="18" />
       <input type="submit" value="Go" />
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
@@ -287,8 +284,8 @@
 
     <div class="footer">
         &copy; Copyright 2012, BNPB/AIFDR/GFDRR.
-      Last updated on Oct 18, 2012.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+      Last updated on Oct 20, 2012.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.1.
     </div>
     <!-- cloud_sptheme 1.3 -->
   </body>

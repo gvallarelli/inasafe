@@ -4,17 +4,14 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
-
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>safe.engine.test_engine &mdash; InaSAFE 0.5.1-final documentation</title>
-    
+    <title>safe.engine.test_engine &mdash; InaSAFE v0.5.1-final documentation</title>
     <link rel="stylesheet" href="../../../_static/cloud.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
-    <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Noticia+Text|Droid+Sans+Mono" type="text/css" />
-    
+    <link rel="stylesheet" href="../../../http://fonts.googleapis.com/css?family=Noticia+Text|Droid+Sans+Mono" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../',
@@ -30,7 +27,7 @@
     <script type="text/javascript" src="../../../_static/jquery.cookie.js"></script>
     <script type="text/javascript" src="../../../_static/toggle_sections.js"></script>
     <link rel="shortcut icon" href="../../../_static/favicon.ico"/>
-    <link rel="top" title="InaSAFE 0.5.1-final documentation" href="../../../index.html" />
+    <link rel="top" title="InaSAFE v0.5.1-final documentation" href="../../../index.html" />
     <link rel="up" title="Module code" href="../../index.html" /> 
   </head>
   <body>
@@ -665,8 +662,8 @@
 
         <span class="c"># Run underlying clipping routine</span>
         <span class="n">res0</span> <span class="o">=</span> <span class="n">clip_grid_by_polygons</span><span class="p">(</span><span class="n">E</span><span class="o">.</span><span class="n">get_data</span><span class="p">(),</span>
-                                     <span class="n">E</span><span class="o">.</span><span class="n">get_geotransform</span><span class="p">(),</span>
-                                     <span class="n">H</span><span class="o">.</span><span class="n">get_geometry</span><span class="p">())</span>
+                                    <span class="n">E</span><span class="o">.</span><span class="n">get_geotransform</span><span class="p">(),</span>
+                                    <span class="n">H</span><span class="o">.</span><span class="n">get_geometry</span><span class="p">())</span>
         <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">res0</span><span class="p">)</span> <span class="o">==</span> <span class="n">N</span>
 
         <span class="c"># Run higher level interpolation routine</span>
@@ -741,56 +738,6 @@
         <span class="k">assert</span> <span class="n">numpy</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">attributes</span><span class="p">[</span><span class="mi">23</span><span class="p">][</span><span class="s">&#39;number&#39;</span><span class="p">],</span> <span class="o">-</span><span class="mi">50</span><span class="p">)</span>
         <span class="k">assert</span> <span class="n">numpy</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">attributes</span><span class="p">[</span><span class="mi">23</span><span class="p">][</span><span class="s">&#39;grid_value&#39;</span><span class="p">],</span> <span class="mf">50.0377</span><span class="p">)</span>
         <span class="k">assert</span> <span class="n">attributes</span><span class="p">[</span><span class="mi">23</span><span class="p">][</span><span class="s">&#39;polygon_id&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">3</span>
-
-    <span class="k">def</span> <span class="nf">test_polygon_hazard_with_holes_and_raster_exposure</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Rasters can be clipped by polygons (with holes)</span>
-
-<span class="sd">        This is testing that a collection of polygons - some with holes -</span>
-<span class="sd">        can correctly clip and tag raster points.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-
-        <span class="c"># Name input files</span>
-        <span class="n">polyhazard</span> <span class="o">=</span> <span class="n">join</span><span class="p">(</span><span class="n">TESTDATA</span><span class="p">,</span> <span class="s">&#39;donut.shp&#39;</span><span class="p">)</span>
-        <span class="n">population</span> <span class="o">=</span> <span class="n">join</span><span class="p">(</span><span class="n">EXPDATA</span><span class="p">,</span> <span class="s">&#39;population_indonesia_2010_BNPB_BPS.asc&#39;</span><span class="p">)</span>
-
-        <span class="c"># Get layers using API</span>
-        <span class="n">H</span> <span class="o">=</span> <span class="n">read_layer</span><span class="p">(</span><span class="n">polyhazard</span><span class="p">)</span>
-        <span class="n">E</span> <span class="o">=</span> <span class="n">read_layer</span><span class="p">(</span><span class="n">population</span><span class="p">)</span>
-
-        <span class="n">N</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">H</span><span class="p">)</span>
-        <span class="k">assert</span> <span class="n">N</span> <span class="o">==</span> <span class="mi">10</span>
-
-        <span class="c"># Characterisation test</span>
-        <span class="k">assert</span> <span class="n">H</span><span class="o">.</span><span class="n">get_data</span><span class="p">()[</span><span class="mi">9</span><span class="p">][</span><span class="s">&#39;KRB&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;Kawasan Rawan Bencana II&#39;</span>
-
-        <span class="c"># Then run and test the high level interpolation function</span>
-        <span class="n">P</span> <span class="o">=</span> <span class="n">interpolate_polygon_raster</span><span class="p">(</span><span class="n">H</span><span class="p">,</span> <span class="n">E</span><span class="p">,</span>
-                                       <span class="n">layer_name</span><span class="o">=</span><span class="s">&#39;poly2raster_test&#39;</span><span class="p">,</span>
-                                       <span class="n">attribute_name</span><span class="o">=</span><span class="s">&#39;grid_value&#39;</span><span class="p">)</span>
-
-        <span class="c"># Possibly write result to file for visual inspection, e.g. with QGIS</span>
-        <span class="c">#P.write_to_file(&#39;polygon_raster_interpolation_example_holes.shp&#39;)</span>
-
-        <span class="c"># Characterisation tests (values verified using QGIS)</span>
-        <span class="c"># In internal polygon</span>
-        <span class="n">attributes</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">get_data</span><span class="p">()[</span><span class="mi">43</span><span class="p">]</span>
-        <span class="c">#geometry = P.get_geometry()[43]</span>
-        <span class="k">assert</span> <span class="n">attributes</span><span class="p">[</span><span class="s">&#39;KRB&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;Kawasan Rawan Bencana III&#39;</span>
-        <span class="k">assert</span> <span class="n">attributes</span><span class="p">[</span><span class="s">&#39;polygon_id&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">8</span>
-
-        <span class="c"># In polygon ring</span>
-        <span class="n">attributes</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">get_data</span><span class="p">()[</span><span class="mi">222</span><span class="p">]</span>
-        <span class="c">#geometry = P.get_geometry()[222]</span>
-        <span class="k">assert</span> <span class="n">attributes</span><span class="p">[</span><span class="s">&#39;KRB&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;Kawasan Rawan Bencana II&#39;</span>
-        <span class="k">assert</span> <span class="n">attributes</span><span class="p">[</span><span class="s">&#39;polygon_id&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">9</span>
-
-        <span class="c"># In one of the outer polygons</span>
-        <span class="n">attributes</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">get_data</span><span class="p">()[</span><span class="mi">26</span><span class="p">]</span>
-        <span class="c">#geometry = P.get_geometry()[26]</span>
-        <span class="k">assert</span> <span class="n">attributes</span><span class="p">[</span><span class="s">&#39;KRB&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;Kawasan Rawan Bencana I&#39;</span>
-        <span class="k">assert</span> <span class="n">attributes</span><span class="p">[</span><span class="s">&#39;polygon_id&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">7</span>
-
-    <span class="n">test_polygon_hazard_with_holes_and_raster_exposure</span><span class="o">.</span><span class="n">slow</span> <span class="o">=</span> <span class="bp">True</span>
 
     <span class="k">def</span> <span class="nf">test_flood_building_impact_function</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Flood building impact function works</span>
@@ -2978,7 +2925,7 @@
 <div id="searchbox" style="display: none">
   <h3>Quick search</h3>
     <form class="search" action="../../../search.html" method="get">
-      <input type="text" name="q" />
+      <input type="text" name="q" size="18" />
       <input type="submit" value="Go" />
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
@@ -3013,8 +2960,8 @@
 
     <div class="footer">
         &copy; Copyright 2012, BNPB/AIFDR/GFDRR.
-      Last updated on Oct 18, 2012.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+      Last updated on Oct 20, 2012.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.1.
     </div>
     <!-- cloud_sptheme 1.3 -->
   </body>

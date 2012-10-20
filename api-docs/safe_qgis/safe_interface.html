@@ -4,17 +4,14 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
-
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Module: safe_qgis.safe_interface &mdash; InaSAFE 0.5.1-final documentation</title>
-    
+    <title>Module: safe_qgis.safe_interface &mdash; InaSAFE v0.5.1-final documentation</title>
     <link rel="stylesheet" href="../../_static/cloud.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-    <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Noticia+Text|Droid+Sans+Mono" type="text/css" />
-    
+    <link rel="stylesheet" href="../../http://fonts.googleapis.com/css?family=Noticia+Text|Droid+Sans+Mono" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
@@ -30,10 +27,10 @@
     <script type="text/javascript" src="../../_static/jquery.cookie.js"></script>
     <script type="text/javascript" src="../../_static/toggle_sections.js"></script>
     <link rel="shortcut icon" href="../../_static/favicon.ico"/>
-    <link rel="top" title="InaSAFE 0.5.1-final documentation" href="../../index.html" />
+    <link rel="top" title="InaSAFE v0.5.1-final documentation" href="../../index.html" />
     <link rel="up" title="Package::safe_qgis" href="../safe_qgis.html" />
-    <link rel="next" title="Module: safe_qgis.clipper" href="clipper.html" />
-    <link rel="prev" title="Module: safe_qgis.options_dialog_base" href="options_dialog_base.html" /> 
+    <link rel="next" title="Module: safe_qgis.plugin" href="plugin.html" />
+    <link rel="prev" title="Module: safe_qgis.utilities_test" href="utilities_test.html" /> 
   </head>
   <body>
     <div class="relbar-top">
@@ -48,10 +45,10 @@
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
         <li class="right" >
-          <a href="clipper.html" title="Module: safe_qgis.clipper"
+          <a href="plugin.html" title="Module: safe_qgis.plugin"
              accesskey="N">next</a> &nbsp; &nbsp;</li>
         <li class="right" >
-          <a href="options_dialog_base.html" title="Module: safe_qgis.options_dialog_base"
+          <a href="utilities_test.html" title="Module: safe_qgis.utilities_test"
              accesskey="P">previous</a> &nbsp; &nbsp;</li>
     <li><a href="../../index.html">Home</a> &raquo;</li>
     <li><a href="../../contents.html">Contents</a> &raquo;</li>
@@ -89,7 +86,7 @@ the Free Software Foundation; either version 2 of the License, or
 <dd><p>Query the inasafe engine to see what plugins are available.</p>
 <p>Args:</p>
 <blockquote>
-<div><p>theKeywordList - an optional parameter which should contain
+<p>theKeywordList - an optional parameter which should contain
 a list of 2 dictionaries (the number of items in the list
 is not enforced). The dictionaries should be obtained by using
 readKeywordsFromFile e.g.:</p>
@@ -101,7 +98,7 @@ readKeywordsFromFile e.g.:</p>
 <span class="n">myFunctions</span> <span class="o">=</span> <span class="n">availableFunctions</span><span class="p">(</span><span class="n">myList</span><span class="p">)</span>
 </pre></div>
 </div>
-</div></blockquote>
+</blockquote>
 <dl class="docutils">
 <dt>Returns:</dt>
 <dd><p class="first">A dictionary of strings where each is a plugin name.</p>
@@ -141,19 +138,19 @@ with hazard layer first and exposure layer second.</li>
 <dd><p>Grow bounding box with one unit of resolution in each direction.</p>
 <p>Args:</p>
 <blockquote>
-<div><ul class="simple">
+<ul class="simple">
 <li>theGeoExtent - Bounding box with format [W, S, E, N]</li>
 <li>theCellSize - (resx, resy) Raster resolution in each direction.</li>
 </ul>
 <p>If resolution is None bbox is returned unchanged.</p>
-</div></blockquote>
+</blockquote>
 <dl class="docutils">
 <dt>Returns:</dt>
 <dd>Adjusted bounding box</dd>
 </dl>
 <p>Raises:</p>
 <blockquote>
-<div>Any exceptions are propogated</div></blockquote>
+Any exceptions are propogated</blockquote>
 <dl class="docutils">
 <dt>Note: See docstring for underlying function buffered_bounding_box</dt>
 <dd>for more details.</dd>
@@ -190,8 +187,8 @@ etc.</p>
 input layers to a commone extent before processing.</p>
 <p>Args:</p>
 <blockquote>
-<div><blockquote>
-<div><ul>
+<blockquote>
+<ul>
 <li><dl class="first docutils">
 <dt>theHazardGeoExtent - an array representing the hazard layer</dt>
 <dd><p class="first last">extents in the form [xmin, ymin, xmax, ymax]. It is assumed
@@ -217,12 +214,12 @@ no checks are made to enforce this.</p>
 </dl>
 </li>
 </ul>
-</div></blockquote>
+</blockquote>
 <dl class="docutils">
 <dt>..note:: We do minimal checking as the inasafe library takes</dt>
 <dd>care of it for us.</dd>
 </dl>
-</div></blockquote>
+</blockquote>
 <dl class="docutils">
 <dt>Returns:</dt>
 <dd><p class="first">An array containing an extent in the form [xmin, ymin, xmax, ymax]
@@ -257,21 +254,21 @@ be fetched.</dd>
 <dd><p>Get styleinfo associated with a layer.</p>
 <p>Args:</p>
 <blockquote>
-<div><ul class="simple">
+<ul class="simple">
 <li>theLayer - InaSAFE layer (raster or vector)</li>
 </ul>
-</div></blockquote>
+</blockquote>
 <dl class="docutils">
 <dt>Returns:</dt>
 <dd>A list of dictionaries containing styleinfo info for a layer.</dd>
 </dl>
 <p>Raises:</p>
 <blockquote>
-<div><ul class="simple">
+<ul class="simple">
 <li>StyleInfoNotFoundException if the style is not found.</li>
 <li>InvalidParameterException if the paramers are not correct.</li>
 </ul>
-</div></blockquote>
+</blockquote>
 </dd></dl>
 
 <dl class="function">
@@ -283,8 +280,10 @@ be fetched.</dd>
 <dl class="function">
 <dt id="safe_qgis.safe_interface.readKeywordsFromFile">
 <tt class="descclassname">safe_qgis.safe_interface.</tt><tt class="descname">readKeywordsFromFile</tt><big>(</big><em>theLayerPath</em>, <em>theKeyword=None</em><big>)</big><a class="reference internal" href="../../_modules/safe_qgis/safe_interface.html#readKeywordsFromFile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe_qgis.safe_interface.readKeywordsFromFile" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get metadata from the keywords file associated with a local
-file in the file system.</p>
+<dd><dl class="docutils">
+<dt>Get metadata from the keywords file associated with a local</dt>
+<dd>file in the file system.</dd>
+</dl>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
 <p class="last">Requires a str representing a file path instance
@@ -297,7 +296,7 @@ takes a inasafe file object as parameter.</p>
 </div>
 <p>Args:</p>
 <blockquote>
-<div><ul>
+<ul>
 <li><dl class="first docutils">
 <dt>theLayerPath - a string representing a path to a layer</dt>
 <dd><p class="first last">(e.g. &#8216;/tmp/foo.shp&#8217;, &#8216;/tmp/foo.tif&#8217;)</p>
@@ -307,7 +306,7 @@ takes a inasafe file object as parameter.</p>
 <li><p class="first">theKeyword - optional - the metadata keyword to retrieve e.g. &#8216;title&#8217;</p>
 </li>
 </ul>
-</div></blockquote>
+</blockquote>
 <dl class="docutils">
 <dt>Returns:</dt>
 <dd>A string containing the retrieved value for the keyword if
@@ -332,11 +331,11 @@ complete keywords dictionary is returned.</dd>
 </div>
 <p>Args:</p>
 <blockquote>
-<div><ul class="simple">
+<ul class="simple">
 <li>theLayer - a InaSAFE layer (vector or raster)</li>
 <li>keyword - the metadata keyword to retrieve e.g. &#8216;title&#8217;</li>
 </ul>
-</div></blockquote>
+</blockquote>
 <dl class="docutils">
 <dt>Returns:</dt>
 <dd>A string containing the retrieved value for the keyword.</dd>
@@ -428,11 +427,11 @@ stripped off and the basename + .keywords will be used as the file.</li>
           <img class="logo" src="../../_static/icon.png" alt="Logo"/>
         </a></p>
   <h4>Previous topic</h4>
-  <p class="topless"><a href="options_dialog_base.html"
-                        title="previous chapter">Module:  safe_qgis.options_dialog_base</a></p>
+  <p class="topless"><a href="utilities_test.html"
+                        title="previous chapter">Module:  safe_qgis.utilities_test</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="clipper.html"
-                        title="next chapter">Module:  safe_qgis.clipper</a></p>
+  <p class="topless"><a href="plugin.html"
+                        title="next chapter">Module:  safe_qgis.plugin</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="../../_sources/api-docs/safe_qgis/safe_interface.txt"
@@ -441,7 +440,7 @@ stripped off and the basename + .keywords will be used as the file.</li>
 <div id="searchbox" style="display: none">
   <h3>Quick search</h3>
     <form class="search" action="../../search.html" method="get">
-      <input type="text" name="q" />
+      <input type="text" name="q" size="18" />
       <input type="submit" value="Go" />
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
@@ -467,10 +466,10 @@ stripped off and the basename + .keywords will be used as the file.</li>
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
         <li class="right" >
-          <a href="clipper.html" title="Module: safe_qgis.clipper"
+          <a href="plugin.html" title="Module: safe_qgis.plugin"
              >next</a> &nbsp; &nbsp;</li>
         <li class="right" >
-          <a href="options_dialog_base.html" title="Module: safe_qgis.options_dialog_base"
+          <a href="utilities_test.html" title="Module: safe_qgis.utilities_test"
              >previous</a> &nbsp; &nbsp;</li>
     <li><a href="../../index.html">Home</a> &raquo;</li>
     <li><a href="../../contents.html">Contents</a> &raquo;</li>
@@ -483,8 +482,8 @@ stripped off and the basename + .keywords will be used as the file.</li>
 
     <div class="footer">
         &copy; Copyright 2012, BNPB/AIFDR/GFDRR.
-      Last updated on Oct 18, 2012.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+      Last updated on Oct 20, 2012.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.1.
     </div>
     <!-- cloud_sptheme 1.3 -->
   </body>
