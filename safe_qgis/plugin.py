@@ -417,6 +417,7 @@ class Plugin:
         myDialog = KeywordsDialog(self.iface.mainWindow(),
                                       self.iface,
                                       self.dockWidget)
+        myDialog.setModal(True)
         myDialog.show()
 
     def showImpactFunctionsDoc(self):

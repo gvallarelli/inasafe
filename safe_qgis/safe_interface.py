@@ -38,12 +38,16 @@ from safe.api import (get_admissible_plugins,
                       buffered_bounding_box,
                       verify as verify_util,
                       VerificationError,
+                      InaSAFEError,
                       temp_dir,
                       unique_filename,
                       safe_tr as safeTr,
                       calculate_impact as safe_calculate_impact,
                       BoundingBoxError,
+                      ReadLayerError,
                       get_plugins, get_version)
+
+from safe.defaults import DEFAULTS
 # pylint: enable=W0611
 
 # InaSAFE GUI specific functionality
@@ -52,6 +56,8 @@ from safe_qgis.exceptions import (KeywordNotFoundException,
                                   StyleInfoNotFoundException,
                                   InvalidParameterException,
                                   InsufficientOverlapException)
+
+from safe.common.exceptions import BoundingBoxError, ReadLayerError
 LOGGER = logging.getLogger('InaSAFE')
 
 

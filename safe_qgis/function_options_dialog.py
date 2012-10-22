@@ -67,7 +67,6 @@ class FunctionOptionsDialog(QtGui.QDialog,
         self.keys = params.keys()
         for key in self.keys:
             self._addFormItem(key, params[key])
-        self.activeFunction
 
     def _addFormItem(self, theParameterKey, theParameterValue):
         """Add a new form element dynamically from a key value pair.
@@ -97,8 +96,15 @@ class FunctionOptionsDialog(QtGui.QDialog,
         myLineEdit = QtGui.QLineEdit(self.formLayoutWidget)
         myLineEdit.setText(str(theParameterValue))
         myLineEdit.setObjectName(_fromUtf8(theParameterKey + 'LineEdit'))
+        myLineEdit.setCursorPosition(0)
         self.editableImpactFunctionsFormLayout.setWidget(self.formItemCounters,
-                                        QtGui.QFormLayout.FieldRole, myLineEdit)
+                                        QtGui.QFormLayout.FieldRole,
+                                        myLineEdit)
+
+        #FIXME (MB) temporary fix through hiding for issue 365
+        if theParameterKey == 'postprocessors':
+            myLineEdit.hide()
+            myLabel.hide()
         self.formItemCounters += 1
 
     def setDialogInfo(self, theFunctionID):

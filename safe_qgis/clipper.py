@@ -22,7 +22,7 @@ import os
 import sys
 import tempfile
 import logging
-from subprocess import (call, CalledProcessError)
+from subprocess import (CalledProcessError, call)
 
 from PyQt4.QtCore import QCoreApplication
 from qgis.core import (QgsCoordinateTransform,
@@ -39,7 +39,8 @@ from safe_qgis.safe_interface import (verify,
 from safe_qgis.keyword_io import KeywordIO
 from safe_qgis.exceptions import (InvalidParameterException,
                            NoFeaturesInExtentException,
-                           InvalidProjectionException)
+                           CallGDALError,
+                           InvalidProjectionException,)
 
 LOGGER = logging.getLogger(name='InaSAFE')
 
@@ -96,8 +97,13 @@ def clipLayer(theLayer, theExtent, theCellSize=None, theExtraKeywords=None,
             theExtraKeywords=theExtraKeywords,
             explodeMultipart=explodeMultipart)
     else:
-        return _clipRasterLayer(theLayer, theExtent, theCellSize,
-            theExtraKeywords=theExtraKeywords)
+        try:
+            return _clipRasterLayer(theLayer, theExtent, theCellSize,
+                theExtraKeywords=theExtraKeywords)
+        except CallGDALError, e:
+            raise e
+        except IOError, e:
+            raise e
 
 
 def _clipVectorLayer(theLayer, theExtent,
