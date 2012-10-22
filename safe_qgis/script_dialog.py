@@ -59,8 +59,8 @@ class ScriptDialog(QtGui.QDialog, Ui_ScriptDialogBase):
         Returns:
         String containing absolute base path for script files
         """
-        root = os.path.dirname(__file__)
-        return os.path.abspath(os.path.join(root, '..', 'script_runner'))
+        myRoot = os.path.dirname(__file__)
+        return os.path.abspath(os.path.join(myRoot, '..', 'script_runner'))
 
     def populateTable(self):
         """ Populate table list in script dialog with file
@@ -73,23 +73,23 @@ class ScriptDialog(QtGui.QDialog, Ui_ScriptDialogBase):
         self.tblScript.clearContents()
 
         # load the list of files in 'script_runner' folder
-        path = self.getScriptPath()
+        myPath = self.getScriptPath()
 
         # get '.py' files in folder
-        files = [
-            x for x in os.listdir(path) if os.path.splitext(x)[1] == '.py']
+        myFiles = [
+            x for x in os.listdir(myPath) if os.path.splitext(x)[1] == '.py']
 
         # insert files to table widget
-        self.tblScript.setRowCount(len(files))
-        for index, filename in enumerate(files):
+        self.tblScript.setRowCount(len(myFiles))
+        for index, filename in enumerate(myFiles):
             self.tblScript.setItem(index, 0, QtGui.QTableWidgetItem(filename))
             self.tblScript.setItem(index, 1, QtGui.QTableWidgetItem(''))
 
 
-    def runScript(self, filename):
+    def runScript(self, theFilename):
         """ runs script in QGIS
         Args:
-           * filename - the script filename
+           * theFilename - the script filename
         Returns:
            not applicable
         Raises:
@@ -100,32 +100,32 @@ class ScriptDialog(QtGui.QDialog, Ui_ScriptDialogBase):
 
 
         # run script
-        module, _ = os.path.splitext(filename)
-        script = __import__(module)
+        myModule, _ = os.path.splitext(theFilename)
+        myScript = __import__(myModule)
 
-        script.run_script(qgis.utils.iface)
+        myScript.run_script(qgis.utils.iface)
 
 
     @pyqtSignature('')
     def on_btnRunSelected_clicked(self):
-        currentRow = self.tblScript.currentRow()
-        filename = str(self.tblScript.item(currentRow, 0).text())
+        myCurrentRow = self.tblScript.currentRow()
+        myFilename = str(self.tblScript.item(myCurrentRow, 0).text())
 
         # set status to 'running'
-        statusItem = self.tblScript.item(currentRow, 1)
-        statusItem.setText(self.tr('Running'))
+        myStatusItem = self.tblScript.item(myCurrentRow, 1)
+        myStatusItem.setText(self.tr('Running'))
 
         # run script
         try:
-            self.runScript(filename)
+            self.runScript(myFilename)
         except Exception as ex:
             # set status to 'fail'
-            statusItem.setText(self.tr('Fail'))
+            myStatusItem.setText(self.tr('Fail'))
             # just reraise the exception
             raise
 
         # set status to 'OK'
-        statusItem.setText(self.tr('OK'))
+        myStatusItem.setText(self.tr('OK'))
 
     @pyqtSignature('')
     def on_btnRefresh_clicked(self):
