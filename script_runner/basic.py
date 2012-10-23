@@ -21,8 +21,9 @@ from PyQt4.QtGui import *
 from safe_qgis.dock import Dock
 from safe_qgis.options_dialog import OptionsDialog
 
+import safe_qgis.macro as macro
 
-def run_script(iface):
+def runScript(iface):
 
     ## widgets
     mainWindow = iface.mainWindow()
@@ -36,7 +37,6 @@ def run_script(iface):
     actionDock.setChecked(False)
 
     dock.showOnlyVisibleLayersFlag = True
-    #loadStandardLayers()
     dock.cboHazard.setCurrentIndex(0)
     dock.cboExposure.setCurrentIndex(0)
     dock.cboFunction.setCurrentIndex(0)
@@ -50,8 +50,8 @@ def run_script(iface):
     ## when we click the dock button, InsafeDock widget must be visible
     actionDock.trigger()
 
-    assert actionDock.isChecked()
-    assert dock.isVisible()
+    macro.assertTrue(actionDock.isChecked())
+    macro.assertTrue(dock.isVisible())
 
     ## when we click options button, OptionsDialog must be visible
     actionOptions.trigger()
@@ -60,12 +60,12 @@ def run_script(iface):
         OptionsDialog, 'InaSAFEOptionsDialog')
 
     #assert optionsDialog.isHidden() is False
-    assert optionsDialog.isVisible()
+    macro.assertTrue(optionsDialog.isVisible())
 
     ## check OptionsDialog flags
     optionsDialog.cbxUseThread.setChecked(True)
     optionsDialog.cbxVisibleLayersOnly.setChecked(True)
     optionsDialog.accept()
 
-    assert dock.runInThreadFlag is True
-    assert dock.showOnlyVisibleLayersFlag is True
+    macro.assertTrue(dock.runInThreadFlag)
+    macro.assertTrue(dock.showOnlyVisibleLayersFlag)

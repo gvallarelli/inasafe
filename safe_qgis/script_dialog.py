@@ -96,14 +96,23 @@ class ScriptDialog(QtGui.QDialog, Ui_ScriptDialogBase):
            no exceptions explicitly raised
         """
 
-        # set status to 'running'
-
+        # run in blank project state
+        qgis.utils.iface.newProject()
 
         # run script
         myModule, _ = os.path.splitext(theFilename)
-        myScript = __import__(myModule)
+        if sys.modules.has_key(myModule):
+            myScript = reload(sys.modules[myModule])
+        else:
+            myScript = __import__(myModule)
 
-        myScript.run_script(qgis.utils.iface)
+
+        # run entry function
+        myFunction = myScript.runScript
+        if myFunction.func_code.co_argcount == 1:
+            myFunction(qgis.utils.iface)
+        else:
+            myFunction()
 
 
     @pyqtSignature('')
