@@ -68,8 +68,78 @@
         <div class="bodywrapper">
           <div class="body">
             
-  <div class="section" id="module-safe-qgis-test-impact-calculator">
-<h1>Module:  safe_qgis.test_impact_calculator<a class="headerlink" href="#module-safe-qgis-test-impact-calculator" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="module-safe_qgis.test_impact_calculator">
+<span id="module-safe-qgis-test-impact-calculator"></span><h1>Module:  safe_qgis.test_impact_calculator<a class="headerlink" href="#module-safe_qgis.test_impact_calculator" title="Permalink to this headline">¶</a></h1>
+<p>InaSAFE Disaster risk assessment tool developed by AusAid -
+<strong>Impact calculator test suite.</strong></p>
+<p>Contact : <a class="reference external" href="mailto:ole&#46;moller&#46;nielsen&#37;&#52;&#48;gmail&#46;com">ole<span>&#46;</span>moller<span>&#46;</span>nielsen<span>&#64;</span>gmail<span>&#46;</span>com</a></p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2 of the License, or
+(at your option) any later version.</p>
+</div>
+<dl class="class">
+<dt id="safe_qgis.test_impact_calculator.ImpactCalculatorTest">
+<em class="property">class </em><tt class="descclassname">safe_qgis.test_impact_calculator.</tt><tt class="descname">ImpactCalculatorTest</tt><big>(</big><em>methodName='runTest'</em><big>)</big><a class="reference internal" href="../../_modules/safe_qgis/test_impact_calculator.html#ImpactCalculatorTest"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe_qgis.test_impact_calculator.ImpactCalculatorTest" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test the InaSAFE plugin stub</p>
+<dl class="method">
+<dt id="safe_qgis.test_impact_calculator.ImpactCalculatorTest.setUp">
+<tt class="descname">setUp</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/safe_qgis/test_impact_calculator.html#ImpactCalculatorTest.setUp"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe_qgis.test_impact_calculator.ImpactCalculatorTest.setUp" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create shared resources that all tests can use</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="safe_qgis.test_impact_calculator.ImpactCalculatorTest.tearDown">
+<tt class="descname">tearDown</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/safe_qgis/test_impact_calculator.html#ImpactCalculatorTest.tearDown"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe_qgis.test_impact_calculator.ImpactCalculatorTest.tearDown" title="Permalink to this definition">¶</a></dt>
+<dd><p>Tear down - destroy the QGIS app</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="safe_qgis.test_impact_calculator.ImpactCalculatorTest.test_getKeywordFromImpactLayer">
+<tt class="descname">test_getKeywordFromImpactLayer</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/safe_qgis/test_impact_calculator.html#ImpactCalculatorTest.test_getKeywordFromImpactLayer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe_qgis.test_impact_calculator.ImpactCalculatorTest.test_getKeywordFromImpactLayer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check that we can get keywords from a created impact layer.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="safe_qgis.test_impact_calculator.ImpactCalculatorTest.test_getStyleInfo">
+<tt class="descname">test_getStyleInfo</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/safe_qgis/test_impact_calculator.html#ImpactCalculatorTest.test_getStyleInfo"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe_qgis.test_impact_calculator.ImpactCalculatorTest.test_getStyleInfo" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test that we can get styleInfo data from a vector&#8217;s keyword file</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="safe_qgis.test_impact_calculator.ImpactCalculatorTest.test_issue100">
+<tt class="descname">test_issue100</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/safe_qgis/test_impact_calculator.html#ImpactCalculatorTest.test_issue100"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe_qgis.test_impact_calculator.ImpactCalculatorTest.test_issue100" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test for issue 100: unhashable type dict</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="safe_qgis.test_impact_calculator.ImpactCalculatorTest.test_properties">
+<tt class="descname">test_properties</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/safe_qgis/test_impact_calculator.html#ImpactCalculatorTest.test_properties"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe_qgis.test_impact_calculator.ImpactCalculatorTest.test_properties" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test if the properties work as expected.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="safe_qgis.test_impact_calculator.ImpactCalculatorTest.test_run">
+<tt class="descname">test_run</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/safe_qgis/test_impact_calculator.html#ImpactCalculatorTest.test_run"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe_qgis.test_impact_calculator.ImpactCalculatorTest.test_run" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test that run works as expected in non threading mode</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="safe_qgis.test_impact_calculator.ImpactCalculatorTest.test_startWithNoParameters">
+<tt class="descname">test_startWithNoParameters</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/safe_qgis/test_impact_calculator.html#ImpactCalculatorTest.test_startWithNoParameters"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe_qgis.test_impact_calculator.ImpactCalculatorTest.test_startWithNoParameters" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test that run raises an error properly when no parameters defined.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="safe_qgis.test_impact_calculator.ImpactCalculatorTest.test_thread">
+<tt class="descname">test_thread</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/safe_qgis/test_impact_calculator.html#ImpactCalculatorTest.test_thread"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe_qgis.test_impact_calculator.ImpactCalculatorTest.test_thread" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test that starting it in a thread works as expected.</p>
+</dd></dl>
+
+</dd></dl>
+
 <p>This module forms part of the <a class="reference external" href="http://inasafe.org">InaSAFE</a> tool.</p>
 </div>
 

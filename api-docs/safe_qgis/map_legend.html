@@ -68,8 +68,171 @@
         <div class="bodywrapper">
           <div class="body">
             
-  <div class="section" id="module-safe-qgis-map-legend">
-<h1>Module:  safe_qgis.map_legend<a class="headerlink" href="#module-safe-qgis-map-legend" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="module-safe_qgis.map_legend">
+<span id="module-safe-qgis-map-legend"></span><h1>Module:  safe_qgis.map_legend<a class="headerlink" href="#module-safe_qgis.map_legend" title="Permalink to this headline">¶</a></h1>
+<dl class="docutils">
+<dt>InaSAFE Disaster risk assessment tool developed by AusAid -</dt>
+<dd><strong>InaSAFE map legend module.</strong></dd>
+</dl>
+<p>Contact : <a class="reference external" href="mailto:ole&#46;moller&#46;nielsen&#37;&#52;&#48;gmail&#46;com">ole<span>&#46;</span>moller<span>&#46;</span>nielsen<span>&#64;</span>gmail<span>&#46;</span>com</a></p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2 of the License, or
+(at your option) any later version.</p>
+</div>
+<dl class="class">
+<dt id="safe_qgis.map_legend.MapLegend">
+<em class="property">class </em><tt class="descclassname">safe_qgis.map_legend.</tt><tt class="descname">MapLegend</tt><big>(</big><em>theLayer</em><big>)</big><a class="reference internal" href="../../_modules/safe_qgis/map_legend.html#MapLegend"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe_qgis.map_legend.MapLegend" title="Permalink to this definition">¶</a></dt>
+<dd><p>A class for creating a map legend.</p>
+<dl class="method">
+<dt id="safe_qgis.map_legend.MapLegend.addClassToLegend">
+<tt class="descname">addClassToLegend</tt><big>(</big><em>theColour</em>, <em>theMin=None</em>, <em>theMax=None</em>, <em>theCategory=None</em>, <em>theLabel=None</em><big>)</big><a class="reference internal" href="../../_modules/safe_qgis/map_legend.html#MapLegend.addClassToLegend"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe_qgis.map_legend.MapLegend.addClassToLegend" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add a class to the current legend. If the legend is not defined,
+a new one will be created. A legend is just an image file with nicely
+rendered classes in it.</p>
+<p>Args:</p>
+<blockquote>
+<div><ul>
+<li><p class="first">theColour - <strong>Required</strong> colour for the class as a QColor</p>
+</li>
+<li><p class="first">theMin - Optional minimum value for the class</p>
+</li>
+<li><dl class="first docutils">
+<dt>theMax - Optional maximum value for the class            * theCategory - Optional category name (will be used in lieu of</dt>
+<dd><p class="first last">min/max)</p>
+</dd>
+</dl>
+</li>
+<li><p class="first">theLabel - Optional text label for the class</p>
+</li>
+</ul>
+</div></blockquote>
+<dl class="docutils">
+<dt>Returns:</dt>
+<dd>None</dd>
+<dt>Raises:</dt>
+<dd>Throws an exception if the class could not be added for
+some reason..</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="safe_qgis.map_legend.MapLegend.addSymbolToLegend">
+<tt class="descname">addSymbolToLegend</tt><big>(</big><em>theSymbol</em>, <em>theMin=None</em>, <em>theMax=None</em>, <em>theCategory=None</em>, <em>theLabel=None</em><big>)</big><a class="reference internal" href="../../_modules/safe_qgis/map_legend.html#MapLegend.addSymbolToLegend"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe_qgis.map_legend.MapLegend.addSymbolToLegend" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add a class to the current legend. If the legend is not defined,
+a new one will be created. A legend is just an image file with nicely
+rendered classes in it.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">This method just extracts the colour from the symbol and then
+delegates to the addClassToLegend function.</p>
+</div>
+<p>Args:</p>
+<blockquote>
+<div><ul>
+<li><p class="first">theSymbol - <strong>Required</strong> symbol for the class as a QgsSymbol</p>
+</li>
+<li><p class="first">theMin - Optional minimum value for the class</p>
+</li>
+<li><dl class="first docutils">
+<dt>theMax - Optional maximum value for the class            * theCategory - Optional category name (will be used in lieu of</dt>
+<dd><p class="first last">min/max)</p>
+</dd>
+</dl>
+</li>
+<li><p class="first">theLabel - Optional text label for the class</p>
+</li>
+</ul>
+</div></blockquote>
+<dl class="docutils">
+<dt>Returns:</dt>
+<dd>None</dd>
+<dt>Raises:</dt>
+<dd>Throws an exception if the class could not be added for
+some reason..</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="safe_qgis.map_legend.MapLegend.extendLegend">
+<tt class="descname">extendLegend</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/safe_qgis/map_legend.html#MapLegend.extendLegend"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe_qgis.map_legend.MapLegend.extendLegend" title="Permalink to this definition">¶</a></dt>
+<dd><p>Grow the legend pixmap enough to accommodate one more legend entry.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>None</dd>
+<dt>Returns:</dt>
+<dd>None</dd>
+<dt>Raises:</dt>
+<dd>Any exceptions raised by the InaSAFE library will be propogated.</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="safe_qgis.map_legend.MapLegend.getLegend">
+<tt class="descname">getLegend</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/safe_qgis/map_legend.html#MapLegend.getLegend"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe_qgis.map_legend.MapLegend.getLegend" title="Permalink to this definition">¶</a></dt>
+<dd><p>Examine the classes of the impact layer associated with this print
+job.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>None</dd>
+<dt>Returns:</dt>
+<dd>None</dd>
+<dt>Raises:</dt>
+<dd>An InvalidLegendLayer will be raised if a legend cannot be
+created from the layer.</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="safe_qgis.map_legend.MapLegend.getRasterLegend">
+<tt class="descname">getRasterLegend</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/safe_qgis/map_legend.html#MapLegend.getRasterLegend"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe_qgis.map_legend.MapLegend.getRasterLegend" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the legend for a raster layer as an image.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>None</dd>
+<dt>Returns:</dt>
+<dd>An image representing the layer&#8217;s legend.
+self.legend is also populated</dd>
+<dt>Raises:</dt>
+<dd>An InvalidLegendLayer will be raised if a legend cannot be
+created from the layer.</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="safe_qgis.map_legend.MapLegend.getVectorLegend">
+<tt class="descname">getVectorLegend</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/safe_qgis/map_legend.html#MapLegend.getVectorLegend"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe_qgis.map_legend.MapLegend.getVectorLegend" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the legend for this layer as a graphic.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>None</dd>
+<dt>Returns:</dt>
+<dd>A QImage object.
+self.legend is also populated with the image.</dd>
+<dt>Raises:</dt>
+<dd>An InvalidLegendLayer will be raised if a legend cannot be
+created from the layer.</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="safe_qgis.map_legend.MapLegend.tr">
+<tt class="descname">tr</tt><big>(</big><em>theString</em><big>)</big><a class="reference internal" href="../../_modules/safe_qgis/map_legend.html#MapLegend.tr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe_qgis.map_legend.MapLegend.tr" title="Permalink to this definition">¶</a></dt>
+<dd><p>We implement this ourself since we do not inherit QObject.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>theString - string for translation.</dd>
+<dt>Returns:</dt>
+<dd>Translated version of theString.</dd>
+<dt>Raises:</dt>
+<dd>no exceptions explicitly raised.</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
 <p>This module forms part of the <a class="reference external" href="http://inasafe.org">InaSAFE</a> tool.</p>
 </div>
 

@@ -68,8 +68,214 @@
         <div class="bodywrapper">
           <div class="body">
             
-  <div class="section" id="module-safe-qgis-plugin">
-<h1>Module:  safe_qgis.plugin<a class="headerlink" href="#module-safe-qgis-plugin" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="module-safe_qgis.plugin">
+<span id="module-safe-qgis-plugin"></span><h1>Module:  safe_qgis.plugin<a class="headerlink" href="#module-safe_qgis.plugin" title="Permalink to this headline">¶</a></h1>
+<dl class="docutils">
+<dt>InaSAFE Disaster risk assessment tool developed by AusAid -</dt>
+<dd><strong>QGIS plugin implementation.</strong></dd>
+</dl>
+<p>Contact : <a class="reference external" href="mailto:ole&#46;moller&#46;nielsen&#37;&#52;&#48;gmail&#46;com">ole<span>&#46;</span>moller<span>&#46;</span>nielsen<span>&#64;</span>gmail<span>&#46;</span>com</a></p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2 of the License, or
+(at your option) any later version.</p>
+</div>
+<dl class="class">
+<dt id="safe_qgis.plugin.Plugin">
+<em class="property">class </em><tt class="descclassname">safe_qgis.plugin.</tt><tt class="descname">Plugin</tt><big>(</big><em>iface</em><big>)</big><a class="reference internal" href="../../_modules/safe_qgis/plugin.html#Plugin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe_qgis.plugin.Plugin" title="Permalink to this definition">¶</a></dt>
+<dd><p>The QGIS interface implementation for the Risk in a box plugin.</p>
+<p>This class acts as the &#8216;glue&#8217; between QGIS and our custom logic.
+It creates a toolbar and menubar entry and launches the InaSAFE user
+interface if these are activated.</p>
+<dl class="method">
+<dt id="safe_qgis.plugin.Plugin.initGui">
+<tt class="descname">initGui</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/safe_qgis/plugin.html#Plugin.initGui"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe_qgis.plugin.Plugin.initGui" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gui initialisation procedure (for QGIS plugin api).</p>
+<p>This method is called by QGIS and should be used to set up
+any graphical user interface elements that should appear in QGIS by
+default (i.e. before the user performs any explicit action with the
+plugin).</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>None.</dd>
+<dt>Returns:</dt>
+<dd>None.</dd>
+<dt>Raises:</dt>
+<dd>no exceptions explicitly raised.</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="safe_qgis.plugin.Plugin.keyActionF7">
+<tt class="descname">keyActionF7</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/safe_qgis/plugin.html#Plugin.keyActionF7"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe_qgis.plugin.Plugin.keyActionF7" title="Permalink to this definition">¶</a></dt>
+<dd><p>Executed when user press F7</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="safe_qgis.plugin.Plugin.layerChanged">
+<tt class="descname">layerChanged</tt><big>(</big><em>theLayer</em><big>)</big><a class="reference internal" href="../../_modules/safe_qgis/plugin.html#Plugin.layerChanged"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe_qgis.plugin.Plugin.layerChanged" title="Permalink to this definition">¶</a></dt>
+<dd><p>Enable or disable the keywords editor icon.</p>
+<p>This slot is called when the user clicks the keyword editor toolbar
+icon or menu item associated with this plugin</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>None.</dd>
+<dt>Returns:</dt>
+<dd>None.</dd>
+<dt>Raises:</dt>
+<dd>no exceptions explicitly raised.</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="safe_qgis.plugin.Plugin.resetDock">
+<tt class="descname">resetDock</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/safe_qgis/plugin.html#Plugin.resetDock"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe_qgis.plugin.Plugin.resetDock" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reset the dock to its default state.</p>
+<p>This slot is called when the user clicks the reset icon in the toolbar
+or the reset menu item associated with this plugin</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>None.</dd>
+<dt>Returns:</dt>
+<dd>None.</dd>
+<dt>Raises:</dt>
+<dd>no exceptions explicitly raised.</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="safe_qgis.plugin.Plugin.setupI18n">
+<tt class="descname">setupI18n</tt><big>(</big><em>thePreferredLocale=None</em><big>)</big><a class="reference internal" href="../../_modules/safe_qgis/plugin.html#Plugin.setupI18n"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe_qgis.plugin.Plugin.setupI18n" title="Permalink to this definition">¶</a></dt>
+<dd><p>Setup internationalisation for the plugin.</p>
+<p>See if QGIS wants to override the system locale
+and then see if we can get a valid translation file
+for whatever locale is effectively being used.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>thePreferredLocale - optional parameter which if set
+will override any other way of determining locale..</dd>
+<dt>Returns:</dt>
+<dd>None.</dd>
+<dt>Raises:</dt>
+<dd>no exceptions explicitly raised.</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="safe_qgis.plugin.Plugin.showHideDockWidget">
+<tt class="descname">showHideDockWidget</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/safe_qgis/plugin.html#Plugin.showHideDockWidget"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe_qgis.plugin.Plugin.showHideDockWidget" title="Permalink to this definition">¶</a></dt>
+<dd><p>Show or hide the dock widget.</p>
+<p>This slot is called when the user clicks the toolbar icon or
+menu item associated with this plugin. It will hide or show
+the dock depending on its current state.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>None.</dd>
+<dt>Returns:</dt>
+<dd>None.</dd>
+<dt>Raises:</dt>
+<dd>no exceptions explicitly raised.</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="safe_qgis.plugin.Plugin.showImpactFunctionsDoc">
+<tt class="descname">showImpactFunctionsDoc</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/safe_qgis/plugin.html#Plugin.showImpactFunctionsDoc"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe_qgis.plugin.Plugin.showImpactFunctionsDoc" title="Permalink to this definition">¶</a></dt>
+<dd><p>Show the keywords editor.</p>
+<p>This slot is called when the user clicks the impact functions
+toolbar icon or menu item associated with this plugin</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>None.</dd>
+<dt>Returns:</dt>
+<dd>None.</dd>
+<dt>Raises:</dt>
+<dd>no exceptions explicitly raised.</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="safe_qgis.plugin.Plugin.showKeywordsEditor">
+<tt class="descname">showKeywordsEditor</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/safe_qgis/plugin.html#Plugin.showKeywordsEditor"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe_qgis.plugin.Plugin.showKeywordsEditor" title="Permalink to this definition">¶</a></dt>
+<dd><p>Show the keywords editor.</p>
+<p>This slot is called when the user clicks the keyword editor toolbar
+icon or menu item associated with this plugin</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>None.</dd>
+<dt>Returns:</dt>
+<dd>None.</dd>
+<dt>Raises:</dt>
+<dd>no exceptions explicitly raised.</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="safe_qgis.plugin.Plugin.showOptions">
+<tt class="descname">showOptions</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/safe_qgis/plugin.html#Plugin.showOptions"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe_qgis.plugin.Plugin.showOptions" title="Permalink to this definition">¶</a></dt>
+<dd><p>Show the options dialog.</p>
+<p>This slot is called when the user clicks the options toolbar
+icon or menu item associated with this plugin</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>None.</dd>
+<dt>Returns:</dt>
+<dd>None.</dd>
+<dt>Raises:</dt>
+<dd>no exceptions explicitly raised.</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="safe_qgis.plugin.Plugin.toggleActionDock">
+<tt class="descname">toggleActionDock</tt><big>(</big><em>checked</em><big>)</big><a class="reference internal" href="../../_modules/safe_qgis/plugin.html#Plugin.toggleActionDock"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe_qgis.plugin.Plugin.toggleActionDock" title="Permalink to this definition">¶</a></dt>
+<dd><p>check or uncheck the toggle inaSAFE toolbar button.</p>
+<p>This slot is called when the user hides the inaSAFE panel using its
+close button or using view-&gt;panels</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>checked - if actionDock has to be checked or not</dd>
+<dt>Returns:</dt>
+<dd>None.</dd>
+<dt>Raises:</dt>
+<dd>no exceptions explicitly raised.</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="safe_qgis.plugin.Plugin.tr">
+<tt class="descname">tr</tt><big>(</big><em>theString</em><big>)</big><a class="reference internal" href="../../_modules/safe_qgis/plugin.html#Plugin.tr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe_qgis.plugin.Plugin.tr" title="Permalink to this definition">¶</a></dt>
+<dd><p>We implement this ourself since we do not inherit QObject.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>theString - string for translation.</dd>
+<dt>Returns:</dt>
+<dd>Translated version of theString.</dd>
+<dt>Raises:</dt>
+<dd>no exceptions explicitly raised.</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="safe_qgis.plugin.Plugin.unload">
+<tt class="descname">unload</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/safe_qgis/plugin.html#Plugin.unload"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe_qgis.plugin.Plugin.unload" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gui breakdown procedure (for QGIS plugin api).</p>
+<p>This method is called by QGIS and should be used to <em>remove</em>
+any graphical user interface elements that should appear in QGIS.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>None.</dd>
+<dt>Returns:</dt>
+<dd>None.</dd>
+<dt>Raises:</dt>
+<dd>no exceptions explicitly raised.</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
 <p>This module forms part of the <a class="reference external" href="http://inasafe.org">InaSAFE</a> tool.</p>
 </div>
 

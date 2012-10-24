@@ -68,8 +68,113 @@
         <div class="bodywrapper">
           <div class="body">
             
-  <div class="section" id="module-safe-qgis-test-clipper">
-<h1>Module:  safe_qgis.test_clipper<a class="headerlink" href="#module-safe-qgis-test-clipper" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="module-safe_qgis.test_clipper">
+<span id="module-safe-qgis-test-clipper"></span><h1>Module:  safe_qgis.test_clipper<a class="headerlink" href="#module-safe_qgis.test_clipper" title="Permalink to this headline">¶</a></h1>
+<dl class="docutils">
+<dt>InaSAFE Disaster risk assessment tool developed by AusAid -</dt>
+<dd><strong>ISClipper test suite.</strong></dd>
+</dl>
+<p>Contact : <a class="reference external" href="mailto:ole&#46;moller&#46;nielsen&#37;&#52;&#48;gmail&#46;com">ole<span>&#46;</span>moller<span>&#46;</span>nielsen<span>&#64;</span>gmail<span>&#46;</span>com</a></p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2 of the License, or
+(at your option) any later version.</p>
+</div>
+<dl class="class">
+<dt id="safe_qgis.test_clipper.ClipperTest">
+<em class="property">class </em><tt class="descclassname">safe_qgis.test_clipper.</tt><tt class="descname">ClipperTest</tt><big>(</big><em>methodName='runTest'</em><big>)</big><a class="reference internal" href="../../_modules/safe_qgis/test_clipper.html#ClipperTest"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe_qgis.test_clipper.ClipperTest" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test the InaSAFE clipper</p>
+<dl class="method">
+<dt id="safe_qgis.test_clipper.ClipperTest.testRasterScaling">
+<tt class="descname">testRasterScaling</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/safe_qgis/test_clipper.html#ClipperTest.testRasterScaling"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe_qgis.test_clipper.ClipperTest.testRasterScaling" title="Permalink to this definition">¶</a></dt>
+<dd><p>Raster layers can be scaled when resampled</p>
+<p>This is a test for ticket #52</p>
+<p>Native test .asc data has</p>
+<p>Population_Jakarta_geographic.asc
+ncols         638
+nrows         649
+cellsize      0.00045228819716044</p>
+<p>Population_2010.asc
+ncols         5525
+nrows         2050
+cellsize      0.0083333333333333</p>
+<p>Scaling is necessary for raster data that represents density
+such as population per km^2</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="safe_qgis.test_clipper.ClipperTest.testRasterScaling_projected">
+<tt class="descname">testRasterScaling_projected</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/safe_qgis/test_clipper.html#ClipperTest.testRasterScaling_projected"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe_qgis.test_clipper.ClipperTest.testRasterScaling_projected" title="Permalink to this definition">¶</a></dt>
+<dd><p>Attempt to scale projected density raster layers raise exception</p>
+<p>Automatic scaling when resampling density data
+does not currently work for projected layers. See issue #123.</p>
+<p>For the time being this test checks that an exception is raised
+when scaling is attempted on projected layers.
+When we resolve issue #123, this test should be rewritten.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="safe_qgis.test_clipper.ClipperTest.test_clipBoth">
+<tt class="descname">test_clipBoth</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/safe_qgis/test_clipper.html#ClipperTest.test_clipBoth"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe_qgis.test_clipper.ClipperTest.test_clipBoth" title="Permalink to this definition">¶</a></dt>
+<dd><p>Raster and Vector layers can be clipped</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="safe_qgis.test_clipper.ClipperTest.test_clipRaster">
+<tt class="descname">test_clipRaster</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/safe_qgis/test_clipper.html#ClipperTest.test_clipRaster"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe_qgis.test_clipper.ClipperTest.test_clipRaster" title="Permalink to this definition">¶</a></dt>
+<dd><p>Raster layers can be clipped</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="safe_qgis.test_clipper.ClipperTest.test_clipVector">
+<tt class="descname">test_clipVector</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/safe_qgis/test_clipper.html#ClipperTest.test_clipVector"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe_qgis.test_clipper.ClipperTest.test_clipVector" title="Permalink to this definition">¶</a></dt>
+<dd><p>Vector layers can be clipped</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="safe_qgis.test_clipper.ClipperTest.test_explodeMultiLineGeometry">
+<tt class="descname">test_explodeMultiLineGeometry</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/safe_qgis/test_clipper.html#ClipperTest.test_explodeMultiLineGeometry"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe_qgis.test_clipper.ClipperTest.test_explodeMultiLineGeometry" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test exploding LINES multipart to single part geometries works</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="safe_qgis.test_clipper.ClipperTest.test_explodeMultiPointGeometry">
+<tt class="descname">test_explodeMultiPointGeometry</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/safe_qgis/test_clipper.html#ClipperTest.test_explodeMultiPointGeometry"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe_qgis.test_clipper.ClipperTest.test_explodeMultiPointGeometry" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test exploding POINT multipart to single part geometries works</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="safe_qgis.test_clipper.ClipperTest.test_explodeMultiPolygonGeometry">
+<tt class="descname">test_explodeMultiPolygonGeometry</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/safe_qgis/test_clipper.html#ClipperTest.test_explodeMultiPolygonGeometry"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe_qgis.test_clipper.ClipperTest.test_explodeMultiPolygonGeometry" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test exploding POLY multipart to single part geometries works</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="safe_qgis.test_clipper.ClipperTest.test_extentToKml">
+<tt class="descname">test_extentToKml</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/safe_qgis/test_clipper.html#ClipperTest.test_extentToKml"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe_qgis.test_clipper.ClipperTest.test_extentToKml" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test if extent to KML is working.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="safe_qgis.test_clipper.ClipperTest.test_invalidFilenamesCaught">
+<tt class="descname">test_invalidFilenamesCaught</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/safe_qgis/test_clipper.html#ClipperTest.test_invalidFilenamesCaught"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe_qgis.test_clipper.ClipperTest.test_invalidFilenamesCaught" title="Permalink to this definition">¶</a></dt>
+<dd><p>Invalid filenames raise appropriate exceptions</p>
+<p>Wrote this test because test_clipBoth raised the wrong error
+when file was missing. Instead of reporting that, it gave
+Western boundary must be less than eastern. I got [0.0, 0.0, 0.0, 0.0]</p>
+<p>See issue #170</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="safe_qgis.test_clipper.ClipperTest.test_vectorProjections">
+<tt class="descname">test_vectorProjections</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/safe_qgis/test_clipper.html#ClipperTest.test_vectorProjections"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe_qgis.test_clipper.ClipperTest.test_vectorProjections" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test that vector input data is reprojected properly during clip</p>
+</dd></dl>
+
+</dd></dl>
+
 <p>This module forms part of the <a class="reference external" href="http://inasafe.org">InaSAFE</a> tool.</p>
 </div>
 

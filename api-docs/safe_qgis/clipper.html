@@ -68,8 +68,109 @@
         <div class="bodywrapper">
           <div class="body">
             
-  <div class="section" id="module-safe-qgis-clipper">
-<h1>Module:  safe_qgis.clipper<a class="headerlink" href="#module-safe-qgis-clipper" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="module-safe_qgis.clipper">
+<span id="module-safe-qgis-clipper"></span><h1>Module:  safe_qgis.clipper<a class="headerlink" href="#module-safe_qgis.clipper" title="Permalink to this headline">¶</a></h1>
+<dl class="docutils">
+<dt>InaSAFE Disaster risk assessment tool developed by AusAid -</dt>
+<dd><strong>ISClipper implementation.</strong></dd>
+</dl>
+<p>Contact : <a class="reference external" href="mailto:ole&#46;moller&#46;nielsen&#37;&#52;&#48;gmail&#46;com">ole<span>&#46;</span>moller<span>&#46;</span>nielsen<span>&#64;</span>gmail<span>&#46;</span>com</a></p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2 of the License, or
+(at your option) any later version.</p>
+</div>
+<dl class="function">
+<dt id="safe_qgis.clipper.clipLayer">
+<tt class="descclassname">safe_qgis.clipper.</tt><tt class="descname">clipLayer</tt><big>(</big><em>theLayer</em>, <em>theExtent</em>, <em>theCellSize=None</em>, <em>theExtraKeywords=None</em>, <em>explodeMultipart=True</em><big>)</big><a class="reference internal" href="../../_modules/safe_qgis/clipper.html#clipLayer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe_qgis.clipper.clipLayer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Clip a Hazard or Exposure layer to the extents provided.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Will delegate to clipVectorLayer or clipRasterLayer as needed.</p>
+</div>
+<p>Args:</p>
+<blockquote>
+<div><ul>
+<li><p class="first">theLayer - a valid QGIS vector or raster layer</p>
+</li>
+<li><dl class="first docutils">
+<dt>theExtent - an array representing the exposure layer</dt>
+<dd><p class="first last">extents in the form [xmin, ymin, xmax, ymax]. It is assumed
+that the coordinates are in EPSG:4326 although currently
+no checks are made to enforce this.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>theCellSize - cell size which the layer should be resampled to.</dt>
+<dd><p class="first last">This argument will be ignored for vector layers and if not provided
+for a raster layer, the native raster cell size will be used.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>theExtraKeywords - Optional keywords dictionary to be added to</dt>
+<dd><p class="first last">output layer</p>
+</dd>
+</dl>
+</li>
+<li><p class="first">explodeMultipart - a bool describing if to convert multipart</p>
+</li>
+</ul>
+<p>features into singleparts</p>
+</div></blockquote>
+<dl class="docutils">
+<dt>Returns:</dt>
+<dd>Path to the output clipped layer (placed in the
+system temp dir). The output layer will be reprojected to EPSG:4326
+if needed.</dd>
+<dt>Raises:</dt>
+<dd>None</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="safe_qgis.clipper.explodeMultiPartGeometry">
+<tt class="descclassname">safe_qgis.clipper.</tt><tt class="descname">explodeMultiPartGeometry</tt><big>(</big><em>theGeom</em><big>)</big><a class="reference internal" href="../../_modules/safe_qgis/clipper.html#explodeMultiPartGeometry"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe_qgis.clipper.explodeMultiPartGeometry" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert a multipart geometry to a list of single parts. This method was
+adapted from Carson Farmer&#8217;s fTools doGeometry implementation in QGIS.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>theGeom - A geometry - if it is multipart it will be exploded.</dd>
+<dt>Returns:</dt>
+<dd>A list of single part geometries</dd>
+<dt>Raises:</dt>
+<dd>None</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="safe_qgis.clipper.extentToKml">
+<tt class="descclassname">safe_qgis.clipper.</tt><tt class="descname">extentToKml</tt><big>(</big><em>theExtent</em><big>)</big><a class="reference internal" href="../../_modules/safe_qgis/clipper.html#extentToKml"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe_qgis.clipper.extentToKml" title="Permalink to this definition">¶</a></dt>
+<dd><p>A helper to get a little kml doc for an extent so that
+we can use it with gdal warp for clipping.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="safe_qgis.clipper.tr">
+<tt class="descclassname">safe_qgis.clipper.</tt><tt class="descname">tr</tt><big>(</big><em>theText</em><big>)</big><a class="reference internal" href="../../_modules/safe_qgis/clipper.html#tr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe_qgis.clipper.tr" title="Permalink to this definition">¶</a></dt>
+<dd><p>We define a tr() alias here since the ClipperTest implementation below
+is not a class and does not inherit from QObject.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">see <a class="reference external" href="http://tinyurl.com/pyqt-differences">http://tinyurl.com/pyqt-differences</a></p>
+</div>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>theText - string to be translated</dd>
+<dt>Returns:</dt>
+<dd>Translated version of the given string if available, otherwise
+the original string.</dd>
+</dl>
+</dd></dl>
+
 <p>This module forms part of the <a class="reference external" href="http://inasafe.org">InaSAFE</a> tool.</p>
 </div>
 

@@ -68,8 +68,126 @@
         <div class="bodywrapper">
           <div class="body">
             
-  <div class="section" id="module-safe-qgis-html-renderer">
-<h1>Module:  safe_qgis.html_renderer<a class="headerlink" href="#module-safe-qgis-html-renderer" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="module-safe_qgis.html_renderer">
+<span id="module-safe-qgis-html-renderer"></span><h1>Module:  safe_qgis.html_renderer<a class="headerlink" href="#module-safe_qgis.html_renderer" title="Permalink to this headline">¶</a></h1>
+<dl class="docutils">
+<dt>InaSAFE Disaster risk assessment tool developed by AusAid -</dt>
+<dd><strong>InaSAFE map making module.</strong></dd>
+</dl>
+<p>Contact : <a class="reference external" href="mailto:ole&#46;moller&#46;nielsen&#37;&#52;&#48;gmail&#46;com">ole<span>&#46;</span>moller<span>&#46;</span>nielsen<span>&#64;</span>gmail<span>&#46;</span>com</a></p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2 of the License, or
+(at your option) any later version.</p>
+</div>
+<dl class="class">
+<dt id="safe_qgis.html_renderer.HtmlRenderer">
+<em class="property">class </em><tt class="descclassname">safe_qgis.html_renderer.</tt><tt class="descname">HtmlRenderer</tt><big>(</big><em>thePageDpi</em><big>)</big><a class="reference internal" href="../../_modules/safe_qgis/html_renderer.html#HtmlRenderer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe_qgis.html_renderer.HtmlRenderer" title="Permalink to this definition">¶</a></dt>
+<dd><p>A class for creating a map.</p>
+<dl class="method">
+<dt id="safe_qgis.html_renderer.HtmlRenderer.htmlLoadedSlot">
+<tt class="descname">htmlLoadedSlot</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/safe_qgis/html_renderer.html#HtmlRenderer.htmlLoadedSlot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe_qgis.html_renderer.HtmlRenderer.htmlLoadedSlot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Slot called when the page is loaded.</p>
+<p>Args: None
+Returns: None
+Raises: None</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="safe_qgis.html_renderer.HtmlRenderer.loadAndWait">
+<tt class="descname">loadAndWait</tt><big>(</big><em>theHtmlPath=None</em>, <em>theHtmlSnippet=None</em><big>)</big><a class="reference internal" href="../../_modules/safe_qgis/html_renderer.html#HtmlRenderer.loadAndWait"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe_qgis.html_renderer.HtmlRenderer.loadAndWait" title="Permalink to this definition">¶</a></dt>
+<dd><p>Load some html to a web view and wait till it is done.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="safe_qgis.html_renderer.HtmlRenderer.printImpactTable">
+<tt class="descname">printImpactTable</tt><big>(</big><em>theKeywords</em>, <em>theFilename=None</em><big>)</big><a class="reference internal" href="../../_modules/safe_qgis/html_renderer.html#HtmlRenderer.printImpactTable"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe_qgis.html_renderer.HtmlRenderer.printImpactTable" title="Permalink to this definition">¶</a></dt>
+<dd><p>High level table generator to print layer keywords.</p>
+<p>It gets the summary and impact table from a QgsMapLayer&#8217;s keywords and
+renders to pdf, returning the resulting PDF file path.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>theKeywords: dic containing impact layer keywords (required)</dd>
+<dt>Returns:</dt>
+<dd>str: Path to generated pdf file.</dd>
+<dt>Raises:</dt>
+<dd>None</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="safe_qgis.html_renderer.HtmlRenderer.printToPdf">
+<tt class="descname">printToPdf</tt><big>(</big><em>theHtml</em>, <em>theFilename=None</em><big>)</big><a class="reference internal" href="../../_modules/safe_qgis/html_renderer.html#HtmlRenderer.printToPdf"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe_qgis.html_renderer.HtmlRenderer.printToPdf" title="Permalink to this definition">¶</a></dt>
+<dd><p>Render an html snippet into the printer, paginating as needed.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><ul class="first last">
+<li><dl class="first docutils">
+<dt>theHtml: str A string containing an html snippet. It will have a</dt>
+<dd><p class="first last">header and footer appended to it in order to make it a valid
+html document. The header will also apply the bootstrap theme
+to the document.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>theFilename: str String containing a pdf file path that the</dt>
+<dd><p class="first last">output will be written to.</p>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+<dt>Returns:</dt>
+<dd><dl class="first last docutils">
+<dt>str: The file path of the output pdf (which is the same as the</dt>
+<dd>theFilename parameter if it was specified.</dd>
+</dl>
+</dd>
+<dt>Raises:</dt>
+<dd>None</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="safe_qgis.html_renderer.HtmlRenderer.renderHtmlToPixmap">
+<tt class="descname">renderHtmlToPixmap</tt><big>(</big><em>theHtml</em>, <em>theWidthMM</em><big>)</big><a class="reference internal" href="../../_modules/safe_qgis/html_renderer.html#HtmlRenderer.renderHtmlToPixmap"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe_qgis.html_renderer.HtmlRenderer.renderHtmlToPixmap" title="Permalink to this definition">¶</a></dt>
+<dd><p>Render some HTML to a pixmap.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><ul class="first last simple">
+<li>theHtml - HTML to be rendered. It is assumed that the html
+is a snippet only, containing no body element - a standard
+header and footer will be appended.</li>
+<li>theWidthMM- width of the table in mm - will be converted to
+points based on the resolution of our page.</li>
+</ul>
+</dd>
+<dt>Returns:</dt>
+<dd>QPixmap</dd>
+<dt>Raises:</dt>
+<dd>Any exceptions raised by the InaSAFE library will be propagated.</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="safe_qgis.html_renderer.HtmlRenderer.tr">
+<tt class="descname">tr</tt><big>(</big><em>theString</em><big>)</big><a class="reference internal" href="../../_modules/safe_qgis/html_renderer.html#HtmlRenderer.tr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe_qgis.html_renderer.HtmlRenderer.tr" title="Permalink to this definition">¶</a></dt>
+<dd><p>We implement this since we do not inherit QObject.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>theString - string for translation.</dd>
+<dt>Returns:</dt>
+<dd>Translated version of theString.</dd>
+<dt>Raises:</dt>
+<dd>no exceptions explicitly raised.</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
 <p>This module forms part of the <a class="reference external" href="http://inasafe.org">InaSAFE</a> tool.</p>
 </div>
 

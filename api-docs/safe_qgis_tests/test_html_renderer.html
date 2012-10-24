@@ -68,8 +68,56 @@
         <div class="bodywrapper">
           <div class="body">
             
-  <div class="section" id="module-safe-qgis-test-html-renderer">
-<h1>Module:  safe_qgis.test_html_renderer<a class="headerlink" href="#module-safe-qgis-test-html-renderer" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="module-safe_qgis.test_html_renderer">
+<span id="module-safe-qgis-test-html-renderer"></span><h1>Module:  safe_qgis.test_html_renderer<a class="headerlink" href="#module-safe_qgis.test_html_renderer" title="Permalink to this headline">¶</a></h1>
+<p>InaSAFE Disaster risk assessment tool developed by AusAid and World Bank
+- <strong>GUI Test Cases.</strong></p>
+<p>Contact : <a class="reference external" href="mailto:ole&#46;moller&#46;nielsen&#37;&#52;&#48;gmail&#46;com">ole<span>&#46;</span>moller<span>&#46;</span>nielsen<span>&#64;</span>gmail<span>&#46;</span>com</a></p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2 of the License, or
+(at your option) any later version.</p>
+</div>
+<dl class="class">
+<dt id="safe_qgis.test_html_renderer.HtmlRendererTest">
+<em class="property">class </em><tt class="descclassname">safe_qgis.test_html_renderer.</tt><tt class="descname">HtmlRendererTest</tt><big>(</big><em>methodName='runTest'</em><big>)</big><a class="reference internal" href="../../_modules/safe_qgis/test_html_renderer.html#HtmlRendererTest"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe_qgis.test_html_renderer.HtmlRendererTest" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test the InaSAFE Html Renderer</p>
+<dl class="method">
+<dt id="safe_qgis.test_html_renderer.HtmlRendererTest.sampleHtml">
+<tt class="descname">sampleHtml</tt><big>(</big><em>theLineCount=100</em><big>)</big><a class="reference internal" href="../../_modules/safe_qgis/test_html_renderer.html#HtmlRendererTest.sampleHtml"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe_qgis.test_html_renderer.HtmlRendererTest.sampleHtml" title="Permalink to this definition">¶</a></dt>
+<dd><p>Helper function to generate some sample html.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>theLineCount: How many lines of fake html you want. Default is 100.</dd>
+<dt>Returns:</dt>
+<dd>str: an html snippet containing a table with theLineCount rows.</dd>
+<dt>Raises:</dt>
+<dd>None</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="safe_qgis.test_html_renderer.HtmlRendererTest.test_printImpactTable">
+<tt class="descname">test_printImpactTable</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/safe_qgis/test_html_renderer.html#HtmlRendererTest.test_printImpactTable"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe_qgis.test_html_renderer.HtmlRendererTest.test_printImpactTable" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test that we can render html from impact table keywords.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="safe_qgis.test_html_renderer.HtmlRendererTest.test_printToPdf">
+<tt class="descname">test_printToPdf</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/safe_qgis/test_html_renderer.html#HtmlRendererTest.test_printToPdf"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe_qgis.test_html_renderer.HtmlRendererTest.test_printToPdf" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test that we can render some html to a pdf (most common use case).</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="safe_qgis.test_html_renderer.HtmlRendererTest.test_renderHtmlToPixmap">
+<tt class="descname">test_renderHtmlToPixmap</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/safe_qgis/test_html_renderer.html#HtmlRendererTest.test_renderHtmlToPixmap"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe_qgis.test_html_renderer.HtmlRendererTest.test_renderHtmlToPixmap" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test that we can render html to a pixmap.</p>
+</dd></dl>
+
+</dd></dl>
+
 <p>This module forms part of the <a class="reference external" href="http://inasafe.org">InaSAFE</a> tool.</p>
 </div>
 

@@ -68,8 +68,57 @@
         <div class="bodywrapper">
           <div class="body">
             
-  <div class="section" id="module-safe-qgis-test-map">
-<h1>Module:  safe_qgis.test_map<a class="headerlink" href="#module-safe-qgis-test-map" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="module-safe_qgis.test_map">
+<span id="module-safe-qgis-test-map"></span><h1>Module:  safe_qgis.test_map<a class="headerlink" href="#module-safe_qgis.test_map" title="Permalink to this headline">¶</a></h1>
+<p><strong>Tests for map creation in QGIS plugin.</strong></p>
+<dl class="class">
+<dt id="safe_qgis.test_map.MapTest">
+<em class="property">class </em><tt class="descclassname">safe_qgis.test_map.</tt><tt class="descname">MapTest</tt><big>(</big><em>methodName='runTest'</em><big>)</big><a class="reference internal" href="../../_modules/safe_qgis/test_map.html#MapTest"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe_qgis.test_map.MapTest" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test the InaSAFE Map generator</p>
+<dl class="method">
+<dt id="safe_qgis.test_map.MapTest.Xtest_renderTemplate">
+<tt class="descname">Xtest_renderTemplate</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="../../_modules/safe_qgis/test_map.html#MapTest.Xtest_renderTemplate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe_qgis.test_map.MapTest.Xtest_renderTemplate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test that load template works</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="safe_qgis.test_map.MapTest.setUp">
+<tt class="descname">setUp</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/safe_qgis/test_map.html#MapTest.setUp"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe_qgis.test_map.MapTest.setUp" title="Permalink to this definition">¶</a></dt>
+<dd><p>Setup fixture run before each tests</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="safe_qgis.test_map.MapTest.test_getMapTitle">
+<tt class="descname">test_getMapTitle</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/safe_qgis/test_map.html#MapTest.test_getMapTitle"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe_qgis.test_map.MapTest.test_getMapTitle" title="Permalink to this definition">¶</a></dt>
+<dd><p>Getting the map title from the keywords</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="safe_qgis.test_map.MapTest.test_handleMissingMapTitle">
+<tt class="descname">test_handleMissingMapTitle</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/safe_qgis/test_map.html#MapTest.test_handleMissingMapTitle"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe_qgis.test_map.MapTest.test_handleMissingMapTitle" title="Permalink to this definition">¶</a></dt>
+<dd><p>Missing map title from the keywords fails gracefully</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="safe_qgis.test_map.MapTest.test_printToPdf">
+<tt class="descname">test_printToPdf</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/safe_qgis/test_map.html#MapTest.test_printToPdf"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe_qgis.test_map.MapTest.test_printToPdf" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test making a pdf of the map - this is the most typical use of map.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="safe_qgis.test_map.MapTest.test_renderComposition">
+<tt class="descname">test_renderComposition</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/safe_qgis/test_map.html#MapTest.test_renderComposition"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe_qgis.test_map.MapTest.test_renderComposition" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test making an image of the map only.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="safe_qgis.test_map.MapTest.test_windowsDrawingArtifacts">
+<tt class="descname">test_windowsDrawingArtifacts</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/safe_qgis/test_map.html#MapTest.test_windowsDrawingArtifacts"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe_qgis.test_map.MapTest.test_windowsDrawingArtifacts" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test that windows rendering does not make artifacts</p>
+</dd></dl>
+
+</dd></dl>
+
 <p>This module forms part of the <a class="reference external" href="http://inasafe.org">InaSAFE</a> tool.</p>
 </div>
 

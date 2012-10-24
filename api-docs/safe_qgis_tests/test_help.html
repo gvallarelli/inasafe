@@ -68,8 +68,45 @@
         <div class="bodywrapper">
           <div class="body">
             
-  <div class="section" id="module-safe-qgis-test-help">
-<h1>Module:  safe_qgis.test_help<a class="headerlink" href="#module-safe-qgis-test-help" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="module-safe_qgis.test_help">
+<span id="module-safe-qgis-test-help"></span><h1>Module:  safe_qgis.test_help<a class="headerlink" href="#module-safe_qgis.test_help" title="Permalink to this headline">¶</a></h1>
+<p>InaSAFE Disaster risk assessment tool developed by AusAid and World Bank
+- <strong>GUI Test Cases.</strong></p>
+<p>Contact : <a class="reference external" href="mailto:ole&#46;moller&#46;nielsen&#37;&#52;&#48;gmail&#46;com">ole<span>&#46;</span>moller<span>&#46;</span>nielsen<span>&#64;</span>gmail<span>&#46;</span>com</a></p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2 of the License, or
+(at your option) any later version.</p>
+</div>
+<dl class="class">
+<dt id="safe_qgis.test_help.HelpTest">
+<em class="property">class </em><tt class="descclassname">safe_qgis.test_help.</tt><tt class="descname">HelpTest</tt><big>(</big><em>methodName='runTest'</em><big>)</big><a class="reference internal" href="../../_modules/safe_qgis/test_help.html#HelpTest"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe_qgis.test_help.HelpTest" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test the InaSAFE help GUI
+.. note:: Currently these tests will all fail unless you comment out the
+APP.exec_() lines because the web view does not load content without
+the main application event loop running.</p>
+<dl class="method">
+<dt id="safe_qgis.test_help.HelpTest.XtestDialogLoads">
+<tt class="descname">XtestDialogLoads</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/safe_qgis/test_help.html#HelpTest.XtestDialogLoads"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe_qgis.test_help.HelpTest.XtestDialogLoads" title="Permalink to this definition">¶</a></dt>
+<dd><p>Basic test to ensure the keyword dialog has loaded</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="safe_qgis.test_help.HelpTest.XtestDockHelp">
+<tt class="descname">XtestDockHelp</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/safe_qgis/test_help.html#HelpTest.XtestDockHelp"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe_qgis.test_help.HelpTest.XtestDockHelp" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test help dialog works with context set to &#8216;dock&#8217;</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="safe_qgis.test_help.HelpTest.XtestKeywordsHelp">
+<tt class="descname">XtestKeywordsHelp</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/safe_qgis/test_help.html#HelpTest.XtestKeywordsHelp"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe_qgis.test_help.HelpTest.XtestKeywordsHelp" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test help dialog works with context set to &#8216;keywords&#8217;</p>
+</dd></dl>
+
+</dd></dl>
+
 <p>This module forms part of the <a class="reference external" href="http://inasafe.org">InaSAFE</a> tool.</p>
 </div>
 
