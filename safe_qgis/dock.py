@@ -71,7 +71,10 @@ from safe_qgis.exceptions import (KeywordNotFoundException,
                                   InsufficientOverlapException,
                                   InvalidParameterException,
                                   InsufficientParametersException,
-                                  HashNotFoundException, CallGDALError)
+                                  HashNotFoundException,
+                                  CallGDALError,
+                                  NoFeaturesInExtentException,
+                                  InvalidProjectionException)
 
 from safe_qgis.map import Map
 from safe_qgis.html_renderer import HtmlRenderer
@@ -1001,6 +1004,33 @@ class Dock(QtGui.QDockWidget, Ui_DockBase):
                                                    context=myMessage)
             self.displayHtml(myMessage)
             return
+        except NoFeaturesInExtentException, e:
+            QtGui.qApp.restoreOverrideCursor()
+            self.hideBusy()
+            myMessage = self.tr('An error occurred because there are no '
+                                'features visible in the current view. Try '
+                                'zooming out or panning until some features '
+                                'become visible.')
+            myMessage = getExceptionWithStacktrace(e,
+                                                   html=True,
+                                                   context=myMessage)
+            self.displayHtml(myMessage)
+            return
+        except InvalidProjectionException, e:
+            QtGui.qApp.restoreOverrideCursor()
+            self.hideBusy()
+            myMessage = self.tr('An error occurred because you are using a '
+                                'layer containing density data (e.g. '
+                                'population density) which will not scale '
+                                'accurately if we re-project it from its '
+                                'native coordinate reference system to'
+                                'WGS84/GeoGraphic.')
+            myMessage = getExceptionWithStacktrace(e,
+                                                   html=True,
+                                                   context=myMessage)
+            self.displayHtml(myMessage)
+            return
+
         try:
             self.runner = self.calculator.getRunner()
         except InsufficientParametersException, e:
@@ -1166,15 +1196,31 @@ class Dock(QtGui.QDockWidget, Ui_DockBase):
 
         myHTML = ''
         for proc, resList in self.postprocOutput.iteritems():
-            #sorting
+            #sorting using the first indicator of a postprocessor
+            myFirstKey = resList[0][1].keyAt(0)
             try:
-                #[1]['Total']['value']
-                #r
-                LOGGER.debug(resList)
-                LOGGER.debug(proc)
-                resList = sorted(resList, key=lambda d: (
-                    -1 if d[1]['Total']['value'] == self.defaults['NO_DATA']
-                    else d[1]['Total']['value']), reverse=True)
+            # [1]['Total']['value']
+            # resList is for example:
+            # [
+            #    (PyQt4.QtCore.QString(u'Entire area'), OrderedDict([
+            #        (u'Total', {'value': 977536, 'metadata': {}}),
+            #        (u'Female population', {'value': 508319, 'metadata': {}}),
+            #        (u'Weekly hygiene packs', {'value': 403453, 'metadata': {
+            #         'description': 'Females hygiene packs for weekly use'}})
+            #    ]))
+            #]
+                myEndOfList = -1
+                resList = sorted(
+                    resList,
+                    key=lambda d: (
+                    # return -1 if the postprocessor returns NO_DATA to put at
+                    # the end of the list
+                    # d[1] is the orderedDict
+                    # d[1][myFirstKey] is the 1st indicator in the orderedDict
+                        myEndOfList if d[1][myFirstKey]['value'] ==
+                                       self.defaults['NO_DATA']
+                        else d[1][myFirstKey]['value']),
+                    reverse=True)
             except KeyError:
                 LOGGER.debug('Skipping sorting as the postprocessor did not '
                              'have a "Total" field')
