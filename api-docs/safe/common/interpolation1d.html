@@ -4,18 +4,21 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
+
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Module: safe.common.interpolation1d &mdash; InaSAFE v0.5.1-final documentation</title>
+    <title>Module: safe.common.interpolation1d &mdash; InaSAFE 1.0.1-final documentation</title>
+    
     <link rel="stylesheet" href="../../../_static/cloud.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
-    <link rel="stylesheet" href="../../../http://fonts.googleapis.com/css?family=Noticia+Text|Droid+Sans+Mono" type="text/css" />
+    <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Noticia+Text|Droid+Sans+Mono" type="text/css" />
+    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../',
-        VERSION:     '0.5.1-final',
+        VERSION:     '1.0.1-final',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -27,10 +30,10 @@
     <script type="text/javascript" src="../../../_static/jquery.cookie.js"></script>
     <script type="text/javascript" src="../../../_static/toggle_sections.js"></script>
     <link rel="shortcut icon" href="../../../_static/favicon.ico"/>
-    <link rel="top" title="InaSAFE v0.5.1-final documentation" href="../../../index.html" />
+    <link rel="top" title="InaSAFE 1.0.1-final documentation" href="../../../index.html" />
     <link rel="up" title="Package::safe.common" href="../common.html" />
-    <link rel="next" title="Module: safe.common.test_polygon" href="test_polygon.html" />
-    <link rel="prev" title="Module: safe.common.utilities" href="utilities.html" /> 
+    <link rel="next" title="Module: safe.common.test_interpolate" href="test_interpolate.html" />
+    <link rel="prev" title="Module: safe.common.interpolation2d" href="interpolation2d.html" /> 
   </head>
   <body>
     <div class="relbar-top">
@@ -45,10 +48,10 @@
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
         <li class="right" >
-          <a href="test_polygon.html" title="Module: safe.common.test_polygon"
+          <a href="test_interpolate.html" title="Module: safe.common.test_interpolate"
              accesskey="N">next</a> &nbsp; &nbsp;</li>
         <li class="right" >
-          <a href="utilities.html" title="Module: safe.common.utilities"
+          <a href="interpolation2d.html" title="Module: safe.common.interpolation2d"
              accesskey="P">previous</a> &nbsp; &nbsp;</li>
     <li><a href="../../../index.html">Home</a> &raquo;</li>
     <li><a href="../../../contents.html">Contents</a> &raquo;</li>
@@ -99,12 +102,11 @@
 <li><p class="first">points: 1D array of coordinates where interpolated values are sought</p>
 </li>
 <li><dl class="first docutils">
-<dt>mode: Determines the interpolation order. Options are</dt>
-<dd><p class="first">&#8216;constant&#8217; - piecewise constant nearest neighbour interpolation
-&#8216;linear&#8217; - bilinear interpolation using the two</p>
-<blockquote class="last">
-<p>nearest neighbours (default)</p>
-</blockquote>
+<dt>mode: Determines the interpolation order. Options are:</dt>
+<dd><ul class="first last simple">
+<li>&#8216;constant&#8217; - piecewise constant nearest neighbour interpolation</li>
+<li>&#8216;linear&#8217; - bilinear interpolation using the two nearest               neighbours (default)</li>
+</ul>
 </dd>
 </dl>
 </li>
@@ -144,11 +146,11 @@ but need not be equidistantly spaced.</p>
           <img class="logo" src="../../../_static/icon.png" alt="Logo"/>
         </a></p>
   <h4>Previous topic</h4>
-  <p class="topless"><a href="utilities.html"
-                        title="previous chapter">Module:  safe.common.utilities</a></p>
+  <p class="topless"><a href="interpolation2d.html"
+                        title="previous chapter">Module:  safe.common.interpolation2d</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="test_polygon.html"
-                        title="next chapter">Module:  safe.common.test_polygon</a></p>
+  <p class="topless"><a href="test_interpolate.html"
+                        title="next chapter">Module:  safe.common.test_interpolate</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="../../../_sources/api-docs/safe/common/interpolation1d.txt"
@@ -157,7 +159,7 @@ but need not be equidistantly spaced.</p>
 <div id="searchbox" style="display: none">
   <h3>Quick search</h3>
     <form class="search" action="../../../search.html" method="get">
-      <input type="text" name="q" size="18" />
+      <input type="text" name="q" />
       <input type="submit" value="Go" />
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
@@ -183,10 +185,10 @@ but need not be equidistantly spaced.</p>
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
         <li class="right" >
-          <a href="test_polygon.html" title="Module: safe.common.test_polygon"
+          <a href="test_interpolate.html" title="Module: safe.common.test_interpolate"
              >next</a> &nbsp; &nbsp;</li>
         <li class="right" >
-          <a href="utilities.html" title="Module: safe.common.utilities"
+          <a href="interpolation2d.html" title="Module: safe.common.interpolation2d"
              >previous</a> &nbsp; &nbsp;</li>
     <li><a href="../../../index.html">Home</a> &raquo;</li>
     <li><a href="../../../contents.html">Contents</a> &raquo;</li>
@@ -200,8 +202,8 @@ but need not be equidistantly spaced.</p>
 
     <div class="footer">
         &copy; Copyright 2012, BNPB/AIFDR/GFDRR.
-      Last updated on Oct 20, 2012.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.1.
+      Last updated on Oct 24, 2012.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
     </div>
     <!-- cloud_sptheme 1.3 -->
   </body>

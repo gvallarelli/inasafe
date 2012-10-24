@@ -4,18 +4,21 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
+
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>safe.storage.test_clipping &mdash; InaSAFE v0.5.1-final documentation</title>
+    <title>safe.storage.test_clipping &mdash; InaSAFE 1.0.1-final documentation</title>
+    
     <link rel="stylesheet" href="../../../_static/cloud.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
-    <link rel="stylesheet" href="../../../http://fonts.googleapis.com/css?family=Noticia+Text|Droid+Sans+Mono" type="text/css" />
+    <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Noticia+Text|Droid+Sans+Mono" type="text/css" />
+    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../',
-        VERSION:     '0.5.1-final',
+        VERSION:     '1.0.1-final',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -27,7 +30,7 @@
     <script type="text/javascript" src="../../../_static/jquery.cookie.js"></script>
     <script type="text/javascript" src="../../../_static/toggle_sections.js"></script>
     <link rel="shortcut icon" href="../../../_static/favicon.ico"/>
-    <link rel="top" title="InaSAFE v0.5.1-final documentation" href="../../../index.html" />
+    <link rel="top" title="InaSAFE 1.0.1-final documentation" href="../../../index.html" />
     <link rel="up" title="Module code" href="../../index.html" /> 
   </head>
   <body>
@@ -59,13 +62,18 @@
   <h1>Source code for safe.storage.test_clipping</h1><div class="highlight"><pre>
 <span class="kn">import</span> <span class="nn">unittest</span>
 <span class="kn">import</span> <span class="nn">numpy</span>
+<span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">from</span> <span class="nn">os.path</span> <span class="kn">import</span> <span class="n">join</span>
 
 <span class="kn">from</span> <span class="nn">safe.common.testing</span> <span class="kn">import</span> <span class="n">TESTDATA</span>
-<span class="kn">from</span> <span class="nn">safe.common.polygon</span> <span class="kn">import</span> <span class="n">is_inside_polygon</span><span class="p">,</span> <span class="n">inside_polygon</span>
+<span class="kn">from</span> <span class="nn">safe.common.polygon</span> <span class="kn">import</span> <span class="p">(</span><span class="n">is_inside_polygon</span><span class="p">,</span> <span class="n">inside_polygon</span><span class="p">,</span>
+                                 <span class="n">populate_polygon</span><span class="p">,</span>
+                                 <span class="n">generate_random_points_in_bbox</span><span class="p">)</span>
 <span class="kn">from</span> <span class="nn">safe.storage.vector</span> <span class="kn">import</span> <span class="n">Vector</span>
 <span class="kn">from</span> <span class="nn">safe.storage.core</span> <span class="kn">import</span> <span class="n">read_layer</span>
 <span class="kn">from</span> <span class="nn">safe.storage.clipping</span> <span class="kn">import</span> <span class="n">clip_raster_by_polygons</span>
+<span class="kn">from</span> <span class="nn">safe.storage.geometry</span> <span class="kn">import</span> <span class="n">Polygon</span>
+<span class="kn">from</span> <span class="nn">safe.common.utilities</span> <span class="kn">import</span> <span class="n">unique_filename</span>
 
 
 <span class="c"># FIXME (Ole): Move this along with contents of clipping.py to</span>
@@ -224,7 +232,10 @@
             <span class="n">values</span> <span class="o">=</span> <span class="p">[{</span><span class="s">&#39;value&#39;</span><span class="p">:</span> <span class="n">x</span><span class="p">}</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">C</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">1</span><span class="p">]]</span>
             <span class="n">point_layer</span> <span class="o">=</span> <span class="n">Vector</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">values</span><span class="p">,</span> <span class="n">geometry</span><span class="o">=</span><span class="n">points</span><span class="p">,</span>
                                  <span class="n">projection</span><span class="o">=</span><span class="n">P</span><span class="o">.</span><span class="n">get_projection</span><span class="p">())</span>
-            <span class="k">assert</span> <span class="n">point_layer</span><span class="o">.</span><span class="n">is_point_data</span>
+
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">point_layer</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="c"># Geometry is only defined for layers that are not degenerate</span>
+                <span class="k">assert</span> <span class="n">point_layer</span><span class="o">.</span><span class="n">is_point_data</span>
 
             <span class="n">polygon_layer</span> <span class="o">=</span> <span class="n">Vector</span><span class="p">(</span><span class="n">geometry</span><span class="o">=</span><span class="p">[</span><span class="n">polygon</span><span class="p">],</span>
                                    <span class="n">projection</span><span class="o">=</span><span class="n">P</span><span class="o">.</span><span class="n">get_projection</span><span class="p">())</span>
@@ -236,6 +247,145 @@
                 <span class="n">polygon_layer</span><span class="o">.</span><span class="n">write_to_file</span><span class="p">(</span><span class="s">&#39;polygon_</span><span class="si">%i</span><span class="s">.shp&#39;</span> <span class="o">%</span> <span class="n">i</span><span class="p">)</span>
 </div>
     <span class="n">test_clip_raster_by_polygons</span><span class="o">.</span><span class="n">slow</span> <span class="o">=</span> <span class="bp">True</span>
+
+<div class="viewcode-block" id="Test_Clipping.test_clip_points_by_polygons_with_holes0"><a class="viewcode-back" href="../../../api-docs/safe/storage/test_clipping.html#safe.storage.test_clipping.Test_Clipping.test_clip_points_by_polygons_with_holes0">[docs]</a>    <span class="k">def</span> <span class="nf">test_clip_points_by_polygons_with_holes0</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Points can be clipped by polygons with holes</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c"># Define an outer ring</span>
+        <span class="n">outer_ring</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mf">106.79</span><span class="p">,</span> <span class="o">-</span><span class="mf">6.233</span><span class="p">],</span>
+                                  <span class="p">[</span><span class="mf">106.80</span><span class="p">,</span> <span class="o">-</span><span class="mf">6.24</span><span class="p">],</span>
+                                  <span class="p">[</span><span class="mf">106.78</span><span class="p">,</span> <span class="o">-</span><span class="mf">6.23</span><span class="p">],</span>
+                                  <span class="p">[</span><span class="mf">106.77</span><span class="p">,</span> <span class="o">-</span><span class="mf">6.21</span><span class="p">],</span>
+                                  <span class="p">[</span><span class="mf">106.79</span><span class="p">,</span> <span class="o">-</span><span class="mf">6.233</span><span class="p">]])</span>
+
+        <span class="c"># Define inner rings</span>
+        <span class="n">inner_rings</span> <span class="o">=</span> <span class="p">[</span><span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mf">106.77827</span><span class="p">,</span> <span class="o">-</span><span class="mf">6.2252</span><span class="p">],</span>
+                                    <span class="p">[</span><span class="mf">106.77775</span><span class="p">,</span> <span class="o">-</span><span class="mf">6.22378</span><span class="p">],</span>
+                                    <span class="p">[</span><span class="mf">106.78</span><span class="p">,</span> <span class="o">-</span><span class="mf">6.22311</span><span class="p">],</span>
+                                    <span class="p">[</span><span class="mf">106.78017</span><span class="p">,</span> <span class="o">-</span><span class="mf">6.22530</span><span class="p">],</span>
+                                    <span class="p">[</span><span class="mf">106.77827</span><span class="p">,</span> <span class="o">-</span><span class="mf">6.2252</span><span class="p">]])[::</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span>
+                       <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mf">106.78652</span><span class="p">,</span> <span class="o">-</span><span class="mf">6.23215</span><span class="p">],</span>
+                                    <span class="p">[</span><span class="mf">106.78642</span><span class="p">,</span> <span class="o">-</span><span class="mf">6.23075</span><span class="p">],</span>
+                                    <span class="p">[</span><span class="mf">106.78746</span><span class="p">,</span> <span class="o">-</span><span class="mf">6.23143</span><span class="p">],</span>
+                                    <span class="p">[</span><span class="mf">106.78831</span><span class="p">,</span> <span class="o">-</span><span class="mf">6.23307</span><span class="p">],</span>
+                                    <span class="p">[</span><span class="mf">106.78652</span><span class="p">,</span> <span class="o">-</span><span class="mf">6.23215</span><span class="p">]])[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]]</span>
+
+        <span class="n">v</span> <span class="o">=</span> <span class="n">Vector</span><span class="p">(</span><span class="n">geometry</span><span class="o">=</span><span class="p">[</span><span class="n">Polygon</span><span class="p">(</span><span class="n">outer_ring</span><span class="o">=</span><span class="n">outer_ring</span><span class="p">,</span>
+                                     <span class="n">inner_rings</span><span class="o">=</span><span class="n">inner_rings</span><span class="p">)])</span>
+        <span class="k">assert</span> <span class="n">v</span><span class="o">.</span><span class="n">is_polygon_data</span>
+
+        <span class="c"># Write it to file</span>
+        <span class="n">tmp_filename</span> <span class="o">=</span> <span class="n">unique_filename</span><span class="p">(</span><span class="n">suffix</span><span class="o">=</span><span class="s">&#39;.shp&#39;</span><span class="p">)</span>
+        <span class="n">v</span><span class="o">.</span><span class="n">write_to_file</span><span class="p">(</span><span class="n">tmp_filename</span><span class="p">)</span>
+
+        <span class="c"># Read polygon it back</span>
+        <span class="n">L</span> <span class="o">=</span> <span class="n">read_layer</span><span class="p">(</span><span class="n">tmp_filename</span><span class="p">)</span>
+        <span class="n">P</span> <span class="o">=</span> <span class="n">L</span><span class="o">.</span><span class="n">get_geometry</span><span class="p">(</span><span class="n">as_geometry_objects</span><span class="o">=</span><span class="bp">True</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="n">outer_ring</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">outer_ring</span>
+        <span class="n">inner_ring0</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">inner_rings</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">inner_ring1</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">inner_rings</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+
+        <span class="c"># Make some test points</span>
+        <span class="n">points</span> <span class="o">=</span> <span class="n">generate_random_points_in_bbox</span><span class="p">(</span><span class="n">outer_ring</span><span class="p">,</span> <span class="mi">1000</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="mi">13</span><span class="p">)</span>
+
+        <span class="c"># Clip to outer ring, excluding holes</span>
+        <span class="n">indices</span> <span class="o">=</span> <span class="n">inside_polygon</span><span class="p">(</span><span class="n">points</span><span class="p">,</span> <span class="n">P</span><span class="o">.</span><span class="n">outer_ring</span><span class="p">,</span> <span class="n">holes</span><span class="o">=</span><span class="n">P</span><span class="o">.</span><span class="n">inner_rings</span><span class="p">)</span>
+
+        <span class="c"># Sanity</span>
+        <span class="k">for</span> <span class="n">point</span> <span class="ow">in</span> <span class="n">points</span><span class="p">[</span><span class="n">indices</span><span class="p">,</span> <span class="p">:]:</span>
+            <span class="c"># Must be inside outer ring</span>
+            <span class="k">assert</span> <span class="n">is_inside_polygon</span><span class="p">(</span><span class="n">point</span><span class="p">,</span> <span class="n">outer_ring</span><span class="p">)</span>
+
+            <span class="c"># But not in any of the inner rings</span>
+            <span class="k">assert</span> <span class="ow">not</span> <span class="n">is_inside_polygon</span><span class="p">(</span><span class="n">point</span><span class="p">,</span> <span class="n">inner_ring0</span><span class="p">)</span>
+            <span class="k">assert</span> <span class="ow">not</span> <span class="n">is_inside_polygon</span><span class="p">(</span><span class="n">point</span><span class="p">,</span> <span class="n">inner_ring1</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">False</span><span class="p">:</span>
+            <span class="c"># Store for visual check</span>
+            <span class="n">pol</span> <span class="o">=</span> <span class="n">Vector</span><span class="p">(</span><span class="n">geometry</span><span class="o">=</span><span class="p">[</span><span class="n">P</span><span class="p">])</span>
+            <span class="n">tmp_filename</span> <span class="o">=</span> <span class="n">unique_filename</span><span class="p">(</span><span class="n">suffix</span><span class="o">=</span><span class="s">&#39;.shp&#39;</span><span class="p">)</span>
+            <span class="n">pol</span><span class="o">.</span><span class="n">write_to_file</span><span class="p">(</span><span class="n">tmp_filename</span><span class="p">)</span>
+            <span class="k">print</span> <span class="s">&#39;Polygon with holes written to </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="n">tmp_filename</span>
+
+            <span class="n">pts</span> <span class="o">=</span> <span class="n">Vector</span><span class="p">(</span><span class="n">geometry</span><span class="o">=</span><span class="n">points</span><span class="p">[</span><span class="n">indices</span><span class="p">,</span> <span class="p">:])</span>
+            <span class="n">tmp_filename</span> <span class="o">=</span> <span class="n">unique_filename</span><span class="p">(</span><span class="n">suffix</span><span class="o">=</span><span class="s">&#39;.shp&#39;</span><span class="p">)</span>
+            <span class="n">pts</span><span class="o">.</span><span class="n">write_to_file</span><span class="p">(</span><span class="n">tmp_filename</span><span class="p">)</span>
+            <span class="k">print</span> <span class="s">&#39;Clipped points written to </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="n">tmp_filename</span>
+</div>
+<div class="viewcode-block" id="Test_Clipping.test_clip_points_by_polygons_with_holes_real"><a class="viewcode-back" href="../../../api-docs/safe/storage/test_clipping.html#safe.storage.test_clipping.Test_Clipping.test_clip_points_by_polygons_with_holes_real">[docs]</a>    <span class="k">def</span> <span class="nf">test_clip_points_by_polygons_with_holes_real</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Points can be clipped by polygons with holes (real data)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c"># Read real polygon with holes</span>
+        <span class="n">filename</span> <span class="o">=</span> <span class="s">&#39;</span><span class="si">%s</span><span class="s">/</span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">TESTDATA</span><span class="p">,</span> <span class="s">&#39;donut.shp&#39;</span><span class="p">)</span>
+        <span class="n">L</span> <span class="o">=</span> <span class="n">read_layer</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+
+        <span class="c"># --------------------------------------------</span>
+        <span class="c"># Pick one polygon that has 2 inner rings</span>
+        <span class="n">P</span> <span class="o">=</span> <span class="n">L</span><span class="o">.</span><span class="n">get_geometry</span><span class="p">(</span><span class="n">as_geometry_objects</span><span class="o">=</span><span class="bp">True</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
+
+        <span class="n">outer_ring</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">outer_ring</span>
+        <span class="n">inner_ring0</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">inner_rings</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">inner_ring1</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">inner_rings</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+
+        <span class="c"># Make some test points</span>
+        <span class="n">points_in_bbox</span> <span class="o">=</span> <span class="n">generate_random_points_in_bbox</span><span class="p">(</span><span class="n">outer_ring</span><span class="p">,</span> <span class="mi">1000</span><span class="p">)</span>
+        <span class="n">points_in_inner_ring0</span> <span class="o">=</span> <span class="n">populate_polygon</span><span class="p">(</span><span class="n">inner_ring0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="mi">13</span><span class="p">)</span>
+        <span class="n">points_in_inner_ring1</span> <span class="o">=</span> <span class="n">populate_polygon</span><span class="p">(</span><span class="n">inner_ring1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="mi">17</span><span class="p">)</span>
+        <span class="n">points</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">concatenate</span><span class="p">((</span><span class="n">points_in_bbox</span><span class="p">,</span>
+                                    <span class="n">points_in_inner_ring0</span><span class="p">,</span>
+                                    <span class="n">points_in_inner_ring1</span><span class="p">))</span>
+
+        <span class="c"># Clip</span>
+        <span class="n">indices</span> <span class="o">=</span> <span class="n">inside_polygon</span><span class="p">(</span><span class="n">points</span><span class="p">,</span> <span class="n">P</span><span class="o">.</span><span class="n">outer_ring</span><span class="p">,</span> <span class="n">holes</span><span class="o">=</span><span class="n">P</span><span class="o">.</span><span class="n">inner_rings</span><span class="p">)</span>
+
+        <span class="c"># Sanity</span>
+        <span class="k">for</span> <span class="n">point</span> <span class="ow">in</span> <span class="n">points</span><span class="p">[</span><span class="n">indices</span><span class="p">,</span> <span class="p">:]:</span>
+            <span class="c"># Must be inside outer ring</span>
+            <span class="k">assert</span> <span class="n">is_inside_polygon</span><span class="p">(</span><span class="n">point</span><span class="p">,</span> <span class="n">outer_ring</span><span class="p">)</span>
+
+            <span class="c"># But not in any of the inner rings</span>
+            <span class="k">assert</span> <span class="ow">not</span> <span class="n">is_inside_polygon</span><span class="p">(</span><span class="n">point</span><span class="p">,</span> <span class="n">inner_ring0</span><span class="p">)</span>
+            <span class="k">assert</span> <span class="ow">not</span> <span class="n">is_inside_polygon</span><span class="p">(</span><span class="n">point</span><span class="p">,</span> <span class="n">inner_ring1</span><span class="p">)</span>
+
+        <span class="c"># ---------------------------------------------------------</span>
+        <span class="c"># Pick a polygon that has 1 inner ring (nice visualisation)</span>
+        <span class="n">P</span> <span class="o">=</span> <span class="n">L</span><span class="o">.</span><span class="n">get_geometry</span><span class="p">(</span><span class="n">as_geometry_objects</span><span class="o">=</span><span class="bp">True</span><span class="p">)[</span><span class="mi">9</span><span class="p">]</span>
+
+        <span class="n">outer_ring</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">outer_ring</span>
+        <span class="n">inner_ring</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">inner_rings</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="c"># Make some test points</span>
+        <span class="n">points</span> <span class="o">=</span> <span class="n">generate_random_points_in_bbox</span><span class="p">(</span><span class="n">outer_ring</span><span class="p">,</span> <span class="mi">500</span><span class="p">)</span>
+
+        <span class="c"># Clip</span>
+        <span class="n">indices</span> <span class="o">=</span> <span class="n">inside_polygon</span><span class="p">(</span><span class="n">points</span><span class="p">,</span> <span class="n">P</span><span class="o">.</span><span class="n">outer_ring</span><span class="p">,</span> <span class="n">holes</span><span class="o">=</span><span class="n">P</span><span class="o">.</span><span class="n">inner_rings</span><span class="p">)</span>
+
+        <span class="c"># Sanity</span>
+        <span class="k">for</span> <span class="n">point</span> <span class="ow">in</span> <span class="n">points</span><span class="p">[</span><span class="n">indices</span><span class="p">,</span> <span class="p">:]:</span>
+            <span class="c"># Must be inside outer ring</span>
+            <span class="k">assert</span> <span class="n">is_inside_polygon</span><span class="p">(</span><span class="n">point</span><span class="p">,</span> <span class="n">outer_ring</span><span class="p">)</span>
+
+            <span class="c"># But not in the inner ring</span>
+            <span class="k">assert</span> <span class="ow">not</span> <span class="n">is_inside_polygon</span><span class="p">(</span><span class="n">point</span><span class="p">,</span> <span class="n">inner_ring</span><span class="p">)</span>
+
+        <span class="c"># Store for visual check (nice one!)</span>
+        <span class="c"># Uncomment os.remove if you want see the layers</span>
+        <span class="n">pol</span> <span class="o">=</span> <span class="n">Vector</span><span class="p">(</span><span class="n">geometry</span><span class="o">=</span><span class="p">[</span><span class="n">P</span><span class="p">])</span>
+        <span class="n">tmp_filename</span> <span class="o">=</span> <span class="n">unique_filename</span><span class="p">(</span><span class="n">suffix</span><span class="o">=</span><span class="s">&#39;.shp&#39;</span><span class="p">)</span>
+        <span class="n">pol</span><span class="o">.</span><span class="n">write_to_file</span><span class="p">(</span><span class="n">tmp_filename</span><span class="p">)</span>
+        <span class="c">#print &#39;Polygon with holes written to %s&#39; % tmp_filename</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">tmp_filename</span><span class="p">)</span>
+
+        <span class="n">pts</span> <span class="o">=</span> <span class="n">Vector</span><span class="p">(</span><span class="n">geometry</span><span class="o">=</span><span class="n">points</span><span class="p">[</span><span class="n">indices</span><span class="p">,</span> <span class="p">:])</span>
+        <span class="n">tmp_filename</span> <span class="o">=</span> <span class="n">unique_filename</span><span class="p">(</span><span class="n">suffix</span><span class="o">=</span><span class="s">&#39;.shp&#39;</span><span class="p">)</span>
+        <span class="n">pts</span><span class="o">.</span><span class="n">write_to_file</span><span class="p">(</span><span class="n">tmp_filename</span><span class="p">)</span>
+        <span class="c">#print &#39;Clipped points written to %s&#39; % tmp_filename</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">tmp_filename</span><span class="p">)</span>
+</div>
+    <span class="n">test_clip_points_by_polygons_with_holes_real</span><span class="o">.</span><span class="n">slow</span> <span class="o">=</span> <span class="bp">True</span>
 </div>
 <span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&#39;__main__&#39;</span><span class="p">:</span>
     <span class="n">suite</span> <span class="o">=</span> <span class="n">unittest</span><span class="o">.</span><span class="n">makeSuite</span><span class="p">(</span><span class="n">Test_Clipping</span><span class="p">,</span> <span class="s">&#39;test&#39;</span><span class="p">)</span>
@@ -254,7 +404,7 @@
 <div id="searchbox" style="display: none">
   <h3>Quick search</h3>
     <form class="search" action="../../../search.html" method="get">
-      <input type="text" name="q" size="18" />
+      <input type="text" name="q" />
       <input type="submit" value="Go" />
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
@@ -289,8 +439,8 @@
 
     <div class="footer">
         &copy; Copyright 2012, BNPB/AIFDR/GFDRR.
-      Last updated on Oct 20, 2012.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.1.
+      Last updated on Oct 24, 2012.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
     </div>
     <!-- cloud_sptheme 1.3 -->
   </body>

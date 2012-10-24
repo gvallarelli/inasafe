@@ -4,18 +4,21 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
+
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Module: safe_qgis.options_dialog &mdash; InaSAFE v0.5.1-final documentation</title>
+    <title>Module: safe_qgis.options_dialog &mdash; InaSAFE 1.0.1-final documentation</title>
+    
     <link rel="stylesheet" href="../../_static/cloud.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-    <link rel="stylesheet" href="../../http://fonts.googleapis.com/css?family=Noticia+Text|Droid+Sans+Mono" type="text/css" />
+    <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Noticia+Text|Droid+Sans+Mono" type="text/css" />
+    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '0.5.1-final',
+        VERSION:     '1.0.1-final',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -27,10 +30,10 @@
     <script type="text/javascript" src="../../_static/jquery.cookie.js"></script>
     <script type="text/javascript" src="../../_static/toggle_sections.js"></script>
     <link rel="shortcut icon" href="../../_static/favicon.ico"/>
-    <link rel="top" title="InaSAFE v0.5.1-final documentation" href="../../index.html" />
+    <link rel="top" title="InaSAFE 1.0.1-final documentation" href="../../index.html" />
     <link rel="up" title="Package::safe_qgis" href="../safe_qgis.html" />
-    <link rel="next" title="Module: safe_qgis.map" href="map.html" />
-    <link rel="prev" title="Module: safe_qgis.impact_calculator_thread" href="impact_calculator_thread.html" /> 
+    <link rel="next" title="Module: safe_qgis.impact_functions_doc_base" href="impact_functions_doc_base.html" />
+    <link rel="prev" title="Module: safe_qgis.qgis_interface" href="qgis_interface.html" /> 
   </head>
   <body>
     <div class="relbar-top">
@@ -45,10 +48,10 @@
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
         <li class="right" >
-          <a href="map.html" title="Module: safe_qgis.map"
+          <a href="impact_functions_doc_base.html" title="Module: safe_qgis.impact_functions_doc_base"
              accesskey="N">next</a> &nbsp; &nbsp;</li>
         <li class="right" >
-          <a href="impact_calculator_thread.html" title="Module: safe_qgis.impact_calculator_thread"
+          <a href="qgis_interface.html" title="Module: safe_qgis.qgis_interface"
              accesskey="P">previous</a> &nbsp; &nbsp;</li>
     <li><a href="../../index.html">Home</a> &raquo;</li>
     <li><a href="../../contents.html">Contents</a> &raquo;</li>
@@ -65,87 +68,8 @@
         <div class="bodywrapper">
           <div class="body">
             
-  <div class="section" id="module-safe_qgis.options_dialog">
-<span id="module-safe-qgis-options-dialog"></span><h1>Module:  safe_qgis.options_dialog<a class="headerlink" href="#module-safe_qgis.options_dialog" title="Permalink to this headline">¶</a></h1>
-<p>InaSAFE Disaster risk assessment tool developed by AusAid - <strong>Options Dialog.</strong></p>
-<p>Contact : <a class="reference external" href="mailto:ole&#46;moller&#46;nielsen&#37;&#52;&#48;gmail&#46;com">ole<span>&#46;</span>moller<span>&#46;</span>nielsen<span>&#64;</span>gmail<span>&#46;</span>com</a></p>
-<div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">This program is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
-(at your option) any later version.</p>
-</div>
-<div class="admonition-todo admonition " id="index-0">
-<p class="first admonition-title">Todo</p>
-<p class="last">Check raster is single band</p>
-</div>
-<dl class="class">
-<dt id="safe_qgis.options_dialog.OptionsDialog">
-<em class="property">class </em><tt class="descclassname">safe_qgis.options_dialog.</tt><tt class="descname">OptionsDialog</tt><big>(</big><em>parent</em>, <em>iface</em>, <em>theDock=None</em><big>)</big><a class="reference internal" href="../../_modules/safe_qgis/options_dialog.html#OptionsDialog"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe_qgis.options_dialog.OptionsDialog" title="Permalink to this definition">¶</a></dt>
-<dd><p>Options dialog for the InaSAFE plugin.</p>
-<dl class="method">
-<dt id="safe_qgis.options_dialog.OptionsDialog.accept">
-<tt class="descname">accept</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/safe_qgis/options_dialog.html#OptionsDialog.accept"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe_qgis.options_dialog.OptionsDialog.accept" title="Permalink to this definition">¶</a></dt>
-<dd><p>Method invoked when ok button is clicked
-Args:</p>
-<blockquote>
-None</blockquote>
-<dl class="docutils">
-<dt>Returns:</dt>
-<dd>None</dd>
-</dl>
-<p>Raises:</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="safe_qgis.options_dialog.OptionsDialog.on_toolKeywordCachePath_clicked">
-<tt class="descname">on_toolKeywordCachePath_clicked</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/safe_qgis/options_dialog.html#OptionsDialog.on_toolKeywordCachePath_clicked"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe_qgis.options_dialog.OptionsDialog.on_toolKeywordCachePath_clicked" title="Permalink to this definition">¶</a></dt>
-<dd><p>Autoconnect slot activated when the select cache file tool button is
-clicked,
-Args:</p>
-<blockquote>
-None</blockquote>
-<dl class="docutils">
-<dt>Returns:</dt>
-<dd>None</dd>
-<dt>Raises:</dt>
-<dd>None</dd>
-</dl>
-</dd></dl>
-
-<dl class="method">
-<dt id="safe_qgis.options_dialog.OptionsDialog.restoreState">
-<tt class="descname">restoreState</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/safe_qgis/options_dialog.html#OptionsDialog.restoreState"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe_qgis.options_dialog.OptionsDialog.restoreState" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="docutils">
-<dt>Args: Reinstate the options based on the user&#8217;s stored session info</dt>
-<dd>None</dd>
-<dt>Returns:</dt>
-<dd>None</dd>
-</dl>
-<p>Raises:</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="safe_qgis.options_dialog.OptionsDialog.saveState">
-<tt class="descname">saveState</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/safe_qgis/options_dialog.html#OptionsDialog.saveState"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe_qgis.options_dialog.OptionsDialog.saveState" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="docutils">
-<dt>Args: Store the options into the user&#8217;s stored session info</dt>
-<dd>None</dd>
-<dt>Returns:</dt>
-<dd>None</dd>
-</dl>
-<p>Raises:</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="safe_qgis.options_dialog.OptionsDialog.showHelp">
-<tt class="descname">showHelp</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/safe_qgis/options_dialog.html#OptionsDialog.showHelp"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe_qgis.options_dialog.OptionsDialog.showHelp" title="Permalink to this definition">¶</a></dt>
-<dd><p>Load the help text for the options safe_qgis</p>
-</dd></dl>
-
-</dd></dl>
-
+  <div class="section" id="module-safe-qgis-options-dialog">
+<h1>Module:  safe_qgis.options_dialog<a class="headerlink" href="#module-safe-qgis-options-dialog" title="Permalink to this headline">¶</a></h1>
 <p>This module forms part of the <a class="reference external" href="http://inasafe.org">InaSAFE</a> tool.</p>
 </div>
 
@@ -159,11 +83,11 @@ None</blockquote>
           <img class="logo" src="../../_static/icon.png" alt="Logo"/>
         </a></p>
   <h4>Previous topic</h4>
-  <p class="topless"><a href="impact_calculator_thread.html"
-                        title="previous chapter">Module:  safe_qgis.impact_calculator_thread</a></p>
+  <p class="topless"><a href="qgis_interface.html"
+                        title="previous chapter">Module:  safe_qgis.qgis_interface</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="map.html"
-                        title="next chapter">Module:  safe_qgis.map</a></p>
+  <p class="topless"><a href="impact_functions_doc_base.html"
+                        title="next chapter">Module:  safe_qgis.impact_functions_doc_base</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="../../_sources/api-docs/safe_qgis/options_dialog.txt"
@@ -172,7 +96,7 @@ None</blockquote>
 <div id="searchbox" style="display: none">
   <h3>Quick search</h3>
     <form class="search" action="../../search.html" method="get">
-      <input type="text" name="q" size="18" />
+      <input type="text" name="q" />
       <input type="submit" value="Go" />
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
@@ -198,10 +122,10 @@ None</blockquote>
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
         <li class="right" >
-          <a href="map.html" title="Module: safe_qgis.map"
+          <a href="impact_functions_doc_base.html" title="Module: safe_qgis.impact_functions_doc_base"
              >next</a> &nbsp; &nbsp;</li>
         <li class="right" >
-          <a href="impact_calculator_thread.html" title="Module: safe_qgis.impact_calculator_thread"
+          <a href="qgis_interface.html" title="Module: safe_qgis.qgis_interface"
              >previous</a> &nbsp; &nbsp;</li>
     <li><a href="../../index.html">Home</a> &raquo;</li>
     <li><a href="../../contents.html">Contents</a> &raquo;</li>
@@ -214,8 +138,8 @@ None</blockquote>
 
     <div class="footer">
         &copy; Copyright 2012, BNPB/AIFDR/GFDRR.
-      Last updated on Oct 20, 2012.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.1.
+      Last updated on Oct 24, 2012.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
     </div>
     <!-- cloud_sptheme 1.3 -->
   </body>

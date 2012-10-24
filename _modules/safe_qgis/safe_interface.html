@@ -4,18 +4,21 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
+
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>safe_qgis.safe_interface &mdash; InaSAFE v0.5.1-final documentation</title>
+    <title>safe_qgis.safe_interface &mdash; InaSAFE 1.0.1-final documentation</title>
+    
     <link rel="stylesheet" href="../../_static/cloud.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-    <link rel="stylesheet" href="../../http://fonts.googleapis.com/css?family=Noticia+Text|Droid+Sans+Mono" type="text/css" />
+    <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Noticia+Text|Droid+Sans+Mono" type="text/css" />
+    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '0.5.1-final',
+        VERSION:     '1.0.1-final',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -27,7 +30,7 @@
     <script type="text/javascript" src="../../_static/jquery.cookie.js"></script>
     <script type="text/javascript" src="../../_static/toggle_sections.js"></script>
     <link rel="shortcut icon" href="../../_static/favicon.ico"/>
-    <link rel="top" title="InaSAFE v0.5.1-final documentation" href="../../index.html" />
+    <link rel="top" title="InaSAFE 1.0.1-final documentation" href="../../index.html" />
     <link rel="up" title="Module code" href="../index.html" /> 
   </head>
   <body>
@@ -74,7 +77,6 @@
 <span class="sd">&quot;&quot;&quot;</span>
 
 <span class="n">__author__</span> <span class="o">=</span> <span class="s">&#39;tim@linfiniti.com, ole.moller.nielsen@gmail.com&#39;</span>
-<span class="n">__version__</span> <span class="o">=</span> <span class="s">&#39;0.5.0&#39;</span>
 <span class="n">__revision__</span> <span class="o">=</span> <span class="s">&#39;$Format:%H$&#39;</span>
 <span class="n">__date__</span> <span class="o">=</span> <span class="s">&#39;04/04/2012&#39;</span>
 <span class="n">__copyright__</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;Copyright 2012, Australia Indonesia Facility for &#39;</span>
@@ -84,23 +86,29 @@
 <span class="c"># Standard modules</span>
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">unicodedata</span>
+<span class="kn">import</span> <span class="nn">logging</span>
 
 <span class="c"># SAFE functionality - passed on to QGIS modules</span>
 <span class="c"># pylint: disable=W0611</span>
-<span class="kn">from</span> <span class="nn">safe.api</span> <span class="kn">import</span> <span class="n">get_admissible_plugins</span>
-<span class="kn">from</span> <span class="nn">safe.api</span> <span class="kn">import</span> <span class="n">get_function_title</span>
-<span class="kn">from</span> <span class="nn">safe.api</span> <span class="kn">import</span> <span class="n">get_plugins</span> <span class="k">as</span> <span class="n">safe_get_plugins</span>
-<span class="kn">from</span> <span class="nn">safe.api</span> <span class="kn">import</span> <span class="n">read_keywords</span><span class="p">,</span> <span class="n">bbox_intersection</span>
-<span class="kn">from</span> <span class="nn">safe.api</span> <span class="kn">import</span> <span class="n">write_keywords</span> <span class="k">as</span> <span class="n">safe_write_keywords</span>
-<span class="kn">from</span> <span class="nn">safe.api</span> <span class="kn">import</span> <span class="n">read_layer</span> <span class="k">as</span> <span class="n">safe_read_layer</span>
-<span class="kn">from</span> <span class="nn">safe.api</span> <span class="kn">import</span> <span class="p">(</span><span class="n">buffered_bounding_box</span><span class="p">,</span>
+<span class="kn">from</span> <span class="nn">safe.api</span> <span class="kn">import</span> <span class="p">(</span><span class="n">get_admissible_plugins</span><span class="p">,</span>
+                      <span class="n">get_function_title</span><span class="p">,</span>
+                      <span class="n">get_plugins</span> <span class="k">as</span> <span class="n">safe_get_plugins</span><span class="p">,</span>
+                      <span class="n">read_keywords</span><span class="p">,</span> <span class="n">bbox_intersection</span><span class="p">,</span>
+                      <span class="n">write_keywords</span> <span class="k">as</span> <span class="n">safe_write_keywords</span><span class="p">,</span>
+                      <span class="n">read_layer</span> <span class="k">as</span> <span class="n">safe_read_layer</span><span class="p">,</span>
+                      <span class="n">buffered_bounding_box</span><span class="p">,</span>
                       <span class="n">verify</span> <span class="k">as</span> <span class="n">verify_util</span><span class="p">,</span>
-                      <span class="n">VerificationError</span><span class="p">)</span>
+                      <span class="n">VerificationError</span><span class="p">,</span>
+                      <span class="n">InaSAFEError</span><span class="p">,</span>
+                      <span class="n">temp_dir</span><span class="p">,</span>
+                      <span class="n">unique_filename</span><span class="p">,</span>
+                      <span class="n">safe_tr</span> <span class="k">as</span> <span class="n">safeTr</span><span class="p">,</span>
+                      <span class="n">calculate_impact</span> <span class="k">as</span> <span class="n">safe_calculate_impact</span><span class="p">,</span>
+                      <span class="n">BoundingBoxError</span><span class="p">,</span>
+                      <span class="n">ReadLayerError</span><span class="p">,</span>
+                      <span class="n">get_plugins</span><span class="p">,</span> <span class="n">get_version</span><span class="p">)</span>
 
-<span class="kn">from</span> <span class="nn">safe.api</span> <span class="kn">import</span> <span class="p">(</span><span class="n">calculate_impact</span> <span class="k">as</span> <span class="n">safe_calculate_impact</span><span class="p">,</span>
-                      <span class="n">internationalisedNames</span><span class="p">)</span>
-
-<span class="kn">from</span> <span class="nn">safe.common.utilities</span> <span class="kn">import</span> <span class="n">temp_dir</span><span class="p">,</span> <span class="n">unique_filename</span>
+<span class="kn">from</span> <span class="nn">safe.defaults</span> <span class="kn">import</span> <span class="n">DEFAULTS</span>
 <span class="c"># pylint: enable=W0611</span>
 
 <span class="c"># InaSAFE GUI specific functionality</span>
@@ -109,7 +117,9 @@
                                   <span class="n">StyleInfoNotFoundException</span><span class="p">,</span>
                                   <span class="n">InvalidParameterException</span><span class="p">,</span>
                                   <span class="n">InsufficientOverlapException</span><span class="p">)</span>
-<span class="kn">from</span> <span class="nn">safe.common.exceptions</span> <span class="kn">import</span> <span class="n">BoundingBoxError</span>
+
+<span class="kn">from</span> <span class="nn">safe.common.exceptions</span> <span class="kn">import</span> <span class="n">BoundingBoxError</span><span class="p">,</span> <span class="n">ReadLayerError</span>
+<span class="n">LOGGER</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s">&#39;InaSAFE&#39;</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="tr"><a class="viewcode-back" href="../../api-docs/safe_qgis/safe_interface.html#safe_qgis.safe_interface.tr">[docs]</a><span class="k">def</span> <span class="nf">tr</span><span class="p">(</span><span class="n">theText</span><span class="p">):</span>
@@ -124,7 +134,7 @@
 <span class="sd">       Translated version of the given string if available, otherwise</span>
 <span class="sd">       the original string.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">myContext</span> <span class="o">=</span> <span class="s">&quot;is_safe_interface&quot;</span>
+    <span class="n">myContext</span> <span class="o">=</span> <span class="s">&quot;@default&quot;</span>
     <span class="k">return</span> <span class="n">QCoreApplication</span><span class="o">.</span><span class="n">translate</span><span class="p">(</span><span class="n">myContext</span><span class="p">,</span> <span class="n">theText</span><span class="p">)</span>
 
 </div>
@@ -520,7 +530,7 @@
 <div id="searchbox" style="display: none">
   <h3>Quick search</h3>
     <form class="search" action="../../search.html" method="get">
-      <input type="text" name="q" size="18" />
+      <input type="text" name="q" />
       <input type="submit" value="Go" />
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
@@ -555,8 +565,8 @@
 
     <div class="footer">
         &copy; Copyright 2012, BNPB/AIFDR/GFDRR.
-      Last updated on Oct 20, 2012.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.1.
+      Last updated on Oct 24, 2012.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
     </div>
     <!-- cloud_sptheme 1.3 -->
   </body>

@@ -4,18 +4,21 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
+
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>safe.postprocessors.age_postprocessor &mdash; InaSAFE v0.5.1-final documentation</title>
+    <title>safe.postprocessors.age_postprocessor &mdash; InaSAFE 1.0.1-final documentation</title>
+    
     <link rel="stylesheet" href="../../../_static/cloud.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
-    <link rel="stylesheet" href="../../../http://fonts.googleapis.com/css?family=Noticia+Text|Droid+Sans+Mono" type="text/css" />
+    <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Noticia+Text|Droid+Sans+Mono" type="text/css" />
+    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../',
-        VERSION:     '0.5.1-final',
+        VERSION:     '1.0.1-final',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -27,7 +30,7 @@
     <script type="text/javascript" src="../../../_static/jquery.cookie.js"></script>
     <script type="text/javascript" src="../../../_static/toggle_sections.js"></script>
     <link rel="shortcut icon" href="../../../_static/favicon.ico"/>
-    <link rel="top" title="InaSAFE v0.5.1-final documentation" href="../../../index.html" />
+    <link rel="top" title="InaSAFE 1.0.1-final documentation" href="../../../index.html" />
     <link rel="up" title="Module code" href="../../index.html" /> 
   </head>
   <body>
@@ -168,8 +171,17 @@
 <span class="sd">            None</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">myName</span> <span class="o">=</span> <span class="n">tr</span><span class="p">(</span><span class="s">&#39;Total&#39;</span><span class="p">)</span>
+
+        <span class="c">#FIXME (MB) Shameless hack to deal with issue #368</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">population_total</span> <span class="o">&gt;</span> <span class="mi">8000000000</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">population_total</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_append_result</span><span class="p">(</span><span class="n">myName</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">NO_DATA_TEXT</span><span class="p">)</span>
+            <span class="k">return</span>
+
         <span class="n">myResult</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">population_total</span>
-        <span class="n">myResult</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">myResult</span><span class="p">))</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">myResult</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">myResult</span><span class="p">))</span>
+        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+            <span class="n">myResult</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">NO_DATA_TEXT</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_append_result</span><span class="p">(</span><span class="n">myName</span><span class="p">,</span> <span class="n">myResult</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_calculate_youth</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -186,8 +198,17 @@
 <span class="sd">            None</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">myName</span> <span class="o">=</span> <span class="n">tr</span><span class="p">(</span><span class="s">&#39;Youth count&#39;</span><span class="p">)</span>
+
+        <span class="c">#FIXME (MB) Shameless hack to deal with issue #368</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">population_total</span> <span class="o">&gt;</span> <span class="mi">8000000000</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">population_total</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_append_result</span><span class="p">(</span><span class="n">myName</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">NO_DATA_TEXT</span><span class="p">)</span>
+            <span class="k">return</span>
+
         <span class="n">myResult</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">population_total</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">youth_ratio</span>
-        <span class="n">myResult</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">myResult</span><span class="p">))</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">myResult</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">myResult</span><span class="p">))</span>
+        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+            <span class="n">myResult</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">NO_DATA_TEXT</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_append_result</span><span class="p">(</span><span class="n">myName</span><span class="p">,</span> <span class="n">myResult</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_calculate_adult</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -204,8 +225,17 @@
 <span class="sd">            None</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">myName</span> <span class="o">=</span> <span class="n">tr</span><span class="p">(</span><span class="s">&#39;Adult count&#39;</span><span class="p">)</span>
+
+        <span class="c">#FIXME (MB) Shameless hack to deal with issue #368</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">population_total</span> <span class="o">&gt;</span> <span class="mi">8000000000</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">population_total</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_append_result</span><span class="p">(</span><span class="n">myName</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">NO_DATA_TEXT</span><span class="p">)</span>
+            <span class="k">return</span>
+
         <span class="n">myResult</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">population_total</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">adult_ratio</span>
-        <span class="n">myResult</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">myResult</span><span class="p">))</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">myResult</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">myResult</span><span class="p">))</span>
+        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+            <span class="n">myResult</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">NO_DATA_TEXT</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_append_result</span><span class="p">(</span><span class="n">myName</span><span class="p">,</span> <span class="n">myResult</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_calculate_elder</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -222,8 +252,17 @@
 <span class="sd">            None</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">myName</span> <span class="o">=</span> <span class="n">tr</span><span class="p">(</span><span class="s">&#39;Elderly count&#39;</span><span class="p">)</span>
+
+        <span class="c">#FIXME (MB) Shameless hack to deal with issue #368</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">population_total</span> <span class="o">&gt;</span> <span class="mi">8000000000</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">population_total</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_append_result</span><span class="p">(</span><span class="n">myName</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">NO_DATA_TEXT</span><span class="p">)</span>
+            <span class="k">return</span>
+
         <span class="n">myResult</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">population_total</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">elder_ratio</span>
-        <span class="n">myResult</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">myResult</span><span class="p">))</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">myResult</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">myResult</span><span class="p">))</span>
+        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+            <span class="n">myResult</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">NO_DATA_TEXT</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_append_result</span><span class="p">(</span><span class="n">myName</span><span class="p">,</span> <span class="n">myResult</span><span class="p">)</span></div>
 </pre></div>
 
@@ -238,7 +277,7 @@
 <div id="searchbox" style="display: none">
   <h3>Quick search</h3>
     <form class="search" action="../../../search.html" method="get">
-      <input type="text" name="q" size="18" />
+      <input type="text" name="q" />
       <input type="submit" value="Go" />
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
@@ -273,8 +312,8 @@
 
     <div class="footer">
         &copy; Copyright 2012, BNPB/AIFDR/GFDRR.
-      Last updated on Oct 20, 2012.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.1.
+      Last updated on Oct 24, 2012.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
     </div>
     <!-- cloud_sptheme 1.3 -->
   </body>

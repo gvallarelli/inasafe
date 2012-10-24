@@ -4,18 +4,21 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
+
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>safe.common.dynamic_translations &mdash; InaSAFE v0.5.1-final documentation</title>
+    <title>safe.common.dynamic_translations &mdash; InaSAFE 1.0.1-final documentation</title>
+    
     <link rel="stylesheet" href="../../../_static/cloud.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
-    <link rel="stylesheet" href="../../../http://fonts.googleapis.com/css?family=Noticia+Text|Droid+Sans+Mono" type="text/css" />
+    <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Noticia+Text|Droid+Sans+Mono" type="text/css" />
+    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../',
-        VERSION:     '0.5.1-final',
+        VERSION:     '1.0.1-final',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -27,7 +30,7 @@
     <script type="text/javascript" src="../../../_static/jquery.cookie.js"></script>
     <script type="text/javascript" src="../../../_static/toggle_sections.js"></script>
     <link rel="shortcut icon" href="../../../_static/favicon.ico"/>
-    <link rel="top" title="InaSAFE v0.5.1-final documentation" href="../../../index.html" />
+    <link rel="top" title="InaSAFE 1.0.1-final documentation" href="../../../index.html" />
     <link rel="up" title="Module code" href="../../index.html" /> 
   </head>
   <body>
@@ -134,6 +137,9 @@
     <span class="n">tr</span><span class="p">(</span><span class="s">&#39;People&#39;</span><span class="p">)</span>
     <span class="n">tr</span><span class="p">(</span><span class="s">&#39;people&#39;</span><span class="p">)</span>
     <span class="n">tr</span><span class="p">(</span><span class="s">&#39;People in Jakarta&#39;</span><span class="p">)</span>
+    <span class="n">tr</span><span class="p">(</span><span class="s">&#39;Indonesian people&#39;</span><span class="p">)</span>
+    <span class="n">tr</span><span class="p">(</span><span class="s">&#39;Indonesian People&#39;</span><span class="p">)</span>
+    <span class="n">tr</span><span class="p">(</span><span class="s">&#39;People in Indonesia&#39;</span><span class="p">)</span>
     <span class="n">tr</span><span class="p">(</span><span class="s">&#39;Flood Depth (design) Jakarta&#39;</span><span class="p">)</span>
     <span class="n">tr</span><span class="p">(</span><span class="s">&#39;Flood Depth (current) Jakarta&#39;</span><span class="p">)</span>
     <span class="n">tr</span><span class="p">(</span><span class="s">&#39;An earthquake in Yogyakarta like in 2006&#39;</span><span class="p">)</span>
@@ -149,7 +155,12 @@
     <span class="n">tr</span><span class="p">(</span><span class="s">&#39;An earthquake at the Lembang fault&#39;</span><span class="p">)</span>
     <span class="c"># Bangunan OSM</span>
     <span class="n">tr</span><span class="p">(</span><span class="s">&#39;OSM building footprints&#39;</span><span class="p">)</span>
-    <span class="c"># Bangunan OSM</span>
+    <span class="n">tr</span><span class="p">(</span><span class="s">&#39;Structures&#39;</span><span class="p">)</span>
+    <span class="n">tr</span><span class="p">(</span><span class="s">&#39;Structures in Jakarta&#39;</span><span class="p">)</span>
+    <span class="n">tr</span><span class="p">(</span><span class="s">&#39;Buildings&#39;</span><span class="p">)</span>
+    <span class="n">tr</span><span class="p">(</span><span class="s">&#39;Buildings in Jakarta&#39;</span><span class="p">)</span>
+    <span class="n">tr</span><span class="p">(</span><span class="s">&#39;Essential buildings&#39;</span><span class="p">)</span>
+    <span class="n">tr</span><span class="p">(</span><span class="s">&#39;Essential Buildings&#39;</span><span class="p">)</span>
     <span class="n">tr</span><span class="p">(</span><span class="s">&#39;OSM buildings&#39;</span><span class="p">)</span>
     <span class="n">tr</span><span class="p">(</span><span class="s">&#39;AIBEP schools&#39;</span><span class="p">)</span>
     <span class="c"># Perkiraan penduduk</span>
@@ -188,7 +199,12 @@
     <span class="n">tr</span><span class="p">(</span><span class="s">&#39;hotel&#39;</span><span class="p">)</span>
     <span class="n">tr</span><span class="p">(</span><span class="s">&#39;public building&#39;</span><span class="p">)</span>
     <span class="n">tr</span><span class="p">(</span><span class="s">&#39;other&#39;</span><span class="p">)</span>
-    <span class="n">tr</span><span class="p">(</span><span class="s">&#39;fire station&#39;</span><span class="p">)</span></div>
+    <span class="n">tr</span><span class="p">(</span><span class="s">&#39;fire station&#39;</span><span class="p">)</span>
+
+    <span class="c"># impact function parameters</span>
+    <span class="c"># FIXME (Sunni) It&#39;s better to be updated dynamically</span>
+    <span class="n">tr</span><span class="p">(</span><span class="s">&#39;Thresholds&#39;</span><span class="p">)</span>
+    <span class="n">tr</span><span class="p">(</span><span class="s">&#39;Postprocessors&#39;</span><span class="p">)</span></div>
 </pre></div>
 
           </div>
@@ -202,7 +218,7 @@
 <div id="searchbox" style="display: none">
   <h3>Quick search</h3>
     <form class="search" action="../../../search.html" method="get">
-      <input type="text" name="q" size="18" />
+      <input type="text" name="q" />
       <input type="submit" value="Go" />
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
@@ -237,8 +253,8 @@
 
     <div class="footer">
         &copy; Copyright 2012, BNPB/AIFDR/GFDRR.
-      Last updated on Oct 20, 2012.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.1.
+      Last updated on Oct 24, 2012.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
     </div>
     <!-- cloud_sptheme 1.3 -->
   </body>

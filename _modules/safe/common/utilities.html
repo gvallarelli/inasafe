@@ -4,18 +4,21 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
+
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>safe.common.utilities &mdash; InaSAFE v0.5.1-final documentation</title>
+    <title>safe.common.utilities &mdash; InaSAFE 1.0.1-final documentation</title>
+    
     <link rel="stylesheet" href="../../../_static/cloud.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
-    <link rel="stylesheet" href="../../../http://fonts.googleapis.com/css?family=Noticia+Text|Droid+Sans+Mono" type="text/css" />
+    <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Noticia+Text|Droid+Sans+Mono" type="text/css" />
+    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../',
-        VERSION:     '0.5.1-final',
+        VERSION:     '1.0.1-final',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -27,7 +30,7 @@
     <script type="text/javascript" src="../../../_static/jquery.cookie.js"></script>
     <script type="text/javascript" src="../../../_static/toggle_sections.js"></script>
     <link rel="shortcut icon" href="../../../_static/favicon.ico"/>
-    <link rel="top" title="InaSAFE v0.5.1-final documentation" href="../../../index.html" />
+    <link rel="top" title="InaSAFE 1.0.1-final documentation" href="../../../index.html" />
     <link rel="up" title="Module code" href="../../index.html" /> 
   </head>
   <body>
@@ -61,14 +64,8 @@
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">gettext</span>
-<span class="kn">import</span> <span class="nn">logging</span>
 <span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">date</span>
 <span class="kn">import</span> <span class="nn">getpass</span>
-
-<span class="c"># FIXME (Ole): For some reason this module doesn&#39;t work without this</span>
-<span class="c"># pylint: disable=W0404</span>
-<span class="kn">import</span> <span class="nn">logging.handlers</span>
-<span class="c"># pylint: enable=W0404</span>
 <span class="kn">from</span> <span class="nn">tempfile</span> <span class="kn">import</span> <span class="n">mkstemp</span>
 
 <span class="kn">from</span> <span class="nn">safe.common.exceptions</span> <span class="kn">import</span> <span class="n">VerificationError</span>
@@ -104,83 +101,6 @@
     <span class="k">return</span> <span class="n">t</span><span class="o">.</span><span class="n">ugettext</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
 
 </div>
-<div class="viewcode-block" id="setup_logger"><a class="viewcode-back" href="../../../api-docs/safe/common/utilities.html#safe.common.utilities.setup_logger">[docs]</a><span class="k">def</span> <span class="nf">setup_logger</span><span class="p">():</span>
-    <span class="sd">&quot;&quot;&quot;Run once when the module is loaded and enable logging</span>
-
-<span class="sd">    Args: None</span>
-
-<span class="sd">    Returns: None</span>
-
-<span class="sd">    Raises: None</span>
-
-<span class="sd">    Borrowed heavily from this:</span>
-<span class="sd">    http://docs.python.org/howto/logging-cookbook.html</span>
-
-<span class="sd">    Use this to first initialise the logger (see safe/__init__.py)::</span>
-
-<span class="sd">       from safe.common import utilities</span>
-<span class="sd">       utilities.setupLogger()</span>
-
-<span class="sd">    You would typically only need to do the above once ever as the</span>
-<span class="sd">    safe modle is initialised early and will set up the logger</span>
-<span class="sd">    globally so it is available to all packages / subpackages as</span>
-<span class="sd">    shown below.</span>
-
-<span class="sd">    In a module that wants to do logging then use this example as</span>
-<span class="sd">    a guide to get the initialised logger instance::</span>
-
-<span class="sd">       # The LOGGER is intialised in utilities.py by init</span>
-<span class="sd">       import logging</span>
-<span class="sd">       LOGGER = logging.getLogger(&#39;InaSAFE&#39;)</span>
-
-<span class="sd">    Now to log a message do::</span>
-
-<span class="sd">       LOGGER.debug(&#39;Some debug message&#39;)</span>
-
-<span class="sd">    .. note:: The file logs are written to the inasafe user tmp dir e.g.:</span>
-<span class="sd">       /tmp/inasafe/23-08-2012/timlinux/logs/inasafe.log</span>
-
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">myLogger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s">&#39;InaSAFE&#39;</span><span class="p">)</span>
-    <span class="n">myLogger</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">DEBUG</span><span class="p">)</span>
-    <span class="c"># create syslog handler which logs even debug messages</span>
-    <span class="c"># (ariel): Make this log to /var/log/safe.log instead of</span>
-    <span class="c">#               /var/log/syslog</span>
-    <span class="c"># (Tim) Ole and I discussed this - we prefer to log into the</span>
-    <span class="c"># user&#39;s temporary working directory.</span>
-    <span class="n">myTempDir</span> <span class="o">=</span> <span class="n">temp_dir</span><span class="p">(</span><span class="s">&#39;logs&#39;</span><span class="p">)</span>
-    <span class="n">myFilename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">myTempDir</span><span class="p">,</span> <span class="s">&#39;inasafe.log&#39;</span><span class="p">)</span>
-    <span class="n">myFileHandler</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">FileHandler</span><span class="p">(</span><span class="n">myFilename</span><span class="p">)</span>
-    <span class="n">myFileHandler</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">DEBUG</span><span class="p">)</span>
-    <span class="c"># create console handler with a higher log level</span>
-    <span class="n">myConsoleHandler</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">StreamHandler</span><span class="p">()</span>
-    <span class="n">myConsoleHandler</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">ERROR</span><span class="p">)</span>
-    <span class="c"># Email handler for errors</span>
-    <span class="n">myEmailServer</span> <span class="o">=</span> <span class="s">&#39;localhost&#39;</span>
-    <span class="n">myEmailServerPort</span> <span class="o">=</span> <span class="mi">25</span>
-    <span class="n">mySenderAddress</span> <span class="o">=</span> <span class="s">&#39;logs@inasafe.org&#39;</span>
-    <span class="n">myRecipientAddresses</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;tim@linfiniti.com&#39;</span><span class="p">]</span>
-    <span class="n">mySubject</span> <span class="o">=</span> <span class="s">&#39;Error&#39;</span>
-    <span class="n">myEmailHandler</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">handlers</span><span class="o">.</span><span class="n">SMTPHandler</span><span class="p">(</span>
-        <span class="p">(</span><span class="n">myEmailServer</span><span class="p">,</span> <span class="n">myEmailServerPort</span><span class="p">),</span>
-        <span class="n">mySenderAddress</span><span class="p">,</span>
-        <span class="n">myRecipientAddresses</span><span class="p">,</span>
-        <span class="n">mySubject</span><span class="p">)</span>
-    <span class="n">myEmailHandler</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">ERROR</span><span class="p">)</span>
-    <span class="c"># create formatter and add it to the handlers</span>
-    <span class="n">myFormatter</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">Formatter</span><span class="p">(</span>
-        <span class="s">&#39;</span><span class="si">%(asctime)s</span><span class="s"> - </span><span class="si">%(name)s</span><span class="s"> - </span><span class="si">%(levelname)s</span><span class="s"> - </span><span class="si">%(message)s</span><span class="s">&#39;</span><span class="p">)</span>
-    <span class="n">myFileHandler</span><span class="o">.</span><span class="n">setFormatter</span><span class="p">(</span><span class="n">myFormatter</span><span class="p">)</span>
-    <span class="n">myConsoleHandler</span><span class="o">.</span><span class="n">setFormatter</span><span class="p">(</span><span class="n">myFormatter</span><span class="p">)</span>
-    <span class="n">myEmailHandler</span><span class="o">.</span><span class="n">setFormatter</span><span class="p">(</span><span class="n">myFormatter</span><span class="p">)</span>
-    <span class="c"># add the handlers to the logger</span>
-    <span class="n">myLogger</span><span class="o">.</span><span class="n">addHandler</span><span class="p">(</span><span class="n">myFileHandler</span><span class="p">)</span>
-    <span class="n">myLogger</span><span class="o">.</span><span class="n">addHandler</span><span class="p">(</span><span class="n">myConsoleHandler</span><span class="p">)</span>
-    <span class="n">myLogger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&#39;Safe Logger Module Loaded&#39;</span><span class="p">)</span>
-    <span class="n">myLogger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&#39;----------------------&#39;</span><span class="p">)</span>
-    <span class="n">myLogger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&#39;CWD: </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">curdir</span><span class="p">))</span>
-
-</div>
 <div class="viewcode-block" id="temp_dir"><a class="viewcode-back" href="../../../api-docs/safe/common/utilities.html#safe.common.utilities.temp_dir">[docs]</a><span class="k">def</span> <span class="nf">temp_dir</span><span class="p">(</span><span class="n">sub_dir</span><span class="o">=</span><span class="s">&#39;work&#39;</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Obtain the temporary working directory for the operating system.</span>
 
@@ -193,7 +113,7 @@
 <span class="sd">       tmpdir = temp_dir(&#39;testing&#39;)</span>
 <span class="sd">       tmpfile = unique_filename(dir=tmpdir)</span>
 <span class="sd">       print tmpfile</span>
-<span class="sd">       /tmp/inasafe/23-08-2012/timlinux/work/testing/tmpMRpF_C</span>
+<span class="sd">       /tmp/inasafe/23-08-2012/timlinux/testing/tmpMRpF_C</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        sub_dir str - optional argument which will cause an additional</span>
@@ -272,7 +192,24 @@
         <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
     <span class="k">except</span> <span class="ne">OSError</span><span class="p">:</span>
         <span class="k">pass</span>
-    <span class="k">return</span> <span class="n">filename</span></div>
+    <span class="k">return</span> <span class="n">filename</span>
+</div>
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">safe_qgis.utilities</span> <span class="kn">import</span> <span class="n">getDefaults</span> <span class="k">as</span> <span class="n">get_qgis_defaults</span>
+
+    <span class="k">def</span> <span class="nf">get_defaults</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">get_qgis_defaults</span><span class="p">(</span><span class="n">theDefault</span><span class="o">=</span><span class="n">default</span><span class="p">)</span>
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+    <span class="c">#this is used when we are in safe without access to qgis (e.g. web )</span>
+    <span class="kn">from</span> <span class="nn">safe.defaults</span> <span class="kn">import</span> <span class="n">DEFAULTS</span>
+
+    <span class="k">def</span> <span class="nf">get_defaults</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">default</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">DEFAULTS</span>
+        <span class="k">elif</span> <span class="n">default</span> <span class="ow">in</span> <span class="n">DEFAULTS</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">DEFAULTS</span><span class="p">[</span><span class="n">default</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">None</span>
 </pre></div>
 
           </div>
@@ -286,7 +223,7 @@
 <div id="searchbox" style="display: none">
   <h3>Quick search</h3>
     <form class="search" action="../../../search.html" method="get">
-      <input type="text" name="q" size="18" />
+      <input type="text" name="q" />
       <input type="submit" value="Go" />
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
@@ -321,8 +258,8 @@
 
     <div class="footer">
         &copy; Copyright 2012, BNPB/AIFDR/GFDRR.
-      Last updated on Oct 20, 2012.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.1.
+      Last updated on Oct 24, 2012.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
     </div>
     <!-- cloud_sptheme 1.3 -->
   </body>

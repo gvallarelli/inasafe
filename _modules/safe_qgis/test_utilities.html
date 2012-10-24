@@ -4,18 +4,21 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
+
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>safe_qgis.test_utilities &mdash; InaSAFE v0.5.1-final documentation</title>
+    <title>safe_qgis.test_utilities &mdash; InaSAFE 1.0.1-final documentation</title>
+    
     <link rel="stylesheet" href="../../_static/cloud.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-    <link rel="stylesheet" href="../../http://fonts.googleapis.com/css?family=Noticia+Text|Droid+Sans+Mono" type="text/css" />
+    <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Noticia+Text|Droid+Sans+Mono" type="text/css" />
+    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '0.5.1-final',
+        VERSION:     '1.0.1-final',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -27,7 +30,7 @@
     <script type="text/javascript" src="../../_static/jquery.cookie.js"></script>
     <script type="text/javascript" src="../../_static/toggle_sections.js"></script>
     <link rel="shortcut icon" href="../../_static/favicon.ico"/>
-    <link rel="top" title="InaSAFE v0.5.1-final documentation" href="../../index.html" />
+    <link rel="top" title="InaSAFE 1.0.1-final documentation" href="../../index.html" />
     <link rel="up" title="Module code" href="../index.html" /> 
   </head>
   <body>
@@ -61,6 +64,9 @@
 <span class="kn">import</span> <span class="nn">sys</span>
 <span class="kn">import</span> <span class="nn">os</span>
 
+<span class="kn">from</span> <span class="nn">unittest</span> <span class="kn">import</span> <span class="n">expectedFailure</span>
+<span class="kn">from</span> <span class="nn">PyQt4.QtCore</span> <span class="kn">import</span> <span class="n">QVariant</span>
+
 <span class="c"># Add parent directory to path to make test aware of other modules</span>
 <span class="c"># We should be able to remove this now that we use env vars. TS</span>
 <span class="n">pardir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">__file__</span><span class="p">),</span> <span class="s">&#39;..&#39;</span><span class="p">))</span>
@@ -70,11 +76,22 @@
 <span class="kn">from</span> <span class="nn">safe_qgis.utilities</span> <span class="kn">import</span> <span class="p">(</span><span class="n">getExceptionWithStacktrace</span><span class="p">,</span>
                               <span class="n">setVectorStyle</span><span class="p">,</span>
                               <span class="n">setRasterStyle</span><span class="p">,</span>
-                              <span class="n">qgisVersion</span><span class="p">)</span>
-<span class="kn">from</span> <span class="nn">safe_qgis.utilities_test</span> <span class="kn">import</span> <span class="n">unitTestDataPath</span>
-<span class="kn">from</span> <span class="nn">safe_qgis.utilities_test</span> <span class="kn">import</span> <span class="p">(</span><span class="n">loadLayer</span><span class="p">,</span> <span class="n">getQgisTestApp</span><span class="p">)</span>
+                              <span class="n">qgisVersion</span><span class="p">,</span>
+                              <span class="n">mmToPoints</span><span class="p">,</span>
+                              <span class="n">pointsToMM</span><span class="p">,</span>
+                              <span class="n">humaniseSeconds</span><span class="p">,</span>
+                              <span class="n">isLayerPolygonal</span><span class="p">,</span>
+                              <span class="n">getLayerAttributeNames</span><span class="p">,</span>
+                              <span class="n">impactLayerAttribution</span><span class="p">)</span>
+<span class="kn">from</span> <span class="nn">safe_qgis.utilities_test</span> <span class="kn">import</span> <span class="p">(</span><span class="n">unitTestDataPath</span><span class="p">,</span>
+                                     <span class="n">loadLayer</span><span class="p">,</span>
+                                     <span class="n">getQgisTestApp</span><span class="p">)</span>
 <span class="kn">from</span> <span class="nn">safe_qgis.exceptions</span> <span class="kn">import</span> <span class="n">StyleError</span>
 <span class="kn">from</span> <span class="nn">safe.common.exceptions</span> <span class="kn">import</span> <span class="n">BoundingBoxError</span>
+<span class="kn">from</span> <span class="nn">safe_qgis.test_keywords_dialog</span> <span class="kn">import</span> <span class="p">(</span><span class="n">makePolygonLayer</span><span class="p">,</span>
+                                            <span class="n">makePadangLayer</span><span class="p">,</span>
+                                            <span class="n">makePointLayer</span><span class="p">)</span>
+<span class="kn">from</span> <span class="nn">safe_qgis.utilities</span> <span class="kn">import</span> <span class="n">getDefaults</span>
 
 <span class="n">QGISAPP</span><span class="p">,</span> <span class="n">CANVAS</span><span class="p">,</span> <span class="n">IFACE</span><span class="p">,</span> <span class="n">PARENT</span> <span class="o">=</span> <span class="n">getQgisTestApp</span><span class="p">()</span>
 
@@ -84,7 +101,7 @@
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="nf">setUp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">pass</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s">&#39;LANG&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s">&#39;en&#39;</span>
 
     <span class="k">def</span> <span class="nf">tearDown</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">pass</span>
@@ -118,8 +135,8 @@
 <span class="sd">        .. seealso:: https://github.com/AIFDR/inasafe/issues/126</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c"># This dataset has all cells with value 1.3</span>
-        <span class="n">myLayer</span><span class="p">,</span> <span class="n">myType</span> <span class="o">=</span> <span class="n">loadLayer</span><span class="p">(</span><span class="s">&#39;issue126.tif&#39;</span><span class="p">)</span>
-        <span class="k">del</span> <span class="n">myType</span>
+        <span class="n">myLayer</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">loadLayer</span><span class="p">(</span><span class="s">&#39;issue126.tif&#39;</span><span class="p">)</span>
+
         <span class="c"># Note the float quantity values below</span>
         <span class="n">myStyleInfo</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="n">myStyleInfo</span><span class="p">[</span><span class="s">&#39;style_classes&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
@@ -134,13 +151,14 @@
             <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="n">myMessage</span><span class="p">)</span>
         <span class="c"># Now validate the transparency values were set to 255 because</span>
         <span class="c"># they are floats and we cant specify pixel ranges to floats</span>
-        <span class="n">myValue1</span> <span class="o">=</span> <span class="n">myLayer</span><span class="o">.</span><span class="n">rasterTransparency</span><span class="p">()</span><span class="o">.</span><span class="n">alphaValue</span><span class="p">(</span><span class="mf">1.1</span><span class="p">)</span>
-        <span class="n">myValue2</span> <span class="o">=</span> <span class="n">myLayer</span><span class="o">.</span><span class="n">rasterTransparency</span><span class="p">()</span><span class="o">.</span><span class="n">alphaValue</span><span class="p">(</span><span class="mf">1.4</span><span class="p">)</span>
+        <span class="c"># Note we don&#39;t test on the exact interval because 464c6171dd55</span>
+        <span class="n">myValue1</span> <span class="o">=</span> <span class="n">myLayer</span><span class="o">.</span><span class="n">rasterTransparency</span><span class="p">()</span><span class="o">.</span><span class="n">alphaValue</span><span class="p">(</span><span class="mf">1.2</span><span class="p">)</span>
+        <span class="n">myValue2</span> <span class="o">=</span> <span class="n">myLayer</span><span class="o">.</span><span class="n">rasterTransparency</span><span class="p">()</span><span class="o">.</span><span class="n">alphaValue</span><span class="p">(</span><span class="mf">1.5</span><span class="p">)</span>
         <span class="n">myMessage</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;Transparency should be ignored when style class&#39;</span>
                      <span class="s">&#39; quantities are floats&#39;</span><span class="p">)</span>
         <span class="k">assert</span> <span class="n">myValue1</span> <span class="o">==</span> <span class="n">myValue2</span> <span class="o">==</span> <span class="mi">255</span><span class="p">,</span> <span class="n">myMessage</span>
 
-        <span class="c"># Now run the same test again</span>
+        <span class="c"># Now run the same test again for int intervals</span>
         <span class="n">myStyleInfo</span><span class="p">[</span><span class="s">&#39;style_classes&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
                         <span class="nb">dict</span><span class="p">(</span><span class="n">colour</span><span class="o">=</span><span class="s">&#39;#38A800&#39;</span><span class="p">,</span> <span class="n">quantity</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">transparency</span><span class="o">=</span><span class="mi">100</span><span class="p">),</span>
                         <span class="nb">dict</span><span class="p">(</span><span class="n">colour</span><span class="o">=</span><span class="s">&#39;#38A800&#39;</span><span class="p">,</span> <span class="n">quantity</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">transparency</span><span class="o">=</span><span class="mi">0</span><span class="p">),</span>
@@ -174,6 +192,44 @@
             <span class="n">setRasterStyle</span><span class="p">(</span><span class="n">myLayer</span><span class="p">,</span> <span class="n">myStyleInfo</span><span class="p">)</span>
         <span class="k">except</span> <span class="ne">Exception</span><span class="p">,</span> <span class="n">e</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="n">myMessage</span> <span class="o">+</span> <span class="s">&#39;: &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
+</div>
+<div class="viewcode-block" id="UtilitiesTest.test_transparency_of_minimum_value"><a class="viewcode-back" href="../../api-docs/safe_qgis_tests/test_utilities.html#safe_qgis.test_utilities.UtilitiesTest.test_transparency_of_minimum_value">[docs]</a>    <span class="k">def</span> <span class="nf">test_transparency_of_minimum_value</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Test that transparency of minimum value works when set to 100%</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c"># This dataset has all cells with value 1.3</span>
+        <span class="n">myLayer</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">loadLayer</span><span class="p">(</span><span class="s">&#39;issue126.tif&#39;</span><span class="p">)</span>
+
+        <span class="c"># Note the float quantity values below</span>
+        <span class="n">myStyleInfo</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">myStyleInfo</span><span class="p">[</span><span class="s">&#39;style_classes&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="p">{</span><span class="s">&#39;colour&#39;</span><span class="p">:</span> <span class="s">&#39;#FFFFFF&#39;</span><span class="p">,</span> <span class="s">&#39;transparency&#39;</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span> <span class="s">&#39;quantity&#39;</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">},</span>
+            <span class="p">{</span><span class="s">&#39;colour&#39;</span><span class="p">:</span> <span class="s">&#39;#38A800&#39;</span><span class="p">,</span> <span class="s">&#39;quantity&#39;</span><span class="p">:</span> <span class="mf">0.038362596547925065</span><span class="p">,</span>
+             <span class="s">&#39;transparency&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s">&#39;label&#39;</span><span class="p">:</span> <span class="s">u&#39;Rendah [0 orang/sel]&#39;</span><span class="p">},</span>
+            <span class="p">{</span><span class="s">&#39;colour&#39;</span><span class="p">:</span> <span class="s">&#39;#79C900&#39;</span><span class="p">,</span> <span class="s">&#39;transparency&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+             <span class="s">&#39;quantity&#39;</span><span class="p">:</span> <span class="mf">0.07672519309585013</span><span class="p">},</span>
+            <span class="p">{</span><span class="s">&#39;colour&#39;</span><span class="p">:</span> <span class="s">&#39;#CEED00&#39;</span><span class="p">,</span> <span class="s">&#39;transparency&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+             <span class="s">&#39;quantity&#39;</span><span class="p">:</span> <span class="mf">0.1150877896437752</span><span class="p">},</span>
+            <span class="p">{</span><span class="s">&#39;colour&#39;</span><span class="p">:</span> <span class="s">&#39;#FFCC00&#39;</span><span class="p">,</span> <span class="s">&#39;quantity&#39;</span><span class="p">:</span> <span class="mf">0.15345038619170026</span><span class="p">,</span>
+             <span class="s">&#39;transparency&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s">&#39;label&#39;</span><span class="p">:</span> <span class="s">u&#39;Sedang [0 orang/sel]&#39;</span><span class="p">},</span>
+            <span class="p">{</span><span class="s">&#39;colour&#39;</span><span class="p">:</span> <span class="s">&#39;#FF6600&#39;</span><span class="p">,</span> <span class="s">&#39;transparency&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+             <span class="s">&#39;quantity&#39;</span><span class="p">:</span> <span class="mf">0.19181298273962533</span><span class="p">},</span>
+            <span class="p">{</span><span class="s">&#39;colour&#39;</span><span class="p">:</span> <span class="s">&#39;#FF0000&#39;</span><span class="p">,</span> <span class="s">&#39;transparency&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+             <span class="s">&#39;quantity&#39;</span><span class="p">:</span> <span class="mf">0.23017557928755039</span><span class="p">},</span>
+            <span class="p">{</span><span class="s">&#39;colour&#39;</span><span class="p">:</span> <span class="s">&#39;#7A0000&#39;</span><span class="p">,</span> <span class="s">&#39;quantity&#39;</span><span class="p">:</span> <span class="mf">0.26853817583547546</span><span class="p">,</span>
+             <span class="s">&#39;transparency&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s">&#39;label&#39;</span><span class="p">:</span> <span class="s">u&#39;Tinggi [0 orang/sel]&#39;</span><span class="p">}]</span>
+
+        <span class="n">myMessage</span> <span class="o">=</span> <span class="s">&#39;Could not create raster style&#39;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">setRasterStyle</span><span class="p">(</span><span class="n">myLayer</span><span class="p">,</span> <span class="n">myStyleInfo</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="n">myMessage</span><span class="p">)</span>
+
+        <span class="n">myMessage</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;Should get a single transparency class for first style &#39;</span>
+                     <span class="s">&#39;class&#39;</span><span class="p">)</span>
+        <span class="n">myTransparencyList</span> <span class="o">=</span> <span class="p">(</span><span class="n">myLayer</span><span class="o">.</span><span class="n">rasterTransparency</span><span class="p">()</span><span class="o">.</span>
+                <span class="n">transparentSingleValuePixelList</span><span class="p">())</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">myTransparencyList</span><span class="p">),</span> <span class="mi">1</span><span class="p">)</span>
 </div>
 <div class="viewcode-block" id="UtilitiesTest.test_issue121"><a class="viewcode-back" href="../../api-docs/safe_qgis_tests/test_utilities.html#safe_qgis.test_utilities.UtilitiesTest.test_issue121">[docs]</a>    <span class="k">def</span> <span class="nf">test_issue121</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Test that point symbol size can be set from style (issue 121).</span>
@@ -295,6 +351,118 @@
         <span class="n">myVersion</span> <span class="o">=</span> <span class="n">qgisVersion</span><span class="p">()</span>
         <span class="n">myMessage</span> <span class="o">=</span> <span class="s">&#39;Got version </span><span class="si">%s</span><span class="s"> of QGIS, but at least 107000 is needed&#39;</span>
         <span class="k">assert</span> <span class="n">myVersion</span> <span class="o">&gt;</span> <span class="mi">10700</span><span class="p">,</span> <span class="n">myMessage</span>
+</div>
+<div class="viewcode-block" id="UtilitiesTest.test_getLayerAttributeNames"><a class="viewcode-back" href="../../api-docs/safe_qgis_tests/test_utilities.html#safe_qgis.test_utilities.UtilitiesTest.test_getLayerAttributeNames">[docs]</a>    <span class="k">def</span> <span class="nf">test_getLayerAttributeNames</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Test we can get the correct attributes back&quot;&quot;&quot;</span>
+        <span class="n">myLayer</span> <span class="o">=</span> <span class="n">makePolygonLayer</span><span class="p">()</span>
+
+        <span class="c">#with good attribute name</span>
+        <span class="n">myAttrs</span><span class="p">,</span> <span class="n">myPos</span> <span class="o">=</span> <span class="n">getLayerAttributeNames</span><span class="p">(</span><span class="n">myLayer</span><span class="p">,</span>
+            <span class="p">[</span><span class="n">QVariant</span><span class="o">.</span><span class="n">Int</span><span class="p">,</span> <span class="n">QVariant</span><span class="o">.</span><span class="n">String</span><span class="p">],</span>
+            <span class="s">&#39;TEST_STRIN&#39;</span><span class="p">)</span>
+        <span class="n">myExpectedAttrs</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;KAB_NAME&#39;</span><span class="p">,</span> <span class="s">&#39;TEST_INT&#39;</span><span class="p">,</span> <span class="s">&#39;TEST_STRIN&#39;</span><span class="p">]</span>
+        <span class="n">myExpectedPos</span> <span class="o">=</span> <span class="mi">2</span>
+        <span class="n">myMessage</span> <span class="o">=</span> <span class="s">&#39;myExpectedAttrs, got </span><span class="si">%s</span><span class="s">, expected </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="p">(</span>
+            <span class="n">myAttrs</span><span class="p">,</span> <span class="n">myExpectedAttrs</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="p">(</span><span class="n">myAttrs</span> <span class="o">==</span> <span class="n">myExpectedAttrs</span><span class="p">),</span> <span class="n">myMessage</span>
+        <span class="n">myMessage</span> <span class="o">=</span> <span class="s">&#39;myExpectedPos, got </span><span class="si">%s</span><span class="s">, expected </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="p">(</span>
+            <span class="n">myPos</span><span class="p">,</span> <span class="n">myExpectedPos</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="p">(</span><span class="n">myPos</span> <span class="o">==</span> <span class="n">myExpectedPos</span><span class="p">),</span> <span class="n">myMessage</span>
+
+        <span class="c">#with inexistent attribute name</span>
+        <span class="n">myAttrs</span><span class="p">,</span> <span class="n">myPos</span> <span class="o">=</span> <span class="n">getLayerAttributeNames</span><span class="p">(</span><span class="n">myLayer</span><span class="p">,</span>
+            <span class="p">[</span><span class="n">QVariant</span><span class="o">.</span><span class="n">Int</span><span class="p">,</span> <span class="n">QVariant</span><span class="o">.</span><span class="n">String</span><span class="p">],</span>
+            <span class="s">&#39;MISSING_ATTR&#39;</span><span class="p">)</span>
+        <span class="n">myExpectedAttrs</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;KAB_NAME&#39;</span><span class="p">,</span> <span class="s">&#39;TEST_INT&#39;</span><span class="p">,</span> <span class="s">&#39;TEST_STRIN&#39;</span><span class="p">]</span>
+        <span class="n">myExpectedPos</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="n">myMessage</span> <span class="o">=</span> <span class="s">&#39;myExpectedAttrs, got </span><span class="si">%s</span><span class="s">, expected </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="p">(</span>
+            <span class="n">myAttrs</span><span class="p">,</span> <span class="n">myExpectedAttrs</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="p">(</span><span class="n">myAttrs</span> <span class="o">==</span> <span class="n">myExpectedAttrs</span><span class="p">),</span> <span class="n">myMessage</span>
+        <span class="n">myMessage</span> <span class="o">=</span> <span class="s">&#39;myExpectedPos, got </span><span class="si">%s</span><span class="s">, expected </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="p">(</span>
+            <span class="n">myPos</span><span class="p">,</span> <span class="n">myExpectedPos</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="p">(</span><span class="n">myPos</span> <span class="o">==</span> <span class="n">myExpectedPos</span><span class="p">),</span> <span class="n">myMessage</span>
+
+        <span class="c">#with raster layer</span>
+        <span class="n">myLayer</span> <span class="o">=</span> <span class="n">makePadangLayer</span><span class="p">()</span>
+        <span class="n">myAttrs</span><span class="p">,</span> <span class="n">myPos</span> <span class="o">=</span> <span class="n">getLayerAttributeNames</span><span class="p">(</span><span class="n">myLayer</span><span class="p">,</span> <span class="p">[],</span> <span class="s">&#39;&#39;</span><span class="p">)</span>
+        <span class="n">myMessage</span> <span class="o">=</span> <span class="s">&#39;Should return None, None for raster layer, got </span><span class="si">%s</span><span class="s">, </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="p">(</span>
+            <span class="n">myAttrs</span><span class="p">,</span> <span class="n">myPos</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="p">(</span><span class="n">myAttrs</span> <span class="ow">is</span> <span class="bp">None</span> <span class="ow">and</span> <span class="n">myPos</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">),</span> <span class="n">myMessage</span>
+</div>
+<div class="viewcode-block" id="UtilitiesTest.test_isLayerPolygonal"><a class="viewcode-back" href="../../api-docs/safe_qgis_tests/test_utilities.html#safe_qgis.test_utilities.UtilitiesTest.test_isLayerPolygonal">[docs]</a>    <span class="k">def</span> <span class="nf">test_isLayerPolygonal</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Test we can get the correct attributes back&quot;&quot;&quot;</span>
+        <span class="n">myLayer</span> <span class="o">=</span> <span class="n">makePolygonLayer</span><span class="p">()</span>
+        <span class="n">myMessage</span> <span class="o">=</span> <span class="s">&#39;isLayerPolygonal, </span><span class="si">%s</span><span class="s"> layer should be polygonal&#39;</span> <span class="o">%</span> <span class="n">myLayer</span>
+        <span class="k">assert</span> <span class="n">isLayerPolygonal</span><span class="p">(</span><span class="n">myLayer</span><span class="p">),</span> <span class="n">myMessage</span>
+
+        <span class="n">myLayer</span> <span class="o">=</span> <span class="n">makePointLayer</span><span class="p">()</span>
+        <span class="n">myMessage</span> <span class="o">=</span> <span class="s">&#39;</span><span class="si">%s</span><span class="s"> layer should be polygonal&#39;</span> <span class="o">%</span> <span class="n">myLayer</span>
+        <span class="k">assert</span> <span class="ow">not</span> <span class="n">isLayerPolygonal</span><span class="p">(</span><span class="n">myLayer</span><span class="p">),</span> <span class="n">myMessage</span>
+
+        <span class="n">myLayer</span> <span class="o">=</span> <span class="n">makePadangLayer</span><span class="p">()</span>
+        <span class="n">myMessage</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;</span><span class="si">%s</span><span class="s"> raster layer should not be polygonal&#39;</span>
+                    <span class="o">%</span> <span class="n">myLayer</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="ow">not</span> <span class="n">isLayerPolygonal</span><span class="p">(</span><span class="n">myLayer</span><span class="p">),</span> <span class="n">myMessage</span>
+</div>
+    <span class="k">def</span> <span class="nf">test_getDefaults</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">myExpectedDefaults</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s">&#39;FEM_RATIO_KEY&#39;</span><span class="p">:</span> <span class="s">&#39;female ratio default&#39;</span><span class="p">,</span>
+            <span class="s">&#39;YOUTH_RATIO&#39;</span><span class="p">:</span> <span class="mf">0.263</span><span class="p">,</span>
+            <span class="s">&#39;ELDER_RATIO&#39;</span><span class="p">:</span> <span class="mf">0.078</span><span class="p">,</span>
+            <span class="s">&#39;NO_DATA&#39;</span><span class="p">:</span> <span class="s">&#39;No data&#39;</span><span class="p">,</span>
+            <span class="s">&#39;FEM_RATIO&#39;</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">,</span>
+            <span class="s">&#39;AGGR_ATTR_KEY&#39;</span><span class="p">:</span> <span class="s">&#39;aggregation attribute&#39;</span><span class="p">,</span>
+            <span class="s">&#39;FEM_RATIO_ATTR_KEY&#39;</span><span class="p">:</span> <span class="s">&#39;female ratio attribute&#39;</span><span class="p">,</span>
+            <span class="s">&#39;ADULT_RATIO&#39;</span><span class="p">:</span> <span class="mf">0.659</span>
+        <span class="p">}</span>
+        <span class="n">myDefaults</span> <span class="o">=</span> <span class="n">getDefaults</span><span class="p">()</span>
+        <span class="n">myMessage</span> <span class="o">=</span> <span class="s">&#39;Defaults: got </span><span class="si">%s</span><span class="s">, expected </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="p">(</span>
+            <span class="n">myDefaults</span><span class="p">,</span> <span class="n">myExpectedDefaults</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="p">(</span><span class="n">myDefaults</span> <span class="o">==</span> <span class="n">myExpectedDefaults</span><span class="p">),</span> <span class="n">myMessage</span>
+
+<div class="viewcode-block" id="UtilitiesTest.test_mmPointConversion"><a class="viewcode-back" href="../../api-docs/safe_qgis_tests/test_utilities.html#safe_qgis.test_utilities.UtilitiesTest.test_mmPointConversion">[docs]</a>    <span class="k">def</span> <span class="nf">test_mmPointConversion</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Test that conversions between pixel and page dimensions work.&quot;&quot;&quot;</span>
+
+        <span class="n">myDpi</span> <span class="o">=</span> <span class="mi">300</span>
+        <span class="n">myPixels</span> <span class="o">=</span> <span class="mi">300</span>
+        <span class="n">myMM</span> <span class="o">=</span> <span class="mf">25.4</span>  <span class="c"># 1 inch</span>
+        <span class="n">myResult</span> <span class="o">=</span> <span class="n">pointsToMM</span><span class="p">(</span><span class="n">myPixels</span><span class="p">,</span> <span class="n">myDpi</span><span class="p">)</span>
+        <span class="n">myMessage</span> <span class="o">=</span> <span class="s">&quot;Expected: </span><span class="si">%s</span><span class="se">\n</span><span class="s">Got: </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">myMM</span><span class="p">,</span> <span class="n">myResult</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">myResult</span> <span class="o">==</span> <span class="n">myMM</span><span class="p">,</span> <span class="n">myMessage</span>
+        <span class="n">myResult</span> <span class="o">=</span> <span class="n">mmToPoints</span><span class="p">(</span><span class="n">myMM</span><span class="p">,</span> <span class="n">myDpi</span><span class="p">)</span>
+        <span class="n">myMessage</span> <span class="o">=</span> <span class="s">&quot;Expected: </span><span class="si">%s</span><span class="se">\n</span><span class="s">Got: </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">myPixels</span><span class="p">,</span> <span class="n">myResult</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">myResult</span> <span class="o">==</span> <span class="n">myPixels</span><span class="p">,</span> <span class="n">myMessage</span>
+</div>
+<div class="viewcode-block" id="UtilitiesTest.test_humaniseSeconds"><a class="viewcode-back" href="../../api-docs/safe_qgis_tests/test_utilities.html#safe_qgis.test_utilities.UtilitiesTest.test_humaniseSeconds">[docs]</a>    <span class="k">def</span> <span class="nf">test_humaniseSeconds</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Test that humanise seconds works.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">humaniseSeconds</span><span class="p">(</span><span class="mi">5</span><span class="p">),</span> <span class="s">&#39;5 seconds&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">humaniseSeconds</span><span class="p">(</span><span class="mi">65</span><span class="p">),</span> <span class="s">&#39;a minute&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">humaniseSeconds</span><span class="p">(</span><span class="mi">3605</span><span class="p">),</span> <span class="s">&#39;over an hour&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">humaniseSeconds</span><span class="p">(</span><span class="mi">9000</span><span class="p">),</span> <span class="s">&#39;2 hours and 30 minutes&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">humaniseSeconds</span><span class="p">(</span><span class="mi">432232</span><span class="p">),</span>
+                         <span class="s">&#39;5 days, 0 hours and 3 minutes&#39;</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="UtilitiesTest.test_impactLayerAttribution"><a class="viewcode-back" href="../../api-docs/safe_qgis_tests/test_utilities.html#safe_qgis.test_utilities.UtilitiesTest.test_impactLayerAttribution">[docs]</a>    <span class="k">def</span> <span class="nf">test_impactLayerAttribution</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Test we get an attribution html snippet nicely for impact layers.&quot;&quot;&quot;</span>
+        <span class="n">myKeywords</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;hazard_title&#39;</span><span class="p">:</span> <span class="s">&#39;Sample Hazard Title&#39;</span><span class="p">,</span>
+                      <span class="s">&#39;hazard_source&#39;</span><span class="p">:</span> <span class="s">&#39;Sample Hazard Source&#39;</span><span class="p">,</span>
+                      <span class="s">&#39;exposure_title&#39;</span><span class="p">:</span> <span class="s">&#39;Sample Exposure Title&#39;</span><span class="p">,</span>
+                      <span class="s">&#39;exposure_source&#39;</span><span class="p">:</span> <span class="s">&#39;Sample Exposure Source&#39;</span><span class="p">}</span>
+        <span class="n">myHtml</span> <span class="o">=</span> <span class="n">impactLayerAttribution</span><span class="p">(</span><span class="n">myKeywords</span><span class="p">)</span>
+        <span class="k">print</span> <span class="n">myHtml</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">myHtml</span><span class="p">),</span> <span class="mi">288</span><span class="p">)</span>
+</div>
+    <span class="nd">@expectedFailure</span>
+<div class="viewcode-block" id="UtilitiesTest.test_localisedAttribution"><a class="viewcode-back" href="../../api-docs/safe_qgis_tests/test_utilities.html#safe_qgis.test_utilities.UtilitiesTest.test_localisedAttribution">[docs]</a>    <span class="k">def</span> <span class="nf">test_localisedAttribution</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Test we can localise attribution.&quot;&quot;&quot;</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s">&#39;LANG&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s">&#39;id&#39;</span>
+        <span class="n">myKeywords</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;hazard_title&#39;</span><span class="p">:</span> <span class="s">&#39;Jakarta 2007 flood&#39;</span><span class="p">,</span>
+                      <span class="s">&#39;hazard_source&#39;</span><span class="p">:</span> <span class="s">&#39;Sample Hazard Source&#39;</span><span class="p">,</span>
+                      <span class="s">&#39;exposure_title&#39;</span><span class="p">:</span> <span class="s">&#39;People in Jakarta&#39;</span><span class="p">,</span>
+                      <span class="s">&#39;exposure_source&#39;</span><span class="p">:</span> <span class="s">&#39;Sample Exposure Source&#39;</span><span class="p">}</span>
+        <span class="n">myHtml</span> <span class="o">=</span> <span class="n">impactLayerAttribution</span><span class="p">(</span><span class="n">myKeywords</span><span class="p">,</span> <span class="bp">True</span><span class="p">)</span>
+        <span class="k">print</span> <span class="n">myHtml</span>
+        <span class="k">assert</span> <span class="n">myHtml</span> <span class="o">==</span> <span class="s">&#39;11&#39;</span>
 </div></div>
 <span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&#39;__main__&#39;</span><span class="p">:</span>
     <span class="n">suite</span> <span class="o">=</span> <span class="n">unittest</span><span class="o">.</span><span class="n">makeSuite</span><span class="p">(</span><span class="n">UtilitiesTest</span><span class="p">,</span> <span class="s">&#39;test&#39;</span><span class="p">)</span>
@@ -313,7 +481,7 @@
 <div id="searchbox" style="display: none">
   <h3>Quick search</h3>
     <form class="search" action="../../search.html" method="get">
-      <input type="text" name="q" size="18" />
+      <input type="text" name="q" />
       <input type="submit" value="Go" />
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
@@ -348,8 +516,8 @@
 
     <div class="footer">
         &copy; Copyright 2012, BNPB/AIFDR/GFDRR.
-      Last updated on Oct 20, 2012.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.1.
+      Last updated on Oct 24, 2012.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
     </div>
     <!-- cloud_sptheme 1.3 -->
   </body>

@@ -4,18 +4,21 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
+
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Module: safe_qgis.utilities_test &mdash; InaSAFE v0.5.1-final documentation</title>
+    <title>Module: safe_qgis.utilities_test &mdash; InaSAFE 1.0.1-final documentation</title>
+    
     <link rel="stylesheet" href="../../_static/cloud.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-    <link rel="stylesheet" href="../../http://fonts.googleapis.com/css?family=Noticia+Text|Droid+Sans+Mono" type="text/css" />
+    <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Noticia+Text|Droid+Sans+Mono" type="text/css" />
+    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '0.5.1-final',
+        VERSION:     '1.0.1-final',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -27,10 +30,10 @@
     <script type="text/javascript" src="../../_static/jquery.cookie.js"></script>
     <script type="text/javascript" src="../../_static/toggle_sections.js"></script>
     <link rel="shortcut icon" href="../../_static/favicon.ico"/>
-    <link rel="top" title="InaSAFE v0.5.1-final documentation" href="../../index.html" />
+    <link rel="top" title="InaSAFE 1.0.1-final documentation" href="../../index.html" />
     <link rel="up" title="Package::safe_qgis" href="../safe_qgis.html" />
-    <link rel="next" title="Module: safe_qgis.safe_interface" href="safe_interface.html" />
-    <link rel="prev" title="Module: safe_qgis.impact_functions_doc" href="impact_functions_doc.html" /> 
+    <link rel="next" title="Module: safe_qgis.exceptions" href="exceptions.html" />
+    <link rel="prev" title="Module: safe_qgis.html_renderer" href="html_renderer.html" /> 
   </head>
   <body>
     <div class="relbar-top">
@@ -45,10 +48,10 @@
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
         <li class="right" >
-          <a href="safe_interface.html" title="Module: safe_qgis.safe_interface"
+          <a href="exceptions.html" title="Module: safe_qgis.exceptions"
              accesskey="N">next</a> &nbsp; &nbsp;</li>
         <li class="right" >
-          <a href="impact_functions_doc.html" title="Module: safe_qgis.impact_functions_doc"
+          <a href="html_renderer.html" title="Module: safe_qgis.html_renderer"
              accesskey="P">previous</a> &nbsp; &nbsp;</li>
     <li><a href="../../index.html">Home</a> &raquo;</li>
     <li><a href="../../contents.html">Contents</a> &raquo;</li>
@@ -65,220 +68,8 @@
         <div class="bodywrapper">
           <div class="body">
             
-  <div class="section" id="module-safe_qgis.utilities_test">
-<span id="module-safe-qgis-utilities-test"></span><h1>Module:  safe_qgis.utilities_test<a class="headerlink" href="#module-safe_qgis.utilities_test" title="Permalink to this headline">¶</a></h1>
-<p>Helper module for gui test suite</p>
-<dl class="class">
-<dt id="safe_qgis.utilities_test.RedirectStdStreams">
-<em class="property">class </em><tt class="descclassname">safe_qgis.utilities_test.</tt><tt class="descname">RedirectStdStreams</tt><big>(</big><em>stdout=None</em>, <em>stderr=None</em><big>)</big><a class="reference internal" href="../../_modules/safe_qgis/utilities_test.html#RedirectStdStreams"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe_qgis.utilities_test.RedirectStdStreams" title="Permalink to this definition">¶</a></dt>
-<dd><p>Context manager for redirection of stdout and stderr</p>
-<p>This is from
-<a class="reference external" href="http://stackoverflow.com/questions/6796492/">http://stackoverflow.com/questions/6796492/</a>
-python-temporarily-redirect-stdout-stderr</p>
-<p>In this context, the class is used to get rid of QGIS
-output in the test suite - BUT IT DOESN&#8217;T WORK (Maybe
-because QGIS starts its providers in a different process?)</p>
-<p>Usage:</p>
-<p>devnull = open(os.devnull, &#8216;w&#8217;)
-print(&#8216;Fubar&#8217;)</p>
-<dl class="docutils">
-<dt>with RedirectStdStreams(stdout=devnull, stderr=devnull):</dt>
-<dd>print(&#8220;You&#8217;ll never see me&#8221;)</dd>
-</dl>
-<p>print(&#8220;I&#8217;m back!&#8221;)</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="safe_qgis.utilities_test.assertHashForFile">
-<tt class="descclassname">safe_qgis.utilities_test.</tt><tt class="descname">assertHashForFile</tt><big>(</big><em>theHash</em>, <em>theFilename</em><big>)</big><a class="reference internal" href="../../_modules/safe_qgis/utilities_test.html#assertHashForFile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe_qgis.utilities_test.assertHashForFile" title="Permalink to this definition">¶</a></dt>
-<dd><p>Assert that a files has matches its expected hash</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="safe_qgis.utilities_test.assertHashesForFile">
-<tt class="descclassname">safe_qgis.utilities_test.</tt><tt class="descname">assertHashesForFile</tt><big>(</big><em>theHashes</em>, <em>theFilename</em><big>)</big><a class="reference internal" href="../../_modules/safe_qgis/utilities_test.html#assertHashesForFile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe_qgis.utilities_test.assertHashesForFile" title="Permalink to this definition">¶</a></dt>
-<dd><p>Assert that a files has matches one of a list of expected hashes</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="safe_qgis.utilities_test.checkImage">
-<tt class="descclassname">safe_qgis.utilities_test.</tt><tt class="descname">checkImage</tt><big>(</big><em>theControlImagePath</em>, <em>theTestImagePath</em>, <em>theTolerance=1000</em><big>)</big><a class="headerlink" href="#safe_qgis.utilities_test.checkImage" title="Permalink to this definition">¶</a></dt>
-<dd><p>Compare a test image against a known good image.</p>
-<dl class="docutils">
-<dt>Args:</dt>
-<dd><ul class="first last">
-<li><p class="first">theControlImagePath: The image representing expected output</p>
-</li>
-<li><dl class="first docutils">
-<dt>theTestImagePath: The Image being checked (must have same dimensions</dt>
-<dd><p class="first last">as the control image).</p>
-</dd>
-</dl>
-</li>
-<li><dl class="first docutils">
-<dt>theTolerance: How many pixels may be different between the</dt>
-<dd><p class="first last">two images.</p>
-</dd>
-</dl>
-</li>
-</ul>
-</dd>
-<dt>Returns:</dt>
-<dd>(bool, str, str) where:
-* bool is success or failure indicator
-* str is a message providing analysis comparison notes</dd>
-<dt>Raises:</dt>
-<dd>None</dd>
-</dl>
-</dd></dl>
-
-<dl class="function">
-<dt id="safe_qgis.utilities_test.checkImages">
-<tt class="descclassname">safe_qgis.utilities_test.</tt><tt class="descname">checkImages</tt><big>(</big><em>theControlImages</em>, <em>theTestImagePath</em>, <em>theTolerance=1000</em><big>)</big><a class="headerlink" href="#safe_qgis.utilities_test.checkImages" title="Permalink to this definition">¶</a></dt>
-<dd><p>Compare a test image against a collection of known good images.</p>
-<dl class="docutils">
-<dt>Args:</dt>
-<dd><ul class="first last">
-<li><dl class="first docutils">
-<dt>theControlImagePath: list of file names. Give only the basename +ext</dt>
-<dd><p class="first last">as the test image path (CONTROL_IMAGE_DIR) will be prepended.</p>
-</dd>
-</dl>
-</li>
-<li><dl class="first docutils">
-<dt>theTestImagePath: The Image being checked (must have same dimensions</dt>
-<dd><p class="first last">as the control image). Must be full path to image.</p>
-</dd>
-</dl>
-</li>
-<li><dl class="first docutils">
-<dt>theTolerance: How many pixels may be different between the</dt>
-<dd><p class="first last">two images.</p>
-</dd>
-</dl>
-</li>
-</ul>
-</dd>
-<dt>Returns:</dt>
-<dd>(bool, str, str) where:
-* bool is success or failure indicator
-* str is the file path of the resulting difference image
-* str is a message providing analysis comparison notes</dd>
-<dt>Raises:</dt>
-<dd>None</dd>
-</dl>
-</dd></dl>
-
-<dl class="function">
-<dt id="safe_qgis.utilities_test.getQgisTestApp">
-<tt class="descclassname">safe_qgis.utilities_test.</tt><tt class="descname">getQgisTestApp</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/safe_qgis/utilities_test.html#getQgisTestApp"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe_qgis.utilities_test.getQgisTestApp" title="Permalink to this definition">¶</a></dt>
-<dd><p>Start one QGis application to test agaist</p>
-<dl class="docutils">
-<dt>Input</dt>
-<dd>NIL</dd>
-<dt>Output</dt>
-<dd>handle to qgis app</dd>
-</dl>
-<p>If QGis is already running the handle to that app will be returned</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="safe_qgis.utilities_test.hashForFile">
-<tt class="descclassname">safe_qgis.utilities_test.</tt><tt class="descname">hashForFile</tt><big>(</big><em>theFilename</em><big>)</big><a class="reference internal" href="../../_modules/safe_qgis/utilities_test.html#hashForFile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe_qgis.utilities_test.hashForFile" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return an md5 checksum for a file</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="safe_qgis.utilities_test.loadLayer">
-<tt class="descclassname">safe_qgis.utilities_test.</tt><tt class="descname">loadLayer</tt><big>(</big><em>theLayerFile</em>, <em>theDirectory='/home/nielso/sandpit/inasafe_data/test'</em><big>)</big><a class="reference internal" href="../../_modules/safe_qgis/utilities_test.html#loadLayer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe_qgis.utilities_test.loadLayer" title="Permalink to this definition">¶</a></dt>
-<dd><p>Helper to load and return a single QGIS layer</p>
-<dl class="docutils">
-<dt>Args:</dt>
-<dd><p class="first">theLayerFile: Pathname to raster or vector file
-DIR: Optional parameter stating the parent dir. If None,</p>
-<blockquote class="last">
-pathname is assumed to be absolute</blockquote>
-</dd>
-</dl>
-<p>Returns: QgsMapLayer, str (for layer type)</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="safe_qgis.utilities_test.setBatemansBayGeoExtent">
-<tt class="descclassname">safe_qgis.utilities_test.</tt><tt class="descname">setBatemansBayGeoExtent</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/safe_qgis/utilities_test.html#setBatemansBayGeoExtent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe_qgis.utilities_test.setBatemansBayGeoExtent" title="Permalink to this definition">¶</a></dt>
-<dd><p>Zoom to an area occupied by both Batemans Bay
-layers in geo crs</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="safe_qgis.utilities_test.setCanvasCrs">
-<tt class="descclassname">safe_qgis.utilities_test.</tt><tt class="descname">setCanvasCrs</tt><big>(</big><em>theEpsgId</em>, <em>theOtfpFlag=False</em><big>)</big><a class="reference internal" href="../../_modules/safe_qgis/utilities_test.html#setCanvasCrs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe_qgis.utilities_test.setCanvasCrs" title="Permalink to this definition">¶</a></dt>
-<dd><p>Helper to set the crs for the CANVAS before a test is run.</p>
-<p>Args:</p>
-<blockquote>
-<ul>
-<li><p class="first">theEpsgId  - Valid EPSG identifier (int)</p>
-</li>
-<li><dl class="first docutils">
-<dt>theOtfpFlag - whether on the fly projections should be enabled</dt>
-<dd><p class="first last">on the CANVAS. Default to False.</p>
-</dd>
-</dl>
-</li>
-</ul>
-</blockquote>
-</dd></dl>
-
-<dl class="function">
-<dt id="safe_qgis.utilities_test.setGeoExtent">
-<tt class="descclassname">safe_qgis.utilities_test.</tt><tt class="descname">setGeoExtent</tt><big>(</big><em>theBoundingBox</em><big>)</big><a class="reference internal" href="../../_modules/safe_qgis/utilities_test.html#setGeoExtent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe_qgis.utilities_test.setGeoExtent" title="Permalink to this definition">¶</a></dt>
-<dd><p>Zoom to an area specified given bounding box (list)</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="safe_qgis.utilities_test.setJakartaGeoExtent">
-<tt class="descclassname">safe_qgis.utilities_test.</tt><tt class="descname">setJakartaGeoExtent</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/safe_qgis/utilities_test.html#setJakartaGeoExtent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe_qgis.utilities_test.setJakartaGeoExtent" title="Permalink to this definition">¶</a></dt>
-<dd><p>Zoom to an area occupied by both Jakarta layers in Geo</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="safe_qgis.utilities_test.setJakartaGoogleExtent">
-<tt class="descclassname">safe_qgis.utilities_test.</tt><tt class="descname">setJakartaGoogleExtent</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/safe_qgis/utilities_test.html#setJakartaGoogleExtent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe_qgis.utilities_test.setJakartaGoogleExtent" title="Permalink to this definition">¶</a></dt>
-<dd><p>Zoom to an area occupied by both Jakarta layers in 900913 crs</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="safe_qgis.utilities_test.setPadangGeoExtent">
-<tt class="descclassname">safe_qgis.utilities_test.</tt><tt class="descname">setPadangGeoExtent</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/safe_qgis/utilities_test.html#setPadangGeoExtent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe_qgis.utilities_test.setPadangGeoExtent" title="Permalink to this definition">¶</a></dt>
-<dd><p>Zoom to an area occupied by both both Padang layers</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="safe_qgis.utilities_test.setYogyaGeoExtent">
-<tt class="descclassname">safe_qgis.utilities_test.</tt><tt class="descname">setYogyaGeoExtent</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/safe_qgis/utilities_test.html#setYogyaGeoExtent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe_qgis.utilities_test.setYogyaGeoExtent" title="Permalink to this definition">¶</a></dt>
-<dd><p>Zoom to an area occupied by both Jakarta layers in Geo</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="safe_qgis.utilities_test.unitTestDataPath">
-<tt class="descclassname">safe_qgis.utilities_test.</tt><tt class="descname">unitTestDataPath</tt><big>(</big><em>theSubdir=None</em><big>)</big><a class="reference internal" href="../../_modules/safe_qgis/utilities_test.html#unitTestDataPath"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe_qgis.utilities_test.unitTestDataPath" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return the absolute path to the InaSAFE unit test data dir.</p>
-<div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">This is not the same thing as the SVN inasafe_data dir. Rather
-this is a new dataset where the test datasets are all tiny for fast
-testing and the datasets live in the same repo as the code.</p>
-</div>
-<dl class="docutils">
-<dt>Args:</dt>
-<dd><ul class="first last simple">
-<li>theSubdir: (Optional) Additional subdir to add to the path - typically
-&#8216;hazard&#8217; or &#8216;exposure&#8217;.</li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
+  <div class="section" id="module-safe-qgis-utilities-test">
+<h1>Module:  safe_qgis.utilities_test<a class="headerlink" href="#module-safe-qgis-utilities-test" title="Permalink to this headline">¶</a></h1>
 <p>This module forms part of the <a class="reference external" href="http://inasafe.org">InaSAFE</a> tool.</p>
 </div>
 
@@ -292,11 +83,11 @@ testing and the datasets live in the same repo as the code.</p>
           <img class="logo" src="../../_static/icon.png" alt="Logo"/>
         </a></p>
   <h4>Previous topic</h4>
-  <p class="topless"><a href="impact_functions_doc.html"
-                        title="previous chapter">Module:  safe_qgis.impact_functions_doc</a></p>
+  <p class="topless"><a href="html_renderer.html"
+                        title="previous chapter">Module:  safe_qgis.html_renderer</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="safe_interface.html"
-                        title="next chapter">Module:  safe_qgis.safe_interface</a></p>
+  <p class="topless"><a href="exceptions.html"
+                        title="next chapter">Module:  safe_qgis.exceptions</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="../../_sources/api-docs/safe_qgis/utilities_test.txt"
@@ -305,7 +96,7 @@ testing and the datasets live in the same repo as the code.</p>
 <div id="searchbox" style="display: none">
   <h3>Quick search</h3>
     <form class="search" action="../../search.html" method="get">
-      <input type="text" name="q" size="18" />
+      <input type="text" name="q" />
       <input type="submit" value="Go" />
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
@@ -331,10 +122,10 @@ testing and the datasets live in the same repo as the code.</p>
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
         <li class="right" >
-          <a href="safe_interface.html" title="Module: safe_qgis.safe_interface"
+          <a href="exceptions.html" title="Module: safe_qgis.exceptions"
              >next</a> &nbsp; &nbsp;</li>
         <li class="right" >
-          <a href="impact_functions_doc.html" title="Module: safe_qgis.impact_functions_doc"
+          <a href="html_renderer.html" title="Module: safe_qgis.html_renderer"
              >previous</a> &nbsp; &nbsp;</li>
     <li><a href="../../index.html">Home</a> &raquo;</li>
     <li><a href="../../contents.html">Contents</a> &raquo;</li>
@@ -347,8 +138,8 @@ testing and the datasets live in the same repo as the code.</p>
 
     <div class="footer">
         &copy; Copyright 2012, BNPB/AIFDR/GFDRR.
-      Last updated on Oct 20, 2012.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.1.
+      Last updated on Oct 24, 2012.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
     </div>
     <!-- cloud_sptheme 1.3 -->
   </body>

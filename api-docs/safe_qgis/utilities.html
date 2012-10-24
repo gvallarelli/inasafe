@@ -4,18 +4,21 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
+
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Module: safe_qgis.utilities &mdash; InaSAFE v0.5.1-final documentation</title>
+    <title>Module: safe_qgis.utilities &mdash; InaSAFE 1.0.1-final documentation</title>
+    
     <link rel="stylesheet" href="../../_static/cloud.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-    <link rel="stylesheet" href="../../http://fonts.googleapis.com/css?family=Noticia+Text|Droid+Sans+Mono" type="text/css" />
+    <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Noticia+Text|Droid+Sans+Mono" type="text/css" />
+    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '0.5.1-final',
+        VERSION:     '1.0.1-final',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -27,10 +30,10 @@
     <script type="text/javascript" src="../../_static/jquery.cookie.js"></script>
     <script type="text/javascript" src="../../_static/toggle_sections.js"></script>
     <link rel="shortcut icon" href="../../_static/favicon.ico"/>
-    <link rel="top" title="InaSAFE v0.5.1-final documentation" href="../../index.html" />
+    <link rel="top" title="InaSAFE 1.0.1-final documentation" href="../../index.html" />
     <link rel="up" title="Package::safe_qgis" href="../safe_qgis.html" />
-    <link rel="next" title="Module: safe_qgis.options_dialog_base" href="options_dialog_base.html" />
-    <link rel="prev" title="Module: safe_qgis.impact_functions_doc_base" href="impact_functions_doc_base.html" /> 
+    <link rel="next" title="Module: safe_qgis.help" href="help.html" />
+    <link rel="prev" title="Module: safe_qgis.dock" href="dock.html" /> 
   </head>
   <body>
     <div class="relbar-top">
@@ -45,10 +48,10 @@
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
         <li class="right" >
-          <a href="options_dialog_base.html" title="Module: safe_qgis.options_dialog_base"
+          <a href="help.html" title="Module: safe_qgis.help"
              accesskey="N">next</a> &nbsp; &nbsp;</li>
         <li class="right" >
-          <a href="impact_functions_doc_base.html" title="Module: safe_qgis.impact_functions_doc_base"
+          <a href="dock.html" title="Module: safe_qgis.dock"
              accesskey="P">previous</a> &nbsp; &nbsp;</li>
     <li><a href="../../index.html">Home</a> &raquo;</li>
     <li><a href="../../contents.html">Contents</a> &raquo;</li>
@@ -65,429 +68,8 @@
         <div class="bodywrapper">
           <div class="body">
             
-  <div class="section" id="module-safe_qgis.utilities">
-<span id="module-safe-qgis-utilities"></span><h1>Module:  safe_qgis.utilities<a class="headerlink" href="#module-safe_qgis.utilities" title="Permalink to this headline">¶</a></h1>
-<dl class="docutils">
-<dt>InaSAFE Disaster risk assessment tool developed by AusAid -</dt>
-<dd><strong>IS Utilitles implementation.</strong></dd>
-</dl>
-<p>Contact : <a class="reference external" href="mailto:ole&#46;moller&#46;nielsen&#37;&#52;&#48;gmail&#46;com">ole<span>&#46;</span>moller<span>&#46;</span>nielsen<span>&#64;</span>gmail<span>&#46;</span>com</a></p>
-<div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">This program is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
-(at your option) any later version.</p>
-</div>
-<dl class="class">
-<dt id="safe_qgis.utilities.QgsLogHandler">
-<em class="property">class </em><tt class="descclassname">safe_qgis.utilities.</tt><tt class="descname">QgsLogHandler</tt><big>(</big><em>level=0</em><big>)</big><a class="headerlink" href="#safe_qgis.utilities.QgsLogHandler" title="Permalink to this definition">¶</a></dt>
-<dd><p>A logging handler that will log messages to the QGIS logging console.</p>
-<dl class="method">
-<dt id="safe_qgis.utilities.QgsLogHandler.emit">
-<tt class="descname">emit</tt><big>(</big><em>theRecord</em><big>)</big><a class="headerlink" href="#safe_qgis.utilities.QgsLogHandler.emit" title="Permalink to this definition">¶</a></dt>
-<dd><p>Try to log the message to QGIS if available, otherwise do nothing.</p>
-<dl class="docutils">
-<dt>Args:</dt>
-<dd><dl class="first last docutils">
-<dt>theRecord: logging record containing whatever info needs to be</dt>
-<dd>logged.</dd>
-</dl>
-</dd>
-<dt>Returns:</dt>
-<dd>None</dd>
-<dt>Raises:</dt>
-<dd>None</dd>
-</dl>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="function">
-<dt id="safe_qgis.utilities.addLoggingHanderOnce">
-<tt class="descclassname">safe_qgis.utilities.</tt><tt class="descname">addLoggingHanderOnce</tt><big>(</big><em>theLogger</em>, <em>theHandler</em><big>)</big><a class="headerlink" href="#safe_qgis.utilities.addLoggingHanderOnce" title="Permalink to this definition">¶</a></dt>
-<dd><p>A helper to add a handler to a logger, ensuring there are no duplicates.</p>
-<dl class="docutils">
-<dt>Args:</dt>
-<dd><ul class="first last">
-<li><p class="first">theLogger: logging.logger instance</p>
-</li>
-<li><dl class="first docutils">
-<dt>theHandler: logging.Handler instance to be added. It will not be</dt>
-<dd><p class="first last">added if an instance of that Handler subclass already exists.</p>
-</dd>
-</dl>
-</li>
-</ul>
-</dd>
-<dt>Returns:</dt>
-<dd>bool: True if the logging handler was added</dd>
-<dt>Raises:</dt>
-<dd>None</dd>
-</dl>
-</dd></dl>
-
-<dl class="function">
-<dt id="safe_qgis.utilities.getDefaults">
-<tt class="descclassname">safe_qgis.utilities.</tt><tt class="descname">getDefaults</tt><big>(</big><em>theDefault=None</em><big>)</big><a class="headerlink" href="#safe_qgis.utilities.getDefaults" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="docutils">
-<dt>returns a dictionary of defaults values to be used</dt>
-<dd>it takes the DEFAULTS from safe and modifies them according to qgis
-QSettings</dd>
-<dt>Args:</dt>
-<dd><ul class="first last simple">
-<li>theDefault: a key of the defaults dictionary</li>
-</ul>
-</dd>
-<dt>Returns:</dt>
-<dd><ul class="first last simple">
-<li>A dictionary of defaults values to be used</li>
-<li>or the default value if a key is passed</li>
-<li>or None if the requested default value is not valid</li>
-</ul>
-</dd>
-<dt>Raises:</dt>
-<dd>no exceptions explicitly raised</dd>
-</dl>
-</dd></dl>
-
-<dl class="function">
-<dt id="safe_qgis.utilities.getExceptionWithStacktrace">
-<tt class="descclassname">safe_qgis.utilities.</tt><tt class="descname">getExceptionWithStacktrace</tt><big>(</big><em>e</em>, <em>html=False</em>, <em>context=None</em><big>)</big><a class="reference internal" href="../../_modules/safe_qgis/utilities.html#getExceptionWithStacktrace"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe_qgis.utilities.getExceptionWithStacktrace" title="Permalink to this definition">¶</a></dt>
-<dd><p>Convert exception into a string and and stack trace</p>
-<dl class="docutils">
-<dt>Input</dt>
-<dd>e: Exception object
-html: Optional flat if output is to wrapped as html
-context: Optional context message</dd>
-<dt>Output</dt>
-<dd>Exception with stack trace info suitable for display</dd>
-</dl>
-</dd></dl>
-
-<dl class="function">
-<dt id="safe_qgis.utilities.getLayerAttributeNames">
-<tt class="descclassname">safe_qgis.utilities.</tt><tt class="descname">getLayerAttributeNames</tt><big>(</big><em>theLayer</em>, <em>theAllowedTypes</em>, <em>theCurrentKeyword=None</em><big>)</big><a class="headerlink" href="#safe_qgis.utilities.getLayerAttributeNames" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="docutils">
-<dt>iterates over self.layer and returns all the attribute names of</dt>
-<dd>attributes that have int or string as field type and the position
-of the theCurrentKeyword in the attribute names list</dd>
-<dt>Args:</dt>
-<dd><ul class="first last">
-<li><dl class="first docutils">
-<dt>theAllowedTypes: list(Qvariant) - a list of QVariants types that are</dt>
-<dd><p class="first last">acceptable for the attribute.
-e.g.: [QtCore.QVariant.Int, QtCore.QVariant.String]</p>
-</dd>
-</dl>
-</li>
-<li><p class="first">theCurrentKeyword - the currently stored keyword for the attribute</p>
-</li>
-</ul>
-</dd>
-<dt>Returns:</dt>
-<dd><ul class="first last">
-<li><dl class="first docutils">
-<dt>all the attribute names of attributes that have int or string as</dt>
-<dd><p class="first last">field type</p>
-</dd>
-</dl>
-</li>
-<li><dl class="first docutils">
-<dt>the position of the theCurrentKeyword in the attribute names list,</dt>
-<dd><p class="first last">this is None if theCurrentKeyword is not in the lis of attributes</p>
-</dd>
-</dl>
-</li>
-</ul>
-</dd>
-<dt>Raises:</dt>
-<dd>no exceptions explicitly raised</dd>
-</dl>
-</dd></dl>
-
-<dl class="function">
-<dt id="safe_qgis.utilities.getWGS84resolution">
-<tt class="descclassname">safe_qgis.utilities.</tt><tt class="descname">getWGS84resolution</tt><big>(</big><em>theLayer</em><big>)</big><a class="reference internal" href="../../_modules/safe_qgis/utilities.html#getWGS84resolution"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe_qgis.utilities.getWGS84resolution" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return resolution of raster layer in EPSG:4326</p>
-<dl class="docutils">
-<dt>Input</dt>
-<dd>theLayer: Raster layer</dd>
-<dt>Output</dt>
-<dd>resolution.</dd>
-</dl>
-<p>If input layer is already in EPSG:4326, simply return the resolution
-If not, work it out based on EPSG:4326 representations of its extent</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="safe_qgis.utilities.htmlFooter">
-<tt class="descclassname">safe_qgis.utilities.</tt><tt class="descname">htmlFooter</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/safe_qgis/utilities.html#htmlFooter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe_qgis.utilities.htmlFooter" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get a standard html footer for wrapping content in.</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="safe_qgis.utilities.htmlHeader">
-<tt class="descclassname">safe_qgis.utilities.</tt><tt class="descname">htmlHeader</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/safe_qgis/utilities.html#htmlHeader"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe_qgis.utilities.htmlHeader" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get a standard html header for wrapping content in.</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="safe_qgis.utilities.humaniseSeconds">
-<tt class="descclassname">safe_qgis.utilities.</tt><tt class="descname">humaniseSeconds</tt><big>(</big><em>theSeconds</em><big>)</big><a class="headerlink" href="#safe_qgis.utilities.humaniseSeconds" title="Permalink to this definition">¶</a></dt>
-<dd><p>Utility function to humanise seconds value into e.g. 10 seconds ago.</p>
-<p>The function will try to make a nice phrase of the seconds count
-provided.</p>
-<div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">Currently theSeconds that amount to days are not supported.</p>
-</div>
-<dl class="docutils">
-<dt>Args:</dt>
-<dd>theSeconds: int - mandatory seconds value e.g. 1100</dd>
-<dt>Returns:</dt>
-<dd>str: A humanised version of the seconds count.</dd>
-<dt>Raises:</dt>
-<dd>None</dd>
-</dl>
-</dd></dl>
-
-<dl class="function">
-<dt id="safe_qgis.utilities.impactLayerAttribution">
-<tt class="descclassname">safe_qgis.utilities.</tt><tt class="descname">impactLayerAttribution</tt><big>(</big><em>theKeywords</em>, <em>theInaSAFEFlag=False</em><big>)</big><a class="headerlink" href="#safe_qgis.utilities.impactLayerAttribution" title="Permalink to this definition">¶</a></dt>
-<dd><p>Make a little table for attribution of data sources used in impact.</p>
-<dl class="docutils">
-<dt>Args:</dt>
-<dd><ul class="first last">
-<li><p class="first">theKeywords: dict{} - a keywords dict for an impact layer.</p>
-</li>
-<li><dl class="first docutils">
-<dt>theInaSAFEFlag: bool - whether to show a little InaSAFE promotional</dt>
-<dd><p class="first last">text in the attribution output. Defaults to False.</p>
-</dd>
-</dl>
-</li>
-</ul>
-</dd>
-<dt>Returns:</dt>
-<dd><dl class="first last docutils">
-<dt>str: an html snippet containing attribution information for the impact</dt>
-<dd>layer. If no keywords are present or no appropriate keywords are
-present, None is returned.</dd>
-</dl>
-</dd>
-<dt>Raises:</dt>
-<dd>None</dd>
-</dl>
-</dd></dl>
-
-<dl class="function">
-<dt id="safe_qgis.utilities.isLayerPolygonal">
-<tt class="descclassname">safe_qgis.utilities.</tt><tt class="descname">isLayerPolygonal</tt><big>(</big><em>theLayer</em><big>)</big><a class="headerlink" href="#safe_qgis.utilities.isLayerPolygonal" title="Permalink to this definition">¶</a></dt>
-<dd><p>tell if a qgis theLayer is vectorial and d its geometries polygons
-Args:</p>
-<blockquote>
-<blockquote>
-the theLayer</blockquote>
-<dl class="docutils">
-<dt>Returns:</dt>
-<dd>bool - true if the theLayer contains polygons</dd>
-<dt>Raises:</dt>
-<dd>None</dd>
-</dl>
-</blockquote>
-</dd></dl>
-
-<dl class="function">
-<dt id="safe_qgis.utilities.mmToPoints">
-<tt class="descclassname">safe_qgis.utilities.</tt><tt class="descname">mmToPoints</tt><big>(</big><em>theMM</em>, <em>theDpi</em><big>)</big><a class="headerlink" href="#safe_qgis.utilities.mmToPoints" title="Permalink to this definition">¶</a></dt>
-<dd><p>Convert measurement in points to one in mm.</p>
-<dl class="docutils">
-<dt>Args:</dt>
-<dd><ul class="first last simple">
-<li>theMM: int - distance in millimeters</li>
-<li>theDpi: int - dots per inch in the print / display medium</li>
-</ul>
-</dd>
-<dt>Returns:</dt>
-<dd>mm converted value</dd>
-<dt>Raises:</dt>
-<dd>Any exceptions raised by the InaSAFE library will be propagated.</dd>
-</dl>
-</dd></dl>
-
-<dl class="function">
-<dt id="safe_qgis.utilities.pointsToMM">
-<tt class="descclassname">safe_qgis.utilities.</tt><tt class="descname">pointsToMM</tt><big>(</big><em>thePoints</em>, <em>theDpi</em><big>)</big><a class="headerlink" href="#safe_qgis.utilities.pointsToMM" title="Permalink to this definition">¶</a></dt>
-<dd><p>Convert measurement in points to one in mm.</p>
-<dl class="docutils">
-<dt>Args:</dt>
-<dd><ul class="first last simple">
-<li>thePoints: int - number of points in display / print medium</li>
-<li>theDpi: int - dots per inch in the print / display medium</li>
-</ul>
-</dd>
-<dt>Returns:</dt>
-<dd>mm converted value</dd>
-<dt>Raises:</dt>
-<dd>Any exceptions raised by the InaSAFE library will be propagated.</dd>
-</dl>
-</dd></dl>
-
-<dl class="function">
-<dt id="safe_qgis.utilities.qgisVersion">
-<tt class="descclassname">safe_qgis.utilities.</tt><tt class="descname">qgisVersion</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/safe_qgis/utilities.html#qgisVersion"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe_qgis.utilities.qgisVersion" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get the version of QGIS
-Args:</p>
-<blockquote>
-<blockquote>
-None</blockquote>
-<dl class="docutils">
-<dt>Returns:</dt>
-<dd>QGIS Version where 10700 represents QGIS 1.7 etc.</dd>
-<dt>Raises:</dt>
-<dd>None</dd>
-</dl>
-</blockquote>
-</dd></dl>
-
-<dl class="function">
-<dt id="safe_qgis.utilities.setRasterStyle">
-<tt class="descclassname">safe_qgis.utilities.</tt><tt class="descname">setRasterStyle</tt><big>(</big><em>theQgsRasterLayer</em>, <em>theStyle</em><big>)</big><a class="reference internal" href="../../_modules/safe_qgis/utilities.html#setRasterStyle"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe_qgis.utilities.setRasterStyle" title="Permalink to this definition">¶</a></dt>
-<dd><p>Set QGIS raster style based on InaSAFE style dictionary.</p>
-<p>This function will set both the colour map and the transparency
-for the passed in layer.</p>
-<dl class="docutils">
-<dt>Args:</dt>
-<dd><ul class="first last simple">
-<li>theQgsRasterLayer: QgsRasterLayer</li>
-<li>style: dict - Dictionary of the form as in the example below.</li>
-</ul>
-</dd>
-<dt>Example:</dt>
-<dd><dl class="first last docutils">
-<dt>style_classes = [dict(colour=&#8217;#38A800&#8217;, quantity=2, transparency=0),</dt>
-<dd>dict(colour=&#8217;#38A800&#8217;, quantity=5, transparency=50),
-dict(colour=&#8217;#79C900&#8217;, quantity=10, transparency=50),
-dict(colour=&#8217;#CEED00&#8217;, quantity=20, transparency=50),
-dict(colour=&#8217;#FFCC00&#8217;, quantity=50, transparency=34),
-dict(colour=&#8217;#FF6600&#8217;, quantity=100, transparency=77),
-dict(colour=&#8217;#FF0000&#8217;, quantity=200, transparency=24),
-dict(colour=&#8217;#7A0000&#8217;, quantity=300, transparency=22)]</dd>
-</dl>
-</dd>
-<dt>Returns:</dt>
-<dd>list: RangeList
-list: TransparencyList</dd>
-</dl>
-</dd></dl>
-
-<dl class="function">
-<dt id="safe_qgis.utilities.setVectorStyle">
-<tt class="descclassname">safe_qgis.utilities.</tt><tt class="descname">setVectorStyle</tt><big>(</big><em>theQgisVectorLayer</em>, <em>theStyle</em><big>)</big><a class="reference internal" href="../../_modules/safe_qgis/utilities.html#setVectorStyle"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe_qgis.utilities.setVectorStyle" title="Permalink to this definition">¶</a></dt>
-<dd><p>Set QGIS vector style based on InaSAFE style dictionary.</p>
-<p>For <strong>opaque</strong> a value of <strong>0</strong> can be used. For <strong>fully transparent</strong>, a
-value of <strong>100</strong> can be used. The function should take care to scale the
-transparency level to between 0 and 100.</p>
-<dl class="docutils">
-<dt>Args:</dt>
-<dd><ul class="first last simple">
-<li>theQgisVectorLayer: QgsMapLayer</li>
-<li>theStyle: dict - Dictionary of the form as in the example below</li>
-</ul>
-</dd>
-<dt>Returns:</dt>
-<dd>None - Sets and saves style for theQgisVectorLayer</dd>
-<dt>Raises:</dt>
-<dd>None</dd>
-</dl>
-<p>Example:</p>
-<blockquote>
-<p>{&#8216;target_field&#8217;: &#8216;DMGLEVEL&#8217;,
-&#8216;style_classes&#8217;:
-[{&#8216;transparency&#8217;: 1, &#8216;max&#8217;: 1.5, &#8216;colour&#8217;: &#8216;#fecc5c&#8217;,</p>
-<blockquote>
-&#8216;min&#8217;: 0.5, &#8216;label&#8217;: &#8216;Low damage&#8217;, &#8216;size&#8217; : 1},</blockquote>
-<dl class="docutils">
-<dt>{&#8216;transparency&#8217;: 55, &#8216;max&#8217;: 2.5, &#8216;colour&#8217;: &#8216;#fd8d3c&#8217;,</dt>
-<dd>&#8216;min&#8217;: 1.5, &#8216;label&#8217;: &#8216;Medium damage&#8217;, &#8216;size&#8217; : 1},</dd>
-<dt>{&#8216;transparency&#8217;: 80, &#8216;max&#8217;: 3.5, &#8216;colour&#8217;: &#8216;#f31a1c&#8217;,</dt>
-<dd>&#8216;min&#8217;: 2.5, &#8216;label&#8217;: &#8216;High damage&#8217;, &#8216;size&#8217; : 1}]}</dd>
-</dl>
-<div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">The transparency and size keys are optional. Size applies
-to points only.</p>
-</div>
-</blockquote>
-</dd></dl>
-
-<dl class="function">
-<dt id="safe_qgis.utilities.setupLogger">
-<tt class="descclassname">safe_qgis.utilities.</tt><tt class="descname">setupLogger</tt><big>(</big><big>)</big><a class="headerlink" href="#safe_qgis.utilities.setupLogger" title="Permalink to this definition">¶</a></dt>
-<dd><p>Run once when the module is loaded and enable logging</p>
-<p>Args: None</p>
-<p>Returns: None</p>
-<p>Raises: None</p>
-<p>Borrowed heavily from this:
-<a class="reference external" href="http://docs.python.org/howto/logging-cookbook.html">http://docs.python.org/howto/logging-cookbook.html</a></p>
-<p>Use this to first initialise the logger (see safe/__init__.py):</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">safe_qgis</span> <span class="kn">import</span> <span class="n">utilities</span>
-<span class="n">utilities</span><span class="o">.</span><span class="n">setupLogger</span><span class="p">()</span>
-</pre></div>
-</div>
-<p>You would typically only need to do the above once ever as the
-safe modle is initialised early and will set up the logger
-globally so it is available to all packages / subpackages as
-shown below.</p>
-<p>In a module that wants to do logging then use this example as
-a guide to get the initialised logger instance:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="c"># The LOGGER is intialised in utilities.py by init</span>
-<span class="kn">import</span> <span class="nn">logging</span>
-<span class="n">LOGGER</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s">&#39;InaSAFE&#39;</span><span class="p">)</span>
-</pre></div>
-</div>
-<p>Now to log a message do:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">LOGGER</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&#39;Some debug message&#39;</span><span class="p">)</span>
-</pre></div>
-</div>
-<div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">The file logs are written to the inasafe user tmp dir e.g.:
-/tmp/inasafe/23-08-2012/timlinux/logs/inasafe.log</p>
-</div>
-</dd></dl>
-
-<dl class="function">
-<dt id="safe_qgis.utilities.setupPrinter">
-<tt class="descclassname">safe_qgis.utilities.</tt><tt class="descname">setupPrinter</tt><big>(</big><em>theFilename</em>, <em>theResolution=300</em>, <em>thePageHeight=297</em>, <em>thePageWidth=210</em><big>)</big><a class="headerlink" href="#safe_qgis.utilities.setupPrinter" title="Permalink to this definition">¶</a></dt>
-<dd><p>Create a QPrinter instance defaulted to print to an A4 portrait pdf</p>
-<dl class="docutils">
-<dt>Args:</dt>
-<dd>theFilename - filename for pdf generated using this printer</dd>
-<dt>Returns:</dt>
-<dd>None</dd>
-<dt>Raises:</dt>
-<dd>None</dd>
-</dl>
-</dd></dl>
-
-<dl class="function">
-<dt id="safe_qgis.utilities.tr">
-<tt class="descclassname">safe_qgis.utilities.</tt><tt class="descname">tr</tt><big>(</big><em>theText</em><big>)</big><a class="reference internal" href="../../_modules/safe_qgis/utilities.html#tr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe_qgis.utilities.tr" title="Permalink to this definition">¶</a></dt>
-<dd><p>We define a tr() alias here since the utilities implementation below
-is not a class and does not inherit from QObject.
-.. note:: see <a class="reference external" href="http://tinyurl.com/pyqt-differences">http://tinyurl.com/pyqt-differences</a>
-Args:</p>
-<blockquote>
-theText - string to be translated</blockquote>
-<dl class="docutils">
-<dt>Returns:</dt>
-<dd>Translated version of the given string if available, otherwise
-the original string.</dd>
-</dl>
-</dd></dl>
-
+  <div class="section" id="module-safe-qgis-utilities">
+<h1>Module:  safe_qgis.utilities<a class="headerlink" href="#module-safe-qgis-utilities" title="Permalink to this headline">¶</a></h1>
 <p>This module forms part of the <a class="reference external" href="http://inasafe.org">InaSAFE</a> tool.</p>
 </div>
 
@@ -501,11 +83,11 @@ the original string.</dd>
           <img class="logo" src="../../_static/icon.png" alt="Logo"/>
         </a></p>
   <h4>Previous topic</h4>
-  <p class="topless"><a href="impact_functions_doc_base.html"
-                        title="previous chapter">Module:  safe_qgis.impact_functions_doc_base</a></p>
+  <p class="topless"><a href="dock.html"
+                        title="previous chapter">Module:  safe_qgis.dock</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="options_dialog_base.html"
-                        title="next chapter">Module:  safe_qgis.options_dialog_base</a></p>
+  <p class="topless"><a href="help.html"
+                        title="next chapter">Module:  safe_qgis.help</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="../../_sources/api-docs/safe_qgis/utilities.txt"
@@ -514,7 +96,7 @@ the original string.</dd>
 <div id="searchbox" style="display: none">
   <h3>Quick search</h3>
     <form class="search" action="../../search.html" method="get">
-      <input type="text" name="q" size="18" />
+      <input type="text" name="q" />
       <input type="submit" value="Go" />
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
@@ -540,10 +122,10 @@ the original string.</dd>
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
         <li class="right" >
-          <a href="options_dialog_base.html" title="Module: safe_qgis.options_dialog_base"
+          <a href="help.html" title="Module: safe_qgis.help"
              >next</a> &nbsp; &nbsp;</li>
         <li class="right" >
-          <a href="impact_functions_doc_base.html" title="Module: safe_qgis.impact_functions_doc_base"
+          <a href="dock.html" title="Module: safe_qgis.dock"
              >previous</a> &nbsp; &nbsp;</li>
     <li><a href="../../index.html">Home</a> &raquo;</li>
     <li><a href="../../contents.html">Contents</a> &raquo;</li>
@@ -556,8 +138,8 @@ the original string.</dd>
 
     <div class="footer">
         &copy; Copyright 2012, BNPB/AIFDR/GFDRR.
-      Last updated on Oct 20, 2012.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.1.
+      Last updated on Oct 24, 2012.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
     </div>
     <!-- cloud_sptheme 1.3 -->
   </body>

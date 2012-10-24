@@ -4,18 +4,21 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
+
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Data Types &mdash; InaSAFE v0.5.1-final documentation</title>
+    <title>Data Types &mdash; InaSAFE 1.0.1-final documentation</title>
+    
     <link rel="stylesheet" href="../_static/cloud.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <link rel="stylesheet" href="../http://fonts.googleapis.com/css?family=Noticia+Text|Droid+Sans+Mono" type="text/css" />
+    <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Noticia+Text|Droid+Sans+Mono" type="text/css" />
+    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.5.1-final',
+        VERSION:     '1.0.1-final',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -27,7 +30,7 @@
     <script type="text/javascript" src="../_static/jquery.cookie.js"></script>
     <script type="text/javascript" src="../_static/toggle_sections.js"></script>
     <link rel="shortcut icon" href="../_static/favicon.ico"/>
-    <link rel="top" title="InaSAFE v0.5.1-final documentation" href="../index.html" />
+    <link rel="top" title="InaSAFE 1.0.1-final documentation" href="../index.html" />
     <link rel="up" title="InaSAFE user documentation" href="index.html" />
     <link rel="next" title="Using QGIS" href="using-qgis.html" />
     <link rel="prev" title="Demo projects" href="inasafe_projects.html" /> 
@@ -99,54 +102,54 @@ in each case.</p>
 <col width="15%" />
 </colgroup>
 <thead valign="bottom">
-<tr><th class="head">H</th>
+<tr class="row-odd"><th class="head">H</th>
 <th class="head">E</th>
 <th class="head">Methodology</th>
 <th class="head">Return value</th>
 </tr>
 </thead>
 <tbody valign="top">
-<tr><td>Polygon</td>
+<tr class="row-even"><td>Polygon</td>
 <td>Point</td>
 <td>Clip points to polygon and assign all attributes</td>
 <td>Point</td>
 </tr>
-<tr><td>Polygon</td>
+<tr class="row-odd"><td>Polygon</td>
 <td>Line</td>
 <td>Clip segments to polygon and assign all attributes (slow)</td>
 <td>Line</td>
 </tr>
-<tr><td>Polygon</td>
+<tr class="row-even"><td>Polygon</td>
 <td>Polygon</td>
 <td>&nbsp;</td>
 <td>N/A</td>
 </tr>
-<tr><td>Polygon</td>
+<tr class="row-odd"><td>Polygon</td>
 <td>Raster</td>
 <td>Convert to points and use Polygon-Point algorithm</td>
 <td>Point</td>
 </tr>
-<tr><td>Raster</td>
+<tr class="row-even"><td>Raster</td>
 <td>Point</td>
 <td>Bilinear or piecewise constant interpolation</td>
 <td>Point</td>
 </tr>
-<tr><td>Raster</td>
+<tr class="row-odd"><td>Raster</td>
 <td>Line</td>
 <td>&nbsp;</td>
 <td>N/A</td>
 </tr>
-<tr><td>Raster</td>
+<tr class="row-even"><td>Raster</td>
 <td>Polygon</td>
 <td>Convert to centroids and use Raster-Point algorithm</td>
 <td>Polygon</td>
 </tr>
-<tr><td rowspan="2">Raster</td>
+<tr class="row-odd"><td rowspan="2">Raster</td>
 <td rowspan="2">Raster</td>
 <td rowspan="2">Check that rasters are aligned and return E</td>
 <td rowspan="2">Raster</td>
 </tr>
-<tr></tr>
+<tr class="row-even"></tr>
 </tbody>
 </table>
 </div>
@@ -174,7 +177,7 @@ in each case.</p>
 <div id="searchbox" style="display: none">
   <h3>Quick search</h3>
     <form class="search" action="../search.html" method="get">
-      <input type="text" name="q" size="18" />
+      <input type="text" name="q" />
       <input type="submit" value="Go" />
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
@@ -215,8 +218,8 @@ in each case.</p>
 
     <div class="footer">
         &copy; Copyright 2012, BNPB/AIFDR/GFDRR.
-      Last updated on Oct 18, 2012.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.1.
+      Last updated on Oct 24, 2012.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
     </div>
     <!-- cloud_sptheme 1.3 -->
   </body>

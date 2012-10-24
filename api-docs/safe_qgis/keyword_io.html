@@ -4,18 +4,21 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
+
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Module: safe_qgis.keyword_io &mdash; InaSAFE v0.5.1-final documentation</title>
+    <title>Module: safe_qgis.keyword_io &mdash; InaSAFE 1.0.1-final documentation</title>
+    
     <link rel="stylesheet" href="../../_static/cloud.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-    <link rel="stylesheet" href="../../http://fonts.googleapis.com/css?family=Noticia+Text|Droid+Sans+Mono" type="text/css" />
+    <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Noticia+Text|Droid+Sans+Mono" type="text/css" />
+    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '0.5.1-final',
+        VERSION:     '1.0.1-final',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -27,10 +30,10 @@
     <script type="text/javascript" src="../../_static/jquery.cookie.js"></script>
     <script type="text/javascript" src="../../_static/toggle_sections.js"></script>
     <link rel="shortcut icon" href="../../_static/favicon.ico"/>
-    <link rel="top" title="InaSAFE v0.5.1-final documentation" href="../../index.html" />
+    <link rel="top" title="InaSAFE 1.0.1-final documentation" href="../../index.html" />
     <link rel="up" title="Package::safe_qgis" href="../safe_qgis.html" />
-    <link rel="next" title="Module: safe_qgis.resources_rc" href="resources_rc.html" />
-    <link rel="prev" title="Module: safe_qgis.dock" href="dock.html" /> 
+    <link rel="next" title="Module: safe_qgis.qgis_interface" href="qgis_interface.html" />
+    <link rel="prev" title="Module: safe_qgis.dock_base" href="dock_base.html" /> 
   </head>
   <body>
     <div class="relbar-top">
@@ -45,10 +48,10 @@
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
         <li class="right" >
-          <a href="resources_rc.html" title="Module: safe_qgis.resources_rc"
+          <a href="qgis_interface.html" title="Module: safe_qgis.qgis_interface"
              accesskey="N">next</a> &nbsp; &nbsp;</li>
         <li class="right" >
-          <a href="dock.html" title="Module: safe_qgis.dock"
+          <a href="dock_base.html" title="Module: safe_qgis.dock_base"
              accesskey="P">previous</a> &nbsp; &nbsp;</li>
     <li><a href="../../index.html">Home</a> &raquo;</li>
     <li><a href="../../contents.html">Contents</a> &raquo;</li>
@@ -65,388 +68,8 @@
         <div class="bodywrapper">
           <div class="body">
             
-  <div class="section" id="module-safe_qgis.keyword_io">
-<span id="module-safe-qgis-keyword-io"></span><h1>Module:  safe_qgis.keyword_io<a class="headerlink" href="#module-safe_qgis.keyword_io" title="Permalink to this headline">¶</a></h1>
-<p><strong>Keyword IO implementation.</strong></p>
-<div class="admonition tip">
-<p class="first admonition-title">Tip</p>
-<p class="last">Provides functionality for reading and writing keywords from within
-QGIS. It is an abstration for the keywords system used by the underlying
-library.</p>
-</div>
-<dl class="class">
-<dt id="safe_qgis.keyword_io.KeywordIO">
-<em class="property">class </em><tt class="descclassname">safe_qgis.keyword_io.</tt><tt class="descname">KeywordIO</tt><a class="reference internal" href="../../_modules/safe_qgis/keyword_io.html#KeywordIO"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe_qgis.keyword_io.KeywordIO" title="Permalink to this definition">¶</a></dt>
-<dd><p>Class for doing keyword read/write operations.</p>
-<p>It abstracts away differences between using SAFE to get keywords from a
-.keywords file and this plugins implemenation of keyword caching in a local
-sqlite db used for supporting keywords for remote datasources.</p>
-<dl class="method">
-<dt id="safe_qgis.keyword_io.KeywordIO.appendKeywords">
-<tt class="descname">appendKeywords</tt><big>(</big><em>theLayer</em>, <em>theKeywords</em><big>)</big><a class="headerlink" href="#safe_qgis.keyword_io.KeywordIO.appendKeywords" title="Permalink to this definition">¶</a></dt>
-<dd><p>Write keywords for a datasource.</p>
-<dl class="docutils">
-<dt>Args:</dt>
-<dd><ul class="first last simple">
-<li>theLayer - A QGIS QgsMapLayer instance.</li>
-<li>theKeywords - a dict containing all the keywords to be added
-for the layer.</li>
-</ul>
-</dd>
-<dt>Returns:</dt>
-<dd>None.</dd>
-<dt>Raises:</dt>
-<dd>None</dd>
-</dl>
-</dd></dl>
-
-<dl class="method">
-<dt id="safe_qgis.keyword_io.KeywordIO.areKeywordsFileBased">
-<tt class="descname">areKeywordsFileBased</tt><big>(</big><em>theLayer</em><big>)</big><a class="reference internal" href="../../_modules/safe_qgis/keyword_io.html#KeywordIO.areKeywordsFileBased"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe_qgis.keyword_io.KeywordIO.areKeywordsFileBased" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="docutils">
-<dt>Find out if keywords should be read/written to file or our keywords</dt>
-<dd>db.</dd>
-<dt>Args:</dt>
-<dd><ul class="first last simple">
-<li>theLayer - A QGIS QgsMapLayer instance.</li>
-</ul>
-</dd>
-<dt>Returns:</dt>
-<dd>True if keywords are storedin a file next to the dataset,
-else False if the dataset is remove e.g. a database.</dd>
-<dt>Raises:</dt>
-<dd>None</dd>
-</dl>
-</dd></dl>
-
-<dl class="method">
-<dt id="safe_qgis.keyword_io.KeywordIO.clearKeywords">
-<tt class="descname">clearKeywords</tt><big>(</big><em>theLayer</em><big>)</big><a class="headerlink" href="#safe_qgis.keyword_io.KeywordIO.clearKeywords" title="Permalink to this definition">¶</a></dt>
-<dd><p>convenience method to clear a files keywords</p>
-<dl class="docutils">
-<dt>Args:</dt>
-<dd><ul class="first last simple">
-<li>theLayer - A QGIS QgsMapLayer instance.</li>
-</ul>
-</dd>
-<dt>Returns:</dt>
-<dd>None.</dd>
-<dt>Raises:</dt>
-<dd>None</dd>
-</dl>
-</dd></dl>
-
-<dl class="method">
-<dt id="safe_qgis.keyword_io.KeywordIO.closeConnection">
-<tt class="descname">closeConnection</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/safe_qgis/keyword_io.html#KeywordIO.closeConnection"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe_qgis.keyword_io.KeywordIO.closeConnection" title="Permalink to this definition">¶</a></dt>
-<dd><p>Given an sqlite3 connection, close it.</p>
-<dl class="docutils">
-<dt>Args:</dt>
-<dd>None</dd>
-<dt>Returns:</dt>
-<dd>None</dd>
-<dt>Raises:</dt>
-<dd>None</dd>
-</dl>
-</dd></dl>
-
-<dl class="method">
-<dt id="safe_qgis.keyword_io.KeywordIO.copyKeywords">
-<tt class="descname">copyKeywords</tt><big>(</big><em>theSourceLayer</em>, <em>theDestinationFile</em>, <em>theExtraKeywords=None</em><big>)</big><a class="reference internal" href="../../_modules/safe_qgis/keyword_io.html#KeywordIO.copyKeywords"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe_qgis.keyword_io.KeywordIO.copyKeywords" title="Permalink to this definition">¶</a></dt>
-<dd><p>Helper to copy the keywords file from a source dataset
-to a destination dataset.</p>
-<p>e.g.:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">copyKeywords</span><span class="p">(</span><span class="s">&#39;foo.shp&#39;</span><span class="p">,</span> <span class="s">&#39;bar.shp&#39;</span><span class="p">)</span>
-</pre></div>
-</div>
-<p>Will result in the foo.keywords file being copied to bar.keyword.</p>
-<p>Optional argument extraKeywords is a dictionary with additional
-keywords that will be added to the destination file
-e.g:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">copyKeywords</span><span class="p">(</span><span class="s">&#39;foo.shp&#39;</span><span class="p">,</span> <span class="s">&#39;bar.shp&#39;</span><span class="p">,</span> <span class="p">{</span><span class="s">&#39;resolution&#39;</span><span class="p">:</span> <span class="mf">0.01</span><span class="p">})</span>
-</pre></div>
-</div>
-<dl class="docutils">
-<dt>Args:</dt>
-<dd><ul class="first last simple">
-<li>theSourceLayer - A QGIS QgsMapLayer instance.</li>
-<li>theDestinationFile - the output filename that should be used
-to store the keywords in. It can be a .shp or a .keywords for
-exampled since the suffix will always be replaced with .keywords.</li>
-<li>theExtraKeywords - a dict containing all the extra keywords to be
-written for the layer. The written keywords will consist of any
-original keywords from the source layer&#8217;s keywords file and
-and the extra keywords (which will replace the source layers
-keywords if the key is identical).</li>
-</ul>
-</dd>
-<dt>Returns:</dt>
-<dd>None.</dd>
-<dt>Raises:</dt>
-<dd>None</dd>
-</dl>
-</dd></dl>
-
-<dl class="method">
-<dt id="safe_qgis.keyword_io.KeywordIO.defaultKeywordDbPath">
-<tt class="descname">defaultKeywordDbPath</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/safe_qgis/keyword_io.html#KeywordIO.defaultKeywordDbPath"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe_qgis.keyword_io.KeywordIO.defaultKeywordDbPath" title="Permalink to this definition">¶</a></dt>
-<dd><p>Helper to get the default path for the keywords file (which is
-&lt;plugin dir&gt;/keywords.db)</p>
-<dl class="docutils">
-<dt>Args:</dt>
-<dd>None</dd>
-<dt>Returns:</dt>
-<dd>A string representing the path to where the keywords file is to be.</dd>
-<dt>Raises:</dt>
-<dd>None</dd>
-</dl>
-</dd></dl>
-
-<dl class="method">
-<dt id="safe_qgis.keyword_io.KeywordIO.deleteKeyword">
-<tt class="descname">deleteKeyword</tt><big>(</big><em>theLayer</em>, <em>theKeyword</em><big>)</big><a class="headerlink" href="#safe_qgis.keyword_io.KeywordIO.deleteKeyword" title="Permalink to this definition">¶</a></dt>
-<dd><p>Read keywords for a datasource and return them as a dictionary.
-This is a wrapper method that will &#8216;do the right thing&#8217; to fetch
-keywords for the given datasource. In particular, if the datasource
-is remote (e.g. a database connection) it will fetch the keywords from
-the keywords store.</p>
-<dl class="docutils">
-<dt>Args:</dt>
-<dd><ul class="first last simple">
-<li>theLayer - A QGIS QgsMapLayer instance.</li>
-<li>theKeyword - the specified keyword will be deleted
-from the keywords dict.</li>
-</ul>
-</dd>
-<dt>Returns:</dt>
-<dd>True if the keyword was sucessfully delete. False otherwise</dd>
-<dt>Raises:</dt>
-<dd>Propogates exception from the underlying reader delegate.</dd>
-</dl>
-</dd></dl>
-
-<dl class="method">
-<dt id="safe_qgis.keyword_io.KeywordIO.deleteKeywordsForUri">
-<tt class="descname">deleteKeywordsForUri</tt><big>(</big><em>theUri</em><big>)</big><a class="reference internal" href="../../_modules/safe_qgis/keyword_io.html#KeywordIO.deleteKeywordsForUri"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe_qgis.keyword_io.KeywordIO.deleteKeywordsForUri" title="Permalink to this definition">¶</a></dt>
-<dd><p>Delete keywords for a URI in the keywords database.
-A hash will be constructed from the supplied uri and a lookup made
-in a local SQLITE database for the keywords. If there is an existing
-record for the hash, the entire record will be erased.</p>
-<div class="admonition-see-also admonition seealso">
-<p class="first admonition-title">See also</p>
-<p class="last">writeKeywordsForUri, readKeywordsForUri</p>
-</div>
-<p>Args:</p>
-<blockquote>
-<ul class="simple">
-<li>theUri -  a str representing a layer uri as parameter.
-.e.g. &#8216;dbname=&#8217;osm&#8217; host=localhost port=5432 user=&#8217;foo&#8217;
-password=&#8217;bar&#8217; sslmode=disable key=&#8217;id&#8217; srid=4326</li>
-</ul>
-</blockquote>
-<dl class="docutils">
-<dt>Returns:</dt>
-<dd>None</dd>
-<dt>Raises:</dt>
-<dd>None</dd>
-</dl>
-</dd></dl>
-
-<dl class="method">
-<dt id="safe_qgis.keyword_io.KeywordIO.getCursor">
-<tt class="descname">getCursor</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/safe_qgis/keyword_io.html#KeywordIO.getCursor"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe_qgis.keyword_io.KeywordIO.getCursor" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get a cursor for the active connection. The cursor can be used to
-execute arbitrary queries against the database. This method also checks
-that the keywords table exists in the schema, and if not, it creates
-it.</p>
-<dl class="docutils">
-<dt>Args:</dt>
-<dd>theConnection - a valid, open sqlite3 database connection.</dd>
-<dt>Returns:</dt>
-<dd>a valid cursor opened against the connection.</dd>
-<dt>Raises:</dt>
-<dd>An sqlite.Error will be raised if anything goes wrong</dd>
-</dl>
-</dd></dl>
-
-<dl class="method">
-<dt id="safe_qgis.keyword_io.KeywordIO.getHashForDatasource">
-<tt class="descname">getHashForDatasource</tt><big>(</big><em>theDataSource</em><big>)</big><a class="reference internal" href="../../_modules/safe_qgis/keyword_io.html#KeywordIO.getHashForDatasource"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe_qgis.keyword_io.KeywordIO.getHashForDatasource" title="Permalink to this definition">¶</a></dt>
-<dd><p>Given a datasource, return its hash.</p>
-<dl class="docutils">
-<dt>Args:</dt>
-<dd>None</dd>
-<dt>Returns:</dt>
-<dd>None</dd>
-<dt>Raises:</dt>
-<dd>None</dd>
-</dl>
-</dd></dl>
-
-<dl class="method">
-<dt id="safe_qgis.keyword_io.KeywordIO.openConnection">
-<tt class="descname">openConnection</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/safe_qgis/keyword_io.html#KeywordIO.openConnection"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe_qgis.keyword_io.KeywordIO.openConnection" title="Permalink to this definition">¶</a></dt>
-<dd><p>Open an sqlite connection to the keywords database.
-By default the keywords database will be used in the plugin dir,
-unless an explicit path has been set using setKeywordDbPath, or
-overridden in QSettings. If the db does not exist it will
-be created.</p>
-<dl class="docutils">
-<dt>Args:</dt>
-<dd>thePath - path to the desired sqlite db to use.</dd>
-<dt>Returns:</dt>
-<dd>None</dd>
-<dt>Raises:</dt>
-<dd>An sqlite.Error is raised if anything goes wrong</dd>
-</dl>
-</dd></dl>
-
-<dl class="method">
-<dt id="safe_qgis.keyword_io.KeywordIO.readKeywordFromUri">
-<tt class="descname">readKeywordFromUri</tt><big>(</big><em>theUri</em>, <em>theKeyword=None</em><big>)</big><a class="reference internal" href="../../_modules/safe_qgis/keyword_io.html#KeywordIO.readKeywordFromUri"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe_qgis.keyword_io.KeywordIO.readKeywordFromUri" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get metadata from the keywords file associated with a
-non local layer (e.g. postgresql connection).</p>
-<p>A hash will be constructed from the supplied uri and a lookup made
-in a local SQLITE database for the keywords. If there is an existing
-record it will be returned, if not and error will be thrown.</p>
-<div class="admonition-see-also admonition seealso">
-<p class="first admonition-title">See also</p>
-<p class="last">writeKeywordsForUri,deleteKeywordsForUri</p>
-</div>
-<p>Args:</p>
-<blockquote>
-<ul class="simple">
-<li>theUri -  a str representing a layer uri as parameter.
-.e.g. &#8216;dbname=&#8217;osm&#8217; host=localhost port=5432 user=&#8217;foo&#8217;
-password=&#8217;bar&#8217; sslmode=disable key=&#8217;id&#8217; srid=4326</li>
-<li>keyword - optional - the metadata keyword to retrieve e.g. &#8216;title&#8217;</li>
-</ul>
-</blockquote>
-<dl class="docutils">
-<dt>Returns:</dt>
-<dd>A string containing the retrieved value for the keyword if
-the keyword argument is specified, otherwise the
-complete keywords dictionary is returned.</dd>
-<dt>Raises:</dt>
-<dd>KeywordNotFoundException if the keyword is not found.</dd>
-</dl>
-</dd></dl>
-
-<dl class="method">
-<dt id="safe_qgis.keyword_io.KeywordIO.readKeywords">
-<tt class="descname">readKeywords</tt><big>(</big><em>theLayer</em>, <em>theKeyword=None</em><big>)</big><a class="reference internal" href="../../_modules/safe_qgis/keyword_io.html#KeywordIO.readKeywords"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe_qgis.keyword_io.KeywordIO.readKeywords" title="Permalink to this definition">¶</a></dt>
-<dd><p>Read keywords for a datasource and return them as a dictionary.
-This is a wrapper method that will &#8216;do the right thing&#8217; to fetch
-keywords for the given datasource. In particular, if the datasource
-is remote (e.g. a database connection) it will fetch the keywords from
-the keywords store.</p>
-<dl class="docutils">
-<dt>Args:</dt>
-<dd><ul class="first last simple">
-<li>theLayer - A QGIS QgsMapLayer instance.</li>
-<li>theKeyword - optional - will extract only the specified keyword
-from the keywords dict.</li>
-</ul>
-</dd>
-<dt>Returns:</dt>
-<dd>A dict if theKeyword is omitted, otherwise the value for the
-given key if it is present.</dd>
-<dt>Raises:</dt>
-<dd>Propogates any exception from the underlying reader delegate.</dd>
-</dl>
-</dd></dl>
-
-<dl class="method">
-<dt id="safe_qgis.keyword_io.KeywordIO.setKeywordDbPath">
-<tt class="descname">setKeywordDbPath</tt><big>(</big><em>thePath</em><big>)</big><a class="reference internal" href="../../_modules/safe_qgis/keyword_io.html#KeywordIO.setKeywordDbPath"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe_qgis.keyword_io.KeywordIO.setKeywordDbPath" title="Permalink to this definition">¶</a></dt>
-<dd><p>Set the path for the keyword database (sqlite).</p>
-<p>The file will be used to search for keywords for non local datasets.</p>
-<dl class="docutils">
-<dt>Args:</dt>
-<dd>thePath - a valid path to a sqlite database. The database does
-not need to exist already, but the user should be able to write
-to the path provided.</dd>
-<dt>Returns:</dt>
-<dd>None</dd>
-<dt>Raises:</dt>
-<dd>None</dd>
-</dl>
-</dd></dl>
-
-<dl class="method">
-<dt id="safe_qgis.keyword_io.KeywordIO.setupKeywordDbPath">
-<tt class="descname">setupKeywordDbPath</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/safe_qgis/keyword_io.html#KeywordIO.setupKeywordDbPath"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe_qgis.keyword_io.KeywordIO.setupKeywordDbPath" title="Permalink to this definition">¶</a></dt>
-<dd><p>Helper to set the active path for the keywords. Called at init time,
-you can override this path by calling setKeywordDbPath.</p>
-<dl class="docutils">
-<dt>Args:</dt>
-<dd>None</dd>
-<dt>Returns:</dt>
-<dd>A string representing the path to where the keywords file is to be.
-If the user has never specified what this path is, the
-defaultKeywordDbPath is returned.</dd>
-<dt>Raises:</dt>
-<dd>None</dd>
-</dl>
-</dd></dl>
-
-<dl class="method">
-<dt id="safe_qgis.keyword_io.KeywordIO.writeKeywords">
-<tt class="descname">writeKeywords</tt><big>(</big><em>theLayer</em>, <em>theKeywords</em><big>)</big><a class="reference internal" href="../../_modules/safe_qgis/keyword_io.html#KeywordIO.writeKeywords"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe_qgis.keyword_io.KeywordIO.writeKeywords" title="Permalink to this definition">¶</a></dt>
-<dd><p>Write keywords for a datasource.
-This is a wrapper method that will &#8216;do the right thing&#8217; to store
-keywords for the given datasource. In particular, if the datasource
-is remote (e.g. a database connection) it will write the keywords from
-the keywords store.</p>
-<dl class="docutils">
-<dt>Args:</dt>
-<dd><ul class="first last simple">
-<li>theLayer - A QGIS QgsMapLayer instance.</li>
-<li>theKeywords - a dict containing all the keywords to be written
-for the layer.</li>
-</ul>
-</dd>
-<dt>Returns:</dt>
-<dd>None.</dd>
-<dt>Raises:</dt>
-<dd>None</dd>
-</dl>
-</dd></dl>
-
-<dl class="method">
-<dt id="safe_qgis.keyword_io.KeywordIO.writeKeywordsForUri">
-<tt class="descname">writeKeywordsForUri</tt><big>(</big><em>theUri</em>, <em>theKeywords</em><big>)</big><a class="reference internal" href="../../_modules/safe_qgis/keyword_io.html#KeywordIO.writeKeywordsForUri"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe_qgis.keyword_io.KeywordIO.writeKeywordsForUri" title="Permalink to this definition">¶</a></dt>
-<dd><p>Write keywords for a URI into the keywords database. All the
-keywords for the uri should be written in a single operation.
-A hash will be constructed from the supplied uri and a lookup made
-in a local SQLITE database for the keywords. If there is an existing
-record it will be updated, if not, a new one will be created.</p>
-<div class="admonition-see-also admonition seealso">
-<p class="first admonition-title">See also</p>
-<p class="last">readKeywordFromUri, deleteKeywordsForUri</p>
-</div>
-<p>Args:</p>
-<blockquote>
-<ul class="simple">
-<li>theUri -  a str representing a layer uri as parameter.
-.e.g. &#8216;dbname=&#8217;osm&#8217; host=localhost port=5432 user=&#8217;foo&#8217;
-password=&#8217;bar&#8217; sslmode=disable key=&#8217;id&#8217; srid=4326</li>
-<li>keywords - mandatory - the metadata keyword to retrieve e.g.
-&#8216;title&#8217;</li>
-</ul>
-</blockquote>
-<dl class="docutils">
-<dt>Returns:</dt>
-<dd>A string containing the retrieved value for the keyword if
-the keyword argument is specified, otherwise the
-complete keywords dictionary is returned.</dd>
-<dt>Raises:</dt>
-<dd>KeywordNotFoundException if the keyword is not recognised.</dd>
-</dl>
-</dd></dl>
-
-</dd></dl>
-
+  <div class="section" id="module-safe-qgis-keyword-io">
+<h1>Module:  safe_qgis.keyword_io<a class="headerlink" href="#module-safe-qgis-keyword-io" title="Permalink to this headline">¶</a></h1>
 <p>This module forms part of the <a class="reference external" href="http://inasafe.org">InaSAFE</a> tool.</p>
 </div>
 
@@ -460,11 +83,11 @@ complete keywords dictionary is returned.</dd>
           <img class="logo" src="../../_static/icon.png" alt="Logo"/>
         </a></p>
   <h4>Previous topic</h4>
-  <p class="topless"><a href="dock.html"
-                        title="previous chapter">Module:  safe_qgis.dock</a></p>
+  <p class="topless"><a href="dock_base.html"
+                        title="previous chapter">Module:  safe_qgis.dock_base</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="resources_rc.html"
-                        title="next chapter">Module:  safe_qgis.resources_rc</a></p>
+  <p class="topless"><a href="qgis_interface.html"
+                        title="next chapter">Module:  safe_qgis.qgis_interface</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="../../_sources/api-docs/safe_qgis/keyword_io.txt"
@@ -473,7 +96,7 @@ complete keywords dictionary is returned.</dd>
 <div id="searchbox" style="display: none">
   <h3>Quick search</h3>
     <form class="search" action="../../search.html" method="get">
-      <input type="text" name="q" size="18" />
+      <input type="text" name="q" />
       <input type="submit" value="Go" />
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
@@ -499,10 +122,10 @@ complete keywords dictionary is returned.</dd>
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
         <li class="right" >
-          <a href="resources_rc.html" title="Module: safe_qgis.resources_rc"
+          <a href="qgis_interface.html" title="Module: safe_qgis.qgis_interface"
              >next</a> &nbsp; &nbsp;</li>
         <li class="right" >
-          <a href="dock.html" title="Module: safe_qgis.dock"
+          <a href="dock_base.html" title="Module: safe_qgis.dock_base"
              >previous</a> &nbsp; &nbsp;</li>
     <li><a href="../../index.html">Home</a> &raquo;</li>
     <li><a href="../../contents.html">Contents</a> &raquo;</li>
@@ -515,8 +138,8 @@ complete keywords dictionary is returned.</dd>
 
     <div class="footer">
         &copy; Copyright 2012, BNPB/AIFDR/GFDRR.
-      Last updated on Oct 20, 2012.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.1.
+      Last updated on Oct 24, 2012.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
     </div>
     <!-- cloud_sptheme 1.3 -->
   </body>

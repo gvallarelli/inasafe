@@ -4,18 +4,21 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
+
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>safe_qgis.test_keywords_dialog &mdash; InaSAFE v0.5.1-final documentation</title>
+    <title>safe_qgis.test_keywords_dialog &mdash; InaSAFE 1.0.1-final documentation</title>
+    
     <link rel="stylesheet" href="../../_static/cloud.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-    <link rel="stylesheet" href="../../http://fonts.googleapis.com/css?family=Noticia+Text|Droid+Sans+Mono" type="text/css" />
+    <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Noticia+Text|Droid+Sans+Mono" type="text/css" />
+    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '0.5.1-final',
+        VERSION:     '1.0.1-final',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -27,7 +30,7 @@
     <script type="text/javascript" src="../../_static/jquery.cookie.js"></script>
     <script type="text/javascript" src="../../_static/toggle_sections.js"></script>
     <link rel="shortcut icon" href="../../_static/favicon.ico"/>
-    <link rel="top" title="InaSAFE v0.5.1-final documentation" href="../../index.html" />
+    <link rel="top" title="InaSAFE 1.0.1-final documentation" href="../../index.html" />
     <link rel="up" title="Module code" href="../index.html" /> 
   </head>
   <body>
@@ -71,7 +74,6 @@
 <span class="sd">&quot;&quot;&quot;</span>
 
 <span class="n">__author__</span> <span class="o">=</span> <span class="s">&#39;tim@linfiniti.com&#39;</span>
-<span class="n">__version__</span> <span class="o">=</span> <span class="s">&#39;0.5.0&#39;</span>
 <span class="n">__date__</span> <span class="o">=</span> <span class="s">&#39;21/02/2011&#39;</span>
 <span class="n">__copyright__</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;Copyright 2012, Australia Indonesia Facility for &#39;</span>
                  <span class="s">&#39;Disaster Reduction&#39;</span><span class="p">)</span>
@@ -90,16 +92,20 @@
 <span class="kn">from</span> <span class="nn">PyQt4.QtTest</span> <span class="kn">import</span> <span class="n">QTest</span>
 
 <span class="kn">from</span> <span class="nn">qgis.core</span> <span class="kn">import</span> <span class="p">(</span><span class="n">QgsRasterLayer</span><span class="p">,</span>
+                       <span class="n">QgsVectorLayer</span><span class="p">,</span>
                        <span class="n">QgsMapLayerRegistry</span><span class="p">)</span>
 
-<span class="kn">from</span> <span class="nn">safe_qgis.odict</span> <span class="kn">import</span> <span class="n">OrderedDict</span>
-<span class="kn">from</span> <span class="nn">safe_qgis.utilities_test</span> <span class="kn">import</span> <span class="p">(</span><span class="n">getQgisTestApp</span><span class="p">,</span> <span class="n">unitTestDataPath</span><span class="p">)</span>
+<span class="kn">from</span> <span class="nn">third_party.odict</span> <span class="kn">import</span> <span class="n">OrderedDict</span>
+<span class="kn">from</span> <span class="nn">safe_qgis.utilities_test</span> <span class="kn">import</span> <span class="p">(</span><span class="n">getQgisTestApp</span><span class="p">,</span>
+                                      <span class="n">unitTestDataPath</span><span class="p">)</span>
 <span class="kn">from</span> <span class="nn">safe_qgis.safe_interface</span> <span class="kn">import</span> <span class="n">readKeywordsFromFile</span>
 <span class="kn">from</span> <span class="nn">safe_qgis.keywords_dialog</span> <span class="kn">import</span> <span class="n">KeywordsDialog</span>
+<span class="kn">from</span> <span class="nn">safe_qgis.exceptions</span> <span class="kn">import</span> <span class="n">KeywordNotFoundException</span>
+<span class="kn">from</span> <span class="nn">safe_qgis.utilities</span> <span class="kn">import</span> <span class="n">getDefaults</span>
 
 
 <span class="c"># For testing and demoing</span>
-<span class="kn">from</span> <span class="nn">safe.common.testing</span> <span class="kn">import</span> <span class="n">HAZDATA</span>
+<span class="kn">from</span> <span class="nn">safe.common.testing</span> <span class="kn">import</span> <span class="n">HAZDATA</span><span class="p">,</span> <span class="n">TESTDATA</span>
 
 <span class="c"># Get QGis app handle</span>
 <span class="n">QGISAPP</span><span class="p">,</span> <span class="n">CANVAS</span><span class="p">,</span> <span class="n">IFACE</span><span class="p">,</span> <span class="n">PARENT</span> <span class="o">=</span> <span class="n">getQgisTestApp</span><span class="p">()</span>
@@ -116,7 +122,7 @@
     <span class="k">return</span> <span class="n">myLayer</span>
 
 </div>
-<div class="viewcode-block" id="copyMakePadangLayer"><a class="viewcode-back" href="../../api-docs/safe_qgis_tests/test_keywords_dialog.html#safe_qgis.test_keywords_dialog.copyMakePadangLayer">[docs]</a><span class="k">def</span> <span class="nf">copyMakePadangLayer</span><span class="p">():</span>
+<div class="viewcode-block" id="makePadangLayerClone"><a class="viewcode-back" href="../../api-docs/safe_qgis_tests/test_keywords_dialog.html#safe_qgis.test_keywords_dialog.makePadangLayerClone">[docs]</a><span class="k">def</span> <span class="nf">makePadangLayerClone</span><span class="p">():</span>
     <span class="sd">&quot;&quot;&quot;Helper function that copies padang keyword for testing and return it.&quot;&quot;&quot;</span>
     <span class="n">mySourceFileName</span> <span class="o">=</span> <span class="s">&#39;Shakemap_Padang_2009&#39;</span>
     <span class="n">myExts</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;.asc&#39;</span><span class="p">,</span> <span class="s">&#39;.asc.aux.xml&#39;</span><span class="p">,</span> <span class="s">&#39;.keywords&#39;</span><span class="p">,</span>
@@ -134,6 +140,32 @@
     <span class="n">myLayer</span> <span class="o">=</span> <span class="n">QgsRasterLayer</span><span class="p">(</span><span class="n">myPath</span><span class="p">,</span> <span class="n">myTitle</span><span class="p">)</span>
     <span class="n">QgsMapLayerRegistry</span><span class="o">.</span><span class="n">instance</span><span class="p">()</span><span class="o">.</span><span class="n">addMapLayer</span><span class="p">(</span><span class="n">myLayer</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">myLayer</span><span class="p">,</span> <span class="n">myFileName</span>
+
+</div>
+<div class="viewcode-block" id="makePolygonLayer"><a class="viewcode-back" href="../../api-docs/safe_qgis_tests/test_keywords_dialog.html#safe_qgis.test_keywords_dialog.makePolygonLayer">[docs]</a><span class="k">def</span> <span class="nf">makePolygonLayer</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Helper function that returns a single predefined layer&quot;&quot;&quot;</span>
+    <span class="n">myFile</span> <span class="o">=</span> <span class="s">&#39;kabupaten_jakarta_singlepart_3_good_attr.shp&#39;</span>
+    <span class="n">myPath</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">TESTDATA</span><span class="p">,</span> <span class="n">myFile</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">myTitle</span> <span class="o">=</span> <span class="n">readKeywordsFromFile</span><span class="p">(</span><span class="n">myPath</span><span class="p">,</span> <span class="s">&#39;title&#39;</span><span class="p">)</span>
+    <span class="k">except</span> <span class="n">KeywordNotFoundException</span><span class="p">:</span>
+        <span class="n">myTitle</span> <span class="o">=</span> <span class="s">&#39;kabupaten_jakarta_singlepart_3_good_attr&#39;</span>
+    <span class="n">myLayer</span> <span class="o">=</span> <span class="n">QgsVectorLayer</span><span class="p">(</span><span class="n">myPath</span><span class="p">,</span> <span class="n">myTitle</span><span class="p">,</span> <span class="s">&#39;ogr&#39;</span><span class="p">)</span>
+    <span class="n">QgsMapLayerRegistry</span><span class="o">.</span><span class="n">instance</span><span class="p">()</span><span class="o">.</span><span class="n">addMapLayer</span><span class="p">(</span><span class="n">myLayer</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">myLayer</span>
+
+</div>
+<div class="viewcode-block" id="makePointLayer"><a class="viewcode-back" href="../../api-docs/safe_qgis_tests/test_keywords_dialog.html#safe_qgis.test_keywords_dialog.makePointLayer">[docs]</a><span class="k">def</span> <span class="nf">makePointLayer</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Helper function that returns a single predefined layer&quot;&quot;&quot;</span>
+    <span class="n">myFile</span> <span class="o">=</span> <span class="s">&#39;test_buildings.shp&#39;</span>
+    <span class="n">myPath</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">TESTDATA</span><span class="p">,</span> <span class="n">myFile</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">myTitle</span> <span class="o">=</span> <span class="n">readKeywordsFromFile</span><span class="p">(</span><span class="n">myPath</span><span class="p">,</span> <span class="s">&#39;title&#39;</span><span class="p">)</span>
+    <span class="k">except</span> <span class="n">KeywordNotFoundException</span><span class="p">:</span>
+        <span class="n">myTitle</span> <span class="o">=</span> <span class="s">&#39;kabupaten_jakarta_singlepart_3_good_attr&#39;</span>
+    <span class="n">myLayer</span> <span class="o">=</span> <span class="n">QgsVectorLayer</span><span class="p">(</span><span class="n">myPath</span><span class="p">,</span> <span class="n">myTitle</span><span class="p">,</span> <span class="s">&#39;ogr&#39;</span><span class="p">)</span>
+    <span class="n">QgsMapLayerRegistry</span><span class="o">.</span><span class="n">instance</span><span class="p">()</span><span class="o">.</span><span class="n">addMapLayer</span><span class="p">(</span><span class="n">myLayer</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">myLayer</span>
 
 </div>
 <div class="viewcode-block" id="removeTempFile"><a class="viewcode-back" href="../../api-docs/safe_qgis_tests/test_keywords_dialog.html#safe_qgis.test_keywords_dialog.removeTempFile">[docs]</a><span class="k">def</span> <span class="nf">removeTempFile</span><span class="p">(</span><span class="n">myFileName</span><span class="o">=</span><span class="s">&#39;temp_Shakemap_Padang_2009&#39;</span><span class="p">):</span>
@@ -215,6 +247,91 @@
                      <span class="s">&#39;to the keywords list.&#39;</span><span class="p">)</span>
         <span class="k">assert</span> <span class="n">myDialog</span><span class="o">.</span><span class="n">getValueForKey</span><span class="p">(</span><span class="s">&#39;category&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="s">&#39;hazard&#39;</span><span class="p">,</span> <span class="n">myMessage</span>
 </div>
+<div class="viewcode-block" id="KeywordsDialogTest.test_on_radPostprocessing_toggled"><a class="viewcode-back" href="../../api-docs/safe_qgis_tests/test_keywords_dialog.html#safe_qgis.test_keywords_dialog.KeywordsDialogTest.test_on_radPostprocessing_toggled">[docs]</a>    <span class="k">def</span> <span class="nf">test_on_radPostprocessing_toggled</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Test hazard radio button toggle behaviour works&quot;&quot;&quot;</span>
+        <span class="n">myLayer</span> <span class="o">=</span> <span class="n">makePolygonLayer</span><span class="p">()</span>
+        <span class="n">myDefaults</span> <span class="o">=</span> <span class="n">getDefaults</span><span class="p">()</span>
+        <span class="n">myDialog</span> <span class="o">=</span> <span class="n">KeywordsDialog</span><span class="p">(</span><span class="n">PARENT</span><span class="p">,</span> <span class="n">IFACE</span><span class="p">,</span> <span class="n">theLayer</span><span class="o">=</span><span class="n">myLayer</span><span class="p">)</span>
+        <span class="n">myButton</span> <span class="o">=</span> <span class="n">myDialog</span><span class="o">.</span><span class="n">radPostprocessing</span>
+        <span class="n">myButton</span><span class="o">.</span><span class="n">setChecked</span><span class="p">(</span><span class="bp">False</span><span class="p">)</span>
+        <span class="n">QTest</span><span class="o">.</span><span class="n">mouseClick</span><span class="p">(</span><span class="n">myButton</span><span class="p">,</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">LeftButton</span><span class="p">)</span>
+        <span class="n">myMessage</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;Toggling the postprocessing radio did not add a &#39;</span>
+                     <span class="s">&#39;category to the keywords list.&#39;</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">myDialog</span><span class="o">.</span><span class="n">getValueForKey</span><span class="p">(</span>
+            <span class="s">&#39;category&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="s">&#39;postprocessing&#39;</span><span class="p">,</span> <span class="n">myMessage</span>
+
+        <span class="n">myMessage</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;Toggling the postprocessing radio did not add an &#39;</span>
+                     <span class="s">&#39;aggregation attribute to the keywords list.&#39;</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">myDialog</span><span class="o">.</span><span class="n">getValueForKey</span><span class="p">(</span>
+            <span class="n">myDefaults</span><span class="p">[</span><span class="s">&#39;AGGR_ATTR_KEY&#39;</span><span class="p">])</span> <span class="o">==</span> <span class="s">&#39;KAB_NAME&#39;</span><span class="p">,</span> <span class="n">myMessage</span>
+
+        <span class="n">myMessage</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;Toggling the postprocessing radio did not add a &#39;</span>
+                     <span class="s">&#39;female ratio attribute to the keywords list.&#39;</span><span class="p">)</span>
+
+        <span class="k">assert</span> <span class="n">myDialog</span><span class="o">.</span><span class="n">getValueForKey</span><span class="p">(</span>
+            <span class="n">myDefaults</span><span class="p">[</span><span class="s">&#39;FEM_RATIO_ATTR_KEY&#39;</span><span class="p">])</span> <span class="o">==</span> \
+               <span class="n">myDialog</span><span class="o">.</span><span class="n">tr</span><span class="p">(</span><span class="s">&#39;Use default&#39;</span><span class="p">),</span> <span class="n">myMessage</span>
+
+        <span class="n">myMessage</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;Toggling the postprocessing radio did not add a &#39;</span>
+                     <span class="s">&#39;female ratio default value to the keywords list.&#39;</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="nb">float</span><span class="p">(</span><span class="n">myDialog</span><span class="o">.</span><span class="n">getValueForKey</span><span class="p">(</span>
+            <span class="n">myDefaults</span><span class="p">[</span><span class="s">&#39;FEM_RATIO_KEY&#39;</span><span class="p">]))</span> <span class="o">==</span> \
+               <span class="n">myDefaults</span><span class="p">[</span><span class="s">&#39;FEM_RATIO&#39;</span><span class="p">],</span> <span class="n">myMessage</span>
+</div>
+<div class="viewcode-block" id="KeywordsDialogTest.test_on_dsbFemaleRatioDefault_valueChanged"><a class="viewcode-back" href="../../api-docs/safe_qgis_tests/test_keywords_dialog.html#safe_qgis.test_keywords_dialog.KeywordsDialogTest.test_on_dsbFemaleRatioDefault_valueChanged">[docs]</a>    <span class="k">def</span> <span class="nf">test_on_dsbFemaleRatioDefault_valueChanged</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Test hazard radio button toggle behaviour works&quot;&quot;&quot;</span>
+        <span class="n">myLayer</span> <span class="o">=</span> <span class="n">makePolygonLayer</span><span class="p">()</span>
+        <span class="n">myDefaults</span> <span class="o">=</span> <span class="n">getDefaults</span><span class="p">()</span>
+        <span class="n">myDialog</span> <span class="o">=</span> <span class="n">KeywordsDialog</span><span class="p">(</span><span class="n">PARENT</span><span class="p">,</span> <span class="n">IFACE</span><span class="p">,</span> <span class="n">theLayer</span><span class="o">=</span><span class="n">myLayer</span><span class="p">)</span>
+        <span class="n">myButton</span> <span class="o">=</span> <span class="n">myDialog</span><span class="o">.</span><span class="n">radPostprocessing</span>
+        <span class="n">myButton</span><span class="o">.</span><span class="n">setChecked</span><span class="p">(</span><span class="bp">False</span><span class="p">)</span>
+        <span class="n">QTest</span><span class="o">.</span><span class="n">mouseClick</span><span class="p">(</span><span class="n">myButton</span><span class="p">,</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">LeftButton</span><span class="p">)</span>
+        <span class="n">myFemaleRatioAttrBox</span> <span class="o">=</span> <span class="n">myDialog</span><span class="o">.</span><span class="n">cboFemaleRatioAttribute</span>
+
+        <span class="c">#set to Don&#39;t use</span>
+        <span class="n">myIndex</span> <span class="o">=</span> <span class="n">myFemaleRatioAttrBox</span><span class="o">.</span><span class="n">findText</span><span class="p">(</span>
+            <span class="n">myDialog</span><span class="o">.</span><span class="n">tr</span><span class="p">(</span><span class="s">&#39;Don</span><span class="se">\&#39;</span><span class="s">t use&#39;</span><span class="p">))</span>
+        <span class="n">myMessage</span> <span class="o">=</span> <span class="p">(</span><span class="n">myDialog</span><span class="o">.</span><span class="n">tr</span><span class="p">(</span><span class="s">&#39;Don</span><span class="se">\&#39;</span><span class="s">t use&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="s">&#39; not found&#39;</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="p">(</span><span class="n">myIndex</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span><span class="p">),</span> <span class="n">myMessage</span>
+        <span class="n">myFemaleRatioAttrBox</span><span class="o">.</span><span class="n">setCurrentIndex</span><span class="p">(</span><span class="n">myIndex</span><span class="p">)</span>
+
+        <span class="n">myMessage</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;Toggling the female ratio attribute combo to&#39;</span>
+                     <span class="s">&#39; &quot;Don</span><span class="se">\&#39;</span><span class="s">t use&quot; did not add it to the keywords list.&#39;</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">myDialog</span><span class="o">.</span><span class="n">getValueForKey</span><span class="p">(</span>
+            <span class="n">myDefaults</span><span class="p">[</span><span class="s">&#39;FEM_RATIO_ATTR_KEY&#39;</span><span class="p">])</span> <span class="o">==</span>\
+               <span class="n">myDialog</span><span class="o">.</span><span class="n">tr</span><span class="p">(</span><span class="s">&#39;Don</span><span class="se">\&#39;</span><span class="s">t use&#39;</span><span class="p">),</span> <span class="n">myMessage</span>
+
+        <span class="n">myMessage</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;Toggling the female ratio attribute combo to&#39;</span>
+                     <span class="s">&#39; &quot;Don</span><span class="se">\&#39;</span><span class="s">t use&quot; did not disable dsbFemaleRatioDefault.&#39;</span><span class="p">)</span>
+        <span class="n">myIsEnabled</span> <span class="o">=</span> <span class="n">myDialog</span><span class="o">.</span><span class="n">dsbFemaleRatioDefault</span><span class="o">.</span><span class="n">isEnabled</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="ow">not</span> <span class="n">myIsEnabled</span><span class="p">,</span> <span class="n">myMessage</span>
+
+        <span class="n">myMessage</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;Toggling the female ratio attribute combo to&#39;</span>
+                     <span class="s">&#39; &quot;Don</span><span class="se">\&#39;</span><span class="s">t use&quot; did not remove the keyword.&#39;</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="p">(</span><span class="n">myDialog</span><span class="o">.</span><span class="n">getValueForKey</span><span class="p">(</span><span class="n">myDefaults</span><span class="p">[</span><span class="s">&#39;FEM_RATIO&#39;</span><span class="p">])</span> <span class="ow">is</span>
+            <span class="bp">None</span><span class="p">),</span> <span class="n">myMessage</span>
+
+        <span class="c">#set to TEST_REAL</span>
+        <span class="n">myIndex</span> <span class="o">=</span> <span class="n">myFemaleRatioAttrBox</span><span class="o">.</span><span class="n">findText</span><span class="p">(</span><span class="s">&#39;TEST_REAL&#39;</span><span class="p">)</span>
+        <span class="n">myMessage</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;TEST_REAL not found&#39;</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="p">(</span><span class="n">myIndex</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span><span class="p">),</span> <span class="n">myMessage</span>
+        <span class="n">myFemaleRatioAttrBox</span><span class="o">.</span><span class="n">setCurrentIndex</span><span class="p">(</span><span class="n">myIndex</span><span class="p">)</span>
+
+        <span class="n">myMessage</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;Toggling the female ratio attribute combo to &quot;TEST_REAL&quot;&#39;</span>
+                     <span class="s">&#39; did not add it to the keywords list.&#39;</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">myDialog</span><span class="o">.</span><span class="n">getValueForKey</span><span class="p">(</span>
+            <span class="n">myDefaults</span><span class="p">[</span><span class="s">&#39;FEM_RATIO_ATTR_KEY&#39;</span><span class="p">])</span> <span class="o">==</span> <span class="s">&#39;TEST_REAL&#39;</span><span class="p">,</span> <span class="n">myMessage</span>
+
+        <span class="n">myMessage</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;Toggling the female ratio attribute combo to &quot;TEST_REAL&quot;&#39;</span>
+                     <span class="s">&#39; did not disable dsbFemaleRatioDefault.&#39;</span><span class="p">)</span>
+        <span class="n">myIsEnabled</span> <span class="o">=</span> <span class="n">myDialog</span><span class="o">.</span><span class="n">dsbFemaleRatioDefault</span><span class="o">.</span><span class="n">isEnabled</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="ow">not</span> <span class="n">myIsEnabled</span><span class="p">,</span> <span class="n">myMessage</span>
+
+        <span class="n">myMessage</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;Toggling the female ratio attribute combo to &quot;TEST_REAL&quot;&#39;</span>
+                     <span class="s">&#39; did not remove the keyword.&#39;</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="p">(</span><span class="n">myDialog</span><span class="o">.</span><span class="n">getValueForKey</span><span class="p">(</span><span class="n">myDefaults</span><span class="p">[</span><span class="s">&#39;FEM_RATIO&#39;</span><span class="p">])</span> <span class="ow">is</span>
+                <span class="bp">None</span><span class="p">),</span> <span class="n">myMessage</span>
+</div>
 <div class="viewcode-block" id="KeywordsDialogTest.Xtest_on_radExposure_toggled"><a class="viewcode-back" href="../../api-docs/safe_qgis_tests/test_keywords_dialog.html#safe_qgis.test_keywords_dialog.KeywordsDialogTest.Xtest_on_radExposure_toggled">[docs]</a>    <span class="k">def</span> <span class="nf">Xtest_on_radExposure_toggled</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Test exposure radio button toggle behaviour works&quot;&quot;&quot;</span>
 
@@ -242,6 +359,7 @@
                      <span class="s">&#39;to the keywords list for </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span>
                      <span class="n">myCombo</span><span class="o">.</span><span class="n">currentText</span><span class="p">())</span>
         <span class="n">myKey</span> <span class="o">=</span> <span class="n">myDialog</span><span class="o">.</span><span class="n">getValueForKey</span><span class="p">(</span><span class="s">&#39;subcategory&#39;</span><span class="p">)</span>
+
         <span class="k">assert</span> <span class="n">myKey</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">,</span> <span class="n">myMessage</span>
         <span class="k">assert</span> <span class="n">myKey</span> <span class="ow">in</span> <span class="nb">str</span><span class="p">(</span><span class="n">myCombo</span><span class="o">.</span><span class="n">currentText</span><span class="p">()),</span> <span class="n">myMessage</span>
 </div>
@@ -409,7 +527,8 @@
         <span class="n">myDialog</span><span class="o">.</span><span class="n">removeItemByValue</span><span class="p">(</span><span class="s">&#39;hazard&#39;</span><span class="p">)</span>
 
         <span class="n">myKeywords</span> <span class="o">=</span> <span class="n">myDialog</span><span class="o">.</span><span class="n">getKeywords</span><span class="p">()</span>
-        <span class="n">myExpectedKeywords</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;title&#39;</span><span class="p">:</span> <span class="s">&#39;An earthquake in Padang like in 2009&#39;</span><span class="p">,</span>
+        <span class="n">myExpectedKeywords</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;source&#39;</span><span class="p">:</span> <span class="s">&#39;USGS&#39;</span><span class="p">,</span>
+                              <span class="s">&#39;title&#39;</span><span class="p">:</span> <span class="s">&#39;An earthquake in Padang like in 2009&#39;</span><span class="p">,</span>
                               <span class="s">&#39;subcategory&#39;</span><span class="p">:</span> <span class="s">&#39;earthquake&#39;</span><span class="p">,</span>
                               <span class="s">&#39;unit&#39;</span><span class="p">:</span> <span class="s">&#39;MMI&#39;</span><span class="p">}</span>
         <span class="n">myMessage</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;</span><span class="se">\n</span><span class="s">Got: </span><span class="si">%s</span><span class="se">\n</span><span class="s">Expected: </span><span class="si">%s</span><span class="se">\n</span><span class="s">&#39;</span> <span class="o">%</span>
@@ -437,9 +556,10 @@
 
         <span class="n">myExpectedKeywords</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;title&#39;</span><span class="p">:</span> <span class="s">&#39;An earthquake in Padang like in 2009&#39;</span><span class="p">,</span>
                               <span class="s">&#39;category&#39;</span><span class="p">:</span> <span class="s">&#39;hazard&#39;</span><span class="p">,</span>
+                              <span class="s">&#39;source&#39;</span><span class="p">:</span> <span class="s">&#39;USGS&#39;</span><span class="p">,</span>
                               <span class="s">&#39;subcategory&#39;</span><span class="p">:</span> <span class="s">&#39;earthquake&#39;</span><span class="p">,</span>
                               <span class="s">&#39;unit&#39;</span><span class="p">:</span> <span class="s">&#39;MMI&#39;</span><span class="p">}</span>
-        <span class="n">myMessage</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;</span><span class="se">\n</span><span class="s">Got: </span><span class="si">%s</span><span class="se">\n</span><span class="s">Expected: </span><span class="si">%s</span><span class="se">\n</span><span class="s">&#39;</span> <span class="o">%</span>
+        <span class="n">myMessage</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;</span><span class="se">\n</span><span class="s">Got:</span><span class="se">\n</span><span class="si">%s</span><span class="se">\n</span><span class="s">Expected:</span><span class="se">\n</span><span class="si">%s</span><span class="se">\n</span><span class="s">&#39;</span> <span class="o">%</span>
                      <span class="p">(</span><span class="n">myKeywords</span><span class="p">,</span> <span class="n">myExpectedKeywords</span><span class="p">))</span>
         <span class="k">assert</span> <span class="n">myKeywords</span> <span class="o">==</span> <span class="n">myExpectedKeywords</span><span class="p">,</span> <span class="n">myMessage</span>
 </div>
@@ -460,8 +580,8 @@
 </div>
 <div class="viewcode-block" id="KeywordsDialogTest.test_addKeywordWhenPressOkButton"><a class="viewcode-back" href="../../api-docs/safe_qgis_tests/test_keywords_dialog.html#safe_qgis.test_keywords_dialog.KeywordsDialogTest.test_addKeywordWhenPressOkButton">[docs]</a>    <span class="k">def</span> <span class="nf">test_addKeywordWhenPressOkButton</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Test add keyword when ok button is pressed.&quot;&quot;&quot;</span>
-        <span class="c">#_, myFile = copyMakePadangLayer()</span>
-        <span class="n">copyMakePadangLayer</span><span class="p">()</span>
+        <span class="c">#_, myFile = makePadangLayerClone()</span>
+        <span class="n">makePadangLayerClone</span><span class="p">()</span>
         <span class="n">myDialog</span> <span class="o">=</span> <span class="n">KeywordsDialog</span><span class="p">(</span><span class="n">PARENT</span><span class="p">,</span> <span class="n">IFACE</span><span class="p">)</span>
 
         <span class="n">myDialog</span><span class="o">.</span><span class="n">radUserDefined</span><span class="o">.</span><span class="n">setChecked</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
@@ -496,7 +616,7 @@
 <div id="searchbox" style="display: none">
   <h3>Quick search</h3>
     <form class="search" action="../../search.html" method="get">
-      <input type="text" name="q" size="18" />
+      <input type="text" name="q" />
       <input type="submit" value="Go" />
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
@@ -531,8 +651,8 @@
 
     <div class="footer">
         &copy; Copyright 2012, BNPB/AIFDR/GFDRR.
-      Last updated on Oct 20, 2012.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.1.
+      Last updated on Oct 24, 2012.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
     </div>
     <!-- cloud_sptheme 1.3 -->
   </body>

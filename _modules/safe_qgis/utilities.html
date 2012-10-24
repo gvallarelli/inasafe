@@ -4,18 +4,21 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
+
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>safe_qgis.utilities &mdash; InaSAFE v0.5.1-final documentation</title>
+    <title>safe_qgis.utilities &mdash; InaSAFE 1.0.1-final documentation</title>
+    
     <link rel="stylesheet" href="../../_static/cloud.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-    <link rel="stylesheet" href="../../http://fonts.googleapis.com/css?family=Noticia+Text|Droid+Sans+Mono" type="text/css" />
+    <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Noticia+Text|Droid+Sans+Mono" type="text/css" />
+    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '0.5.1-final',
+        VERSION:     '1.0.1-final',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -27,7 +30,7 @@
     <script type="text/javascript" src="../../_static/jquery.cookie.js"></script>
     <script type="text/javascript" src="../../_static/toggle_sections.js"></script>
     <link rel="shortcut icon" href="../../_static/favicon.ico"/>
-    <link rel="top" title="InaSAFE v0.5.1-final documentation" href="../../index.html" />
+    <link rel="top" title="InaSAFE 1.0.1-final documentation" href="../../index.html" />
     <link rel="up" title="Module code" href="../index.html" /> 
   </head>
   <body>
@@ -71,12 +74,12 @@
 <span class="sd">&quot;&quot;&quot;</span>
 
 <span class="n">__author__</span> <span class="o">=</span> <span class="s">&#39;tim@linfiniti.com&#39;</span>
-<span class="n">__version__</span> <span class="o">=</span> <span class="s">&#39;0.5.0&#39;</span>
 <span class="n">__revision__</span> <span class="o">=</span> <span class="s">&#39;$Format:%H$&#39;</span>
 <span class="n">__date__</span> <span class="o">=</span> <span class="s">&#39;29/01/2011&#39;</span>
 <span class="n">__copyright__</span> <span class="o">=</span> <span class="s">&#39;Copyright 2012, Australia Indonesia Facility for &#39;</span>
 <span class="n">__copyright__</span> <span class="o">+=</span> <span class="s">&#39;Disaster Reduction&#39;</span>
 
+<span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">sys</span>
 <span class="kn">import</span> <span class="nn">traceback</span>
 <span class="kn">import</span> <span class="nn">logging</span>
@@ -84,6 +87,7 @@
 
 <span class="kn">from</span> <span class="nn">PyQt4</span> <span class="kn">import</span> <span class="n">QtCore</span><span class="p">,</span> <span class="n">QtGui</span>
 <span class="kn">from</span> <span class="nn">PyQt4.QtCore</span> <span class="kn">import</span> <span class="n">QCoreApplication</span>
+
 <span class="kn">from</span> <span class="nn">qgis.core</span> <span class="kn">import</span> <span class="p">(</span><span class="n">QGis</span><span class="p">,</span>
                        <span class="n">QgsRasterLayer</span><span class="p">,</span>
                        <span class="n">QgsMapLayer</span><span class="p">,</span>
@@ -96,7 +100,13 @@
                        <span class="n">QgsColorRampShader</span><span class="p">,</span>
                        <span class="n">QgsRasterTransparency</span><span class="p">,</span>
                        <span class="p">)</span>
+
+<span class="kn">from</span> <span class="nn">safe_interface</span> <span class="kn">import</span> <span class="n">temp_dir</span>
+
 <span class="kn">from</span> <span class="nn">safe_qgis.exceptions</span> <span class="kn">import</span> <span class="n">StyleError</span><span class="p">,</span> <span class="n">MethodUnavailableError</span>
+
+<span class="kn">from</span> <span class="nn">safe_qgis.safe_interface</span> <span class="kn">import</span> <span class="n">DEFAULTS</span><span class="p">,</span> <span class="n">safeTr</span><span class="p">,</span> <span class="n">get_version</span>
+
 <span class="c">#do not remove this even if it is marked as unused by your IDE</span>
 <span class="c">#resources are used by htmlfooter and header the comment will mark it unused</span>
 <span class="c">#for pylint</span>
@@ -106,25 +116,35 @@
 
 
 <div class="viewcode-block" id="setVectorStyle"><a class="viewcode-back" href="../../api-docs/safe_qgis/utilities.html#safe_qgis.utilities.setVectorStyle">[docs]</a><span class="k">def</span> <span class="nf">setVectorStyle</span><span class="p">(</span><span class="n">theQgisVectorLayer</span><span class="p">,</span> <span class="n">theStyle</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Set QGIS vector style based on InaSAFE style dictionary</span>
+    <span class="sd">&quot;&quot;&quot;Set QGIS vector style based on InaSAFE style dictionary.</span>
 
-<span class="sd">    Input</span>
-<span class="sd">        theQgisVectorLayer: Qgis layer</span>
-<span class="sd">        theStyle: Dictionary of the form as in the example below</span>
+<span class="sd">    For **opaque** a value of **0** can be used. For **fully transparent**, a</span>
+<span class="sd">    value of **100** can be used. The function should take care to scale the</span>
+<span class="sd">    transparency level to between 0 and 100.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        * theQgisVectorLayer: QgsMapLayer</span>
+<span class="sd">        * theStyle: dict - Dictionary of the form as in the example below</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        None - Sets and saves style for theQgisVectorLayer</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        None</span>
+
+<span class="sd">    Example:</span>
 
 <span class="sd">        {&#39;target_field&#39;: &#39;DMGLEVEL&#39;,</span>
 <span class="sd">        &#39;style_classes&#39;:</span>
-<span class="sd">        [{&#39;opacity&#39;: 1, &#39;max&#39;: 1.5, &#39;colour&#39;: &#39;#fecc5c&#39;,</span>
+<span class="sd">        [{&#39;transparency&#39;: 1, &#39;max&#39;: 1.5, &#39;colour&#39;: &#39;#fecc5c&#39;,</span>
 <span class="sd">          &#39;min&#39;: 0.5, &#39;label&#39;: &#39;Low damage&#39;, &#39;size&#39; : 1},</span>
-<span class="sd">        {&#39;opacity&#39;: 1, &#39;max&#39;: 2.5, &#39;colour&#39;: &#39;#fd8d3c&#39;,</span>
+<span class="sd">        {&#39;transparency&#39;: 55, &#39;max&#39;: 2.5, &#39;colour&#39;: &#39;#fd8d3c&#39;,</span>
 <span class="sd">         &#39;min&#39;: 1.5, &#39;label&#39;: &#39;Medium damage&#39;, &#39;size&#39; : 1},</span>
-<span class="sd">        {&#39;opacity&#39;: 1, &#39;max&#39;: 3.5, &#39;colour&#39;: &#39;#f31a1c&#39;,</span>
+<span class="sd">        {&#39;transparency&#39;: 80, &#39;max&#39;: 3.5, &#39;colour&#39;: &#39;#f31a1c&#39;,</span>
 <span class="sd">         &#39;min&#39;: 2.5, &#39;label&#39;: &#39;High damage&#39;, &#39;size&#39; : 1}]}</span>
 
 <span class="sd">        .. note:: The transparency and size keys are optional. Size applies</span>
 <span class="sd">           to points only.</span>
-<span class="sd">    Output</span>
-<span class="sd">        Sets and saves style for theQgisVectorLayer</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">myTargetField</span> <span class="o">=</span> <span class="n">theStyle</span><span class="p">[</span><span class="s">&#39;target_field&#39;</span><span class="p">]</span>
@@ -197,7 +217,7 @@
         <span class="c"># Convert transparency % to opacity</span>
         <span class="c"># alpha = 0: transparent</span>
         <span class="c"># alpha = 1: opaque</span>
-        <span class="n">alpha</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">myTransparencyPercent</span> <span class="o">/</span> <span class="mi">100</span>
+        <span class="n">alpha</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">myTransparencyPercent</span> <span class="o">/</span> <span class="mf">100.0</span>
         <span class="n">mySymbol</span><span class="o">.</span><span class="n">setAlpha</span><span class="p">(</span><span class="n">alpha</span><span class="p">)</span>
         <span class="n">myRange</span> <span class="o">=</span> <span class="n">QgsRendererRangeV2</span><span class="p">(</span><span class="n">myMin</span><span class="p">,</span>
                                      <span class="n">myMax</span><span class="p">,</span>
@@ -219,16 +239,18 @@
 <span class="sd">    for the passed in layer.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        theQgsRasterLayer: Qgis layer</span>
-<span class="sd">        style: Dictionary of the form as in the example below</span>
+<span class="sd">        * theQgsRasterLayer: QgsRasterLayer</span>
+<span class="sd">        * style: dict - Dictionary of the form as in the example below.</span>
+
+<span class="sd">    Example:</span>
 <span class="sd">        style_classes = [dict(colour=&#39;#38A800&#39;, quantity=2, transparency=0),</span>
-<span class="sd">                         dict(colour=&#39;#38A800&#39;, quantity=5, transparency=1),</span>
-<span class="sd">                         dict(colour=&#39;#79C900&#39;, quantity=10, transparency=1),</span>
-<span class="sd">                         dict(colour=&#39;#CEED00&#39;, quantity=20, transparency=1),</span>
-<span class="sd">                         dict(colour=&#39;#FFCC00&#39;, quantity=50, transparency=1),</span>
-<span class="sd">                         dict(colour=&#39;#FF6600&#39;, quantity=100, transparency=1),</span>
-<span class="sd">                         dict(colour=&#39;#FF0000&#39;, quantity=200, transparency=1),</span>
-<span class="sd">                         dict(colour=&#39;#7A0000&#39;, quantity=300, transparency=1)]</span>
+<span class="sd">                         dict(colour=&#39;#38A800&#39;, quantity=5, transparency=50),</span>
+<span class="sd">                         dict(colour=&#39;#79C900&#39;, quantity=10, transparency=50),</span>
+<span class="sd">                         dict(colour=&#39;#CEED00&#39;, quantity=20, transparency=50),</span>
+<span class="sd">                         dict(colour=&#39;#FFCC00&#39;, quantity=50, transparency=34),</span>
+<span class="sd">                         dict(colour=&#39;#FF6600&#39;, quantity=100, transparency=77),</span>
+<span class="sd">                         dict(colour=&#39;#FF0000&#39;, quantity=200, transparency=24),</span>
+<span class="sd">                         dict(colour=&#39;#7A0000&#39;, quantity=300, transparency=22)]</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        list: RangeList</span>
@@ -251,20 +273,23 @@
 <span class="sd">    for the passed in layer.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        theQgsRasterLayer: Qgis layer</span>
-<span class="sd">        style: Dictionary of the form as in the example below</span>
-<span class="sd">        style_classes = [dict(colour=&#39;#38A800&#39;, quantity=2, transparency=0),</span>
-<span class="sd">                         dict(colour=&#39;#38A800&#39;, quantity=5, transparency=1),</span>
-<span class="sd">                         dict(colour=&#39;#79C900&#39;, quantity=10, transparency=1),</span>
-<span class="sd">                         dict(colour=&#39;#CEED00&#39;, quantity=20, transparency=1),</span>
-<span class="sd">                         dict(colour=&#39;#FFCC00&#39;, quantity=50, transparency=1),</span>
-<span class="sd">                         dict(colour=&#39;#FF6600&#39;, quantity=100, transparency=1),</span>
-<span class="sd">                         dict(colour=&#39;#FF0000&#39;, quantity=200, transparency=1),</span>
-<span class="sd">                         dict(colour=&#39;#7A0000&#39;, quantity=300, transparency=1)]</span>
+<span class="sd">        * theQgsRasterLayer: QgsRasterLayer.</span>
+<span class="sd">        * style: dict - Dictionary of the form as in the example below.</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">        list: RangeList</span>
-<span class="sd">        list: TransparencyList</span>
+<span class="sd">        * list: RangeList</span>
+<span class="sd">        * list: TransparencyList</span>
+
+<span class="sd">    Example:</span>
+
+<span class="sd">        style_classes = [dict(colour=&#39;#38A800&#39;, quantity=2, transparency=0),</span>
+<span class="sd">                         dict(colour=&#39;#38A800&#39;, quantity=5, transparency=50),</span>
+<span class="sd">                         dict(colour=&#39;#79C900&#39;, quantity=10, transparency=50),</span>
+<span class="sd">                         dict(colour=&#39;#CEED00&#39;, quantity=20, transparency=50),</span>
+<span class="sd">                         dict(colour=&#39;#FFCC00&#39;, quantity=50, transparency=34),</span>
+<span class="sd">                         dict(colour=&#39;#FF6600&#39;, quantity=100, transparency=77),</span>
+<span class="sd">                         dict(colour=&#39;#FF0000&#39;, quantity=200, transparency=24),</span>
+<span class="sd">                         dict(colour=&#39;#7A0000&#39;, quantity=300, transparency=22)]</span>
 
 <span class="sd">    .. note:: There is currently a limitation in QGIS in that</span>
 <span class="sd">       pixel transparency values can not be specified in ranges and</span>
@@ -297,6 +322,13 @@
         <span class="k">if</span> <span class="s">&#39;transparency&#39;</span> <span class="ow">in</span> <span class="n">myClass</span><span class="p">:</span>
             <span class="n">myTransparencyPercent</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">myClass</span><span class="p">[</span><span class="s">&#39;transparency&#39;</span><span class="p">])</span>
         <span class="k">if</span> <span class="n">myTransparencyPercent</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="c"># Always assign the transparency to the class&#39; specified quantity</span>
+            <span class="n">myPixel</span> <span class="o">=</span> \
+                    <span class="n">QgsRasterTransparency</span><span class="o">.</span><span class="n">TransparentSingleValuePixel</span><span class="p">()</span>
+            <span class="n">myPixel</span><span class="o">.</span><span class="n">pixelValue</span> <span class="o">=</span> <span class="n">myMax</span>
+            <span class="n">myPixel</span><span class="o">.</span><span class="n">percentTransparent</span> <span class="o">=</span> <span class="n">myTransparencyPercent</span>
+            <span class="n">myTransparencyList</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">myPixel</span><span class="p">)</span>
+
             <span class="c"># Check if range extrema are integers so we know if we can</span>
             <span class="c"># use them to calculate a value range</span>
             <span class="k">if</span> <span class="p">((</span><span class="n">myLastValue</span> <span class="o">==</span> <span class="nb">int</span><span class="p">(</span><span class="n">myLastValue</span><span class="p">))</span> <span class="ow">and</span> <span class="p">(</span><span class="n">myMax</span> <span class="o">==</span> <span class="nb">int</span><span class="p">(</span><span class="n">myMax</span><span class="p">))):</span>
@@ -339,20 +371,23 @@
 <span class="sd">    for the passed in layer.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        theQgsRasterLayer: Qgis layer</span>
-<span class="sd">        style: Dictionary of the form as in the example below</span>
-<span class="sd">        style_classes = [dict(colour=&#39;#38A800&#39;, quantity=2, transparency=0),</span>
-<span class="sd">                         dict(colour=&#39;#38A800&#39;, quantity=5, transparency=1),</span>
-<span class="sd">                         dict(colour=&#39;#79C900&#39;, quantity=10, transparency=1),</span>
-<span class="sd">                         dict(colour=&#39;#CEED00&#39;, quantity=20, transparency=1),</span>
-<span class="sd">                         dict(colour=&#39;#FFCC00&#39;, quantity=50, transparency=1),</span>
-<span class="sd">                         dict(colour=&#39;#FF6600&#39;, quantity=100, transparency=1),</span>
-<span class="sd">                         dict(colour=&#39;#FF0000&#39;, quantity=200, transparency=1),</span>
-<span class="sd">                         dict(colour=&#39;#7A0000&#39;, quantity=300, transparency=1)]</span>
+<span class="sd">        * theQgsRasterLayer: QgsRasterLayer</span>
+<span class="sd">        * style: Dictionary of the form as in the example below.</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">        list: RangeList</span>
-<span class="sd">        list: TransparencyList</span>
+<span class="sd">        * list: RangeList</span>
+<span class="sd">        * list: TransparencyList</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        style_classes = [dict(colour=&#39;#38A800&#39;, quantity=2, transparency=0),</span>
+<span class="sd">                         dict(colour=&#39;#38A800&#39;, quantity=5, transparency=50),</span>
+<span class="sd">                         dict(colour=&#39;#79C900&#39;, quantity=10, transparency=50),</span>
+<span class="sd">                         dict(colour=&#39;#CEED00&#39;, quantity=20, transparency=50),</span>
+<span class="sd">                         dict(colour=&#39;#FFCC00&#39;, quantity=50, transparency=34),</span>
+<span class="sd">                         dict(colour=&#39;#FF6600&#39;, quantity=100, transparency=77),</span>
+<span class="sd">                         dict(colour=&#39;#FF0000&#39;, quantity=200, transparency=24),</span>
+<span class="sd">                         dict(colour=&#39;#7A0000&#39;, quantity=300, transparency=22)]</span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c"># Note imports here to prevent importing on unsupported QGIS versions</span>
     <span class="c"># pylint: disable=E0611</span>
@@ -435,8 +470,7 @@
 <span class="sd">       Translated version of the given string if available, otherwise</span>
 <span class="sd">       the original string.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">myContext</span> <span class="o">=</span> <span class="s">&quot;Utilities&quot;</span>
-    <span class="k">return</span> <span class="n">QCoreApplication</span><span class="o">.</span><span class="n">translate</span><span class="p">(</span><span class="n">myContext</span><span class="p">,</span> <span class="n">theText</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">QCoreApplication</span><span class="o">.</span><span class="n">translate</span><span class="p">(</span><span class="s">&#39;@default&#39;</span><span class="p">,</span> <span class="n">theText</span><span class="p">)</span>
 
 </div>
 <div class="viewcode-block" id="getExceptionWithStacktrace"><a class="viewcode-back" href="../../api-docs/safe_qgis/utilities.html#safe_qgis.utilities.getExceptionWithStacktrace">[docs]</a><span class="k">def</span> <span class="nf">getExceptionWithStacktrace</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">html</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">context</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
@@ -568,25 +602,249 @@
     <span class="n">myVersion</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">myVersion</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">myVersion</span>
 
+
+<span class="c"># TODO: move this to its own file? TS</span></div>
+<div class="viewcode-block" id="QgsLogHandler"><a class="viewcode-back" href="../../api-docs/safe_qgis/utilities.html#safe_qgis.utilities.QgsLogHandler">[docs]</a><span class="k">class</span> <span class="nc">QgsLogHandler</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">Handler</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;A logging handler that will log messages to the QGIS logging console.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="n">logging</span><span class="o">.</span><span class="n">NOTSET</span><span class="p">):</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">Handler</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+
+<div class="viewcode-block" id="QgsLogHandler.emit"><a class="viewcode-back" href="../../api-docs/safe_qgis/utilities.html#safe_qgis.utilities.QgsLogHandler.emit">[docs]</a>    <span class="k">def</span> <span class="nf">emit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">theRecord</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Try to log the message to QGIS if available, otherwise do nothing.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            theRecord: logging record containing whatever info needs to be</span>
+<span class="sd">                logged.</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            None</span>
+<span class="sd">        Raises:</span>
+<span class="sd">            None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="c">#available from qgis 1.8</span>
+            <span class="kn">from</span> <span class="nn">qgis.core</span> <span class="kn">import</span> <span class="n">QgsMessageLog</span>
+            <span class="c"># Check logging.LogRecord properties for lots of other goodies</span>
+            <span class="c"># like line number etc. you can get from the log message.</span>
+            <span class="n">QgsMessageLog</span><span class="o">.</span><span class="n">logMessage</span><span class="p">(</span><span class="n">theRecord</span><span class="o">.</span><span class="n">getMessage</span><span class="p">(),</span> <span class="s">&#39;InaSAFE&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+
+        <span class="k">except</span> <span class="p">(</span><span class="n">MethodUnavailableError</span><span class="p">,</span> <span class="ne">ImportError</span><span class="p">):</span>
+            <span class="k">pass</span>
+
+</div></div>
+<div class="viewcode-block" id="addLoggingHanderOnce"><a class="viewcode-back" href="../../api-docs/safe_qgis/utilities.html#safe_qgis.utilities.addLoggingHanderOnce">[docs]</a><span class="k">def</span> <span class="nf">addLoggingHanderOnce</span><span class="p">(</span><span class="n">theLogger</span><span class="p">,</span> <span class="n">theHandler</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;A helper to add a handler to a logger, ensuring there are no duplicates.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        * theLogger: logging.logger instance</span>
+<span class="sd">        * theHandler: logging.Handler instance to be added. It will not be</span>
+<span class="sd">            added if an instance of that Handler subclass already exists.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        bool: True if the logging handler was added</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        None</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">myClassName</span> <span class="o">=</span> <span class="n">theHandler</span><span class="o">.</span><span class="n">__class__</span><span class="o">.</span><span class="n">__name__</span>
+    <span class="k">for</span> <span class="n">myHandler</span> <span class="ow">in</span> <span class="n">theLogger</span><span class="o">.</span><span class="n">handlers</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">myHandler</span><span class="o">.</span><span class="n">__class__</span><span class="o">.</span><span class="n">__name__</span> <span class="o">==</span> <span class="n">myClassName</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">False</span>
+
+    <span class="n">theLogger</span><span class="o">.</span><span class="n">addHandler</span><span class="p">(</span><span class="n">theHandler</span><span class="p">)</span>
+    <span class="k">return</span> <span class="bp">True</span>
+
 </div>
-<span class="k">def</span> <span class="nf">logOnQgsMessageLog</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="n">tag</span><span class="o">=</span><span class="s">&#39;inaSAFE&#39;</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
-    <span class="k">if</span> <span class="n">qgisVersion</span><span class="p">()</span> <span class="o">&gt;=</span> <span class="mi">10800</span><span class="p">:</span>
-        <span class="c">#available from qgis 1.8</span>
-        <span class="kn">from</span> <span class="nn">qgis.core</span> <span class="kn">import</span> <span class="n">QgsMessageLog</span>
-        <span class="n">QgsMessageLog</span><span class="o">.</span><span class="n">logMessage</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">msg</span><span class="p">),</span> <span class="n">tag</span><span class="p">,</span> <span class="n">level</span><span class="p">)</span>
+<div class="viewcode-block" id="setupLogger"><a class="viewcode-back" href="../../api-docs/safe_qgis/utilities.html#safe_qgis.utilities.setupLogger">[docs]</a><span class="k">def</span> <span class="nf">setupLogger</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Run once when the module is loaded and enable logging</span>
+
+<span class="sd">    Args: None</span>
+
+<span class="sd">    Returns: None</span>
+
+<span class="sd">    Raises: None</span>
+
+<span class="sd">    Borrowed heavily from this:</span>
+<span class="sd">    http://docs.python.org/howto/logging-cookbook.html</span>
+
+<span class="sd">    Use this to first initialise the logger (see safe/__init__.py)::</span>
+
+<span class="sd">       from safe_qgis import utilities</span>
+<span class="sd">       utilities.setupLogger()</span>
+
+<span class="sd">    You would typically only need to do the above once ever as the</span>
+<span class="sd">    safe modle is initialised early and will set up the logger</span>
+<span class="sd">    globally so it is available to all packages / subpackages as</span>
+<span class="sd">    shown below.</span>
+
+<span class="sd">    In a module that wants to do logging then use this example as</span>
+<span class="sd">    a guide to get the initialised logger instance::</span>
+
+<span class="sd">       # The LOGGER is intialised in utilities.py by init</span>
+<span class="sd">       import logging</span>
+<span class="sd">       LOGGER = logging.getLogger(&#39;InaSAFE&#39;)</span>
+
+<span class="sd">    Now to log a message do::</span>
+
+<span class="sd">       LOGGER.debug(&#39;Some debug message&#39;)</span>
+
+<span class="sd">    .. note:: The file logs are written to the inasafe user tmp dir e.g.:</span>
+<span class="sd">       /tmp/inasafe/23-08-2012/timlinux/logs/inasafe.log</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">myLogger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s">&#39;InaSAFE&#39;</span><span class="p">)</span>
+    <span class="n">myLogger</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">DEBUG</span><span class="p">)</span>
+    <span class="n">myDefaultHanderLevel</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">DEBUG</span>
+    <span class="c"># create formatter that will be added to the handlers</span>
+    <span class="n">myFormatter</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">Formatter</span><span class="p">(</span>
+        <span class="s">&#39;</span><span class="si">%(asctime)s</span><span class="s"> - </span><span class="si">%(name)s</span><span class="s"> - </span><span class="si">%(levelname)s</span><span class="s"> - </span><span class="si">%(message)s</span><span class="s">&#39;</span><span class="p">)</span>
+    <span class="c"># create syslog handler which logs even debug messages</span>
+    <span class="c"># (ariel): Make this log to /var/log/safe.log instead of</span>
+    <span class="c">#               /var/log/syslog</span>
+    <span class="c"># (Tim) Ole and I discussed this - we prefer to log into the</span>
+    <span class="c"># user&#39;s temporary working directory.</span>
+    <span class="n">myTempDir</span> <span class="o">=</span> <span class="n">temp_dir</span><span class="p">(</span><span class="s">&#39;logs&#39;</span><span class="p">)</span>
+    <span class="n">myFilename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">myTempDir</span><span class="p">,</span> <span class="s">&#39;inasafe.log&#39;</span><span class="p">)</span>
+    <span class="n">myFileHandler</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">FileHandler</span><span class="p">(</span><span class="n">myFilename</span><span class="p">)</span>
+    <span class="n">myFileHandler</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">myDefaultHanderLevel</span><span class="p">)</span>
+    <span class="c"># create console handler with a higher log level</span>
+    <span class="n">myConsoleHandler</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">StreamHandler</span><span class="p">()</span>
+    <span class="n">myConsoleHandler</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">ERROR</span><span class="p">)</span>
+
+    <span class="n">myQgisHandler</span> <span class="o">=</span> <span class="n">QgsLogHandler</span><span class="p">()</span>
+
+    <span class="c"># TODO: User opt in before we enable email based logging.</span>
+    <span class="c"># Email handler for errors</span>
+    <span class="c">#myEmailServer = &#39;localhost&#39;</span>
+    <span class="c">#myEmailServerPort = 25</span>
+    <span class="c">#mySenderAddress = &#39;logs@inasafe.org&#39;</span>
+    <span class="c">#myRecipientAddresses = [&#39;tim@linfiniti.com&#39;]</span>
+    <span class="c">#mySubject = &#39;Error&#39;</span>
+    <span class="c">#myEmailHandler = logging.handlers.SMTPHandler(</span>
+    <span class="c">#    (myEmailServer, myEmailServerPort),</span>
+    <span class="c">#                                      mySenderAddress,</span>
+    <span class="c">#                                      myRecipientAddresses,</span>
+    <span class="c">#                                      mySubject)</span>
+    <span class="c">#myEmailHandler.setLevel(logging.ERROR)</span>
+
+    <span class="c"># Sentry handler - this is optional hence the localised import</span>
+    <span class="c"># It will only log if pip install raven. If raven is available</span>
+    <span class="c"># logging messages will be sent to http://sentry.linfiniti.com</span>
+    <span class="c"># We will log exceptions only there. Only if you have the env var</span>
+    <span class="c"># &#39;INSAFE_SENTRY=1&#39; present (value can be anything) will this be enabled.</span>
+    <span class="k">if</span> <span class="s">&#39;INASAFE_SENTRY&#39;</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="kn">from</span> <span class="nn">raven.handlers.logging</span> <span class="kn">import</span> <span class="n">SentryHandler</span>
+            <span class="kn">from</span> <span class="nn">raven</span> <span class="kn">import</span> <span class="n">Client</span>
+
+            <span class="n">myClient</span> <span class="o">=</span> <span class="n">Client</span><span class="p">(</span><span class="s">&#39;http://5aee75e47c6740af842b3ef138d3ad33:16160af&#39;</span>
+                              <span class="s">&#39;d794847b98a34e1fde0ed5a8d@sentry.linfiniti.com/&#39;</span>
+                              <span class="s">&#39;4&#39;</span><span class="p">)</span>
+            <span class="n">mySentryHandler</span> <span class="o">=</span> <span class="n">SentryHandler</span><span class="p">(</span><span class="n">myClient</span><span class="p">)</span>
+            <span class="n">mySentryHandler</span><span class="o">.</span><span class="n">setFormatter</span><span class="p">(</span><span class="n">myFormatter</span><span class="p">)</span>
+            <span class="n">mySentryHandler</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">ERROR</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">addLoggingHanderOnce</span><span class="p">(</span><span class="n">myLogger</span><span class="p">,</span> <span class="n">mySentryHandler</span><span class="p">):</span>
+                <span class="n">myLogger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&#39;Sentry logging enabled&#39;</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+            <span class="n">myLogger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&#39;Sentry logging disabled&#39;</span><span class="p">)</span>
+
+    <span class="c">#Set formatters</span>
+    <span class="n">myFileHandler</span><span class="o">.</span><span class="n">setFormatter</span><span class="p">(</span><span class="n">myFormatter</span><span class="p">)</span>
+    <span class="n">myConsoleHandler</span><span class="o">.</span><span class="n">setFormatter</span><span class="p">(</span><span class="n">myFormatter</span><span class="p">)</span>
+    <span class="c">#myEmailHandler.setFormatter(myFormatter)</span>
+    <span class="n">myQgisHandler</span><span class="o">.</span><span class="n">setFormatter</span><span class="p">(</span><span class="n">myFormatter</span><span class="p">)</span>
+
+    <span class="c"># add the handlers to the logger</span>
+    <span class="n">addLoggingHanderOnce</span><span class="p">(</span><span class="n">myLogger</span><span class="p">,</span> <span class="n">myFileHandler</span><span class="p">)</span>
+    <span class="n">addLoggingHanderOnce</span><span class="p">(</span><span class="n">myLogger</span><span class="p">,</span> <span class="n">myConsoleHandler</span><span class="p">)</span>
+    <span class="c">#addLoggingHanderOnce(myLogger, myEmailHandler)</span>
+    <span class="n">addLoggingHanderOnce</span><span class="p">(</span><span class="n">myLogger</span><span class="p">,</span> <span class="n">myQgisHandler</span><span class="p">)</span>
+
+</div>
+<div class="viewcode-block" id="isLayerPolygonal"><a class="viewcode-back" href="../../api-docs/safe_qgis/utilities.html#safe_qgis.utilities.isLayerPolygonal">[docs]</a><span class="k">def</span> <span class="nf">isLayerPolygonal</span><span class="p">(</span><span class="n">theLayer</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;tell if a qgis theLayer is vectorial and d its geometries polygons</span>
+<span class="sd">   Args:</span>
+<span class="sd">       the theLayer</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        bool - true if the theLayer contains polygons</span>
+<span class="sd">    Raises:</span>
+<span class="sd">       None</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">theLayer</span><span class="o">.</span><span class="n">type</span><span class="p">()</span> <span class="o">==</span> <span class="n">QgsMapLayer</span><span class="o">.</span><span class="n">VectorLayer</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span>
+            <span class="n">theLayer</span><span class="o">.</span><span class="n">geometryType</span><span class="p">()</span> <span class="o">==</span> <span class="n">QGis</span><span class="o">.</span><span class="n">Polygon</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">False</span>
+
+</div>
+<div class="viewcode-block" id="getLayerAttributeNames"><a class="viewcode-back" href="../../api-docs/safe_qgis/utilities.html#safe_qgis.utilities.getLayerAttributeNames">[docs]</a><span class="k">def</span> <span class="nf">getLayerAttributeNames</span><span class="p">(</span><span class="n">theLayer</span><span class="p">,</span> <span class="n">theAllowedTypes</span><span class="p">,</span> <span class="n">theCurrentKeyword</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;iterates over self.layer and returns all the attribute names of</span>
+<span class="sd">       attributes that have int or string as field type and the position</span>
+<span class="sd">       of the theCurrentKeyword in the attribute names list</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">       * theAllowedTypes: list(Qvariant) - a list of QVariants types that are</span>
+<span class="sd">            acceptable for the attribute.</span>
+<span class="sd">            e.g.: [QtCore.QVariant.Int, QtCore.QVariant.String]</span>
+<span class="sd">       * theCurrentKeyword - the currently stored keyword for the attribute</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">       * all the attribute names of attributes that have int or string as</span>
+<span class="sd">            field type</span>
+<span class="sd">       * the position of the theCurrentKeyword in the attribute names list,</span>
+<span class="sd">            this is None if theCurrentKeyword is not in the lis of attributes</span>
+<span class="sd">    Raises:</span>
+<span class="sd">       no exceptions explicitly raised</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="n">theLayer</span><span class="o">.</span><span class="n">type</span><span class="p">()</span> <span class="o">==</span> <span class="n">QgsMapLayer</span><span class="o">.</span><span class="n">VectorLayer</span><span class="p">:</span>
+        <span class="n">myProvider</span> <span class="o">=</span> <span class="n">theLayer</span><span class="o">.</span><span class="n">dataProvider</span><span class="p">()</span>
+        <span class="n">myProvider</span> <span class="o">=</span> <span class="n">myProvider</span><span class="o">.</span><span class="n">fields</span><span class="p">()</span>
+        <span class="n">myFields</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">mySelectedIndex</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">myProvider</span><span class="p">:</span>
+            <span class="c"># show only int or string myFields to be chosen as aggregation</span>
+            <span class="c"># attribute other possible would be float</span>
+            <span class="k">if</span> <span class="n">myProvider</span><span class="p">[</span><span class="n">f</span><span class="p">]</span><span class="o">.</span><span class="n">type</span><span class="p">()</span> <span class="ow">in</span> <span class="n">theAllowedTypes</span><span class="p">:</span>
+                <span class="n">myCurrentFieldName</span> <span class="o">=</span> <span class="n">myProvider</span><span class="p">[</span><span class="n">f</span><span class="p">]</span><span class="o">.</span><span class="n">name</span><span class="p">()</span>
+                <span class="n">myFields</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">myCurrentFieldName</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">theCurrentKeyword</span> <span class="o">==</span> <span class="n">myCurrentFieldName</span><span class="p">:</span>
+                    <span class="n">mySelectedIndex</span> <span class="o">=</span> <span class="n">i</span>
+                <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">return</span> <span class="n">myFields</span><span class="p">,</span> <span class="n">mySelectedIndex</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="k">print</span> <span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">msg</span><span class="p">),</span> <span class="n">tag</span><span class="p">,</span> <span class="n">level</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">None</span><span class="p">,</span> <span class="bp">None</span>
 
+</div>
+<div class="viewcode-block" id="getDefaults"><a class="viewcode-back" href="../../api-docs/safe_qgis/utilities.html#safe_qgis.utilities.getDefaults">[docs]</a><span class="k">def</span> <span class="nf">getDefaults</span><span class="p">(</span><span class="n">theDefault</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;returns a dictionary of defaults values to be used</span>
+<span class="sd">        it takes the DEFAULTS from safe and modifies them according to qgis</span>
+<span class="sd">        QSettings</span>
 
-<span class="k">try</span><span class="p">:</span>
-    <span class="c">#available from qgis 1.8</span>
-    <span class="kn">from</span> <span class="nn">qgis.core</span> <span class="kn">import</span> <span class="n">QgsMessageLog</span>
-<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
-    <span class="k">def</span> <span class="nf">logOnQgsMessageLog</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="n">tag</span><span class="o">=</span><span class="s">&#39;inaSAFE&#39;</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
-        <span class="k">print</span> <span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">msg</span><span class="p">),</span> <span class="n">tag</span><span class="p">,</span> <span class="n">level</span><span class="p">)</span>
-<span class="k">else</span><span class="p">:</span>
-    <span class="k">def</span> <span class="nf">logOnQgsMessageLog</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="n">tag</span><span class="o">=</span><span class="s">&#39;inaSAFE&#39;</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
-        <span class="n">QgsMessageLog</span><span class="o">.</span><span class="n">logMessage</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">msg</span><span class="p">),</span> <span class="n">tag</span><span class="p">,</span> <span class="n">level</span><span class="p">)</span>
+<span class="sd">    Args:</span>
+<span class="sd">       * theDefault: a key of the defaults dictionary</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">       * A dictionary of defaults values to be used</span>
+<span class="sd">       * or the default value if a key is passed</span>
+<span class="sd">       * or None if the requested default value is not valid</span>
+<span class="sd">    Raises:</span>
+<span class="sd">       no exceptions explicitly raised</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">mySettings</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">QSettings</span><span class="p">()</span>
+    <span class="n">myDefaults</span> <span class="o">=</span> <span class="n">DEFAULTS</span>
+
+    <span class="n">myDefaults</span><span class="p">[</span><span class="s">&#39;FEM_RATIO&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">mySettings</span><span class="o">.</span><span class="n">value</span><span class="p">(</span>
+        <span class="s">&#39;inasafe/defaultFemaleRatio&#39;</span><span class="p">,</span>
+        <span class="n">DEFAULTS</span><span class="p">[</span><span class="s">&#39;FEM_RATIO&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">toDouble</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="k">if</span> <span class="n">theDefault</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">myDefaults</span>
+    <span class="k">elif</span> <span class="n">theDefault</span> <span class="ow">in</span> <span class="n">myDefaults</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">myDefaults</span><span class="p">[</span><span class="n">theDefault</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">None</span>
 
 
 <span class="c">#def copyInMemory(vLayer, copyName=&#39;&#39;):</span>
@@ -643,95 +901,182 @@
 <span class="c">#    memLayer.commitChanges()</span>
 <span class="c">#</span>
 <span class="c">#    return memLayer</span>
+</div>
+<div class="viewcode-block" id="mmToPoints"><a class="viewcode-back" href="../../api-docs/safe_qgis/utilities.html#safe_qgis.utilities.mmToPoints">[docs]</a><span class="k">def</span> <span class="nf">mmToPoints</span><span class="p">(</span><span class="n">theMM</span><span class="p">,</span> <span class="n">theDpi</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Convert measurement in points to one in mm.</span>
 
+<span class="sd">    Args:</span>
+<span class="sd">        * theMM: int - distance in millimeters</span>
+<span class="sd">        * theDpi: int - dots per inch in the print / display medium</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        mm converted value</span>
+<span class="sd">    Raises:</span>
+<span class="sd">        Any exceptions raised by the InaSAFE library will be propagated.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">myInchAsMM</span> <span class="o">=</span> <span class="mf">25.4</span>
+    <span class="n">myPoints</span> <span class="o">=</span> <span class="p">(</span><span class="n">theMM</span> <span class="o">*</span> <span class="n">theDpi</span><span class="p">)</span> <span class="o">/</span> <span class="n">myInchAsMM</span>
+    <span class="k">return</span> <span class="n">myPoints</span>
 
-<span class="c">#def memoryLayerToShapefile(theFileName,</span>
-<span class="c">#                           theFilePath,</span>
-<span class="c">#                           theMemoryLayer,</span>
-<span class="c">#                           theForceFlag=False,</span>
-<span class="c">#                           mySourceQmlPath=&#39;&#39;):</span>
-<span class="c">#    &quot;&quot;&quot;Write a memory layer to a shapefile.</span>
-<span class="c">#</span>
-<span class="c">#    .. note:: The file will be saved into the theFilePath dir  If a qml</span>
-<span class="c">#        matching theFileName.qml can be found it will automatically copied</span>
-<span class="c">#        over to the output dir.</span>
-<span class="c">#        Any existing shp by the same name will be</span>
-<span class="c">#        overridden if theForceFlag is True, otherwise the existing file will</span>
-<span class="c">#        be returned.</span>
-<span class="c">#</span>
-<span class="c">#    Args:</span>
-<span class="c">#        theFileName: str filename excluding path and ext. e.g. &#39;mmi-cities&#39;</span>
-<span class="c">#        theMemoryLayer: QGIS memory layer instance.</span>
-<span class="c">#        theForceFlag: bool (Optional). Whether to force the overwrite</span>
-<span class="c">#            of any existing data. Defaults to False.</span>
-<span class="c">#        mySourceQmlPath: str (Optional). Copy the qml file</span>
-<span class="c">#        mySourceQmlPath/theFileName.qml to theFilePath.</span>
-<span class="c">#</span>
-<span class="c">#    Returns: str Path to the created shapefile</span>
-<span class="c">#</span>
-<span class="c">#    Raises: ShapefileCreationError</span>
-<span class="c">#    &quot;&quot;&quot;</span>
-<span class="c">#    LOGGER.debug(&#39;memoryLayerToShapefile requested.&#39;)</span>
-<span class="c">#</span>
-<span class="c">#    LOGGER.debug(str(theMemoryLayer.dataProvider().attributeIndexes()))</span>
-<span class="c">#    if theMemoryLayer.featureCount() &lt; 1:</span>
-<span class="c">#        raise ShapefileCreationError(&#39;Memory layer has no features&#39;)</span>
-<span class="c">#</span>
-<span class="c">#    myGeoCrs = QgsCoordinateReferenceSystem()</span>
-<span class="c">#    myGeoCrs.createFromId(4326, QgsCoordinateReferenceSystem.EpsgCrsId)</span>
-<span class="c">#</span>
-<span class="c">#    myOutputFileBase = os.path.join(theFilePath,</span>
-<span class="c">#        &#39;%s.&#39; % theFileName)</span>
-<span class="c">#    myOutputFile = myOutputFileBase + &#39;shp&#39;</span>
-<span class="c">#    if os.path.exists(myOutputFile) and theForceFlag is not True:</span>
-<span class="c">#        return myOutputFile</span>
-<span class="c">#    elif os.path.exists(myOutputFile):</span>
-<span class="c">#        try:</span>
-<span class="c">#            os.remove(myOutputFileBase + &#39;shp&#39;)</span>
-<span class="c">#            os.remove(myOutputFileBase + &#39;shx&#39;)</span>
-<span class="c">#            os.remove(myOutputFileBase + &#39;dbf&#39;)</span>
-<span class="c">#            os.remove(myOutputFileBase + &#39;prj&#39;)</span>
-<span class="c">#        except OSError:</span>
-<span class="c">#            LOGGER.exception(&#39;Old shape files not deleted&#39;</span>
-<span class="c">#                             &#39; - this may indicate a file permissions issue.&#39;)</span>
-<span class="c">#</span>
-<span class="c">#    # Next two lines a workaround for a QGIS bug (lte 1.8)</span>
-<span class="c">#    # preventing mem layer attributes being saved to shp.</span>
-<span class="c">#    theMemoryLayer.startEditing()</span>
-<span class="c">#    theMemoryLayer.commitChanges()</span>
-<span class="c">#</span>
-<span class="c">#    LOGGER.debug(&#39;Writing mem layer to shp: %s&#39; % myOutputFile)</span>
-<span class="c">#    # Explicitly giving all options, not really needed but nice for clarity</span>
-<span class="c">#    myErrorMessage = QtCore.QString()</span>
-<span class="c">#    myOptions = QtCore.QStringList()</span>
-<span class="c">#    myLayerOptions = QtCore.QStringList()</span>
-<span class="c">#    mySelectedOnlyFlag = False</span>
-<span class="c">#    mySkipAttributesFlag = False</span>
-<span class="c">#    myResult = QgsVectorFileWriter.writeAsVectorFormat(</span>
-<span class="c">#        theMemoryLayer,</span>
-<span class="c">#        myOutputFile,</span>
-<span class="c">#        &#39;utf-8&#39;,</span>
-<span class="c">#        myGeoCrs,</span>
-<span class="c">#        &quot;ESRI Shapefile&quot;,</span>
-<span class="c">#        mySelectedOnlyFlag,</span>
-<span class="c">#        myErrorMessage,</span>
-<span class="c">#        myOptions,</span>
-<span class="c">#        myLayerOptions,</span>
-<span class="c">#        mySkipAttributesFlag)</span>
-<span class="c">#</span>
-<span class="c">#    if myResult == QgsVectorFileWriter.NoError:</span>
-<span class="c">#        LOGGER.debug(&#39;Wrote mem layer to shp: %s&#39; % myOutputFile)</span>
-<span class="c">#    else:</span>
-<span class="c">#        raise ShapefileCreationError(</span>
-<span class="c">#            &#39;Failed with error: %s&#39; % myResult)</span>
-<span class="c">#</span>
-<span class="c">#    # Lastly copy over the standard qml (QGIS Style file) for the mmi.tif</span>
-<span class="c">#    if mySourceQmlPath is not &#39;&#39;:</span>
-<span class="c">#        myQmlPath = os.path.join(theFilePath, &#39;%s.qml&#39; % theFileName)</span>
-<span class="c">#        mySourceQml = os.path.join(mySourceQmlPath, &#39;%s.qml&#39; % theFileName)</span>
-<span class="c">#        shutil.copyfile(mySourceQml, myQmlPath)</span>
-<span class="c">#</span>
-<span class="c">#    return myOutputFile</span>
+</div>
+<div class="viewcode-block" id="pointsToMM"><a class="viewcode-back" href="../../api-docs/safe_qgis/utilities.html#safe_qgis.utilities.pointsToMM">[docs]</a><span class="k">def</span> <span class="nf">pointsToMM</span><span class="p">(</span><span class="n">thePoints</span><span class="p">,</span> <span class="n">theDpi</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Convert measurement in points to one in mm.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        * thePoints: int - number of points in display / print medium</span>
+<span class="sd">        * theDpi: int - dots per inch in the print / display medium</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        mm converted value</span>
+<span class="sd">    Raises:</span>
+<span class="sd">        Any exceptions raised by the InaSAFE library will be propagated.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">myInchAsMM</span> <span class="o">=</span> <span class="mf">25.4</span>
+    <span class="n">myMM</span> <span class="o">=</span> <span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">thePoints</span><span class="p">)</span> <span class="o">/</span> <span class="n">theDpi</span><span class="p">)</span> <span class="o">*</span> <span class="n">myInchAsMM</span>
+    <span class="k">return</span> <span class="n">myMM</span>
+
+</div>
+<div class="viewcode-block" id="setupPrinter"><a class="viewcode-back" href="../../api-docs/safe_qgis/utilities.html#safe_qgis.utilities.setupPrinter">[docs]</a><span class="k">def</span> <span class="nf">setupPrinter</span><span class="p">(</span><span class="n">theFilename</span><span class="p">,</span>
+                 <span class="n">theResolution</span><span class="o">=</span><span class="mi">300</span><span class="p">,</span>
+                 <span class="n">thePageHeight</span><span class="o">=</span><span class="mi">297</span><span class="p">,</span>
+                 <span class="n">thePageWidth</span><span class="o">=</span><span class="mi">210</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Create a QPrinter instance defaulted to print to an A4 portrait pdf</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        theFilename - filename for pdf generated using this printer</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        None</span>
+<span class="sd">    Raises:</span>
+<span class="sd">        None</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c">#</span>
+    <span class="c"># Create a printer device (we are &#39;printing&#39; to a pdf</span>
+    <span class="c">#</span>
+    <span class="n">LOGGER</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&#39;InaSAFE Map setupPrinter called&#39;</span><span class="p">)</span>
+    <span class="n">myPrinter</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QPrinter</span><span class="p">()</span>
+    <span class="n">myPrinter</span><span class="o">.</span><span class="n">setOutputFormat</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QPrinter</span><span class="o">.</span><span class="n">PdfFormat</span><span class="p">)</span>
+    <span class="n">myPrinter</span><span class="o">.</span><span class="n">setOutputFileName</span><span class="p">(</span><span class="n">theFilename</span><span class="p">)</span>
+    <span class="n">myPrinter</span><span class="o">.</span><span class="n">setPaperSize</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">QSizeF</span><span class="p">(</span><span class="n">thePageWidth</span><span class="p">,</span> <span class="n">thePageHeight</span><span class="p">),</span>
+                            <span class="n">QtGui</span><span class="o">.</span><span class="n">QPrinter</span><span class="o">.</span><span class="n">Millimeter</span><span class="p">)</span>
+    <span class="n">myPrinter</span><span class="o">.</span><span class="n">setFullPage</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
+    <span class="n">myPrinter</span><span class="o">.</span><span class="n">setColorMode</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QPrinter</span><span class="o">.</span><span class="n">Color</span><span class="p">)</span>
+    <span class="n">myPrinter</span><span class="o">.</span><span class="n">setResolution</span><span class="p">(</span><span class="n">theResolution</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">myPrinter</span>
+
+</div>
+<div class="viewcode-block" id="humaniseSeconds"><a class="viewcode-back" href="../../api-docs/safe_qgis/utilities.html#safe_qgis.utilities.humaniseSeconds">[docs]</a><span class="k">def</span> <span class="nf">humaniseSeconds</span><span class="p">(</span><span class="n">theSeconds</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Utility function to humanise seconds value into e.g. 10 seconds ago.</span>
+
+<span class="sd">    The function will try to make a nice phrase of the seconds count</span>
+<span class="sd">    provided.</span>
+
+<span class="sd">    .. note:: Currently theSeconds that amount to days are not supported.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        theSeconds: int - mandatory seconds value e.g. 1100</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        str: A humanised version of the seconds count.</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        None</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">myDays</span> <span class="o">=</span> <span class="n">theSeconds</span> <span class="o">/</span> <span class="p">(</span><span class="mi">3600</span> <span class="o">*</span> <span class="mi">24</span><span class="p">)</span>
+    <span class="n">myDayModulus</span> <span class="o">=</span> <span class="n">theSeconds</span> <span class="o">%</span> <span class="p">(</span><span class="mi">3600</span> <span class="o">*</span> <span class="mi">24</span><span class="p">)</span>
+    <span class="n">myHours</span> <span class="o">=</span> <span class="n">myDayModulus</span> <span class="o">/</span> <span class="mi">3600</span>
+    <span class="n">myHourModulus</span> <span class="o">=</span> <span class="n">myDayModulus</span> <span class="o">%</span> <span class="mi">3600</span>
+    <span class="n">myMinutes</span> <span class="o">=</span> <span class="n">myHourModulus</span> <span class="o">/</span> <span class="mi">60</span>
+
+    <span class="k">if</span> <span class="n">theSeconds</span> <span class="o">&lt;</span> <span class="mi">60</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">tr</span><span class="p">(</span><span class="s">&#39;</span><span class="si">%i</span><span class="s"> seconds&#39;</span> <span class="o">%</span> <span class="n">theSeconds</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">theSeconds</span> <span class="o">&lt;</span> <span class="mi">120</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">tr</span><span class="p">(</span><span class="s">&#39;a minute&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">theSeconds</span> <span class="o">&lt;</span> <span class="mi">3600</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">tr</span><span class="p">(</span><span class="s">&#39;minutes&#39;</span> <span class="o">%</span> <span class="n">myMinutes</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">theSeconds</span> <span class="o">&lt;</span> <span class="mi">7200</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">tr</span><span class="p">(</span><span class="s">&#39;over an hour&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">theSeconds</span> <span class="o">&lt;</span> <span class="mi">86400</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">tr</span><span class="p">(</span><span class="s">&#39;</span><span class="si">%i</span><span class="s"> hours and </span><span class="si">%i</span><span class="s"> minutes&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">myHours</span><span class="p">,</span> <span class="n">myMinutes</span><span class="p">))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c"># If all else fails...</span>
+        <span class="k">return</span> <span class="n">tr</span><span class="p">(</span><span class="s">&#39;</span><span class="si">%i</span><span class="s"> days, </span><span class="si">%i</span><span class="s"> hours and </span><span class="si">%i</span><span class="s"> minutes&#39;</span> <span class="o">%</span> <span class="p">(</span>
+            <span class="n">myDays</span><span class="p">,</span> <span class="n">myHours</span><span class="p">,</span> <span class="n">myMinutes</span><span class="p">))</span>
+
+</div>
+<div class="viewcode-block" id="impactLayerAttribution"><a class="viewcode-back" href="../../api-docs/safe_qgis/utilities.html#safe_qgis.utilities.impactLayerAttribution">[docs]</a><span class="k">def</span> <span class="nf">impactLayerAttribution</span><span class="p">(</span><span class="n">theKeywords</span><span class="p">,</span> <span class="n">theInaSAFEFlag</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Make a little table for attribution of data sources used in impact.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        * theKeywords: dict{} - a keywords dict for an impact layer.</span>
+<span class="sd">        * theInaSAFEFlag: bool - whether to show a little InaSAFE promotional</span>
+<span class="sd">            text in the attribution output. Defaults to False.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        str: an html snippet containing attribution information for the impact</span>
+<span class="sd">            layer. If no keywords are present or no appropriate keywords are</span>
+<span class="sd">            present, None is returned.</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        None</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">theKeywords</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">None</span>
+    <span class="n">myReport</span> <span class="o">=</span> <span class="s">&#39;&#39;</span>
+    <span class="n">myJoinWords</span> <span class="o">=</span> <span class="s">&#39; - </span><span class="si">%s</span><span class="s"> &#39;</span> <span class="o">%</span> <span class="n">tr</span><span class="p">(</span><span class="s">&#39;sourced from&#39;</span><span class="p">)</span>
+    <span class="n">myHazardDetails</span> <span class="o">=</span> <span class="n">tr</span><span class="p">(</span><span class="s">&#39;Hazard details&#39;</span><span class="p">)</span>
+    <span class="n">myHazardTitleKeyword</span> <span class="o">=</span> <span class="s">&#39;hazard_title&#39;</span>
+    <span class="n">myHazardSourceKeyword</span> <span class="o">=</span> <span class="s">&#39;hazard_source&#39;</span>
+    <span class="n">myExposureDetails</span> <span class="o">=</span> <span class="n">tr</span><span class="p">(</span><span class="s">&#39;Exposure details&#39;</span><span class="p">)</span>
+    <span class="n">myExposureTitleKeyword</span> <span class="o">=</span> <span class="s">&#39;exposure_title&#39;</span>
+    <span class="n">myExposureSourceKeyword</span> <span class="o">=</span> <span class="s">&#39;exposure_source&#39;</span>
+
+    <span class="k">if</span> <span class="n">myHazardTitleKeyword</span> <span class="ow">in</span> <span class="n">theKeywords</span><span class="p">:</span>
+        <span class="c"># We use safe translation infrastructure for this one (rather than Qt)</span>
+        <span class="n">myHazardTitle</span> <span class="o">=</span> <span class="n">safeTr</span><span class="p">(</span><span class="n">theKeywords</span><span class="p">[</span><span class="n">myHazardTitleKeyword</span><span class="p">])</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">myHazardTitle</span> <span class="o">=</span> <span class="n">tr</span><span class="p">(</span><span class="s">&#39;Hazard layer&#39;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">myHazardSourceKeyword</span> <span class="ow">in</span> <span class="n">theKeywords</span><span class="p">:</span>
+        <span class="c"># We use safe translation infrastructure for this one (rather than Qt)</span>
+        <span class="n">myHazardSource</span> <span class="o">=</span> <span class="n">safeTr</span><span class="p">(</span><span class="n">theKeywords</span><span class="p">[</span><span class="n">myHazardSourceKeyword</span><span class="p">])</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">myHazardSource</span> <span class="o">=</span> <span class="n">tr</span><span class="p">(</span><span class="s">&#39;an unknown source&#39;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">myExposureTitleKeyword</span> <span class="ow">in</span> <span class="n">theKeywords</span><span class="p">:</span>
+        <span class="n">myExposureTitle</span> <span class="o">=</span> <span class="n">theKeywords</span><span class="p">[</span><span class="n">myExposureTitleKeyword</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">myExposureTitle</span> <span class="o">=</span> <span class="n">tr</span><span class="p">(</span><span class="s">&#39;Exposure layer&#39;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">myExposureSourceKeyword</span> <span class="ow">in</span> <span class="n">theKeywords</span><span class="p">:</span>
+        <span class="n">myExposureSource</span> <span class="o">=</span> <span class="n">theKeywords</span><span class="p">[</span><span class="n">myExposureSourceKeyword</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">myExposureSource</span> <span class="o">=</span> <span class="n">tr</span><span class="p">(</span><span class="s">&#39;an unknown source&#39;</span><span class="p">)</span>
+
+    <span class="n">myReport</span> <span class="o">+=</span> <span class="p">(</span><span class="s">&#39;&lt;table class=&quot;table table-striped condensed&#39;</span>
+                 <span class="s">&#39; bordered-table&quot;&gt;&#39;</span><span class="p">)</span>
+    <span class="n">myReport</span> <span class="o">+=</span> <span class="s">&#39;&lt;tr&gt;&lt;th&gt;</span><span class="si">%s</span><span class="s">&lt;/th&gt;&lt;/tr&gt;&#39;</span> <span class="o">%</span> <span class="n">myHazardDetails</span>
+    <span class="n">myReport</span> <span class="o">+=</span> <span class="s">&#39;&lt;tr&gt;&lt;td&gt;</span><span class="si">%s%s</span><span class="s"> </span><span class="si">%s</span><span class="s">.&lt;/td&gt;&lt;/tr&gt;&#39;</span> <span class="o">%</span> <span class="p">(</span>
+        <span class="n">myHazardTitle</span><span class="p">,</span>
+        <span class="n">myJoinWords</span><span class="p">,</span>
+        <span class="n">myHazardSource</span><span class="p">)</span>
+
+    <span class="n">myReport</span> <span class="o">+=</span> <span class="s">&#39;&lt;tr&gt;&lt;th&gt;</span><span class="si">%s</span><span class="s">&lt;/th&gt;&lt;/tr&gt;&#39;</span> <span class="o">%</span> <span class="n">myExposureDetails</span>
+    <span class="n">myReport</span> <span class="o">+=</span> <span class="s">&#39;&lt;tr&gt;&lt;td&gt;</span><span class="si">%s%s</span><span class="s"> </span><span class="si">%s</span><span class="s">.&lt;/td&gt;&lt;/tr&gt;&#39;</span> <span class="o">%</span> <span class="p">(</span>
+        <span class="n">myExposureTitle</span><span class="p">,</span>
+        <span class="n">myJoinWords</span><span class="p">,</span>
+        <span class="n">myExposureSource</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">theInaSAFEFlag</span><span class="p">:</span>
+        <span class="n">myReport</span> <span class="o">+=</span> <span class="s">&#39;&lt;tr&gt;&lt;th&gt;</span><span class="si">%s</span><span class="s">&lt;/th&gt;&lt;/tr&gt;&#39;</span> <span class="o">%</span> <span class="n">tr</span><span class="p">(</span><span class="s">&#39;Software notes&#39;</span><span class="p">)</span>
+        <span class="n">myInaSAFEPhrase</span> <span class="o">=</span> <span class="n">tr</span><span class="p">(</span><span class="s">&#39;This report was created using InaSAFE &#39;</span>
+                              <span class="s">&#39;version %1. Visit http://inasafe.org to get &#39;</span>
+                              <span class="s">&#39;your free copy of this software!&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">arg</span><span class="p">(</span>
+                                <span class="n">get_version</span><span class="p">())</span>
+        <span class="n">myInaSAFEPhrase</span> <span class="o">+=</span> <span class="n">tr</span><span class="p">(</span><span class="s">&#39;InaSAFE has been jointly developed by&#39;</span>
+                               <span class="s">&#39; BNPB, AusAid &amp; the World Bank&#39;</span><span class="p">)</span>
+        <span class="n">myReport</span> <span class="o">+=</span> <span class="s">&#39;&lt;tr&gt;&lt;td&gt;</span><span class="si">%s</span><span class="s">&lt;/td&gt;&lt;/tr&gt;&#39;</span> <span class="o">%</span> <span class="n">myInaSAFEPhrase</span>
+
+    <span class="n">myReport</span> <span class="o">+=</span> <span class="s">&#39;&lt;/table&gt;&#39;</span>
+
+    <span class="k">return</span> <span class="n">myReport</span></div>
 </pre></div>
 
           </div>
@@ -745,7 +1090,7 @@
 <div id="searchbox" style="display: none">
   <h3>Quick search</h3>
     <form class="search" action="../../search.html" method="get">
-      <input type="text" name="q" size="18" />
+      <input type="text" name="q" />
       <input type="submit" value="Go" />
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
@@ -780,8 +1125,8 @@
 
     <div class="footer">
         &copy; Copyright 2012, BNPB/AIFDR/GFDRR.
-      Last updated on Oct 20, 2012.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.1.
+      Last updated on Oct 24, 2012.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
     </div>
     <!-- cloud_sptheme 1.3 -->
   </body>

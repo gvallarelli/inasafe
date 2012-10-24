@@ -4,18 +4,21 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
+
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>safe.engine.test_engine &mdash; InaSAFE v0.5.1-final documentation</title>
+    <title>safe.engine.test_engine &mdash; InaSAFE 1.0.1-final documentation</title>
+    
     <link rel="stylesheet" href="../../../_static/cloud.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
-    <link rel="stylesheet" href="../../../http://fonts.googleapis.com/css?family=Noticia+Text|Droid+Sans+Mono" type="text/css" />
+    <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Noticia+Text|Droid+Sans+Mono" type="text/css" />
+    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../',
-        VERSION:     '0.5.1-final',
+        VERSION:     '1.0.1-final',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -27,7 +30,7 @@
     <script type="text/javascript" src="../../../_static/jquery.cookie.js"></script>
     <script type="text/javascript" src="../../../_static/toggle_sections.js"></script>
     <link rel="shortcut icon" href="../../../_static/favicon.ico"/>
-    <link rel="top" title="InaSAFE v0.5.1-final documentation" href="../../../index.html" />
+    <link rel="top" title="InaSAFE 1.0.1-final documentation" href="../../../index.html" />
     <link rel="up" title="Module code" href="../../index.html" /> 
   </head>
   <body>
@@ -77,7 +80,7 @@
 <span class="kn">from</span> <span class="nn">safe.storage.utilities</span> <span class="kn">import</span> <span class="n">DEFAULT_ATTRIBUTE</span>
 
 <span class="kn">from</span> <span class="nn">safe.common.polygon</span> <span class="kn">import</span> <span class="n">separate_points_by_polygon</span>
-<span class="kn">from</span> <span class="nn">safe.common.polygon</span> <span class="kn">import</span> <span class="n">is_inside_polygon</span>
+<span class="kn">from</span> <span class="nn">safe.common.polygon</span> <span class="kn">import</span> <span class="n">is_inside_polygon</span><span class="p">,</span> <span class="n">inside_polygon</span>
 <span class="kn">from</span> <span class="nn">safe.common.polygon</span> <span class="kn">import</span> <span class="n">clip_lines_by_polygon</span><span class="p">,</span> <span class="n">clip_grid_by_polygons</span>
 <span class="kn">from</span> <span class="nn">safe.common.polygon</span> <span class="kn">import</span> <span class="n">line_dictionary_to_geometry</span>
 <span class="kn">from</span> <span class="nn">safe.common.interpolation2d</span> <span class="kn">import</span> <span class="n">interpolate_raster</span>
@@ -86,7 +89,7 @@
 <span class="kn">from</span> <span class="nn">safe.common.utilities</span> <span class="kn">import</span> <span class="n">VerificationError</span><span class="p">,</span> <span class="n">unique_filename</span>
 <span class="kn">from</span> <span class="nn">safe.common.testing</span> <span class="kn">import</span> <span class="n">TESTDATA</span><span class="p">,</span> <span class="n">HAZDATA</span><span class="p">,</span> <span class="n">EXPDATA</span>
 <span class="kn">from</span> <span class="nn">safe.common.exceptions</span> <span class="kn">import</span> <span class="n">InaSAFEError</span>
-<span class="kn">from</span> <span class="nn">safe.impact_functions</span> <span class="kn">import</span> <span class="n">get_plugins</span>
+<span class="kn">from</span> <span class="nn">safe.impact_functions</span> <span class="kn">import</span> <span class="n">get_plugins</span><span class="p">,</span> <span class="n">get_plugin</span>
 
 <span class="c"># These imports are needed for impact function registration - dont remove</span>
 <span class="c"># If any of these get reinstated as &quot;official&quot; public impact functions,</span>
@@ -95,11 +98,13 @@
 <span class="kn">from</span> <span class="nn">impact_functions_for_testing</span> <span class="kn">import</span> <span class="n">empirical_fatality_model</span>
 <span class="kn">from</span> <span class="nn">impact_functions_for_testing</span> <span class="kn">import</span> <span class="n">allen_fatality_model</span>
 <span class="kn">from</span> <span class="nn">impact_functions_for_testing</span> <span class="kn">import</span> <span class="n">unspecific_building_impact_model</span>
+<span class="kn">from</span> <span class="nn">impact_functions_for_testing</span> <span class="kn">import</span> <span class="n">earthquake_impact_on_women</span>
 <span class="kn">from</span> <span class="nn">impact_functions_for_testing</span> <span class="kn">import</span> <span class="n">NEXIS_building_impact_model</span>
 <span class="kn">from</span> <span class="nn">impact_functions_for_testing</span> <span class="kn">import</span> <span class="n">HKV_flood_study</span>
 <span class="kn">from</span> <span class="nn">impact_functions_for_testing</span> <span class="kn">import</span> <span class="n">BNPB_earthquake_guidelines</span>
 <span class="kn">from</span> <span class="nn">impact_functions_for_testing</span> <span class="kn">import</span> <span class="n">general_ashload_impact</span>
 <span class="kn">from</span> <span class="nn">impact_functions_for_testing</span> <span class="kn">import</span> <span class="n">flood_road_impact</span>
+<span class="kn">from</span> <span class="nn">impact_functions_for_testing</span> <span class="kn">import</span> <span class="n">itb_fatality_model_org</span>
 <span class="c"># pylint: enable=W0611</span>
 
 
@@ -248,13 +253,75 @@
         <span class="c"># Name file names for hazard level, exposure and expected fatalities</span>
         <span class="n">hazard_filename</span> <span class="o">=</span> <span class="s">&#39;</span><span class="si">%s</span><span class="s">/itb_test_mmi.asc&#39;</span> <span class="o">%</span> <span class="n">TESTDATA</span>
         <span class="n">exposure_filename</span> <span class="o">=</span> <span class="s">&#39;</span><span class="si">%s</span><span class="s">/itb_test_pop.asc&#39;</span> <span class="o">%</span> <span class="n">TESTDATA</span>
-        <span class="n">fatality_filename</span> <span class="o">=</span> <span class="s">&#39;</span><span class="si">%s</span><span class="s">/itb_test_fat.asc&#39;</span> <span class="o">%</span> <span class="n">TESTDATA</span>
+        <span class="c">#fatality_filename = &#39;%s/itb_test_fat.asc&#39; % TESTDATA</span>
 
         <span class="c"># Calculate impact using API</span>
         <span class="n">H</span> <span class="o">=</span> <span class="n">read_layer</span><span class="p">(</span><span class="n">hazard_filename</span><span class="p">)</span>
         <span class="n">E</span> <span class="o">=</span> <span class="n">read_layer</span><span class="p">(</span><span class="n">exposure_filename</span><span class="p">)</span>
 
         <span class="n">plugin_name</span> <span class="o">=</span> <span class="s">&#39;I T B Fatality Function&#39;</span>
+        <span class="n">plugin_list</span> <span class="o">=</span> <span class="n">get_plugins</span><span class="p">(</span><span class="n">plugin_name</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">plugin_list</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span>
+        <span class="k">assert</span> <span class="n">plugin_list</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">plugin_name</span>
+
+        <span class="n">IF</span> <span class="o">=</span> <span class="n">plugin_list</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="n">plugin_name</span><span class="p">]</span>
+
+        <span class="c"># Call calculation engine</span>
+        <span class="n">impact_layer</span> <span class="o">=</span> <span class="n">calculate_impact</span><span class="p">(</span><span class="n">layers</span><span class="o">=</span><span class="p">[</span><span class="n">H</span><span class="p">,</span> <span class="n">E</span><span class="p">],</span>
+                                        <span class="n">impact_fcn</span><span class="o">=</span><span class="n">IF</span><span class="p">)</span>
+        <span class="n">impact_filename</span> <span class="o">=</span> <span class="n">impact_layer</span><span class="o">.</span><span class="n">get_filename</span><span class="p">()</span>
+
+        <span class="n">I</span> <span class="o">=</span> <span class="n">read_layer</span><span class="p">(</span><span class="n">impact_filename</span><span class="p">)</span>
+        <span class="c">#calculated_result = I.get_data()</span>
+        <span class="c">#print calculated_result.shape</span>
+        <span class="n">keywords</span> <span class="o">=</span> <span class="n">I</span><span class="o">.</span><span class="n">get_keywords</span><span class="p">()</span>
+<span class="c">#        print &quot;keywords&quot;, keywords</span>
+        <span class="n">population</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">keywords</span><span class="p">[</span><span class="s">&#39;total_population&#39;</span><span class="p">])</span>
+        <span class="n">fatalities</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">keywords</span><span class="p">[</span><span class="s">&#39;total_fatalities&#39;</span><span class="p">])</span>
+
+        <span class="c"># Check aggregated values</span>
+        <span class="n">expected_population</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="mf">85424650.</span> <span class="o">/</span> <span class="mi">1000</span><span class="p">))</span> <span class="o">*</span> <span class="mi">1000</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;Expected population was </span><span class="si">%f</span><span class="s">, I got </span><span class="si">%f</span><span class="s">&#39;</span>
+               <span class="o">%</span> <span class="p">(</span><span class="n">expected_population</span><span class="p">,</span> <span class="n">population</span><span class="p">))</span>
+        <span class="k">assert</span> <span class="n">population</span> <span class="o">==</span> <span class="n">expected_population</span><span class="p">,</span> <span class="n">msg</span>
+
+        <span class="n">expected_fatalities</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="mf">40871.3028</span> <span class="o">/</span> <span class="mi">1000</span><span class="p">))</span> <span class="o">*</span> <span class="mi">1000</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;Expected fatalities was </span><span class="si">%f</span><span class="s">, I got </span><span class="si">%f</span><span class="s">&#39;</span>
+               <span class="o">%</span> <span class="p">(</span><span class="n">expected_fatalities</span><span class="p">,</span> <span class="n">fatalities</span><span class="p">))</span>
+        <span class="k">assert</span> <span class="n">numpy</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">fatalities</span><span class="p">,</span> <span class="n">expected_fatalities</span><span class="p">,</span>
+                              <span class="n">rtol</span><span class="o">=</span><span class="mf">1.0e-5</span><span class="p">),</span> <span class="n">msg</span>
+
+        <span class="c"># Check that aggregated number of fatilites is as expected</span>
+        <span class="n">all_numbers</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">sum</span><span class="p">([</span><span class="mf">31.8937368131</span><span class="p">,</span>
+                                     <span class="mf">2539.26369372</span><span class="p">,</span>
+                                     <span class="mf">1688.72362573</span><span class="p">,</span>
+                                     <span class="mf">17174.9261705</span><span class="p">,</span>
+                                     <span class="mf">19436.834531</span><span class="p">]))</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;Aggregated number of fatalities not as expected: </span><span class="si">%i</span><span class="s">&#39;</span>
+               <span class="o">%</span> <span class="n">all_numbers</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">all_numbers</span> <span class="o">==</span> <span class="mi">40871</span><span class="p">,</span> <span class="n">msg</span>
+
+        <span class="n">x</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">all_numbers</span><span class="p">)</span> <span class="o">/</span> <span class="mi">1000</span><span class="p">))</span> <span class="o">*</span> <span class="mi">1000</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s">&#39;Did not find expected fatality value </span><span class="si">%i</span><span class="s"> in summary&#39;</span> <span class="o">%</span> <span class="n">x</span>
+        <span class="k">assert</span> <span class="nb">str</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="ow">in</span> <span class="n">keywords</span><span class="p">[</span><span class="s">&#39;impact_summary&#39;</span><span class="p">],</span> <span class="n">msg</span>
+
+    <span class="k">def</span> <span class="nf">test_ITB_earthquake_fatality_estimation_org</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Fatalities from ground shaking can be computed correctly</span>
+<span class="sd">           using the ITB fatality model (Test data from Hadi Ghasemi).</span>
+
+<span class="sd">           This function is using the original implementation</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c"># Name file names for hazard level, exposure and expected fatalities</span>
+        <span class="n">hazard_filename</span> <span class="o">=</span> <span class="s">&#39;</span><span class="si">%s</span><span class="s">/itb_test_mmi.asc&#39;</span> <span class="o">%</span> <span class="n">TESTDATA</span>
+        <span class="n">exposure_filename</span> <span class="o">=</span> <span class="s">&#39;</span><span class="si">%s</span><span class="s">/itb_test_pop.asc&#39;</span> <span class="o">%</span> <span class="n">TESTDATA</span>
+        <span class="n">fatality_filename</span> <span class="o">=</span> <span class="s">&#39;</span><span class="si">%s</span><span class="s">/itb_test_fat.asc&#39;</span> <span class="o">%</span> <span class="n">TESTDATA</span>
+
+        <span class="c"># Calculate impact using API</span>
+        <span class="n">H</span> <span class="o">=</span> <span class="n">read_layer</span><span class="p">(</span><span class="n">hazard_filename</span><span class="p">)</span>
+        <span class="n">E</span> <span class="o">=</span> <span class="n">read_layer</span><span class="p">(</span><span class="n">exposure_filename</span><span class="p">)</span>
+
+        <span class="n">plugin_name</span> <span class="o">=</span> <span class="s">&#39;I T B Fatality Function Org&#39;</span>
         <span class="n">plugin_list</span> <span class="o">=</span> <span class="n">get_plugins</span><span class="p">(</span><span class="n">plugin_name</span><span class="p">)</span>
         <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">plugin_list</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span>
         <span class="k">assert</span> <span class="n">plugin_list</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">plugin_name</span>
@@ -284,7 +351,7 @@
         <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;Expected fatalities was </span><span class="si">%f</span><span class="s">, I got </span><span class="si">%f</span><span class="s">&#39;</span>
                <span class="o">%</span> <span class="p">(</span><span class="n">expected_fatalities</span><span class="p">,</span> <span class="n">fatalities</span><span class="p">))</span>
         <span class="k">assert</span> <span class="n">numpy</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">fatalities</span><span class="p">,</span> <span class="n">expected_fatalities</span><span class="p">,</span>
-        <span class="n">rtol</span><span class="o">=</span><span class="mf">1.0e-5</span><span class="p">),</span> <span class="n">msg</span>
+                              <span class="n">rtol</span><span class="o">=</span><span class="mf">1.0e-5</span><span class="p">),</span> <span class="n">msg</span>
 
         <span class="c"># Compare with reference data</span>
         <span class="n">F</span> <span class="o">=</span> <span class="n">read_layer</span><span class="p">(</span><span class="n">fatality_filename</span><span class="p">)</span>
@@ -299,10 +366,10 @@
         <span class="c"># Check for expected numbers (from Hadi Ghasemi) in keywords</span>
         <span class="c"># NOTE: Commented out because function no longer needs to return</span>
         <span class="c"># individual exposure numbers.</span>
-        <span class="c">#for population_count in [2649040.0, 50273440.0, 7969610.0,</span>
-        <span class="c">#                         19320620.0, 5211940.0]:</span>
-        <span class="c">#    assert str(int(population_count / 1000)) in \</span>
-        <span class="c">#        keywords[&#39;impact_summary&#39;]</span>
+        <span class="k">for</span> <span class="n">population_count</span> <span class="ow">in</span> <span class="p">[</span><span class="mf">2649040.0</span><span class="p">,</span> <span class="mf">50273440.0</span><span class="p">,</span> <span class="mf">7969610.0</span><span class="p">,</span>
+                                 <span class="mf">19320620.0</span><span class="p">,</span> <span class="mf">5211940.0</span><span class="p">]:</span>
+            <span class="k">assert</span> <span class="nb">str</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">population_count</span> <span class="o">/</span> <span class="mi">1000</span><span class="p">))</span> <span class="ow">in</span> \
+                <span class="n">keywords</span><span class="p">[</span><span class="s">&#39;impact_summary&#39;</span><span class="p">]</span>
 
         <span class="c"># Check that aggregated number of fatilites is as expected</span>
         <span class="n">all_numbers</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">sum</span><span class="p">([</span><span class="mf">31.8937368131</span><span class="p">,</span>
@@ -318,24 +385,12 @@
         <span class="n">msg</span> <span class="o">=</span> <span class="s">&#39;Did not find expected fatality value </span><span class="si">%i</span><span class="s"> in summary&#39;</span> <span class="o">%</span> <span class="n">x</span>
         <span class="k">assert</span> <span class="nb">str</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="ow">in</span> <span class="n">keywords</span><span class="p">[</span><span class="s">&#39;impact_summary&#39;</span><span class="p">],</span> <span class="n">msg</span>
 
-        <span class="c"># Characterisation test of formula for displaced people</span>
-        <span class="c"># This may well change in the future</span>
-        <span class="c">#print keywords[&#39;impact_summary&#39;]</span>
-        <span class="n">exp_disp_val</span> <span class="o">=</span> <span class="s">&#39;14366000&#39;</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;Did not find expected displacement value </span><span class="si">%s</span><span class="s"> in summary&#39;</span>
-               <span class="o">%</span> <span class="n">exp_disp_val</span><span class="p">)</span>
-        <span class="k">assert</span> <span class="n">exp_disp_val</span> <span class="ow">in</span> <span class="n">keywords</span><span class="p">[</span><span class="s">&#39;impact_summary&#39;</span><span class="p">],</span> <span class="n">msg</span>
-
-        <span class="c"># Individual check does not work anymore, because the function</span>
-        <span class="c"># now only returns</span>
-        <span class="c"># the aggregate number of fatalities</span>
-        <span class="c">#for fatality_count in [31.8937368131, 2539.26369372,</span>
-        <span class="c">#                       1688.72362573, 17174.9261705, 19436.834531]:</span>
-        <span class="c">#    x = str(int(fatality_count))</span>
-        <span class="c">#    summary = keywords[&#39;impact_summary&#39;]</span>
-        <span class="c">#    msg = &#39;Expected %s in impact_summary: %s&#39; % (x, summary)</span>
-        <span class="c">#    print x in summary #, msg</span>
-        <span class="c">#    #assert x in summary, msg</span>
+        <span class="k">for</span> <span class="n">fatality_count</span> <span class="ow">in</span> <span class="p">[</span><span class="mf">31.8937368131</span><span class="p">,</span> <span class="mf">2539.26369372</span><span class="p">,</span>
+                               <span class="mf">1688.72362573</span><span class="p">,</span> <span class="mf">17174.9261705</span><span class="p">,</span> <span class="mf">19436.834531</span><span class="p">]:</span>
+            <span class="n">x</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">fatality_count</span><span class="p">))</span>
+            <span class="n">summary</span> <span class="o">=</span> <span class="n">keywords</span><span class="p">[</span><span class="s">&#39;impact_summary&#39;</span><span class="p">]</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s">&#39;Expected </span><span class="si">%s</span><span class="s"> in impact_summary: </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">summary</span><span class="p">)</span>
+            <span class="k">assert</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">summary</span><span class="p">,</span> <span class="n">msg</span>
 
     <span class="k">def</span> <span class="nf">test_earthquake_fatality_estimation_ghasemi</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Fatalities from ground shaking can be computed correctly 2</span>
@@ -541,6 +596,116 @@
 
     <span class="n">test_jakarta_flood_study</span><span class="o">.</span><span class="n">slow</span> <span class="o">=</span> <span class="bp">True</span>
 
+    <span class="k">def</span> <span class="nf">test_volcano_population_evacuation_impact</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Population impact from volcanic hazard is computed correctly</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c"># Name file names for hazard level, exposure and expected fatalities</span>
+        <span class="n">hazard_filename</span> <span class="o">=</span> <span class="s">&#39;</span><span class="si">%s</span><span class="s">/donut.shp&#39;</span> <span class="o">%</span> <span class="n">TESTDATA</span>
+        <span class="n">exposure_filename</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;</span><span class="si">%s</span><span class="s">/pop_merapi_clip.tif&#39;</span> <span class="o">%</span> <span class="n">TESTDATA</span><span class="p">)</span>
+        <span class="c"># Slow</span>
+        <span class="c"># FIXME (Ole): Results are different - check!</span>
+        <span class="c">#exposure_filename = (&#39;%s/population_indonesia_2010_BNPB_BPS.asc&#39;</span>
+        <span class="c">#                     % EXPDATA)</span>
+
+        <span class="c"># Calculate impact using API</span>
+        <span class="n">H</span> <span class="o">=</span> <span class="n">read_layer</span><span class="p">(</span><span class="n">hazard_filename</span><span class="p">)</span>
+        <span class="n">E</span> <span class="o">=</span> <span class="n">read_layer</span><span class="p">(</span><span class="n">exposure_filename</span><span class="p">)</span>
+
+        <span class="n">plugin_name</span> <span class="o">=</span> <span class="s">&#39;Volcano Polygon Hazard Population&#39;</span>
+        <span class="n">IF</span> <span class="o">=</span> <span class="n">get_plugin</span><span class="p">(</span><span class="n">plugin_name</span><span class="p">)</span>
+        <span class="k">print</span> <span class="s">&#39;Calculating&#39;</span>
+        <span class="c"># Call calculation engine</span>
+        <span class="n">impact_layer</span> <span class="o">=</span> <span class="n">calculate_impact</span><span class="p">(</span><span class="n">layers</span><span class="o">=</span><span class="p">[</span><span class="n">H</span><span class="p">,</span> <span class="n">E</span><span class="p">],</span>
+                                        <span class="n">impact_fcn</span><span class="o">=</span><span class="n">IF</span><span class="p">)</span>
+        <span class="n">impact_filename</span> <span class="o">=</span> <span class="n">impact_layer</span><span class="o">.</span><span class="n">get_filename</span><span class="p">()</span>
+
+        <span class="n">I</span> <span class="o">=</span> <span class="n">read_layer</span><span class="p">(</span><span class="n">impact_filename</span><span class="p">)</span>
+
+        <span class="n">keywords</span> <span class="o">=</span> <span class="n">I</span><span class="o">.</span><span class="n">get_keywords</span><span class="p">()</span>
+
+        <span class="c"># Check for expected results:</span>
+        <span class="c">#for value in [&#39;Merapi&#39;, 192055, 56514, 68568, 66971]:</span>
+        <span class="k">for</span> <span class="n">value</span> <span class="ow">in</span> <span class="p">[</span><span class="s">&#39;Merapi&#39;</span><span class="p">,</span> <span class="mi">190000</span><span class="p">,</span> <span class="mi">56000</span><span class="p">,</span> <span class="mi">66000</span><span class="p">,</span> <span class="mi">68000</span><span class="p">]:</span>
+            <span class="n">x</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+            <span class="n">summary</span> <span class="o">=</span> <span class="n">keywords</span><span class="p">[</span><span class="s">&#39;impact_summary&#39;</span><span class="p">]</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;Did not find expected value </span><span class="si">%s</span><span class="s"> in summary </span><span class="si">%s</span><span class="s">&#39;</span>
+                   <span class="o">%</span> <span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">summary</span><span class="p">))</span>
+            <span class="k">assert</span> <span class="nb">str</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="ow">in</span> <span class="n">summary</span><span class="p">,</span> <span class="n">msg</span>
+
+        <span class="c"># FIXME (Ole): Should also have test for concentric circle</span>
+        <span class="c">#              evacuation zones</span>
+
+    <span class="c"># This one currently fails because the clipped input data has</span>
+    <span class="c"># different resolution to the full data. Issue #344</span>
+    <span class="c">#</span>
+    <span class="c"># This test is not finished, but must wait &#39;till #344 has been sorted</span>
+    <span class="nd">@unittest.expectedFailure</span>
+    <span class="k">def</span> <span class="nf">test_polygon_hazard_raster_exposure_clipped_grids</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Rasters clipped by polygons irrespective of pre-clipping</span>
+
+<span class="sd">        Double check that a raster clipped by the QGIS front-end</span>
+<span class="sd">        produces the same results as when full raster is used.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c"># Read test files</span>
+        <span class="n">hazard_filename</span> <span class="o">=</span> <span class="s">&#39;</span><span class="si">%s</span><span class="s">/donut.shp&#39;</span> <span class="o">%</span> <span class="n">TESTDATA</span>
+        <span class="n">exposure_filename_clip</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;</span><span class="si">%s</span><span class="s">/pop_merapi_clip.tif&#39;</span> <span class="o">%</span> <span class="n">TESTDATA</span><span class="p">)</span>
+        <span class="n">exposure_filename_full</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;</span><span class="si">%s</span><span class="s">/pop_merapi_prj_problem.asc&#39;</span>
+                                  <span class="o">%</span> <span class="n">EXPDATA</span><span class="p">)</span>
+
+        <span class="n">H</span> <span class="o">=</span> <span class="n">read_layer</span><span class="p">(</span><span class="n">hazard_filename</span><span class="p">)</span>
+        <span class="n">E_clip</span> <span class="o">=</span> <span class="n">read_layer</span><span class="p">(</span><span class="n">exposure_filename_clip</span><span class="p">)</span>
+        <span class="n">E_full</span> <span class="o">=</span> <span class="n">read_layer</span><span class="p">(</span><span class="n">exposure_filename_full</span><span class="p">)</span>
+
+        <span class="c"># Establish whether full and clipped grids coincide</span>
+        <span class="c"># in clipped area</span>
+        <span class="n">gt_clip</span> <span class="o">=</span> <span class="n">E_clip</span><span class="o">.</span><span class="n">get_geotransform</span><span class="p">()</span>
+        <span class="n">gt_full</span> <span class="o">=</span> <span class="n">E_full</span><span class="o">.</span><span class="n">get_geotransform</span><span class="p">()</span>
+
+        <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;Resolutions were different. Geotransform full grid: </span><span class="si">%s</span><span class="s">, &#39;</span>
+               <span class="s">&#39;clipped grid: </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">gt_full</span><span class="p">,</span> <span class="n">gt_clip</span><span class="p">))</span>
+        <span class="k">assert</span> <span class="n">numpy</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">gt_clip</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">gt_full</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span> <span class="n">msg</span>
+        <span class="k">assert</span> <span class="n">numpy</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">gt_clip</span><span class="p">[</span><span class="mi">5</span><span class="p">],</span> <span class="n">gt_full</span><span class="p">[</span><span class="mi">5</span><span class="p">]),</span> <span class="n">msg</span>
+
+        <span class="n">polygons</span> <span class="o">=</span> <span class="n">H</span><span class="o">.</span><span class="n">get_geometry</span><span class="p">(</span><span class="n">as_geometry_objects</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+
+        <span class="c"># Clip</span>
+        <span class="n">res_clip</span> <span class="o">=</span> <span class="n">clip_grid_by_polygons</span><span class="p">(</span><span class="n">E_clip</span><span class="o">.</span><span class="n">get_data</span><span class="p">(),</span>
+                                         <span class="n">E_clip</span><span class="o">.</span><span class="n">get_geotransform</span><span class="p">(),</span>
+                                         <span class="n">polygons</span><span class="p">)</span>
+
+        <span class="c">#print res_clip</span>
+        <span class="c">#print len(res_clip)</span>
+
+        <span class="n">res_full</span> <span class="o">=</span> <span class="n">clip_grid_by_polygons</span><span class="p">(</span><span class="n">E_full</span><span class="o">.</span><span class="n">get_data</span><span class="p">(),</span>
+                                         <span class="n">E_full</span><span class="o">.</span><span class="n">get_geotransform</span><span class="p">(),</span>
+                                         <span class="n">polygons</span><span class="p">)</span>
+
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">res_clip</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">res_full</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">res_clip</span><span class="p">)):</span>
+            <span class="c">#print</span>
+            <span class="n">x</span> <span class="o">=</span> <span class="n">res_clip</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">y</span> <span class="o">=</span> <span class="n">res_full</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+
+            <span class="c">#print x</span>
+            <span class="c">#print y</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;Got len(x) == </span><span class="si">%i</span><span class="s">, len(y) == </span><span class="si">%i</span><span class="s">. Should be the same&#39;</span>
+                   <span class="o">%</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">y</span><span class="p">)))</span>
+            <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">y</span><span class="p">),</span> <span class="n">msg</span>
+
+            <span class="c"># Check that they are inside the respective polygon</span>
+            <span class="n">P</span> <span class="o">=</span> <span class="n">polygons</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="n">idx</span> <span class="o">=</span> <span class="n">inside_polygon</span><span class="p">(</span><span class="n">x</span><span class="p">,</span>  <span class="c"># pylint: disable=W0612</span>
+                                 <span class="n">P</span><span class="o">.</span><span class="n">outer_ring</span><span class="p">,</span>
+                                 <span class="n">holes</span><span class="o">=</span><span class="n">P</span><span class="o">.</span><span class="n">inner_rings</span><span class="p">)</span>
+            <span class="c">#print idx</span>
+
+            <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;Expected point locations to be the same in clipped &#39;</span>
+                   <span class="s">&#39;and full grids, Got </span><span class="si">%s</span><span class="s"> and </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">))</span>
+            <span class="k">assert</span> <span class="n">numpy</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+
     <span class="k">def</span> <span class="nf">test_polygon_hazard_and_raster_exposure_big</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Rasters can be converted to points and clipped by polygons</span>
 
@@ -574,7 +739,7 @@
         <span class="c">#t0 = time.time()</span>
         <span class="n">res</span> <span class="o">=</span> <span class="n">clip_grid_by_polygons</span><span class="p">(</span><span class="n">E</span><span class="o">.</span><span class="n">get_data</span><span class="p">(),</span>
                                     <span class="n">E</span><span class="o">.</span><span class="n">get_geotransform</span><span class="p">(),</span>
-                                    <span class="n">H</span><span class="o">.</span><span class="n">get_geometry</span><span class="p">())</span>
+                                    <span class="n">H</span><span class="o">.</span><span class="n">get_geometry</span><span class="p">(</span><span class="n">as_geometry_objects</span><span class="o">=</span><span class="bp">True</span><span class="p">))</span>
         <span class="c">#print &#39;Engine took %i seconds&#39; % (time.time() - t0)</span>
 
         <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">res</span><span class="p">)</span> <span class="o">==</span> <span class="n">N</span>
@@ -662,8 +827,8 @@
 
         <span class="c"># Run underlying clipping routine</span>
         <span class="n">res0</span> <span class="o">=</span> <span class="n">clip_grid_by_polygons</span><span class="p">(</span><span class="n">E</span><span class="o">.</span><span class="n">get_data</span><span class="p">(),</span>
-                                    <span class="n">E</span><span class="o">.</span><span class="n">get_geotransform</span><span class="p">(),</span>
-                                    <span class="n">H</span><span class="o">.</span><span class="n">get_geometry</span><span class="p">())</span>
+                                     <span class="n">E</span><span class="o">.</span><span class="n">get_geotransform</span><span class="p">(),</span>
+                                     <span class="n">H</span><span class="o">.</span><span class="n">get_geometry</span><span class="p">(</span><span class="n">as_geometry_objects</span><span class="o">=</span><span class="bp">True</span><span class="p">))</span>
         <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">res0</span><span class="p">)</span> <span class="o">==</span> <span class="n">N</span>
 
         <span class="c"># Run higher level interpolation routine</span>
@@ -739,6 +904,56 @@
         <span class="k">assert</span> <span class="n">numpy</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">attributes</span><span class="p">[</span><span class="mi">23</span><span class="p">][</span><span class="s">&#39;grid_value&#39;</span><span class="p">],</span> <span class="mf">50.0377</span><span class="p">)</span>
         <span class="k">assert</span> <span class="n">attributes</span><span class="p">[</span><span class="mi">23</span><span class="p">][</span><span class="s">&#39;polygon_id&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">3</span>
 
+    <span class="k">def</span> <span class="nf">test_polygon_hazard_with_holes_and_raster_exposure</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Rasters can be clipped by polygons (with holes)</span>
+
+<span class="sd">        This is testing that a collection of polygons - some with holes -</span>
+<span class="sd">        can correctly clip and tag raster points.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c"># Name input files</span>
+        <span class="n">polyhazard</span> <span class="o">=</span> <span class="n">join</span><span class="p">(</span><span class="n">TESTDATA</span><span class="p">,</span> <span class="s">&#39;donut.shp&#39;</span><span class="p">)</span>
+        <span class="n">population</span> <span class="o">=</span> <span class="n">join</span><span class="p">(</span><span class="n">TESTDATA</span><span class="p">,</span> <span class="s">&#39;pop_merapi_clip.tif&#39;</span><span class="p">)</span>
+
+        <span class="c"># Get layers using API</span>
+        <span class="n">H</span> <span class="o">=</span> <span class="n">read_layer</span><span class="p">(</span><span class="n">polyhazard</span><span class="p">)</span>
+        <span class="n">E</span> <span class="o">=</span> <span class="n">read_layer</span><span class="p">(</span><span class="n">population</span><span class="p">)</span>
+
+        <span class="n">N</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">H</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">N</span> <span class="o">==</span> <span class="mi">10</span>
+
+        <span class="c"># Characterisation test</span>
+        <span class="k">assert</span> <span class="n">H</span><span class="o">.</span><span class="n">get_data</span><span class="p">()[</span><span class="mi">9</span><span class="p">][</span><span class="s">&#39;KRB&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;Kawasan Rawan Bencana II&#39;</span>
+
+        <span class="c"># Then run and test the high level interpolation function</span>
+        <span class="n">P</span> <span class="o">=</span> <span class="n">interpolate_polygon_raster</span><span class="p">(</span><span class="n">H</span><span class="p">,</span> <span class="n">E</span><span class="p">,</span>
+                                       <span class="n">layer_name</span><span class="o">=</span><span class="s">&#39;poly2raster_test&#39;</span><span class="p">,</span>
+                                       <span class="n">attribute_name</span><span class="o">=</span><span class="s">&#39;grid_value&#39;</span><span class="p">)</span>
+
+        <span class="c"># Possibly write result to file for visual inspection, e.g. with QGIS</span>
+        <span class="c">#P.write_to_file(&#39;polygon_raster_interpolation_example_holes.shp&#39;)</span>
+
+        <span class="c"># Characterisation tests (values verified using QGIS)</span>
+        <span class="c"># In internal polygon</span>
+        <span class="n">attributes</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">get_data</span><span class="p">()[</span><span class="mi">43</span><span class="p">]</span>
+        <span class="c">#geometry = P.get_geometry()[43]</span>
+        <span class="k">assert</span> <span class="n">attributes</span><span class="p">[</span><span class="s">&#39;KRB&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;Kawasan Rawan Bencana III&#39;</span>
+        <span class="k">assert</span> <span class="n">attributes</span><span class="p">[</span><span class="s">&#39;polygon_id&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">8</span>
+
+        <span class="c"># In polygon ring</span>
+        <span class="n">attributes</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">get_data</span><span class="p">()[</span><span class="mi">222</span><span class="p">]</span>
+        <span class="c">#geometry = P.get_geometry()[222]</span>
+        <span class="k">assert</span> <span class="n">attributes</span><span class="p">[</span><span class="s">&#39;KRB&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;Kawasan Rawan Bencana II&#39;</span>
+        <span class="k">assert</span> <span class="n">attributes</span><span class="p">[</span><span class="s">&#39;polygon_id&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">9</span>
+
+        <span class="c"># In one of the outer polygons</span>
+        <span class="n">attributes</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">get_data</span><span class="p">()[</span><span class="mi">26</span><span class="p">]</span>
+        <span class="c">#geometry = P.get_geometry()[26]</span>
+        <span class="k">assert</span> <span class="n">attributes</span><span class="p">[</span><span class="s">&#39;KRB&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;Kawasan Rawan Bencana I&#39;</span>
+        <span class="k">assert</span> <span class="n">attributes</span><span class="p">[</span><span class="s">&#39;polygon_id&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">4</span>
+
+    <span class="n">test_polygon_hazard_with_holes_and_raster_exposure</span><span class="o">.</span><span class="n">slow</span> <span class="o">=</span> <span class="bp">False</span>
+
     <span class="k">def</span> <span class="nf">test_flood_building_impact_function</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Flood building impact function works</span>
 
@@ -779,6 +994,44 @@
             <span class="c"># FIXME (Ole): check more numbers</span>
 
     <span class="n">test_flood_building_impact_function</span><span class="o">.</span><span class="n">slow</span> <span class="o">=</span> <span class="bp">True</span>
+
+    <span class="k">def</span> <span class="nf">test_data_sources_are_carried_forward</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Data sources are carried forward to impact layer</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">haz_filename</span> <span class="o">=</span> <span class="s">&#39;Flood_Current_Depth_Jakarta_geographic.asc&#39;</span>
+
+        <span class="c"># File names for hazard level and exposure</span>
+        <span class="n">hazard_filename</span> <span class="o">=</span> <span class="s">&#39;</span><span class="si">%s</span><span class="s">/</span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">HAZDATA</span><span class="p">,</span> <span class="n">haz_filename</span><span class="p">)</span>
+        <span class="n">exposure_filename</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;</span><span class="si">%s</span><span class="s">/OSM_building_polygons_20110905.shp&#39;</span>
+                             <span class="o">%</span> <span class="n">TESTDATA</span><span class="p">)</span>
+
+        <span class="c"># Calculate impact using API</span>
+        <span class="n">H</span> <span class="o">=</span> <span class="n">read_layer</span><span class="p">(</span><span class="n">hazard_filename</span><span class="p">)</span>
+        <span class="n">E</span> <span class="o">=</span> <span class="n">read_layer</span><span class="p">(</span><span class="n">exposure_filename</span><span class="p">)</span>
+
+        <span class="n">H_tit</span> <span class="o">=</span> <span class="n">H</span><span class="o">.</span><span class="n">get_keywords</span><span class="p">()[</span><span class="s">&#39;title&#39;</span><span class="p">]</span>
+        <span class="n">E_tit</span> <span class="o">=</span> <span class="n">E</span><span class="o">.</span><span class="n">get_keywords</span><span class="p">()[</span><span class="s">&#39;title&#39;</span><span class="p">]</span>
+
+        <span class="n">H_src</span> <span class="o">=</span> <span class="n">H</span><span class="o">.</span><span class="n">get_keywords</span><span class="p">()[</span><span class="s">&#39;source&#39;</span><span class="p">]</span>
+        <span class="n">E_src</span> <span class="o">=</span> <span class="n">E</span><span class="o">.</span><span class="n">get_keywords</span><span class="p">()[</span><span class="s">&#39;source&#39;</span><span class="p">]</span>
+
+        <span class="n">plugin_name</span> <span class="o">=</span> <span class="s">&#39;FloodBuildingImpactFunction&#39;</span>
+        <span class="n">plugin_list</span> <span class="o">=</span> <span class="n">get_plugins</span><span class="p">(</span><span class="n">plugin_name</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">plugin_list</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span>
+        <span class="k">assert</span> <span class="n">plugin_list</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">plugin_name</span>
+
+        <span class="n">IF</span> <span class="o">=</span> <span class="n">plugin_list</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="n">plugin_name</span><span class="p">]</span>
+
+        <span class="n">impact_vector</span> <span class="o">=</span> <span class="n">calculate_impact</span><span class="p">(</span><span class="n">layers</span><span class="o">=</span><span class="p">[</span><span class="n">H</span><span class="p">,</span> <span class="n">E</span><span class="p">],</span>
+                                         <span class="n">impact_fcn</span><span class="o">=</span><span class="n">IF</span><span class="p">)</span>
+
+        <span class="k">assert</span> <span class="n">impact_vector</span><span class="o">.</span><span class="n">get_keywords</span><span class="p">()[</span><span class="s">&#39;hazard_title&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">H_tit</span>
+        <span class="k">assert</span> <span class="n">impact_vector</span><span class="o">.</span><span class="n">get_keywords</span><span class="p">()[</span><span class="s">&#39;exposure_title&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">E_tit</span>
+        <span class="k">assert</span> <span class="n">impact_vector</span><span class="o">.</span><span class="n">get_keywords</span><span class="p">()[</span><span class="s">&#39;hazard_source&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">H_src</span>
+        <span class="k">assert</span> <span class="n">impact_vector</span><span class="o">.</span><span class="n">get_keywords</span><span class="p">()[</span><span class="s">&#39;exposure_source&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">E_src</span>
+
+    <span class="n">test_data_sources_are_carried_forward</span><span class="o">.</span><span class="n">slow</span> <span class="o">=</span> <span class="bp">True</span>
 
     <span class="k">def</span> <span class="nf">test_earthquake_damage_schools</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Lembang building damage from ground shaking works</span>
@@ -995,24 +1248,30 @@
         <span class="c"># Do interpolation using underlying library</span>
         <span class="c"># This was to debug this test failing under Windows</span>
         <span class="n">I</span> <span class="o">=</span> <span class="n">interpolate_raster_vector_points</span><span class="p">(</span><span class="n">H</span><span class="p">,</span> <span class="n">E</span><span class="p">)</span>
+        <span class="n">key</span> <span class="o">=</span> <span class="s">&#39;Tsunami Ma&#39;</span>
+
         <span class="k">for</span> <span class="n">feature</span> <span class="ow">in</span> <span class="n">I</span><span class="o">.</span><span class="n">get_data</span><span class="p">():</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;</span><span class="si">%s</span><span class="s"> not found in field list:</span><span class="se">\n</span><span class="si">%s</span><span class="s">&#39;</span>
+                   <span class="o">%</span> <span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">feature</span><span class="o">.</span><span class="n">keys</span><span class="p">())))</span>
+            <span class="k">assert</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">feature</span><span class="o">.</span><span class="n">keys</span><span class="p">(),</span> <span class="n">msg</span>
             <span class="k">if</span> <span class="p">(</span><span class="n">feature</span><span class="p">[</span><span class="s">&#39;LONGITUDE&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mf">150.1787</span> <span class="ow">and</span>
                 <span class="n">feature</span><span class="p">[</span><span class="s">&#39;LATITUDE&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="o">-</span><span class="mf">35.70413</span><span class="p">):</span>
-                <span class="k">assert</span> <span class="n">numpy</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">feature</span><span class="p">[</span><span class="s">&#39;Tsunami Max Inundation Geo&#39;</span><span class="p">])</span>
+                <span class="n">msg</span> <span class="o">=</span> <span class="s">&#39;&#39;</span>
+                <span class="k">assert</span> <span class="n">numpy</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">feature</span><span class="p">[</span><span class="n">key</span><span class="p">])</span>
             <span class="k">elif</span> <span class="p">(</span><span class="n">feature</span><span class="p">[</span><span class="s">&#39;LONGITUDE&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mf">150.1793</span> <span class="ow">and</span>
                   <span class="n">feature</span><span class="p">[</span><span class="s">&#39;LATITUDE&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="o">-</span><span class="mf">35.70632</span><span class="p">):</span>
-                <span class="k">assert</span> <span class="n">numpy</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">feature</span><span class="p">[</span><span class="s">&#39;Tsunami Max Inundation Geo&#39;</span><span class="p">])</span>
+                <span class="k">assert</span> <span class="n">numpy</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">feature</span><span class="p">[</span><span class="n">key</span><span class="p">])</span>
             <span class="k">elif</span> <span class="p">(</span><span class="n">feature</span><span class="p">[</span><span class="s">&#39;LONGITUDE&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mf">150.18208</span> <span class="ow">and</span>
                   <span class="n">feature</span><span class="p">[</span><span class="s">&#39;LATITUDE&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="o">-</span><span class="mf">35.70996</span><span class="p">):</span>
-                <span class="k">assert</span> <span class="n">numpy</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">feature</span><span class="p">[</span><span class="s">&#39;Tsunami Max Inundation Geo&#39;</span><span class="p">])</span>
+                <span class="k">assert</span> <span class="n">numpy</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">feature</span><span class="p">[</span><span class="n">key</span><span class="p">])</span>
             <span class="k">elif</span> <span class="p">(</span><span class="n">feature</span><span class="p">[</span><span class="s">&#39;LONGITUDE&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mf">150.18664</span> <span class="ow">and</span>
                   <span class="n">feature</span><span class="p">[</span><span class="s">&#39;LATITUDE&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="o">-</span><span class="mf">35.70253</span><span class="p">):</span>
-                <span class="k">assert</span> <span class="n">numpy</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">feature</span><span class="p">[</span><span class="s">&#39;Tsunami Max Inundation Geo&#39;</span><span class="p">])</span>
+                <span class="k">assert</span> <span class="n">numpy</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">feature</span><span class="p">[</span><span class="n">key</span><span class="p">])</span>
             <span class="k">elif</span> <span class="p">(</span><span class="n">feature</span><span class="p">[</span><span class="s">&#39;LONGITUDE&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mf">150.18487</span> <span class="ow">and</span>
                   <span class="n">feature</span><span class="p">[</span><span class="s">&#39;LATITUDE&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="o">-</span><span class="mf">35.70561</span><span class="p">):</span>
-                <span class="k">assert</span> <span class="n">numpy</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">feature</span><span class="p">[</span><span class="s">&#39;Tsunami Max Inundation Geo&#39;</span><span class="p">])</span>
+                <span class="k">assert</span> <span class="n">numpy</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">feature</span><span class="p">[</span><span class="n">key</span><span class="p">])</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="k">assert</span> <span class="ow">not</span> <span class="n">numpy</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">feature</span><span class="p">[</span><span class="s">&#39;Tsunami Max Inundation Geo&#39;</span><span class="p">])</span>
+                <span class="k">assert</span> <span class="ow">not</span> <span class="n">numpy</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">feature</span><span class="p">[</span><span class="n">key</span><span class="p">])</span>
 
         <span class="c"># Run main test</span>
         <span class="n">plugin_name</span> <span class="o">=</span> <span class="s">&#39;Tsunami Building Loss Function&#39;</span>
@@ -1334,9 +1593,9 @@
         <span class="k">assert</span> <span class="n">numpy</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">AA</span><span class="p">,</span> <span class="n">A</span><span class="p">),</span> <span class="n">msg</span>
 
         <span class="c"># Test interpolation function with default layer_name</span>
-        <span class="c">#I = R.interpolate(V, attribute_name=&#39;value&#39;)</span>
         <span class="n">I</span> <span class="o">=</span> <span class="n">assign_hazard_values_to_exposure_data</span><span class="p">(</span><span class="n">R</span><span class="p">,</span> <span class="n">V</span><span class="p">,</span> <span class="n">attribute_name</span><span class="o">=</span><span class="s">&#39;value&#39;</span><span class="p">)</span>
-        <span class="k">assert</span> <span class="n">V</span><span class="o">.</span><span class="n">get_name</span><span class="p">()</span> <span class="o">==</span> <span class="n">I</span><span class="o">.</span><span class="n">get_name</span><span class="p">()</span>
+        <span class="c">#msg = &#39;Got name %s, expected %s&#39; % (I.get_name(), V.get_name())</span>
+        <span class="c">#assert V.get_name() == I.get_name(), msg</span>
 
         <span class="n">Icoordinates</span> <span class="o">=</span> <span class="n">I</span><span class="o">.</span><span class="n">get_geometry</span><span class="p">()</span>
         <span class="n">Iattributes</span> <span class="o">=</span> <span class="n">I</span><span class="o">.</span><span class="n">get_data</span><span class="p">()</span>
@@ -1422,9 +1681,14 @@
 
                 <span class="n">Ival</span> <span class="o">=</span> <span class="n">Iattributes</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">key</span><span class="p">]</span>
                 <span class="n">val</span> <span class="o">=</span> <span class="n">attributes</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">key</span><span class="p">]</span>
+
                 <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;Interpolated attribute </span><span class="si">%s</span><span class="s"> did not have the &#39;</span>
                        <span class="s">&#39;expected value </span><span class="si">%s</span><span class="s">. I got </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">val</span><span class="p">,</span> <span class="n">Ival</span><span class="p">))</span>
-                <span class="k">assert</span> <span class="n">Ival</span> <span class="o">==</span> <span class="n">val</span><span class="p">,</span> <span class="n">msg</span>
+
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="k">assert</span> <span class="n">Ival</span> <span class="o">==</span> <span class="n">val</span><span class="p">,</span> <span class="n">msg</span>
+                <span class="k">except</span> <span class="ne">AssertionError</span><span class="p">:</span>
+                    <span class="k">assert</span> <span class="n">numpy</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">Ival</span><span class="p">,</span> <span class="n">val</span><span class="p">,</span> <span class="n">rtol</span><span class="o">=</span><span class="mf">1.0e-6</span><span class="p">),</span> <span class="n">msg</span>
 
     <span class="n">test_interpolation_lembang</span><span class="o">.</span><span class="n">slow</span> <span class="o">=</span> <span class="bp">True</span>
 
@@ -1628,7 +1892,8 @@
                                                   <span class="n">attribute_name</span><span class="o">=</span><span class="bp">None</span><span class="p">)</span>
 
         <span class="n">I_attributes</span> <span class="o">=</span> <span class="n">I</span><span class="o">.</span><span class="n">get_data</span><span class="p">()</span>
-        <span class="k">assert</span> <span class="n">I</span><span class="o">.</span><span class="n">get_name</span><span class="p">()</span> <span class="o">==</span> <span class="s">&#39;depth&#39;</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s">&#39;Expected &quot;depth&quot;, got </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="n">I</span><span class="o">.</span><span class="n">get_name</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="n">I</span><span class="o">.</span><span class="n">get_name</span><span class="p">()</span> <span class="o">==</span> <span class="s">&#39;depth&#39;</span><span class="p">,</span> <span class="n">msg</span>
 
         <span class="n">N</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">I_attributes</span><span class="p">)</span>
         <span class="k">assert</span> <span class="n">N</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">E_attributes</span><span class="p">)</span>
@@ -1722,7 +1987,7 @@
                 <span class="n">counts</span><span class="p">[</span><span class="n">DEFAULT_ATTRIBUTE</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
                 <span class="n">counts</span><span class="p">[</span><span class="s">&#39;Not &#39;</span> <span class="o">+</span> <span class="n">DEFAULT_ATTRIBUTE</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
 
-            <span class="k">if</span> <span class="n">attrs</span><span class="p">[</span><span class="n">DEFAULT_ATTRIBUTE</span><span class="p">]</span> <span class="ow">is</span> <span class="bp">True</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">attrs</span><span class="p">[</span><span class="n">DEFAULT_ATTRIBUTE</span><span class="p">]:</span>
                 <span class="n">counts</span><span class="p">[</span><span class="n">DEFAULT_ATTRIBUTE</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">counts</span><span class="p">[</span><span class="s">&#39;Not &#39;</span> <span class="o">+</span> <span class="n">DEFAULT_ATTRIBUTE</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
@@ -2050,6 +2315,7 @@
         <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="p">[</span><span class="n">DEFAULT_ATTRIBUTE</span><span class="p">,</span> <span class="s">&#39;polygon_id&#39;</span><span class="p">,</span> <span class="s">&#39;parent_line_id&#39;</span><span class="p">]:</span>
             <span class="n">msg</span> <span class="o">=</span> <span class="s">&#39;Did not find new attribute name &quot;</span><span class="si">%s</span><span class="s">&quot; in </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">name</span><span class="p">,</span>
                                                                   <span class="n">I_names</span><span class="p">)</span>
+            <span class="c"># FIXME (Ole): Shapefiles cut name down to 10 characters.</span>
             <span class="k">assert</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">I_names</span><span class="p">,</span> <span class="n">msg</span>
 
         <span class="c"># Verify interpolated values with test result</span>
@@ -2068,7 +2334,7 @@
                 <span class="n">counts</span><span class="p">[</span><span class="n">DEFAULT_ATTRIBUTE</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
                 <span class="n">counts</span><span class="p">[</span><span class="s">&#39;Not &#39;</span> <span class="o">+</span> <span class="n">DEFAULT_ATTRIBUTE</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
 
-            <span class="k">if</span> <span class="n">attrs</span><span class="p">[</span><span class="n">DEFAULT_ATTRIBUTE</span><span class="p">]</span> <span class="ow">is</span> <span class="bp">True</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">attrs</span><span class="p">[</span><span class="n">DEFAULT_ATTRIBUTE</span><span class="p">]:</span>
                 <span class="n">counts</span><span class="p">[</span><span class="n">DEFAULT_ATTRIBUTE</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">counts</span><span class="p">[</span><span class="s">&#39;Not &#39;</span> <span class="o">+</span> <span class="n">DEFAULT_ATTRIBUTE</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
@@ -2163,6 +2429,7 @@
         <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="p">[</span><span class="n">DEFAULT_ATTRIBUTE</span><span class="p">,</span> <span class="s">&#39;polygon_id&#39;</span><span class="p">,</span> <span class="s">&#39;parent_line_id&#39;</span><span class="p">]:</span>
             <span class="n">msg</span> <span class="o">=</span> <span class="s">&#39;Did not find new attribute name &quot;</span><span class="si">%s</span><span class="s">&quot; in </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">name</span><span class="p">,</span>
                                                                   <span class="n">I_names</span><span class="p">)</span>
+            <span class="c"># FIXME (Ole): Shapefiles cut name down to 10 characters.</span>
             <span class="k">assert</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">I_names</span><span class="p">,</span> <span class="n">msg</span>
 
         <span class="c"># Verify interpolated values with test result</span>
@@ -2172,6 +2439,7 @@
 
             <span class="c"># Check that default attribute is present</span>
             <span class="n">attrs</span> <span class="o">=</span> <span class="n">I_attributes</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+
             <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;Did not find default attribute </span><span class="si">%s</span><span class="s"> in </span><span class="si">%s</span><span class="s">&#39;</span>
                    <span class="o">%</span> <span class="p">(</span><span class="n">DEFAULT_ATTRIBUTE</span><span class="p">,</span> <span class="n">attrs</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span>
             <span class="k">assert</span> <span class="n">DEFAULT_ATTRIBUTE</span> <span class="ow">in</span> <span class="n">attrs</span><span class="p">,</span> <span class="n">msg</span>
@@ -2181,7 +2449,7 @@
                 <span class="n">counts</span><span class="p">[</span><span class="n">DEFAULT_ATTRIBUTE</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
                 <span class="n">counts</span><span class="p">[</span><span class="s">&#39;Not &#39;</span> <span class="o">+</span> <span class="n">DEFAULT_ATTRIBUTE</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
 
-            <span class="k">if</span> <span class="n">attrs</span><span class="p">[</span><span class="n">DEFAULT_ATTRIBUTE</span><span class="p">]</span> <span class="ow">is</span> <span class="bp">True</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">attrs</span><span class="p">[</span><span class="n">DEFAULT_ATTRIBUTE</span><span class="p">]:</span>
                 <span class="n">counts</span><span class="p">[</span><span class="n">DEFAULT_ATTRIBUTE</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">counts</span><span class="p">[</span><span class="s">&#39;Not &#39;</span> <span class="o">+</span> <span class="n">DEFAULT_ATTRIBUTE</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
@@ -2314,7 +2582,7 @@
 
     <span class="n">test_polygon_to_roads_interpolation_flood_example</span><span class="o">.</span><span class="n">slow</span> <span class="o">=</span> <span class="bp">True</span>
 
-    <span class="k">def</span> <span class="nf">test_polygon_to_roads_interpolation_jakarta_flood_example</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">Xtest_polygon_to_roads_interpolation_jakarta_flood_example1</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Roads can be tagged with values from flood polygons</span>
 
 <span class="sd">        This is a test for road interpolation (issue #55)</span>
@@ -2401,7 +2669,7 @@
         <span class="k">assert</span> <span class="n">I_attributes</span><span class="p">[</span><span class="mi">198</span><span class="p">][</span><span class="s">&#39;polygon_id&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">235</span>
         <span class="k">assert</span> <span class="n">I_attributes</span><span class="p">[</span><span class="mi">198</span><span class="p">][</span><span class="s">&#39;parent_line_id&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">333</span>
 
-    <span class="n">test_polygon_to_roads_interpolation_jakarta_flood_example</span><span class="o">.</span><span class="n">slow</span> <span class="o">=</span> <span class="bp">True</span>
+    <span class="n">Xtest_polygon_to_roads_interpolation_jakarta_flood_example1</span><span class="o">.</span><span class="n">slow</span> <span class="o">=</span> <span class="bp">True</span>
 
     <span class="k">def</span> <span class="nf">Xtest_polygon_to_roads_interpolation_jakarta_flood_merged</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Roads can be tagged with values from flood polygons</span>
@@ -2413,18 +2681,19 @@
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="c"># Name file names for hazard level and exposure</span>
-        <span class="n">hazard_filename</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;</span><span class="si">%s</span><span class="s">/Jakarta_RW_2007_flood_Dissolve.shp&#39;</span> <span class="o">%</span> <span class="n">TESTDATA</span><span class="p">)</span>
+        <span class="n">hazard_filename</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;</span><span class="si">%s</span><span class="s">/RW_2007_dissolve.shp&#39;</span> <span class="o">%</span> <span class="n">TESTDATA</span><span class="p">)</span>
         <span class="n">exposure_filename</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;</span><span class="si">%s</span><span class="s">/jakarta_roads.shp&#39;</span> <span class="o">%</span> <span class="n">EXPDATA</span><span class="p">)</span>
 
         <span class="c"># Read all input data</span>
         <span class="n">H</span> <span class="o">=</span> <span class="n">read_layer</span><span class="p">(</span><span class="n">hazard_filename</span><span class="p">)</span>  <span class="c"># Polygons</span>
         <span class="c">#H_attributes = H.get_data()</span>
         <span class="c">#H_geometries = H.get_geometry()</span>
-        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">H</span><span class="p">)</span> <span class="o">==</span> <span class="mi">59</span>
+        <span class="k">print</span> <span class="nb">len</span><span class="p">(</span><span class="n">H</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">H</span><span class="p">)</span> <span class="o">==</span> <span class="mi">35</span>
 
         <span class="n">E</span> <span class="o">=</span> <span class="n">read_layer</span><span class="p">(</span><span class="n">exposure_filename</span><span class="p">)</span>
         <span class="n">E_geometries</span> <span class="o">=</span> <span class="n">E</span><span class="o">.</span><span class="n">get_geometry</span><span class="p">()</span>
-        <span class="n">E_attributes</span> <span class="o">=</span> <span class="n">E</span><span class="o">.</span><span class="n">get_data</span><span class="p">()</span>
+        <span class="c">#E_attributes = E.get_data()</span>
         <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">E</span><span class="p">)</span> <span class="o">==</span> <span class="mi">18574</span>
 
         <span class="c"># Get statistics of road types</span>
@@ -2458,23 +2727,25 @@
         <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">E</span><span class="p">)</span> <span class="o">==</span> <span class="mi">744</span>
 
         <span class="c"># Test interpolation function</span>
-        <span class="c">#import time</span>
-        <span class="c">#t0 = time.time()</span>
+        <span class="kn">import</span> <span class="nn">time</span>
+        <span class="n">t0</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+        <span class="k">print</span>
+        <span class="k">print</span> <span class="s">&#39;start&#39;</span>
         <span class="n">I</span> <span class="o">=</span> <span class="n">assign_hazard_values_to_exposure_data</span><span class="p">(</span><span class="n">H</span><span class="p">,</span> <span class="n">E</span><span class="p">,</span>
                                                   <span class="n">layer_name</span><span class="o">=</span><span class="s">&#39;depth&#39;</span><span class="p">,</span>
                                                   <span class="n">attribute_name</span><span class="o">=</span><span class="bp">None</span><span class="p">)</span>
-        <span class="c">#print &#39;Using merged polygon took %f seconds&#39; % (time.time() - t0)</span>
-        <span class="c">#I.write_to_file(&#39;flood_prone_roads_jakarta_merged.shp&#39;)</span>
+        <span class="k">print</span> <span class="s">&#39;Using merged polygon took </span><span class="si">%f</span><span class="s"> seconds&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">t0</span><span class="p">)</span>
+        <span class="n">I</span><span class="o">.</span><span class="n">write_to_file</span><span class="p">(</span><span class="s">&#39;flood_prone_roads_jakarta_merged.shp&#39;</span><span class="p">)</span>
 
         <span class="c"># Check against correctness verified in QGIS</span>
-        <span class="n">I_attributes</span> <span class="o">=</span> <span class="n">I</span><span class="o">.</span><span class="n">get_data</span><span class="p">()</span>
-        <span class="k">assert</span> <span class="n">I_attributes</span><span class="p">[</span><span class="mi">198</span><span class="p">][</span><span class="s">&#39;TYPE&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;secondary&#39;</span>
-        <span class="k">assert</span> <span class="n">I_attributes</span><span class="p">[</span><span class="mi">198</span><span class="p">][</span><span class="s">&#39;NAME&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;Lingkar Mega Kuningan&#39;</span>
-        <span class="k">assert</span> <span class="n">I_attributes</span><span class="p">[</span><span class="mi">198</span><span class="p">][</span><span class="s">&#39;KEL_NAME&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;KUNINGAN TIMUR&#39;</span>
-        <span class="k">assert</span> <span class="n">I_attributes</span><span class="p">[</span><span class="mi">198</span><span class="p">][</span><span class="s">&#39;polygon_id&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">235</span>
-        <span class="k">assert</span> <span class="n">I_attributes</span><span class="p">[</span><span class="mi">198</span><span class="p">][</span><span class="s">&#39;parent_line_id&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">333</span>
+        <span class="c">#I_attributes = I.get_data()</span>
+        <span class="c">#assert I_attributes[198][&#39;TYPE&#39;] == &#39;secondary&#39;</span>
+        <span class="c">#assert I_attributes[198][&#39;NAME&#39;] == &#39;Lingkar Mega Kuningan&#39;</span>
+        <span class="c">#assert I_attributes[198][&#39;KEL_NAME&#39;] == &#39;KUNINGAN TIMUR&#39;</span>
+        <span class="c">#assert I_attributes[198][&#39;polygon_id&#39;] == 235</span>
+        <span class="c">#assert I_attributes[198][&#39;parent_line_id&#39;] == 333</span>
 
-    <span class="c">#test_polygon_to_roads_interpolation_jakarta_flood_merged.slow = True</span>
+    <span class="n">Xtest_polygon_to_roads_interpolation_jakarta_flood_merged</span><span class="o">.</span><span class="n">slow</span> <span class="o">=</span> <span class="bp">True</span>
 
     <span class="k">def</span> <span class="nf">Xtest_line_interpolation_from_polygons_one_attribute</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Line interpolation using one polygon works with attribute</span>
@@ -2925,7 +3196,7 @@
 <div id="searchbox" style="display: none">
   <h3>Quick search</h3>
     <form class="search" action="../../../search.html" method="get">
-      <input type="text" name="q" size="18" />
+      <input type="text" name="q" />
       <input type="submit" value="Go" />
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
@@ -2960,8 +3231,8 @@
 
     <div class="footer">
         &copy; Copyright 2012, BNPB/AIFDR/GFDRR.
-      Last updated on Oct 20, 2012.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.1.
+      Last updated on Oct 24, 2012.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
     </div>
     <!-- cloud_sptheme 1.3 -->
   </body>

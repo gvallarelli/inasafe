@@ -4,18 +4,21 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
+
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>safe.impact_functions.earthquake.itb_building_impact_model &mdash; InaSAFE v0.5.1-final documentation</title>
+    <title>safe.impact_functions.earthquake.itb_building_impact_model &mdash; InaSAFE 1.0.1-final documentation</title>
+    
     <link rel="stylesheet" href="../../../../_static/cloud.css" type="text/css" />
     <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
-    <link rel="stylesheet" href="../../../../http://fonts.googleapis.com/css?family=Noticia+Text|Droid+Sans+Mono" type="text/css" />
+    <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Noticia+Text|Droid+Sans+Mono" type="text/css" />
+    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../../',
-        VERSION:     '0.5.1-final',
+        VERSION:     '1.0.1-final',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -27,7 +30,7 @@
     <script type="text/javascript" src="../../../../_static/jquery.cookie.js"></script>
     <script type="text/javascript" src="../../../../_static/toggle_sections.js"></script>
     <link rel="shortcut icon" href="../../../../_static/favicon.ico"/>
-    <link rel="top" title="InaSAFE v0.5.1-final documentation" href="../../../../index.html" />
+    <link rel="top" title="InaSAFE 1.0.1-final documentation" href="../../../../index.html" />
     <link rel="up" title="Module code" href="../../../index.html" /> 
   </head>
   <body>
@@ -87,7 +90,7 @@
 <span class="kn">from</span> <span class="nn">safe.impact_functions.core</span> <span class="kn">import</span> <span class="n">get_hazard_layer</span><span class="p">,</span> <span class="n">get_exposure_layer</span>
 <span class="kn">from</span> <span class="nn">safe.storage.vector</span> <span class="kn">import</span> <span class="n">Vector</span>
 <span class="kn">from</span> <span class="nn">safe.common.numerics</span> <span class="kn">import</span> <span class="n">lognormal_cdf</span>
-<span class="kn">from</span> <span class="nn">safe.common.utilities</span> <span class="kn">import</span> <span class="n">ugettext</span> <span class="k">as</span> <span class="n">_</span>
+<span class="kn">from</span> <span class="nn">safe.common.utilities</span> <span class="kn">import</span> <span class="n">ugettext</span> <span class="k">as</span> <span class="n">tr</span>
 <span class="kn">from</span> <span class="nn">safe.common.utilities</span> <span class="kn">import</span> <span class="n">verify</span>
 <span class="kn">from</span> <span class="nn">safe.engine.interpolation</span> <span class="kn">import</span> <span class="n">assign_hazard_values_to_exposure_data</span>
 
@@ -140,7 +143,7 @@
 <span class="sd">                    datatype in [&#39;osm&#39;, &#39;itb&#39;, &#39;sigab&#39;]</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="n">title</span> <span class="o">=</span> <span class="n">_</span><span class="p">(</span><span class="s">&#39;Be damaged depending on building type&#39;</span><span class="p">)</span>
+    <span class="n">title</span> <span class="o">=</span> <span class="n">tr</span><span class="p">(</span><span class="s">&#39;Be damaged depending on building type&#39;</span><span class="p">)</span>
 
 <div class="viewcode-block" id="ITBEarthquakeBuildingDamageFunction.run"><a class="viewcode-back" href="../../../../api-docs/safe/impact_functions/earthquake/itb_building_impact_model.html#safe.impact_functions.earthquake.itb_building_impact_model.ITBEarthquakeBuildingDamageFunction.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">layers</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Risk plugin for Padang building survey</span>
@@ -238,34 +241,34 @@
                     <span class="s">&#39;   &lt;tr&gt;&lt;td&gt;</span><span class="si">%s</span><span class="s"> (10-33</span><span class="si">%%</span><span class="s">)&amp;#58;&lt;/td&gt;&lt;td&gt;</span><span class="si">%i</span><span class="s">&lt;/td&gt;&lt;/tr&gt;&#39;</span>
                     <span class="s">&#39;   &lt;tr&gt;&lt;td&gt;</span><span class="si">%s</span><span class="s"> (33-66</span><span class="si">%%</span><span class="s">)&amp;#58;&lt;/td&gt;&lt;td&gt;</span><span class="si">%i</span><span class="s">&lt;/td&gt;&lt;/tr&gt;&#39;</span>
                     <span class="s">&#39;   &lt;tr&gt;&lt;td&gt;</span><span class="si">%s</span><span class="s"> (66-100</span><span class="si">%%</span><span class="s">)&amp;#58;&lt;/td&gt;&lt;td&gt;</span><span class="si">%i</span><span class="s">&lt;/td&gt;&lt;/tr&gt;&#39;</span>
-                    <span class="s">&#39;&lt;/table&gt;&lt;/font&gt;&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">_</span><span class="p">(</span><span class="s">&#39;Buildings&#39;</span><span class="p">),</span> <span class="n">_</span><span class="p">(</span><span class="s">&#39;Total&#39;</span><span class="p">),</span>
-                                    <span class="n">_</span><span class="p">(</span><span class="s">&#39;All&#39;</span><span class="p">),</span> <span class="n">N</span><span class="p">,</span>
-                                    <span class="n">_</span><span class="p">(</span><span class="s">&#39;No damage&#39;</span><span class="p">),</span> <span class="n">count0</span><span class="p">,</span>
-                                    <span class="n">_</span><span class="p">(</span><span class="s">&#39;Low damage&#39;</span><span class="p">),</span> <span class="n">count10</span><span class="p">,</span>
-                                    <span class="n">_</span><span class="p">(</span><span class="s">&#39;Medium damage&#39;</span><span class="p">),</span> <span class="n">count25</span><span class="p">,</span>
-                                    <span class="n">_</span><span class="p">(</span><span class="s">&#39;High damage&#39;</span><span class="p">),</span> <span class="n">count50</span><span class="p">))</span>
+                    <span class="s">&#39;&lt;/table&gt;&lt;/font&gt;&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">tr</span><span class="p">(</span><span class="s">&#39;Buildings&#39;</span><span class="p">),</span> <span class="n">tr</span><span class="p">(</span><span class="s">&#39;Total&#39;</span><span class="p">),</span>
+                                    <span class="n">tr</span><span class="p">(</span><span class="s">&#39;All&#39;</span><span class="p">),</span> <span class="n">N</span><span class="p">,</span>
+                                    <span class="n">tr</span><span class="p">(</span><span class="s">&#39;No damage&#39;</span><span class="p">),</span> <span class="n">count0</span><span class="p">,</span>
+                                    <span class="n">tr</span><span class="p">(</span><span class="s">&#39;Low damage&#39;</span><span class="p">),</span> <span class="n">count10</span><span class="p">,</span>
+                                    <span class="n">tr</span><span class="p">(</span><span class="s">&#39;Medium damage&#39;</span><span class="p">),</span> <span class="n">count25</span><span class="p">,</span>
+                                    <span class="n">tr</span><span class="p">(</span><span class="s">&#39;High damage&#39;</span><span class="p">),</span> <span class="n">count50</span><span class="p">))</span>
         <span class="n">impact_summary</span> <span class="o">+=</span> <span class="s">&#39;&lt;br&gt;&#39;</span>  <span class="c"># Blank separation row</span>
-        <span class="n">impact_summary</span> <span class="o">+=</span> <span class="s">&#39;&lt;b&gt;&#39;</span> <span class="o">+</span> <span class="n">_</span><span class="p">(</span><span class="s">&#39;Assumption&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="s">&#39;&amp;#58;&lt;/b&gt;&lt;br&gt;&#39;</span>
+        <span class="n">impact_summary</span> <span class="o">+=</span> <span class="s">&#39;&lt;b&gt;&#39;</span> <span class="o">+</span> <span class="n">tr</span><span class="p">(</span><span class="s">&#39;Assumption&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="s">&#39;&amp;#58;&lt;/b&gt;&lt;br&gt;&#39;</span>
         <span class="c"># This is the proper text:</span>
-        <span class="c">#_(&#39;Levels of impact are defined by post 2009 &#39;</span>
+        <span class="c">#tr(&#39;Levels of impact are defined by post 2009 &#39;</span>
         <span class="c">#  &#39;Padang earthquake survey conducted by Geoscience &#39;</span>
         <span class="c">#  &#39;Australia and Institute of Teknologi Bandung.&#39;))</span>
-        <span class="c">#_(&#39;Unreinforced masonry is assumed where no &#39;</span>
+        <span class="c">#tr(&#39;Unreinforced masonry is assumed where no &#39;</span>
         <span class="c">#  &#39;structural information is available.&#39;))</span>
-        <span class="n">impact_summary</span> <span class="o">+=</span> <span class="n">_</span><span class="p">(</span><span class="s">&#39;Levels of impact are defined by post 2009 &#39;</span>
+        <span class="n">impact_summary</span> <span class="o">+=</span> <span class="n">tr</span><span class="p">(</span><span class="s">&#39;Levels of impact are defined by post 2009 &#39;</span>
                             <span class="s">&#39;Padang earthquake survey conducted by Geoscience &#39;</span>
                             <span class="s">&#39;Australia and Institute of Teknologi Bandung.&#39;</span><span class="p">)</span>
-        <span class="n">impact_summary</span> <span class="o">+=</span> <span class="n">_</span><span class="p">(</span><span class="s">&#39;Unreinforced masonry is assumed where no &#39;</span>
+        <span class="n">impact_summary</span> <span class="o">+=</span> <span class="n">tr</span><span class="p">(</span><span class="s">&#39;Unreinforced masonry is assumed where no &#39;</span>
                             <span class="s">&#39;structural information is available.&#39;</span><span class="p">)</span>
         <span class="c"># Create style</span>
-        <span class="n">style_classes</span> <span class="o">=</span> <span class="p">[</span><span class="nb">dict</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="n">_</span><span class="p">(</span><span class="s">&#39;No damage&#39;</span><span class="p">),</span> <span class="nb">min</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="nb">max</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
-                              <span class="n">colour</span><span class="o">=</span><span class="s">&#39;#00ff00&#39;</span><span class="p">,</span> <span class="n">transparency</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span>
-                         <span class="nb">dict</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="n">_</span><span class="p">(</span><span class="s">&#39;Low damage&#39;</span><span class="p">),</span> <span class="nb">min</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="nb">max</span><span class="o">=</span><span class="mi">33</span><span class="p">,</span>
-                              <span class="n">colour</span><span class="o">=</span><span class="s">&#39;#ffff00&#39;</span><span class="p">,</span> <span class="n">transparency</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span>
-                         <span class="nb">dict</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="n">_</span><span class="p">(</span><span class="s">&#39;Medium damage&#39;</span><span class="p">),</span> <span class="nb">min</span><span class="o">=</span><span class="mi">33</span><span class="p">,</span> <span class="nb">max</span><span class="o">=</span><span class="mi">66</span><span class="p">,</span>
-                              <span class="n">colour</span><span class="o">=</span><span class="s">&#39;#ffaa00&#39;</span><span class="p">,</span> <span class="n">transparency</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span>
-                         <span class="nb">dict</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="n">_</span><span class="p">(</span><span class="s">&#39;High damage&#39;</span><span class="p">),</span> <span class="nb">min</span><span class="o">=</span><span class="mi">66</span><span class="p">,</span> <span class="nb">max</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
-                              <span class="n">colour</span><span class="o">=</span><span class="s">&#39;#ff0000&#39;</span><span class="p">,</span> <span class="n">transparency</span><span class="o">=</span><span class="mi">1</span><span class="p">)]</span>
+        <span class="n">style_classes</span> <span class="o">=</span> <span class="p">[</span><span class="nb">dict</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="n">tr</span><span class="p">(</span><span class="s">&#39;No damage&#39;</span><span class="p">),</span> <span class="nb">min</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="nb">max</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+                              <span class="n">colour</span><span class="o">=</span><span class="s">&#39;#00ff00&#39;</span><span class="p">,</span> <span class="n">transparency</span><span class="o">=</span><span class="mi">0</span><span class="p">),</span>
+                         <span class="nb">dict</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="n">tr</span><span class="p">(</span><span class="s">&#39;Low damage&#39;</span><span class="p">),</span> <span class="nb">min</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="nb">max</span><span class="o">=</span><span class="mi">33</span><span class="p">,</span>
+                              <span class="n">colour</span><span class="o">=</span><span class="s">&#39;#ffff00&#39;</span><span class="p">,</span> <span class="n">transparency</span><span class="o">=</span><span class="mi">0</span><span class="p">),</span>
+                         <span class="nb">dict</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="n">tr</span><span class="p">(</span><span class="s">&#39;Medium damage&#39;</span><span class="p">),</span> <span class="nb">min</span><span class="o">=</span><span class="mi">33</span><span class="p">,</span> <span class="nb">max</span><span class="o">=</span><span class="mi">66</span><span class="p">,</span>
+                              <span class="n">colour</span><span class="o">=</span><span class="s">&#39;#ffaa00&#39;</span><span class="p">,</span> <span class="n">transparency</span><span class="o">=</span><span class="mi">0</span><span class="p">),</span>
+                         <span class="nb">dict</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="n">tr</span><span class="p">(</span><span class="s">&#39;High damage&#39;</span><span class="p">),</span> <span class="nb">min</span><span class="o">=</span><span class="mi">66</span><span class="p">,</span> <span class="nb">max</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+                              <span class="n">colour</span><span class="o">=</span><span class="s">&#39;#ff0000&#39;</span><span class="p">,</span> <span class="n">transparency</span><span class="o">=</span><span class="mi">0</span><span class="p">)]</span>
         <span class="n">style_info</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">target_field</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">target_field</span><span class="p">,</span>
                           <span class="n">style_classes</span><span class="o">=</span><span class="n">style_classes</span><span class="p">)</span>
 
@@ -290,7 +293,7 @@
 <div id="searchbox" style="display: none">
   <h3>Quick search</h3>
     <form class="search" action="../../../../search.html" method="get">
-      <input type="text" name="q" size="18" />
+      <input type="text" name="q" />
       <input type="submit" value="Go" />
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
@@ -325,8 +328,8 @@
 
     <div class="footer">
         &copy; Copyright 2012, BNPB/AIFDR/GFDRR.
-      Last updated on Oct 20, 2012.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.1.
+      Last updated on Oct 24, 2012.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
     </div>
     <!-- cloud_sptheme 1.3 -->
   </body>

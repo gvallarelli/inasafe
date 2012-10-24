@@ -4,18 +4,21 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
+
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>safe.impact_functions.inundation.flood_population_evacuation &mdash; InaSAFE v0.5.1-final documentation</title>
+    <title>safe.impact_functions.inundation.flood_population_evacuation &mdash; InaSAFE 1.0.1-final documentation</title>
+    
     <link rel="stylesheet" href="../../../../_static/cloud.css" type="text/css" />
     <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
-    <link rel="stylesheet" href="../../../../http://fonts.googleapis.com/css?family=Noticia+Text|Droid+Sans+Mono" type="text/css" />
+    <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Noticia+Text|Droid+Sans+Mono" type="text/css" />
+    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../../',
-        VERSION:     '0.5.1-final',
+        VERSION:     '1.0.1-final',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -27,7 +30,7 @@
     <script type="text/javascript" src="../../../../_static/jquery.cookie.js"></script>
     <script type="text/javascript" src="../../../../_static/toggle_sections.js"></script>
     <link rel="shortcut icon" href="../../../../_static/favicon.ico"/>
-    <link rel="top" title="InaSAFE v0.5.1-final documentation" href="../../../../index.html" />
+    <link rel="top" title="InaSAFE 1.0.1-final documentation" href="../../../../index.html" />
     <link rel="up" title="Module code" href="../../../index.html" /> 
   </head>
   <body>
@@ -60,11 +63,11 @@
 <span class="kn">import</span> <span class="nn">numpy</span>
 <span class="kn">from</span> <span class="nn">safe.impact_functions.core</span> <span class="kn">import</span> <span class="n">FunctionProvider</span>
 <span class="kn">from</span> <span class="nn">safe.impact_functions.core</span> <span class="kn">import</span> <span class="n">get_hazard_layer</span><span class="p">,</span> <span class="n">get_exposure_layer</span>
-<span class="kn">from</span> <span class="nn">safe.impact_functions.core</span> <span class="kn">import</span> <span class="p">(</span><span class="n">get_question</span><span class="p">,</span> <span class="n">get_function_title</span><span class="p">,</span>
-                                        <span class="n">get_thresholds</span><span class="p">)</span>
+<span class="kn">from</span> <span class="nn">safe.impact_functions.core</span> <span class="kn">import</span> <span class="n">get_question</span><span class="p">,</span> <span class="n">get_function_title</span>
 <span class="kn">from</span> <span class="nn">safe.impact_functions.styles</span> <span class="kn">import</span> <span class="n">flood_population_style</span> <span class="k">as</span> <span class="n">style_info</span>
 <span class="kn">from</span> <span class="nn">safe.storage.raster</span> <span class="kn">import</span> <span class="n">Raster</span>
-<span class="kn">from</span> <span class="nn">safe.common.utilities</span> <span class="kn">import</span> <span class="n">ugettext</span> <span class="k">as</span> <span class="n">_</span>
+<span class="kn">from</span> <span class="nn">safe.common.utilities</span> <span class="kn">import</span> <span class="p">(</span><span class="n">ugettext</span> <span class="k">as</span> <span class="n">tr</span><span class="p">,</span>
+                                   <span class="n">get_defaults</span><span class="p">)</span>
 <span class="kn">from</span> <span class="nn">safe.common.utilities</span> <span class="kn">import</span> <span class="n">verify</span>
 <span class="kn">from</span> <span class="nn">safe.common.tables</span> <span class="kn">import</span> <span class="n">Table</span><span class="p">,</span> <span class="n">TableRow</span>
 
@@ -81,11 +84,20 @@
 
 <span class="sd">    :param requires category==&#39;exposure&#39; and \</span>
 <span class="sd">                    subcategory==&#39;population&#39; and \</span>
-<span class="sd">                    layertype==&#39;raster&#39; and \</span>
-<span class="sd">                    datatype==&#39;density&#39;</span>
+<span class="sd">                    layertype==&#39;raster&#39;</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="n">title</span> <span class="o">=</span> <span class="n">_</span><span class="p">(</span><span class="s">&#39;Need evacuation&#39;</span><span class="p">)</span>
+    <span class="n">title</span> <span class="o">=</span> <span class="n">tr</span><span class="p">(</span><span class="s">&#39;Need evacuation&#39;</span><span class="p">)</span>
+    <span class="n">defaults</span> <span class="o">=</span> <span class="n">get_defaults</span><span class="p">()</span>
+    <span class="n">parameters</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s">&#39;thresholds&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">],</span>
+        <span class="s">&#39;postprocessors&#39;</span><span class="p">:</span>
+            <span class="p">{</span><span class="s">&#39;Gender&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s">&#39;on&#39;</span><span class="p">:</span> <span class="bp">True</span><span class="p">},</span>
+             <span class="s">&#39;Age&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s">&#39;on&#39;</span><span class="p">:</span> <span class="bp">True</span><span class="p">,</span>
+                     <span class="s">&#39;params&#39;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="s">&#39;youth_ratio&#39;</span><span class="p">:</span> <span class="n">defaults</span><span class="p">[</span><span class="s">&#39;YOUTH_RATIO&#39;</span><span class="p">],</span>
+                    <span class="s">&#39;adult_ratio&#39;</span><span class="p">:</span> <span class="n">defaults</span><span class="p">[</span><span class="s">&#39;ADULT_RATIO&#39;</span><span class="p">],</span>
+                    <span class="s">&#39;elder_ratio&#39;</span><span class="p">:</span> <span class="n">defaults</span><span class="p">[</span><span class="s">&#39;ELDER_RATIO&#39;</span><span class="p">]}}}}</span>
 
 <div class="viewcode-block" id="FloodEvacuationFunction.run"><a class="viewcode-back" href="../../../../api-docs/safe/impact_functions/inundation/flood_population_evacuation.html#safe.impact_functions.inundation.flood_population_evacuation.FloodEvacuationFunction.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">layers</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Risk plugin for flood population evacuation</span>
@@ -113,10 +125,7 @@
 
         <span class="c"># Determine depths above which people are regarded affected [m]</span>
         <span class="c"># Use thresholds from inundation layer if specified</span>
-        <span class="n">thresholds</span> <span class="o">=</span> <span class="n">get_thresholds</span><span class="p">(</span><span class="n">inundation</span><span class="p">)</span>
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">thresholds</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="c"># Default threshold</span>
-            <span class="n">thresholds</span> <span class="o">=</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">]</span>
+        <span class="n">thresholds</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s">&#39;thresholds&#39;</span><span class="p">]</span>
 
         <span class="n">verify</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">thresholds</span><span class="p">,</span> <span class="nb">list</span><span class="p">),</span>
                <span class="s">&#39;Expected thresholds to be a list. Got </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="nb">str</span><span class="p">(</span><span class="n">thresholds</span><span class="p">))</span>
@@ -162,50 +171,51 @@
 
         <span class="c"># Generate impact report for the pdf map</span>
         <span class="n">table_body</span> <span class="o">=</span> <span class="p">[</span><span class="n">question</span><span class="p">,</span>
-                      <span class="n">TableRow</span><span class="p">([</span><span class="n">_</span><span class="p">(</span><span class="s">&#39;People needing evacuation&#39;</span><span class="p">),</span>
+                      <span class="n">TableRow</span><span class="p">([(</span><span class="n">tr</span><span class="p">(</span><span class="s">&#39;People in </span><span class="si">%.1f</span><span class="s"> m of water&#39;</span><span class="p">)</span> <span class="o">%</span>
+                                    <span class="n">thresholds</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]),</span>
                                 <span class="s">&#39;</span><span class="si">%i</span><span class="s">&#39;</span> <span class="o">%</span> <span class="n">evacuated</span><span class="p">],</span>
                                <span class="n">header</span><span class="o">=</span><span class="bp">True</span><span class="p">),</span>
-                      <span class="n">TableRow</span><span class="p">(</span><span class="n">_</span><span class="p">(</span><span class="s">&#39;Map shows population density needing &#39;</span>
+                      <span class="n">TableRow</span><span class="p">(</span><span class="n">tr</span><span class="p">(</span><span class="s">&#39;Map shows population density needing &#39;</span>
                                  <span class="s">&#39;evacuation&#39;</span><span class="p">)),</span>
-                      <span class="n">TableRow</span><span class="p">([</span><span class="n">_</span><span class="p">(</span><span class="s">&#39;Needs per week&#39;</span><span class="p">),</span> <span class="n">_</span><span class="p">(</span><span class="s">&#39;Total&#39;</span><span class="p">)],</span>
+                      <span class="n">TableRow</span><span class="p">([</span><span class="n">tr</span><span class="p">(</span><span class="s">&#39;Needs per week&#39;</span><span class="p">),</span> <span class="n">tr</span><span class="p">(</span><span class="s">&#39;Total&#39;</span><span class="p">)],</span>
                                <span class="n">header</span><span class="o">=</span><span class="bp">True</span><span class="p">),</span>
-            <span class="p">[</span><span class="n">_</span><span class="p">(</span><span class="s">&#39;Rice [kg]&#39;</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="n">rice</span><span class="p">)],</span>
-            <span class="p">[</span><span class="n">_</span><span class="p">(</span><span class="s">&#39;Drinking Water [l]&#39;</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="n">drinking_water</span><span class="p">)],</span>
-            <span class="p">[</span><span class="n">_</span><span class="p">(</span><span class="s">&#39;Clean Water [l]&#39;</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="n">water</span><span class="p">)],</span>
-            <span class="p">[</span><span class="n">_</span><span class="p">(</span><span class="s">&#39;Family Kits&#39;</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="n">family_kits</span><span class="p">)],</span>
-            <span class="p">[</span><span class="n">_</span><span class="p">(</span><span class="s">&#39;Toilets&#39;</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="n">toilets</span><span class="p">)]]</span>
+            <span class="p">[</span><span class="n">tr</span><span class="p">(</span><span class="s">&#39;Rice [kg]&#39;</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="n">rice</span><span class="p">)],</span>
+            <span class="p">[</span><span class="n">tr</span><span class="p">(</span><span class="s">&#39;Drinking Water [l]&#39;</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="n">drinking_water</span><span class="p">)],</span>
+            <span class="p">[</span><span class="n">tr</span><span class="p">(</span><span class="s">&#39;Clean Water [l]&#39;</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="n">water</span><span class="p">)],</span>
+            <span class="p">[</span><span class="n">tr</span><span class="p">(</span><span class="s">&#39;Family Kits&#39;</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="n">family_kits</span><span class="p">)],</span>
+            <span class="p">[</span><span class="n">tr</span><span class="p">(</span><span class="s">&#39;Toilets&#39;</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="n">toilets</span><span class="p">)]]</span>
         <span class="n">impact_table</span> <span class="o">=</span> <span class="n">Table</span><span class="p">(</span><span class="n">table_body</span><span class="p">)</span><span class="o">.</span><span class="n">toNewlineFreeString</span><span class="p">()</span>
 
-        <span class="n">table_body</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">TableRow</span><span class="p">(</span><span class="n">_</span><span class="p">(</span><span class="s">&#39;Action Checklist:&#39;</span><span class="p">),</span> <span class="n">header</span><span class="o">=</span><span class="bp">True</span><span class="p">))</span>
-        <span class="n">table_body</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">TableRow</span><span class="p">(</span><span class="n">_</span><span class="p">(</span><span class="s">&#39;How will warnings be disseminated?&#39;</span><span class="p">)))</span>
-        <span class="n">table_body</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">TableRow</span><span class="p">(</span><span class="n">_</span><span class="p">(</span><span class="s">&#39;How will we reach stranded people?&#39;</span><span class="p">)))</span>
-        <span class="n">table_body</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">TableRow</span><span class="p">(</span><span class="n">_</span><span class="p">(</span><span class="s">&#39;Do we have enough relief items?&#39;</span><span class="p">)))</span>
-        <span class="n">table_body</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">TableRow</span><span class="p">(</span><span class="n">_</span><span class="p">(</span><span class="s">&#39;If yes, where are they located and how &#39;</span>
+        <span class="n">table_body</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">TableRow</span><span class="p">(</span><span class="n">tr</span><span class="p">(</span><span class="s">&#39;Action Checklist:&#39;</span><span class="p">),</span> <span class="n">header</span><span class="o">=</span><span class="bp">True</span><span class="p">))</span>
+        <span class="n">table_body</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">TableRow</span><span class="p">(</span><span class="n">tr</span><span class="p">(</span><span class="s">&#39;How will warnings be disseminated?&#39;</span><span class="p">)))</span>
+        <span class="n">table_body</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">TableRow</span><span class="p">(</span><span class="n">tr</span><span class="p">(</span><span class="s">&#39;How will we reach stranded people?&#39;</span><span class="p">)))</span>
+        <span class="n">table_body</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">TableRow</span><span class="p">(</span><span class="n">tr</span><span class="p">(</span><span class="s">&#39;Do we have enough relief items?&#39;</span><span class="p">)))</span>
+        <span class="n">table_body</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">TableRow</span><span class="p">(</span><span class="n">tr</span><span class="p">(</span><span class="s">&#39;If yes, where are they located and how &#39;</span>
                                      <span class="s">&#39;will we distribute them?&#39;</span><span class="p">)))</span>
-        <span class="n">table_body</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">TableRow</span><span class="p">(</span><span class="n">_</span><span class="p">(</span><span class="s">&#39;If no, where can we obtain additional &#39;</span>
+        <span class="n">table_body</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">TableRow</span><span class="p">(</span><span class="n">tr</span><span class="p">(</span><span class="s">&#39;If no, where can we obtain additional &#39;</span>
                                      <span class="s">&#39;relief items from and how will we &#39;</span>
                                      <span class="s">&#39;transport them to here?&#39;</span><span class="p">)))</span>
 
         <span class="c"># Extend impact report for on-screen display</span>
-        <span class="n">table_body</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="n">TableRow</span><span class="p">(</span><span class="n">_</span><span class="p">(</span><span class="s">&#39;Notes&#39;</span><span class="p">),</span> <span class="n">header</span><span class="o">=</span><span class="bp">True</span><span class="p">),</span>
-                           <span class="n">_</span><span class="p">(</span><span class="s">&#39;Total population: </span><span class="si">%i</span><span class="s">&#39;</span><span class="p">)</span> <span class="o">%</span> <span class="n">total</span><span class="p">,</span>
-                           <span class="n">_</span><span class="p">(</span><span class="s">&#39;People need evacuation if flood levels &#39;</span>
+        <span class="n">table_body</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="n">TableRow</span><span class="p">(</span><span class="n">tr</span><span class="p">(</span><span class="s">&#39;Notes&#39;</span><span class="p">),</span> <span class="n">header</span><span class="o">=</span><span class="bp">True</span><span class="p">),</span>
+                           <span class="n">tr</span><span class="p">(</span><span class="s">&#39;Total population: </span><span class="si">%i</span><span class="s">&#39;</span><span class="p">)</span> <span class="o">%</span> <span class="n">total</span><span class="p">,</span>
+                           <span class="n">tr</span><span class="p">(</span><span class="s">&#39;People need evacuation if flood levels &#39;</span>
                              <span class="s">&#39;exceed </span><span class="si">%(eps).1f</span><span class="s"> m&#39;</span><span class="p">)</span> <span class="o">%</span> <span class="p">{</span><span class="s">&#39;eps&#39;</span><span class="p">:</span> <span class="n">thresholds</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]},</span>
-                           <span class="n">_</span><span class="p">(</span><span class="s">&#39;Minimum needs are defined in BNPB &#39;</span>
+                           <span class="n">tr</span><span class="p">(</span><span class="s">&#39;Minimum needs are defined in BNPB &#39;</span>
                              <span class="s">&#39;regulation 7/2008&#39;</span><span class="p">)])</span>
 
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">counts</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="n">table_body</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">TableRow</span><span class="p">(</span><span class="n">_</span><span class="p">(</span><span class="s">&#39;Detailed breakdown&#39;</span><span class="p">),</span> <span class="n">header</span><span class="o">=</span><span class="bp">True</span><span class="p">))</span>
+            <span class="n">table_body</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">TableRow</span><span class="p">(</span><span class="n">tr</span><span class="p">(</span><span class="s">&#39;Detailed breakdown&#39;</span><span class="p">),</span> <span class="n">header</span><span class="o">=</span><span class="bp">True</span><span class="p">))</span>
 
             <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">counts</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]):</span>
-                <span class="n">s</span> <span class="o">=</span> <span class="p">(</span><span class="n">_</span><span class="p">(</span><span class="s">&#39;People in </span><span class="si">%(lo).1f</span><span class="s"> m to </span><span class="si">%(hi).1f</span><span class="s"> m of water: </span><span class="si">%(val)i</span><span class="s">&#39;</span><span class="p">)</span>
+                <span class="n">s</span> <span class="o">=</span> <span class="p">(</span><span class="n">tr</span><span class="p">(</span><span class="s">&#39;People in </span><span class="si">%(lo).1f</span><span class="s"> m to </span><span class="si">%(hi).1f</span><span class="s"> m of water: </span><span class="si">%(val)i</span><span class="s">&#39;</span><span class="p">)</span>
                      <span class="o">%</span> <span class="p">{</span><span class="s">&#39;lo&#39;</span><span class="p">:</span> <span class="n">thresholds</span><span class="p">[</span><span class="n">i</span><span class="p">],</span>
                         <span class="s">&#39;hi&#39;</span><span class="p">:</span> <span class="n">thresholds</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">],</span>
                         <span class="s">&#39;val&#39;</span><span class="p">:</span> <span class="n">val</span><span class="p">})</span>
                 <span class="n">table_body</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">TableRow</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="bp">False</span><span class="p">))</span>
 
         <span class="n">impact_summary</span> <span class="o">=</span> <span class="n">Table</span><span class="p">(</span><span class="n">table_body</span><span class="p">)</span><span class="o">.</span><span class="n">toNewlineFreeString</span><span class="p">()</span>
-        <span class="n">map_title</span> <span class="o">=</span> <span class="n">_</span><span class="p">(</span><span class="s">&#39;People in need of evacuation&#39;</span><span class="p">)</span>
+        <span class="n">map_title</span> <span class="o">=</span> <span class="n">tr</span><span class="p">(</span><span class="s">&#39;People in need of evacuation&#39;</span><span class="p">)</span>
 
         <span class="c"># Generate 8 equidistant classes across the range of flooded population</span>
         <span class="c"># 8 is the number of classes in the predefined flood population style</span>
@@ -215,18 +225,28 @@
 
         <span class="c"># Modify labels in existing flood style to show quantities</span>
         <span class="n">style_classes</span> <span class="o">=</span> <span class="n">style_info</span><span class="p">[</span><span class="s">&#39;style_classes&#39;</span><span class="p">]</span>
+        <span class="n">style_classes</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="s">&#39;label&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">tr</span><span class="p">(</span><span class="s">&#39;Low [</span><span class="si">%i</span><span class="s"> people/cell]&#39;</span><span class="p">)</span> <span class="o">%</span> <span class="n">classes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">style_classes</span><span class="p">[</span><span class="mi">4</span><span class="p">][</span><span class="s">&#39;label&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">tr</span><span class="p">(</span><span class="s">&#39;Medium [</span><span class="si">%i</span><span class="s"> people/cell]&#39;</span><span class="p">)</span> <span class="o">%</span> <span class="n">classes</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span>
+        <span class="n">style_classes</span><span class="p">[</span><span class="mi">7</span><span class="p">][</span><span class="s">&#39;label&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">tr</span><span class="p">(</span><span class="s">&#39;High [</span><span class="si">%i</span><span class="s"> people/cell]&#39;</span><span class="p">)</span> <span class="o">%</span> <span class="n">classes</span><span class="p">[</span><span class="mi">7</span><span class="p">]</span>
 
-        <span class="n">style_classes</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="s">&#39;label&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">_</span><span class="p">(</span><span class="s">&#39;Low [</span><span class="si">%i</span><span class="s"> people/cell]&#39;</span><span class="p">)</span> <span class="o">%</span> <span class="n">classes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-        <span class="n">style_classes</span><span class="p">[</span><span class="mi">4</span><span class="p">][</span><span class="s">&#39;label&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">_</span><span class="p">(</span><span class="s">&#39;Medium [</span><span class="si">%i</span><span class="s"> people/cell]&#39;</span><span class="p">)</span> <span class="o">%</span> <span class="n">classes</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span>
-        <span class="n">style_classes</span><span class="p">[</span><span class="mi">7</span><span class="p">][</span><span class="s">&#39;label&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">_</span><span class="p">(</span><span class="s">&#39;High [</span><span class="si">%i</span><span class="s"> people/cell]&#39;</span><span class="p">)</span> <span class="o">%</span> <span class="n">classes</span><span class="p">[</span><span class="mi">7</span><span class="p">]</span>
+        <span class="c"># Override associated quantities in colour style</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">classes</span><span class="p">)):</span>
+            <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">transparency</span> <span class="o">=</span> <span class="mi">100</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">transparency</span> <span class="o">=</span> <span class="mi">0</span>
 
-        <span class="n">style_info</span><span class="p">[</span><span class="s">&#39;legend_title&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">_</span><span class="p">(</span><span class="s">&#39;Population Density&#39;</span><span class="p">)</span>
+            <span class="n">style_classes</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="s">&#39;quantity&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">classes</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="n">style_classes</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="s">&#39;transparency&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">transparency</span>
+
+        <span class="c"># Title</span>
+        <span class="n">style_info</span><span class="p">[</span><span class="s">&#39;legend_title&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">tr</span><span class="p">(</span><span class="s">&#39;Population Density&#39;</span><span class="p">)</span>
 
         <span class="c"># Create raster object and return</span>
         <span class="n">R</span> <span class="o">=</span> <span class="n">Raster</span><span class="p">(</span><span class="n">I</span><span class="p">,</span>
                    <span class="n">projection</span><span class="o">=</span><span class="n">inundation</span><span class="o">.</span><span class="n">get_projection</span><span class="p">(),</span>
                    <span class="n">geotransform</span><span class="o">=</span><span class="n">inundation</span><span class="o">.</span><span class="n">get_geotransform</span><span class="p">(),</span>
-                   <span class="n">name</span><span class="o">=</span><span class="n">_</span><span class="p">(</span><span class="s">&#39;Population which </span><span class="si">%s</span><span class="s">&#39;</span><span class="p">)</span> <span class="o">%</span> <span class="n">get_function_title</span><span class="p">(</span><span class="bp">self</span><span class="p">),</span>
+                   <span class="n">name</span><span class="o">=</span><span class="n">tr</span><span class="p">(</span><span class="s">&#39;Population which </span><span class="si">%s</span><span class="s">&#39;</span><span class="p">)</span> <span class="o">%</span> <span class="n">get_function_title</span><span class="p">(</span><span class="bp">self</span><span class="p">),</span>
                    <span class="n">keywords</span><span class="o">=</span><span class="p">{</span><span class="s">&#39;impact_summary&#39;</span><span class="p">:</span> <span class="n">impact_summary</span><span class="p">,</span>
                              <span class="s">&#39;impact_table&#39;</span><span class="p">:</span> <span class="n">impact_table</span><span class="p">,</span>
                              <span class="s">&#39;map_title&#39;</span><span class="p">:</span> <span class="n">map_title</span><span class="p">},</span>
@@ -245,7 +265,7 @@
 <div id="searchbox" style="display: none">
   <h3>Quick search</h3>
     <form class="search" action="../../../../search.html" method="get">
-      <input type="text" name="q" size="18" />
+      <input type="text" name="q" />
       <input type="submit" value="Go" />
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
@@ -280,8 +300,8 @@
 
     <div class="footer">
         &copy; Copyright 2012, BNPB/AIFDR/GFDRR.
-      Last updated on Oct 20, 2012.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.1.
+      Last updated on Oct 24, 2012.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
     </div>
     <!-- cloud_sptheme 1.3 -->
   </body>
