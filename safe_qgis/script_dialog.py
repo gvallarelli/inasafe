@@ -47,11 +47,14 @@ class ScriptDialog(QtGui.QDialog, Ui_ScriptDialogBase):
         self.tblScript.setColumnWidth(0, 200)
         self.tblScript.setColumnWidth(1, 50)
 
+        self.gboOptions.setVisible(False)
 
         # add script folder to sys.path
         sys.path.append(self.getScriptPath())
 
         self.populateTable()
+        self.adjustSize()
+
 
     def getScriptPath(self):
         """ Get base path for directory that contains the script files
@@ -96,23 +99,27 @@ class ScriptDialog(QtGui.QDialog, Ui_ScriptDialogBase):
            no exceptions explicitly raised
         """
 
-        # run in blank project state
-        qgis.utils.iface.newProject()
-
-        # run script
+        # import script module
         myModule, _ = os.path.splitext(theFilename)
         if sys.modules.has_key(myModule):
             myScript = reload(sys.modules[myModule])
         else:
             myScript = __import__(myModule)
 
+        myCount = int(self.sboCount.value())
 
-        # run entry function
-        myFunction = myScript.runScript
-        if myFunction.func_code.co_argcount == 1:
-            myFunction(qgis.utils.iface)
-        else:
-            myFunction()
+        # run script
+        for i in range(1, myCount + 1):
+            # run in blank project state if checkbox is checked
+            if self.cboNewProject.isChecked():
+                qgis.utils.iface.newProject()
+
+            # run entry function
+            myFunction = myScript.runScript
+            if myFunction.func_code.co_argcount == 1:
+                myFunction(qgis.utils.iface)
+            else:
+                myFunction()
 
 
     @pyqtSignature('')
@@ -139,3 +146,13 @@ class ScriptDialog(QtGui.QDialog, Ui_ScriptDialogBase):
     @pyqtSignature('')
     def on_btnRefresh_clicked(self):
         self.populateTable()
+
+    @pyqtSignature('bool')
+    def on_pbnAdvanced_toggled(self, theFlag):
+        if theFlag:
+            self.pbnAdvanced.setText(self.tr('Hide advanced options'))
+        else:
+            self.pbnAdvanced.setText(self.tr('Show advanced options'))
+
+        self.gboOptions.setVisible(theFlag)
+        self.adjustSize()
