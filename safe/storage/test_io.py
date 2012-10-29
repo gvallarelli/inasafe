@@ -248,6 +248,8 @@ class Test_IO(unittest.TestCase):
         # Check
         assert R == L, msg
 
+    test_donut_polygons.slow = True
+
     def test_analysis_of_vector_data_top_N(self):
         """Analysis of vector data - get top N of an attribute
         """
@@ -2331,18 +2333,17 @@ class Test_IO(unittest.TestCase):
         os.environ['LC_ALL'] = 'C.UTF-8'
 
         #must be after above
-        string1 = 'Hello!'
-        out1 = tr(string1)
+        out1 = tr('Hello!')
         expected1 = 'Hello!'
         msg = 'Expected %s, got %s' % (expected1, out1)
-        assert string1 == expected1, msg
+        assert out1 == expected1, msg
 
         # Set the Indonesian locale to test translations.
         os.environ['LANG'] = 'id'
         os.environ['LC_ALL'] = 'id_ID.UTF-8'
 
         #must be after above
-        indoout1 = tr(string1)  # translate as 'Hi'
+        indoout1 = tr('Hello!')  # translate as 'Hi'
         indoexpected1 = 'Hi!'
         msg = 'Expected %s, got %s' % (indoexpected1, indoout1)
         assert indoout1 == indoexpected1, msg
@@ -2365,6 +2366,8 @@ class Test_IO(unittest.TestCase):
         #    msg = 'Multipart polygon should not have raised exception'
         #    raise Exception(msg)
         #======================================================================
+
+    test_multipart_polygon_raises_exception.slow = True
 
     def test_projection_comparisons(self):
         """Projection information can be correctly compared
