@@ -496,5 +496,8 @@ class Plugin:
         """Show Script Dialog"""
         from safe_qgis.script_dialog import ScriptDialog
 
-        dialog = ScriptDialog(self.iface.mainWindow())
-        dialog.show()
+        myDialog = self.iface.mainWindow().findChild(ScriptDialog)
+        if myDialog is None:
+            myDialog = ScriptDialog(self.iface.mainWindow())
+
+        myDialog.show()
