@@ -18,10 +18,12 @@ __copyright__ = 'Copyright 2012, Australia Indonesia Facility for '
 __copyright__ += 'Disaster Reduction'
 
 import os
+import logging
 from safe.common.utilities import ugettext as tr
 from safe_qgis.dock import Dock
 from qgis.utils import iface
 
+LOGGER = logging.getLogger('InaSAFE')
 
 def findInaSAFEDock():
     """ Get InaSAFE Dock widget instance.
@@ -86,6 +88,8 @@ def runScenario():
 
 
 
+
+
 def addLayers(theDirectory, thePaths):
 
     def extractPath(thePath):
@@ -107,8 +111,10 @@ def addLayers(theDirectory, thePaths):
         myExt = os.path.splitext(myPath)[-1]
 
         if myExt in ['.asc', '.tif']:
+            LOGGER.debug("add raster layer %s" % myPath)
             iface.addRasterLayer(myPath, myBaseName)
         elif myExt in ['.shp'] :
+            LOGGER.debug("add vector layer %s" % myPath)
             iface.addVectorLayer(myPath, myBaseName, 'ogr')
         else:
             raise Exception('File %s had illegal extension' % myPath)

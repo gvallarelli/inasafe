@@ -19,12 +19,15 @@ __copyright__ = ('Copyright 2012, Australia Indonesia Facility for '
 
 import os
 import sys
+import logging
 
 from PyQt4 import QtGui, QtCore
 from PyQt4.QtCore import pyqtSignature
 from script_dialog_base import Ui_ScriptDialogBase
 
 import qgis.utils
+
+LOGGER = logging.getLogger('InaSAFE')
 
 
 class ScriptDialog(QtGui.QDialog, Ui_ScriptDialogBase):
@@ -134,14 +137,18 @@ class ScriptDialog(QtGui.QDialog, Ui_ScriptDialogBase):
         # run script
         try:
             self.runScript(myFilename)
+            # set status to 'OK'
+            myStatusItem.setText(self.tr('OK'))
         except Exception as ex:
             # set status to 'fail'
             myStatusItem.setText(self.tr('Fail'))
+
+            LOGGER.log(0, ex.message)
+
             # just reraise the exception
             raise
 
-        # set status to 'OK'
-        myStatusItem.setText(self.tr('OK'))
+
 
     @pyqtSignature('')
     def on_btnRefresh_clicked(self):

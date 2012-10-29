@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'script_dialog.ui'
 #
-# Created: Wed Oct 24 14:00:42 2012
+# Created: Mon Oct 29 15:17:17 2012
 #      by: PyQt4 UI code generator 4.9.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -18,6 +18,11 @@ class Ui_ScriptDialogBase(object):
     def setupUi(self, ScriptDialogBase):
         ScriptDialogBase.setObjectName(_fromUtf8("ScriptDialogBase"))
         ScriptDialogBase.resize(515, 514)
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Fixed, QtGui.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(ScriptDialogBase.sizePolicy().hasHeightForWidth())
+        ScriptDialogBase.setSizePolicy(sizePolicy)
         self.tblScript = QtGui.QTableWidget(ScriptDialogBase)
         self.tblScript.setGeometry(QtCore.QRect(20, 10, 481, 181))
         self.tblScript.setAlternatingRowColors(False)
