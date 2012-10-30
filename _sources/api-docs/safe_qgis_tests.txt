@@ -5,6 +5,7 @@ Package::safe_qgis_tests
    :maxdepth: 2
 
    safe_qgis_tests/test_function_options_dialog
+   safe_qgis_tests/test_init
    safe_qgis_tests/test_clipper
    safe_qgis_tests/test_qgis_environment
    safe_qgis_tests/test_keyword_io

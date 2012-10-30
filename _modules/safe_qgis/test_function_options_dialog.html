@@ -1,0 +1,199 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>safe_qgis.test_function_options_dialog &mdash; InaSAFE 1.0.1-final documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/cloud.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Noticia+Text|Droid+Sans+Mono" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '1.0.1-final',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../_static/jquery.cookie.js"></script>
+    <script type="text/javascript" src="../../_static/toggle_sections.js"></script>
+    <link rel="shortcut icon" href="../../_static/favicon.ico"/>
+    <link rel="top" title="InaSAFE 1.0.1-final documentation" href="../../index.html" />
+    <link rel="up" title="Module code" href="../index.html" /> 
+  </head>
+  <body>
+    <div class="relbar-top">
+        
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> &nbsp; &nbsp;</li>
+    <li><a href="../../index.html">Home</a> &raquo;</li>
+    <li><a href="../../contents.html">Contents</a> &raquo;</li>
+
+          <li><a href="../index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    </div>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for safe_qgis.test_function_options_dialog</h1><div class="highlight"><pre>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">InaSAFE Disaster risk assessment tool developed by AusAid and World Bank</span>
+<span class="sd">- **GUI Test Cases.**</span>
+
+<span class="sd">Contact : ole.moller.nielsen@gmail.com</span>
+
+<span class="sd">.. note:: This program is free software; you can redistribute it and/or modify</span>
+<span class="sd">     it under the terms of the GNU General Public License as published by</span>
+<span class="sd">     the Free Software Foundation; either version 2 of the License, or</span>
+<span class="sd">     (at your option) any later version.</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="n">__author__</span> <span class="o">=</span> <span class="s">&#39;misugijunz@gmail.com&#39;</span>
+<span class="n">__date__</span> <span class="o">=</span> <span class="s">&#39;15/10/2012&#39;</span>
+<span class="n">__copyright__</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;Copyright 2012, Australia Indonesia Facility for &#39;</span>
+                 <span class="s">&#39;Disaster Reduction&#39;</span><span class="p">)</span>
+<span class="kn">import</span> <span class="nn">unittest</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+
+<span class="kn">from</span> <span class="nn">PyQt4.QtGui</span> <span class="kn">import</span> <span class="n">QLineEdit</span>
+
+<span class="c"># Add PARENT directory to path to make test aware of other modules</span>
+<span class="n">pardir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">__file__</span><span class="p">),</span> <span class="s">&#39;..&#39;</span><span class="p">))</span>
+<span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pardir</span><span class="p">)</span>
+
+<span class="kn">from</span> <span class="nn">safe.impact_functions</span> <span class="kn">import</span> <span class="n">get_plugins</span>
+
+<span class="kn">from</span> <span class="nn">safe_qgis.function_options_dialog</span> <span class="kn">import</span> <span class="n">FunctionOptionsDialog</span>
+<span class="kn">from</span> <span class="nn">safe_qgis.utilities_test</span> <span class="kn">import</span> <span class="n">getQgisTestApp</span>
+<span class="c"># pylint: disable=W0611</span>
+<span class="kn">from</span> <span class="nn">safe.engine.impact_functions_for_testing.itb_fatality_model_configurable</span>\
+    <span class="kn">import</span> <span class="n">ITBFatalityFunctionConfigurable</span>
+<span class="c"># pylint: enable=W0611</span>
+
+<span class="n">QGISAPP</span><span class="p">,</span> <span class="n">CANVAS</span><span class="p">,</span> <span class="n">IFACE</span><span class="p">,</span> <span class="n">PARENT</span> <span class="o">=</span> <span class="n">getQgisTestApp</span><span class="p">()</span>
+<span class="n">LOGGER</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s">&#39;InaSAFE&#39;</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="FunctionOptionsDialogTest"><a class="viewcode-back" href="../../api-docs/safe_qgis_tests/test_function_options_dialog.html#safe_qgis.test_function_options_dialog.FunctionOptionsDialogTest">[docs]</a><span class="k">class</span> <span class="nc">FunctionOptionsDialogTest</span><span class="p">(</span><span class="n">unittest</span><span class="o">.</span><span class="n">TestCase</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Test the InaSAFE GUI for Configurable Impact Functions&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="FunctionOptionsDialogTest.setUp"><a class="viewcode-back" href="../../api-docs/safe_qgis_tests/test_function_options_dialog.html#safe_qgis.test_function_options_dialog.FunctionOptionsDialogTest.setUp">[docs]</a>    <span class="k">def</span> <span class="nf">setUp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Fixture run before all tests&quot;&quot;&quot;</span>
+        <span class="k">pass</span>
+</div>
+<div class="viewcode-block" id="FunctionOptionsDialogTest.tearUp"><a class="viewcode-back" href="../../api-docs/safe_qgis_tests/test_function_options_dialog.html#safe_qgis.test_function_options_dialog.FunctionOptionsDialogTest.tearUp">[docs]</a>    <span class="k">def</span> <span class="nf">tearUp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Fixture run before each test&quot;&quot;&quot;</span>
+        <span class="k">pass</span>
+</div>
+<div class="viewcode-block" id="FunctionOptionsDialogTest.tearDown"><a class="viewcode-back" href="../../api-docs/safe_qgis_tests/test_function_options_dialog.html#safe_qgis.test_function_options_dialog.FunctionOptionsDialogTest.tearDown">[docs]</a>    <span class="k">def</span> <span class="nf">tearDown</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Fixture run after each test&quot;&quot;&quot;</span>
+        <span class="k">pass</span>
+</div>
+<div class="viewcode-block" id="FunctionOptionsDialogTest.test_buildForm"><a class="viewcode-back" href="../../api-docs/safe_qgis_tests/test_function_options_dialog.html#safe_qgis.test_function_options_dialog.FunctionOptionsDialogTest.test_buildForm">[docs]</a>    <span class="k">def</span> <span class="nf">test_buildForm</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Test that we can build a form by passing it a function and params.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">myFunctionId</span> <span class="o">=</span> <span class="s">&#39;I T B Fatality Function Configurable&#39;</span>
+        <span class="n">myFunctionList</span> <span class="o">=</span> <span class="n">get_plugins</span><span class="p">(</span><span class="n">myFunctionId</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">myFunctionList</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span>
+        <span class="k">assert</span> <span class="n">myFunctionList</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">myFunctionId</span>
+        <span class="n">myFunction</span> <span class="o">=</span> <span class="n">myFunctionList</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">myDialog</span> <span class="o">=</span> <span class="n">FunctionOptionsDialog</span><span class="p">(</span><span class="bp">None</span><span class="p">)</span>
+        <span class="n">myParameters</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;foo&#39;</span><span class="p">:</span> <span class="s">&#39;bar&#39;</span><span class="p">}</span>
+        <span class="n">myDialog</span><span class="o">.</span><span class="n">buildForm</span><span class="p">(</span><span class="n">myFunction</span><span class="p">,</span> <span class="n">myParameters</span><span class="p">)</span>
+
+        <span class="c">#myKids = myDialog.findChildren(QLineEdit)</span>
+        <span class="c">#for myKid in myKids:</span>
+        <span class="c">#    print myKid.objectName()</span>
+        <span class="n">myWidget</span> <span class="o">=</span> <span class="n">myDialog</span><span class="o">.</span><span class="n">findChild</span><span class="p">(</span><span class="n">QLineEdit</span><span class="p">,</span> <span class="s">&#39;fooLineEdit&#39;</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">myWidget</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span>
+        <span class="k">assert</span> <span class="n">myWidget</span><span class="o">.</span><span class="n">text</span><span class="p">()</span> <span class="o">==</span> <span class="s">&#39;bar&#39;</span>
+
+        <span class="c"># For localised testing only, disable when test works!</span>
+        <span class="c"># This will spawn the dialog so you can actually see its contents</span>
+        <span class="c">#myDialog.exec_()</span>
+</div></div>
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">suite</span> <span class="o">=</span> <span class="n">unittest</span><span class="o">.</span><span class="n">makeSuite</span><span class="p">(</span><span class="n">FunctionOptionsDialogTest</span><span class="p">,</span> <span class="s">&#39;test&#39;</span><span class="p">)</span>
+    <span class="n">runner</span> <span class="o">=</span> <span class="n">unittest</span><span class="o">.</span><span class="n">TextTestRunner</span><span class="p">(</span><span class="n">verbosity</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">runner</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">suite</span><span class="p">)</span>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+        <p class="logo"><a href="../../contents.html">
+          <img class="logo" src="../../_static/icon.png" alt="Logo"/>
+        </a></p>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="relbar-bottom">
+        
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> &nbsp; &nbsp;</li>
+    <li><a href="../../index.html">Home</a> &raquo;</li>
+    <li><a href="../../contents.html">Contents</a> &raquo;</li>
+
+          <li><a href="../index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    </div>
+
+    <div class="footer">
+        &copy; Copyright 2012, BNPB/AIFDR/GFDRR.
+      Last updated on Oct 30, 2012.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+    <!-- cloud_sptheme 1.3 -->
+  </body>
+</html>

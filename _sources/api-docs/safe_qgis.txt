@@ -21,7 +21,6 @@ Package::safe_qgis
    safe_qgis/keyword_io
    safe_qgis/html_renderer
    safe_qgis/utilities_test
-   safe_qgis/help_base
    safe_qgis/plugin
    safe_qgis/safe_interface
    safe_qgis/function_options_dialog

@@ -9,7 +9,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Module: safe_qgis.test_dock &mdash; InaSAFE 0.5.1-final documentation</title>
+    <title>Module: safe_qgis.test_dock &mdash; InaSAFE 1.0.1-final documentation</title>
     
     <link rel="stylesheet" href="../../_static/cloud.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -18,7 +18,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '0.5.1-final',
+        VERSION:     '1.0.1-final',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -29,7 +29,8 @@
     <script type="text/javascript" src="../../_static/doctools.js"></script>
     <script type="text/javascript" src="../../_static/jquery.cookie.js"></script>
     <script type="text/javascript" src="../../_static/toggle_sections.js"></script>
-    <link rel="top" title="InaSAFE 0.5.1-final documentation" href="../../index.html" />
+    <link rel="shortcut icon" href="../../_static/favicon.ico"/>
+    <link rel="top" title="InaSAFE 1.0.1-final documentation" href="../../index.html" />
     <link rel="up" title="Package::safe_qgis_tests" href="../safe_qgis_tests.html" />
     <link rel="next" title="Module: safe_qgis.test_impact_functions_doc" href="test_impact_functions_doc.html" />
     <link rel="prev" title="Module: safe_qgis.test_safe_translations" href="test_safe_translations.html" /> 
@@ -84,6 +85,18 @@ the Free Software Foundation; either version 2 of the License, or
 <em class="property">class </em><tt class="descclassname">safe_qgis.test_dock.</tt><tt class="descname">DockTest</tt><big>(</big><em>methodName='runTest'</em><big>)</big><a class="reference internal" href="../../_modules/safe_qgis/test_dock.html#DockTest"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe_qgis.test_dock.DockTest" title="Permalink to this definition">¶</a></dt>
 <dd><p>Test the InaSAFE GUI</p>
 <dl class="method">
+<dt id="safe_qgis.test_dock.DockTest.Xtest_runnerExceptions">
+<tt class="descname">Xtest_runnerExceptions</tt><big>(</big><big>)</big><a class="headerlink" href="#safe_qgis.test_dock.DockTest.Xtest_runnerExceptions" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test runner exceptions</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="safe_qgis.test_dock.DockTest.Xtest_runnerIsNone">
+<tt class="descname">Xtest_runnerIsNone</tt><big>(</big><big>)</big><a class="headerlink" href="#safe_qgis.test_dock.DockTest.Xtest_runnerIsNone" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test for none runner exceptions</p>
+</dd></dl>
+
+<dl class="method">
 <dt id="safe_qgis.test_dock.DockTest.setUp">
 <tt class="descname">setUp</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/safe_qgis/test_dock.html#DockTest.setUp"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe_qgis.test_dock.DockTest.setUp" title="Permalink to this definition">¶</a></dt>
 <dd><p>Fixture run before all tests</p>
@@ -120,6 +133,12 @@ See <a class="reference external" href="https://github.com/AIFDR/inasafe/issues/
 <tt class="descname">test_ResultStyling</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/safe_qgis/test_dock.html#DockTest.test_ResultStyling"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe_qgis.test_dock.DockTest.test_ResultStyling" title="Permalink to this definition">¶</a></dt>
 <dd><p>Test that ouputs from a model are correctly styled (colours and
 opacity.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="safe_qgis.test_dock.DockTest.test_aggregationResults">
+<tt class="descname">test_aggregationResults</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#safe_qgis.test_dock.DockTest.test_aggregationResults" title="Permalink to this definition">¶</a></dt>
+<dd><p>Aggregation results are correct.</p>
 </dd></dl>
 
 <dl class="method">
@@ -172,6 +191,19 @@ kezwords</p>
 <dt id="safe_qgis.test_dock.DockTest.test_defaults">
 <tt class="descname">test_defaults</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/safe_qgis/test_dock.html#DockTest.test_defaults"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe_qgis.test_dock.DockTest.test_defaults" title="Permalink to this definition">¶</a></dt>
 <dd><p>Test the GUI in its default state</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="safe_qgis.test_dock.DockTest.test_hasParametersButtonDisabled">
+<tt class="descname">test_hasParametersButtonDisabled</tt><big>(</big><big>)</big><a class="headerlink" href="#safe_qgis.test_dock.DockTest.test_hasParametersButtonDisabled" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function configuration button is disabled
+when layers not compatible.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="safe_qgis.test_dock.DockTest.test_hasParametersButtonEnabled">
+<tt class="descname">test_hasParametersButtonEnabled</tt><big>(</big><big>)</big><a class="headerlink" href="#safe_qgis.test_dock.DockTest.test_hasParametersButtonEnabled" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function configuration button is enabled when layers are compatible.</p>
 </dd></dl>
 
 <dl class="method">
@@ -428,7 +460,7 @@ sure we have the right one.</p>
 
     <div class="footer">
         &copy; Copyright 2012, BNPB/AIFDR/GFDRR.
-      Last updated on Oct 17, 2012.
+      Last updated on Oct 30, 2012.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
     </div>
     <!-- cloud_sptheme 1.3 -->
