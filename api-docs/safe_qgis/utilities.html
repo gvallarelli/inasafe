@@ -9,7 +9,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Module: safe_qgis.utilities &mdash; InaSAFE 1.0.1-final documentation</title>
+    <title>Module: safe_qgis.utilities &mdash; InaSAFE 0.5.1-final documentation</title>
     
     <link rel="stylesheet" href="../../_static/cloud.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -18,7 +18,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '1.0.1-final',
+        VERSION:     '0.5.1-final',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -29,11 +29,10 @@
     <script type="text/javascript" src="../../_static/doctools.js"></script>
     <script type="text/javascript" src="../../_static/jquery.cookie.js"></script>
     <script type="text/javascript" src="../../_static/toggle_sections.js"></script>
-    <link rel="shortcut icon" href="../../_static/favicon.ico"/>
-    <link rel="top" title="InaSAFE 1.0.1-final documentation" href="../../index.html" />
+    <link rel="top" title="InaSAFE 0.5.1-final documentation" href="../../index.html" />
     <link rel="up" title="Package::safe_qgis" href="../safe_qgis.html" />
-    <link rel="next" title="Module: safe_qgis.help" href="help.html" />
-    <link rel="prev" title="Module: safe_qgis.dock" href="dock.html" /> 
+    <link rel="next" title="Module: safe_qgis.qgis_interface" href="qgis_interface.html" />
+    <link rel="prev" title="Module: safe_qgis.options_dialog" href="options_dialog.html" /> 
   </head>
   <body>
     <div class="relbar-top">
@@ -48,10 +47,10 @@
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
         <li class="right" >
-          <a href="help.html" title="Module: safe_qgis.help"
+          <a href="qgis_interface.html" title="Module: safe_qgis.qgis_interface"
              accesskey="N">next</a> &nbsp; &nbsp;</li>
         <li class="right" >
-          <a href="dock.html" title="Module: safe_qgis.dock"
+          <a href="options_dialog.html" title="Module: safe_qgis.options_dialog"
              accesskey="P">previous</a> &nbsp; &nbsp;</li>
     <li><a href="../../index.html">Home</a> &raquo;</li>
     <li><a href="../../contents.html">Contents</a> &raquo;</li>
@@ -258,35 +257,6 @@ provided.</p>
 </dd></dl>
 
 <dl class="function">
-<dt id="safe_qgis.utilities.impactLayerAttribution">
-<tt class="descclassname">safe_qgis.utilities.</tt><tt class="descname">impactLayerAttribution</tt><big>(</big><em>theKeywords</em>, <em>theInaSAFEFlag=False</em><big>)</big><a class="reference internal" href="../../_modules/safe_qgis/utilities.html#impactLayerAttribution"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe_qgis.utilities.impactLayerAttribution" title="Permalink to this definition">¶</a></dt>
-<dd><p>Make a little table for attribution of data sources used in impact.</p>
-<dl class="docutils">
-<dt>Args:</dt>
-<dd><ul class="first last">
-<li><p class="first">theKeywords: dict{} - a keywords dict for an impact layer.</p>
-</li>
-<li><dl class="first docutils">
-<dt>theInaSAFEFlag: bool - whether to show a little InaSAFE promotional</dt>
-<dd><p class="first last">text in the attribution output. Defaults to False.</p>
-</dd>
-</dl>
-</li>
-</ul>
-</dd>
-<dt>Returns:</dt>
-<dd><dl class="first last docutils">
-<dt>str: an html snippet containing attribution information for the impact</dt>
-<dd>layer. If no keywords are present or no appropriate keywords are
-present, None is returned.</dd>
-</dl>
-</dd>
-<dt>Raises:</dt>
-<dd>None</dd>
-</dl>
-</dd></dl>
-
-<dl class="function">
 <dt id="safe_qgis.utilities.isLayerPolygonal">
 <tt class="descclassname">safe_qgis.utilities.</tt><tt class="descname">isLayerPolygonal</tt><big>(</big><em>theLayer</em><big>)</big><a class="reference internal" href="../../_modules/safe_qgis/utilities.html#isLayerPolygonal"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe_qgis.utilities.isLayerPolygonal" title="Permalink to this definition">¶</a></dt>
 <dd><p>tell if a qgis theLayer is vectorial and d its geometries polygons
@@ -360,22 +330,17 @@ Args:</p>
 for the passed in layer.</p>
 <dl class="docutils">
 <dt>Args:</dt>
-<dd><ul class="first last simple">
-<li>theQgsRasterLayer: QgsRasterLayer</li>
-<li>style: dict - Dictionary of the form as in the example below.</li>
-</ul>
-</dd>
-<dt>Example:</dt>
-<dd><dl class="first last docutils">
-<dt>style_classes = [dict(colour=&#8217;#38A800&#8217;, quantity=2, transparency=0),</dt>
-<dd>dict(colour=&#8217;#38A800&#8217;, quantity=5, transparency=50),
-dict(colour=&#8217;#79C900&#8217;, quantity=10, transparency=50),
-dict(colour=&#8217;#CEED00&#8217;, quantity=20, transparency=50),
-dict(colour=&#8217;#FFCC00&#8217;, quantity=50, transparency=34),
-dict(colour=&#8217;#FF6600&#8217;, quantity=100, transparency=77),
-dict(colour=&#8217;#FF0000&#8217;, quantity=200, transparency=24),
-dict(colour=&#8217;#7A0000&#8217;, quantity=300, transparency=22)]</dd>
-</dl>
+<dd><p class="first">theQgsRasterLayer: Qgis layer
+style: Dictionary of the form as in the example below
+style_classes = [dict(colour=&#8217;#38A800&#8217;, quantity=2, transparency=0),</p>
+<blockquote class="last">
+<div>dict(colour=&#8217;#38A800&#8217;, quantity=5, transparency=1),
+dict(colour=&#8217;#79C900&#8217;, quantity=10, transparency=1),
+dict(colour=&#8217;#CEED00&#8217;, quantity=20, transparency=1),
+dict(colour=&#8217;#FFCC00&#8217;, quantity=50, transparency=1),
+dict(colour=&#8217;#FF6600&#8217;, quantity=100, transparency=1),
+dict(colour=&#8217;#FF0000&#8217;, quantity=200, transparency=1),
+dict(colour=&#8217;#7A0000&#8217;, quantity=300, transparency=1)]</div></blockquote>
 </dd>
 <dt>Returns:</dt>
 <dd>list: RangeList
@@ -386,41 +351,31 @@ list: TransparencyList</dd>
 <dl class="function">
 <dt id="safe_qgis.utilities.setVectorStyle">
 <tt class="descclassname">safe_qgis.utilities.</tt><tt class="descname">setVectorStyle</tt><big>(</big><em>theQgisVectorLayer</em>, <em>theStyle</em><big>)</big><a class="reference internal" href="../../_modules/safe_qgis/utilities.html#setVectorStyle"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe_qgis.utilities.setVectorStyle" title="Permalink to this definition">¶</a></dt>
-<dd><p>Set QGIS vector style based on InaSAFE style dictionary.</p>
-<p>For <strong>opaque</strong> a value of <strong>0</strong> can be used. For <strong>fully transparent</strong>, a
-value of <strong>100</strong> can be used. The function should take care to scale the
-transparency level to between 0 and 100.</p>
+<dd><p>Set QGIS vector style based on InaSAFE style dictionary</p>
 <dl class="docutils">
-<dt>Args:</dt>
-<dd><ul class="first last simple">
-<li>theQgisVectorLayer: QgsMapLayer</li>
-<li>theStyle: dict - Dictionary of the form as in the example below</li>
-</ul>
-</dd>
-<dt>Returns:</dt>
-<dd>None - Sets and saves style for theQgisVectorLayer</dd>
-<dt>Raises:</dt>
-<dd>None</dd>
-</dl>
-<p>Example:</p>
-<blockquote>
-<div><p>{&#8216;target_field&#8217;: &#8216;DMGLEVEL&#8217;,
+<dt>Input</dt>
+<dd><p class="first">theQgisVectorLayer: Qgis layer
+theStyle: Dictionary of the form as in the example below</p>
+<p>{&#8216;target_field&#8217;: &#8216;DMGLEVEL&#8217;,
 &#8216;style_classes&#8217;:
-[{&#8216;transparency&#8217;: 1, &#8216;max&#8217;: 1.5, &#8216;colour&#8217;: &#8216;#fecc5c&#8217;,</p>
+[{&#8216;opacity&#8217;: 1, &#8216;max&#8217;: 1.5, &#8216;colour&#8217;: &#8216;#fecc5c&#8217;,</p>
 <blockquote>
 <div>&#8216;min&#8217;: 0.5, &#8216;label&#8217;: &#8216;Low damage&#8217;, &#8216;size&#8217; : 1},</div></blockquote>
 <dl class="docutils">
-<dt>{&#8216;transparency&#8217;: 55, &#8216;max&#8217;: 2.5, &#8216;colour&#8217;: &#8216;#fd8d3c&#8217;,</dt>
+<dt>{&#8216;opacity&#8217;: 1, &#8216;max&#8217;: 2.5, &#8216;colour&#8217;: &#8216;#fd8d3c&#8217;,</dt>
 <dd>&#8216;min&#8217;: 1.5, &#8216;label&#8217;: &#8216;Medium damage&#8217;, &#8216;size&#8217; : 1},</dd>
-<dt>{&#8216;transparency&#8217;: 80, &#8216;max&#8217;: 3.5, &#8216;colour&#8217;: &#8216;#f31a1c&#8217;,</dt>
+<dt>{&#8216;opacity&#8217;: 1, &#8216;max&#8217;: 3.5, &#8216;colour&#8217;: &#8216;#f31a1c&#8217;,</dt>
 <dd>&#8216;min&#8217;: 2.5, &#8216;label&#8217;: &#8216;High damage&#8217;, &#8216;size&#8217; : 1}]}</dd>
 </dl>
-<div class="admonition note">
+<div class="last admonition note">
 <p class="first admonition-title">Note</p>
 <p class="last">The transparency and size keys are optional. Size applies
 to points only.</p>
 </div>
-</div></blockquote>
+</dd>
+<dt>Output</dt>
+<dd>Sets and saves style for theQgisVectorLayer</dd>
+</dl>
 </dd></dl>
 
 <dl class="function">
@@ -502,11 +457,11 @@ the original string.</dd>
           <img class="logo" src="../../_static/icon.png" alt="Logo"/>
         </a></p>
   <h4>Previous topic</h4>
-  <p class="topless"><a href="dock.html"
-                        title="previous chapter">Module:  safe_qgis.dock</a></p>
+  <p class="topless"><a href="options_dialog.html"
+                        title="previous chapter">Module:  safe_qgis.options_dialog</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="help.html"
-                        title="next chapter">Module:  safe_qgis.help</a></p>
+  <p class="topless"><a href="qgis_interface.html"
+                        title="next chapter">Module:  safe_qgis.qgis_interface</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="../../_sources/api-docs/safe_qgis/utilities.txt"
@@ -541,10 +496,10 @@ the original string.</dd>
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
         <li class="right" >
-          <a href="help.html" title="Module: safe_qgis.help"
+          <a href="qgis_interface.html" title="Module: safe_qgis.qgis_interface"
              >next</a> &nbsp; &nbsp;</li>
         <li class="right" >
-          <a href="dock.html" title="Module: safe_qgis.dock"
+          <a href="options_dialog.html" title="Module: safe_qgis.options_dialog"
              >previous</a> &nbsp; &nbsp;</li>
     <li><a href="../../index.html">Home</a> &raquo;</li>
     <li><a href="../../contents.html">Contents</a> &raquo;</li>
@@ -557,7 +512,7 @@ the original string.</dd>
 
     <div class="footer">
         &copy; Copyright 2012, BNPB/AIFDR/GFDRR.
-      Last updated on Oct 24, 2012.
+      Last updated on Oct 17, 2012.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
     </div>
     <!-- cloud_sptheme 1.3 -->

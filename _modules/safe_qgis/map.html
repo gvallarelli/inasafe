@@ -9,7 +9,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>safe_qgis.map &mdash; InaSAFE 1.0.1-final documentation</title>
+    <title>safe_qgis.map &mdash; InaSAFE 0.5.1-final documentation</title>
     
     <link rel="stylesheet" href="../../_static/cloud.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -18,7 +18,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '1.0.1-final',
+        VERSION:     '0.5.1-final',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -29,8 +29,7 @@
     <script type="text/javascript" src="../../_static/doctools.js"></script>
     <script type="text/javascript" src="../../_static/jquery.cookie.js"></script>
     <script type="text/javascript" src="../../_static/toggle_sections.js"></script>
-    <link rel="shortcut icon" href="../../_static/favicon.ico"/>
-    <link rel="top" title="InaSAFE 1.0.1-final documentation" href="../../index.html" />
+    <link rel="top" title="InaSAFE 0.5.1-final documentation" href="../../index.html" />
     <link rel="up" title="Module code" href="../index.html" /> 
   </head>
   <body>
@@ -73,6 +72,7 @@
 
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="n">__author__</span> <span class="o">=</span> <span class="s">&#39;tim@linfiniti.com&#39;</span>
+<span class="n">__version__</span> <span class="o">=</span> <span class="s">&#39;0.5.1&#39;</span>
 <span class="n">__revision__</span> <span class="o">=</span> <span class="s">&#39;$Format:%H$&#39;</span>
 <span class="n">__date__</span> <span class="o">=</span> <span class="s">&#39;10/01/2011&#39;</span>
 <span class="n">__copyright__</span> <span class="o">=</span> <span class="s">&#39;Copyright 2012, Australia Indonesia Facility for &#39;</span>
@@ -98,7 +98,8 @@
 <span class="kn">from</span> <span class="nn">safe_qgis.map_legend</span> <span class="kn">import</span> <span class="n">MapLegend</span>
 <span class="kn">from</span> <span class="nn">safe_qgis.utilities</span> <span class="kn">import</span> <span class="p">(</span><span class="n">setupPrinter</span><span class="p">,</span>
                                  <span class="n">pointsToMM</span><span class="p">,</span>
-                                 <span class="n">mmToPoints</span><span class="p">)</span>
+                                 <span class="n">mmToPoints</span><span class="p">,</span>
+                                 <span class="n">humaniseSeconds</span><span class="p">)</span>
 <span class="c"># Don&#39;t remove this even if it is flagged as unused by your ide</span>
 <span class="c"># it is needed for qrc:/ url resolution. See Qt Resources docs.</span>
 <span class="kn">import</span> <span class="nn">safe_qgis.resources</span>     <span class="c"># pylint: disable=W0611</span>
@@ -735,27 +736,33 @@
         <span class="c">#user: timlinux</span>
         <span class="c">#host_name: ultrabook</span>
         <span class="c">#time_stamp: 2012-10-13_23:10:31</span>
-        <span class="c">#myUser = self.keywordIO.readKeywords(self.layer, &#39;user&#39;)</span>
-        <span class="c">#myHost = self.keywordIO.readKeywords(self.layer, &#39;host_name&#39;)</span>
+        <span class="n">myUser</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">keywordIO</span><span class="o">.</span><span class="n">readKeywords</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">layer</span><span class="p">,</span> <span class="s">&#39;user&#39;</span><span class="p">)</span>
+        <span class="n">myHost</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">keywordIO</span><span class="o">.</span><span class="n">readKeywords</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">layer</span><span class="p">,</span> <span class="s">&#39;host_name&#39;</span><span class="p">)</span>
         <span class="n">myDateTime</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">keywordIO</span><span class="o">.</span><span class="n">readKeywords</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">layer</span><span class="p">,</span> <span class="s">&#39;time_stamp&#39;</span><span class="p">)</span>
         <span class="n">myTokens</span> <span class="o">=</span> <span class="n">myDateTime</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39;_&#39;</span><span class="p">)</span>
         <span class="n">myDate</span> <span class="o">=</span> <span class="n">myTokens</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
         <span class="n">myTime</span> <span class="o">=</span> <span class="n">myTokens</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-        <span class="c">#myElapsedTime = self.keywordIO.readKeywords(self.layer,</span>
-        <span class="c">#                                            &#39;elapsed_time&#39;)</span>
-        <span class="c">#myElapsedTime = humaniseSeconds(myElapsedTime)</span>
+        <span class="n">myElapsedTime</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">keywordIO</span><span class="o">.</span><span class="n">readKeywords</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">layer</span><span class="p">,</span> <span class="s">&#39;elapsed_time&#39;</span><span class="p">)</span>
+        <span class="n">myElapsedTime</span> <span class="o">=</span> <span class="n">humaniseSeconds</span><span class="p">(</span><span class="n">myElapsedTime</span><span class="p">)</span>
         <span class="n">myLongVersion</span> <span class="o">=</span> <span class="n">get_version</span><span class="p">()</span>
         <span class="n">myTokens</span> <span class="o">=</span> <span class="n">myLongVersion</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39;.&#39;</span><span class="p">)</span>
         <span class="n">myVersion</span> <span class="o">=</span> <span class="s">&#39;</span><span class="si">%s</span><span class="s">.</span><span class="si">%s</span><span class="s">.</span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">myTokens</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">myTokens</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">myTokens</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
-        <span class="n">myLabelText</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tr</span><span class="p">(</span><span class="s">&#39;Date and time of assessment: %1 %2</span><span class="se">\n</span><span class="s">&#39;</span>
-                              <span class="s">&#39;Special note: This assessment is a guide - we &#39;</span>
-                              <span class="s">&#39;strongly recommend that you ground truth the &#39;</span>
-                              <span class="s">&#39;results shown here before deploying resources &#39;</span>
-                              <span class="s">&#39;and / or personnel.</span><span class="se">\n</span><span class="s">&#39;</span>
-                              <span class="s">&#39;Assessment carried out using InaSAFE release &#39;</span>
-                              <span class="s">&#39;%3 (QGIS plugin version).&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">arg</span><span class="p">(</span>
-                              <span class="n">myDate</span><span class="p">)</span><span class="o">.</span><span class="n">arg</span><span class="p">(</span><span class="n">myTime</span><span class="p">)</span><span class="o">.</span><span class="n">arg</span><span class="p">(</span><span class="n">myVersion</span><span class="p">)</span>
-        <span class="n">myFontSize</span> <span class="o">=</span> <span class="mi">6</span>
+        <span class="n">myLabelText</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tr</span><span class="p">(</span><span class="s">&#39;Assessment carried out on host &quot;</span><span class="si">%s</span><span class="s">&quot;&#39;</span>
+                         <span class="s">&#39;by user &quot;</span><span class="si">%s</span><span class="s">&quot; using InaSAFE release </span><span class="si">%s</span><span class="s"> (QGIS &#39;</span>
+                         <span class="s">&#39;plugin version).</span><span class="se">\n</span><span class="s">&#39;</span>
+                         <span class="s">&#39;Date and time of assessment: </span><span class="si">%s</span><span class="s"> </span><span class="si">%s</span><span class="se">\n</span><span class="s">&#39;</span>
+                         <span class="s">&#39;Elapsed time for assessment calculation: </span><span class="si">%s</span><span class="se">\n</span><span class="s">&#39;</span>
+                         <span class="s">&#39;Special note: This assessment is a guide - we &#39;</span>
+                         <span class="s">&#39;strongly recommend that you ground truth the &#39;</span>
+                         <span class="s">&#39;results shown here before deploying resources &#39;</span>
+                         <span class="s">&#39;and / or personnel.&#39;</span> <span class="o">%</span> <span class="p">(</span>
+                         <span class="n">myHost</span><span class="p">,</span>
+                         <span class="n">myUser</span><span class="p">,</span>
+                         <span class="n">myVersion</span><span class="p">,</span>
+                         <span class="n">myDate</span><span class="p">,</span>
+                         <span class="n">myTime</span><span class="p">,</span>
+                         <span class="n">myElapsedTime</span><span class="p">))</span>
+        <span class="n">myFontSize</span> <span class="o">=</span> <span class="mi">8</span>
         <span class="n">myFontWeight</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QFont</span><span class="o">.</span><span class="n">Normal</span>
         <span class="n">myItalicsFlag</span> <span class="o">=</span> <span class="bp">True</span>
         <span class="n">myFont</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QFont</span><span class="p">(</span><span class="s">&#39;verdana&#39;</span><span class="p">,</span>
@@ -931,7 +938,7 @@
 
     <div class="footer">
         &copy; Copyright 2012, BNPB/AIFDR/GFDRR.
-      Last updated on Oct 24, 2012.
+      Last updated on Oct 17, 2012.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
     </div>
     <!-- cloud_sptheme 1.3 -->

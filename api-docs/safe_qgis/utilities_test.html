@@ -9,7 +9,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Module: safe_qgis.utilities_test &mdash; InaSAFE 1.0.1-final documentation</title>
+    <title>Module: safe_qgis.utilities_test &mdash; InaSAFE 0.5.1-final documentation</title>
     
     <link rel="stylesheet" href="../../_static/cloud.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -18,7 +18,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '1.0.1-final',
+        VERSION:     '0.5.1-final',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -29,10 +29,9 @@
     <script type="text/javascript" src="../../_static/doctools.js"></script>
     <script type="text/javascript" src="../../_static/jquery.cookie.js"></script>
     <script type="text/javascript" src="../../_static/toggle_sections.js"></script>
-    <link rel="shortcut icon" href="../../_static/favicon.ico"/>
-    <link rel="top" title="InaSAFE 1.0.1-final documentation" href="../../index.html" />
+    <link rel="top" title="InaSAFE 0.5.1-final documentation" href="../../index.html" />
     <link rel="up" title="Package::safe_qgis" href="../safe_qgis.html" />
-    <link rel="next" title="Module: safe_qgis.exceptions" href="exceptions.html" />
+    <link rel="next" title="Module: safe_qgis.help_base" href="help_base.html" />
     <link rel="prev" title="Module: safe_qgis.html_renderer" href="html_renderer.html" /> 
   </head>
   <body>
@@ -48,7 +47,7 @@
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
         <li class="right" >
-          <a href="exceptions.html" title="Module: safe_qgis.exceptions"
+          <a href="help_base.html" title="Module: safe_qgis.help_base"
              accesskey="N">next</a> &nbsp; &nbsp;</li>
         <li class="right" >
           <a href="html_renderer.html" title="Module: safe_qgis.html_renderer"
@@ -104,9 +103,9 @@ print(&#8216;Fubar&#8217;)</p>
 </dd></dl>
 
 <dl class="function">
-<dt id="safe_qgis.utilities_test.checkImage">
-<tt class="descclassname">safe_qgis.utilities_test.</tt><tt class="descname">checkImage</tt><big>(</big><em>theControlImagePath</em>, <em>theTestImagePath</em>, <em>theTolerance=1000</em><big>)</big><a class="reference internal" href="../../_modules/safe_qgis/utilities_test.html#checkImage"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe_qgis.utilities_test.checkImage" title="Permalink to this definition">¶</a></dt>
-<dd><p>Compare a test image against a known good image.</p>
+<dt id="safe_qgis.utilities_test.compareImages">
+<tt class="descclassname">safe_qgis.utilities_test.</tt><tt class="descname">compareImages</tt><big>(</big><em>theControlImagePath</em>, <em>theTestImagePath</em>, <em>theTolerance</em><big>)</big><a class="headerlink" href="#safe_qgis.utilities_test.compareImages" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compare two images to produce a difference image using a tolerance.</p>
 <dl class="docutils">
 <dt>Args:</dt>
 <dd><ul class="first last">
@@ -114,43 +113,7 @@ print(&#8216;Fubar&#8217;)</p>
 </li>
 <li><dl class="first docutils">
 <dt>theTestImagePath: The Image being checked (must have same dimensions</dt>
-<dd><p class="first last">as the control image).</p>
-</dd>
-</dl>
-</li>
-<li><dl class="first docutils">
-<dt>theTolerance: How many pixels may be different between the</dt>
-<dd><p class="first last">two images.</p>
-</dd>
-</dl>
-</li>
-</ul>
-</dd>
-<dt>Returns:</dt>
-<dd>(bool, str, str) where:
-* bool is success or failure indicator
-* str is a message providing analysis comparison notes</dd>
-<dt>Raises:</dt>
-<dd>None</dd>
-</dl>
-</dd></dl>
-
-<dl class="function">
-<dt id="safe_qgis.utilities_test.checkImages">
-<tt class="descclassname">safe_qgis.utilities_test.</tt><tt class="descname">checkImages</tt><big>(</big><em>theControlImages</em>, <em>theTestImagePath</em>, <em>theTolerance=1000</em><big>)</big><a class="reference internal" href="../../_modules/safe_qgis/utilities_test.html#checkImages"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe_qgis.utilities_test.checkImages" title="Permalink to this definition">¶</a></dt>
-<dd><p>Compare a test image against a collection of known good images.</p>
-<dl class="docutils">
-<dt>Args:</dt>
-<dd><ul class="first last">
-<li><dl class="first docutils">
-<dt>theControlImagePath: list of file names. Give only the basename +ext</dt>
-<dd><p class="first last">as the test image path (CONTROL_IMAGE_DIR) will be prepended.</p>
-</dd>
-</dl>
-</li>
-<li><dl class="first docutils">
-<dt>theTestImagePath: The Image being checked (must have same dimensions</dt>
-<dd><p class="first last">as the control image). Must be full path to image.</p>
+<dd><p class="first last">as the control image.</p>
 </dd>
 </dl>
 </li>
@@ -193,7 +156,7 @@ print(&#8216;Fubar&#8217;)</p>
 
 <dl class="function">
 <dt id="safe_qgis.utilities_test.loadLayer">
-<tt class="descclassname">safe_qgis.utilities_test.</tt><tt class="descname">loadLayer</tt><big>(</big><em>theLayerFile</em>, <em>theDirectory='/home/timlinux/dev/python/inasafe_data/test'</em><big>)</big><a class="reference internal" href="../../_modules/safe_qgis/utilities_test.html#loadLayer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe_qgis.utilities_test.loadLayer" title="Permalink to this definition">¶</a></dt>
+<tt class="descclassname">safe_qgis.utilities_test.</tt><tt class="descname">loadLayer</tt><big>(</big><em>theLayerFile</em>, <em>theDirectory='/home/marco/dev/qgis-plugins/inasafe_data/test'</em><big>)</big><a class="reference internal" href="../../_modules/safe_qgis/utilities_test.html#loadLayer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#safe_qgis.utilities_test.loadLayer" title="Permalink to this definition">¶</a></dt>
 <dd><p>Helper to load and return a single QGIS layer</p>
 <dl class="docutils">
 <dt>Args:</dt>
@@ -298,8 +261,8 @@ testing and the datasets live in the same repo as the code.</p>
   <p class="topless"><a href="html_renderer.html"
                         title="previous chapter">Module:  safe_qgis.html_renderer</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="exceptions.html"
-                        title="next chapter">Module:  safe_qgis.exceptions</a></p>
+  <p class="topless"><a href="help_base.html"
+                        title="next chapter">Module:  safe_qgis.help_base</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="../../_sources/api-docs/safe_qgis/utilities_test.txt"
@@ -334,7 +297,7 @@ testing and the datasets live in the same repo as the code.</p>
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
         <li class="right" >
-          <a href="exceptions.html" title="Module: safe_qgis.exceptions"
+          <a href="help_base.html" title="Module: safe_qgis.help_base"
              >next</a> &nbsp; &nbsp;</li>
         <li class="right" >
           <a href="html_renderer.html" title="Module: safe_qgis.html_renderer"
@@ -350,7 +313,7 @@ testing and the datasets live in the same repo as the code.</p>
 
     <div class="footer">
         &copy; Copyright 2012, BNPB/AIFDR/GFDRR.
-      Last updated on Oct 24, 2012.
+      Last updated on Oct 17, 2012.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
     </div>
     <!-- cloud_sptheme 1.3 -->

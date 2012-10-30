@@ -9,7 +9,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>safe.engine.test_engine &mdash; InaSAFE 1.0.1-final documentation</title>
+    <title>safe.engine.test_engine &mdash; InaSAFE 0.5.1-final documentation</title>
     
     <link rel="stylesheet" href="../../../_static/cloud.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
@@ -18,7 +18,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../',
-        VERSION:     '1.0.1-final',
+        VERSION:     '0.5.1-final',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -29,8 +29,7 @@
     <script type="text/javascript" src="../../../_static/doctools.js"></script>
     <script type="text/javascript" src="../../../_static/jquery.cookie.js"></script>
     <script type="text/javascript" src="../../../_static/toggle_sections.js"></script>
-    <link rel="shortcut icon" href="../../../_static/favicon.ico"/>
-    <link rel="top" title="InaSAFE 1.0.1-final documentation" href="../../../index.html" />
+    <link rel="top" title="InaSAFE 0.5.1-final documentation" href="../../../index.html" />
     <link rel="up" title="Module code" href="../../index.html" /> 
   </head>
   <body>
@@ -98,7 +97,6 @@
 <span class="kn">from</span> <span class="nn">impact_functions_for_testing</span> <span class="kn">import</span> <span class="n">empirical_fatality_model</span>
 <span class="kn">from</span> <span class="nn">impact_functions_for_testing</span> <span class="kn">import</span> <span class="n">allen_fatality_model</span>
 <span class="kn">from</span> <span class="nn">impact_functions_for_testing</span> <span class="kn">import</span> <span class="n">unspecific_building_impact_model</span>
-<span class="kn">from</span> <span class="nn">impact_functions_for_testing</span> <span class="kn">import</span> <span class="n">earthquake_impact_on_women</span>
 <span class="kn">from</span> <span class="nn">impact_functions_for_testing</span> <span class="kn">import</span> <span class="n">NEXIS_building_impact_model</span>
 <span class="kn">from</span> <span class="nn">impact_functions_for_testing</span> <span class="kn">import</span> <span class="n">HKV_flood_study</span>
 <span class="kn">from</span> <span class="nn">impact_functions_for_testing</span> <span class="kn">import</span> <span class="n">BNPB_earthquake_guidelines</span>
@@ -625,13 +623,10 @@
         <span class="n">keywords</span> <span class="o">=</span> <span class="n">I</span><span class="o">.</span><span class="n">get_keywords</span><span class="p">()</span>
 
         <span class="c"># Check for expected results:</span>
-        <span class="c">#for value in [&#39;Merapi&#39;, 192055, 56514, 68568, 66971]:</span>
-        <span class="k">for</span> <span class="n">value</span> <span class="ow">in</span> <span class="p">[</span><span class="s">&#39;Merapi&#39;</span><span class="p">,</span> <span class="mi">190000</span><span class="p">,</span> <span class="mi">56000</span><span class="p">,</span> <span class="mi">66000</span><span class="p">,</span> <span class="mi">68000</span><span class="p">]:</span>
+        <span class="k">for</span> <span class="n">value</span> <span class="ow">in</span> <span class="p">[</span><span class="s">&#39;Merapi&#39;</span><span class="p">,</span> <span class="mi">192055</span><span class="p">,</span> <span class="mi">56514</span><span class="p">,</span> <span class="mi">68568</span><span class="p">,</span> <span class="mi">66971</span><span class="p">]:</span>
             <span class="n">x</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
-            <span class="n">summary</span> <span class="o">=</span> <span class="n">keywords</span><span class="p">[</span><span class="s">&#39;impact_summary&#39;</span><span class="p">]</span>
-            <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;Did not find expected value </span><span class="si">%s</span><span class="s"> in summary </span><span class="si">%s</span><span class="s">&#39;</span>
-                   <span class="o">%</span> <span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">summary</span><span class="p">))</span>
-            <span class="k">assert</span> <span class="nb">str</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="ow">in</span> <span class="n">summary</span><span class="p">,</span> <span class="n">msg</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s">&#39;Did not find expected value </span><span class="si">%s</span><span class="s"> in summary&#39;</span> <span class="o">%</span> <span class="n">x</span>
+            <span class="k">assert</span> <span class="nb">str</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="ow">in</span> <span class="n">keywords</span><span class="p">[</span><span class="s">&#39;impact_summary&#39;</span><span class="p">],</span> <span class="n">msg</span>
 
         <span class="c"># FIXME (Ole): Should also have test for concentric circle</span>
         <span class="c">#              evacuation zones</span>
@@ -675,8 +670,8 @@
                                          <span class="n">E_clip</span><span class="o">.</span><span class="n">get_geotransform</span><span class="p">(),</span>
                                          <span class="n">polygons</span><span class="p">)</span>
 
-        <span class="c">#print res_clip</span>
-        <span class="c">#print len(res_clip)</span>
+        <span class="k">print</span> <span class="n">res_clip</span>
+        <span class="k">print</span> <span class="nb">len</span><span class="p">(</span><span class="n">res_clip</span><span class="p">)</span>
 
         <span class="n">res_full</span> <span class="o">=</span> <span class="n">clip_grid_by_polygons</span><span class="p">(</span><span class="n">E_full</span><span class="o">.</span><span class="n">get_data</span><span class="p">(),</span>
                                          <span class="n">E_full</span><span class="o">.</span><span class="n">get_geotransform</span><span class="p">(),</span>
@@ -685,22 +680,22 @@
         <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">res_clip</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">res_full</span><span class="p">)</span>
 
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">res_clip</span><span class="p">)):</span>
-            <span class="c">#print</span>
+            <span class="k">print</span>
             <span class="n">x</span> <span class="o">=</span> <span class="n">res_clip</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
             <span class="n">y</span> <span class="o">=</span> <span class="n">res_full</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
 
-            <span class="c">#print x</span>
-            <span class="c">#print y</span>
+            <span class="k">print</span> <span class="n">x</span>
+            <span class="k">print</span> <span class="n">y</span>
             <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;Got len(x) == </span><span class="si">%i</span><span class="s">, len(y) == </span><span class="si">%i</span><span class="s">. Should be the same&#39;</span>
                    <span class="o">%</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">y</span><span class="p">)))</span>
             <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">y</span><span class="p">),</span> <span class="n">msg</span>
 
             <span class="c"># Check that they are inside the respective polygon</span>
             <span class="n">P</span> <span class="o">=</span> <span class="n">polygons</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
-            <span class="n">idx</span> <span class="o">=</span> <span class="n">inside_polygon</span><span class="p">(</span><span class="n">x</span><span class="p">,</span>  <span class="c"># pylint: disable=W0612</span>
+            <span class="n">idx</span> <span class="o">=</span> <span class="n">inside_polygon</span><span class="p">(</span><span class="n">x</span><span class="p">,</span>
                                  <span class="n">P</span><span class="o">.</span><span class="n">outer_ring</span><span class="p">,</span>
                                  <span class="n">holes</span><span class="o">=</span><span class="n">P</span><span class="o">.</span><span class="n">inner_rings</span><span class="p">)</span>
-            <span class="c">#print idx</span>
+            <span class="k">print</span> <span class="n">idx</span>
 
             <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;Expected point locations to be the same in clipped &#39;</span>
                    <span class="s">&#39;and full grids, Got </span><span class="si">%s</span><span class="s"> and </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">))</span>
@@ -994,44 +989,6 @@
             <span class="c"># FIXME (Ole): check more numbers</span>
 
     <span class="n">test_flood_building_impact_function</span><span class="o">.</span><span class="n">slow</span> <span class="o">=</span> <span class="bp">True</span>
-
-    <span class="k">def</span> <span class="nf">test_data_sources_are_carried_forward</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Data sources are carried forward to impact layer</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-
-        <span class="n">haz_filename</span> <span class="o">=</span> <span class="s">&#39;Flood_Current_Depth_Jakarta_geographic.asc&#39;</span>
-
-        <span class="c"># File names for hazard level and exposure</span>
-        <span class="n">hazard_filename</span> <span class="o">=</span> <span class="s">&#39;</span><span class="si">%s</span><span class="s">/</span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">HAZDATA</span><span class="p">,</span> <span class="n">haz_filename</span><span class="p">)</span>
-        <span class="n">exposure_filename</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;</span><span class="si">%s</span><span class="s">/OSM_building_polygons_20110905.shp&#39;</span>
-                             <span class="o">%</span> <span class="n">TESTDATA</span><span class="p">)</span>
-
-        <span class="c"># Calculate impact using API</span>
-        <span class="n">H</span> <span class="o">=</span> <span class="n">read_layer</span><span class="p">(</span><span class="n">hazard_filename</span><span class="p">)</span>
-        <span class="n">E</span> <span class="o">=</span> <span class="n">read_layer</span><span class="p">(</span><span class="n">exposure_filename</span><span class="p">)</span>
-
-        <span class="n">H_tit</span> <span class="o">=</span> <span class="n">H</span><span class="o">.</span><span class="n">get_keywords</span><span class="p">()[</span><span class="s">&#39;title&#39;</span><span class="p">]</span>
-        <span class="n">E_tit</span> <span class="o">=</span> <span class="n">E</span><span class="o">.</span><span class="n">get_keywords</span><span class="p">()[</span><span class="s">&#39;title&#39;</span><span class="p">]</span>
-
-        <span class="n">H_src</span> <span class="o">=</span> <span class="n">H</span><span class="o">.</span><span class="n">get_keywords</span><span class="p">()[</span><span class="s">&#39;source&#39;</span><span class="p">]</span>
-        <span class="n">E_src</span> <span class="o">=</span> <span class="n">E</span><span class="o">.</span><span class="n">get_keywords</span><span class="p">()[</span><span class="s">&#39;source&#39;</span><span class="p">]</span>
-
-        <span class="n">plugin_name</span> <span class="o">=</span> <span class="s">&#39;FloodBuildingImpactFunction&#39;</span>
-        <span class="n">plugin_list</span> <span class="o">=</span> <span class="n">get_plugins</span><span class="p">(</span><span class="n">plugin_name</span><span class="p">)</span>
-        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">plugin_list</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span>
-        <span class="k">assert</span> <span class="n">plugin_list</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">plugin_name</span>
-
-        <span class="n">IF</span> <span class="o">=</span> <span class="n">plugin_list</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="n">plugin_name</span><span class="p">]</span>
-
-        <span class="n">impact_vector</span> <span class="o">=</span> <span class="n">calculate_impact</span><span class="p">(</span><span class="n">layers</span><span class="o">=</span><span class="p">[</span><span class="n">H</span><span class="p">,</span> <span class="n">E</span><span class="p">],</span>
-                                         <span class="n">impact_fcn</span><span class="o">=</span><span class="n">IF</span><span class="p">)</span>
-
-        <span class="k">assert</span> <span class="n">impact_vector</span><span class="o">.</span><span class="n">get_keywords</span><span class="p">()[</span><span class="s">&#39;hazard_title&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">H_tit</span>
-        <span class="k">assert</span> <span class="n">impact_vector</span><span class="o">.</span><span class="n">get_keywords</span><span class="p">()[</span><span class="s">&#39;exposure_title&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">E_tit</span>
-        <span class="k">assert</span> <span class="n">impact_vector</span><span class="o">.</span><span class="n">get_keywords</span><span class="p">()[</span><span class="s">&#39;hazard_source&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">H_src</span>
-        <span class="k">assert</span> <span class="n">impact_vector</span><span class="o">.</span><span class="n">get_keywords</span><span class="p">()[</span><span class="s">&#39;exposure_source&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">E_src</span>
-
-    <span class="n">test_data_sources_are_carried_forward</span><span class="o">.</span><span class="n">slow</span> <span class="o">=</span> <span class="bp">True</span>
 
     <span class="k">def</span> <span class="nf">test_earthquake_damage_schools</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Lembang building damage from ground shaking works</span>
@@ -3231,7 +3188,7 @@
 
     <div class="footer">
         &copy; Copyright 2012, BNPB/AIFDR/GFDRR.
-      Last updated on Oct 24, 2012.
+      Last updated on Oct 17, 2012.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
     </div>
     <!-- cloud_sptheme 1.3 -->
