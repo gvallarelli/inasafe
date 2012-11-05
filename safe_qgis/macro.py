@@ -19,9 +19,12 @@ __copyright__ += 'Disaster Reduction'
 
 import os
 import logging
+import PyQt4.QtCore as QtCore
+
 from safe.common.utilities import ugettext as tr
 from safe_qgis.dock import Dock
 from qgis.utils import iface
+
 
 LOGGER = logging.getLogger('InaSAFE')
 
@@ -79,18 +82,34 @@ def setupScenario(theHazard, theExposure, theFunction,
 
 def runScenario():
     """Simulate pressing run button in InaSAFE dock widget.
-
+    Returns: None
     """
 
-    #FIXME: (Gigih) need to check if scenario failed or not.
     theDock = findInaSAFEDock()
+
+    def completed():
+        LOGGER.debug("scenario done")
+        QtCore.QObject.disconnect(theDock.pbnRunStop,
+            QtCore.SIGNAL('enabled()'),
+            completed)
+
+    QtCore.QObject.connect(theDock.pbnRunStop,
+        QtCore.SIGNAL('enabled()'), completed)
     theDock.pbnRunStop.click()
 
 
 
-
-
 def addLayers(theDirectory, thePaths):
+    """ Add vector or raster layer to current project
+     Args:
+        theDirectory str - (Required) base directory to find path.
+        thePaths str or list - (Required) path of layer file.
+
+    Returns: None.
+
+    Raises: Exception - occurs when thePaths have illegal extension
+            TypeError - occurs when thePaths is not string or list
+    """
 
     def extractPath(thePath):
         myFilename = os.path.split(thePath)[-1]  # In case path was absolute
@@ -105,7 +124,7 @@ def addLayers(theDirectory, thePaths):
         myPaths = [extractPath(x) for x in thePaths]
     else:
         myMessage = "thePaths must be string or list not %s" % type(thePaths)
-        raise Exception(myMessage)
+        raise TypeError(myMessage)
 
     for myPath, myBaseName in myPaths:
         myExt = os.path.splitext(myPath)[-1]
@@ -121,9 +140,9 @@ def addLayers(theDirectory, thePaths):
 
 
 def assertEquals(theValue, theExpected, theMessage=None):
-    #FIXME: (gigih) change assert to something else
-    assert theValue == theExpected, theMessage
+    if theValue != theExpected:
+        raise Exception(theMessage)
 
 def assertTrue(theValue, theMessage=None):
-    #FIXME: (gigih) change assert to something else
-    assert theValue is True, theMessage
+    if theValue is not True:
+        raise Exception(theMessage)
