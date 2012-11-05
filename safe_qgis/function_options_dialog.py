@@ -22,6 +22,8 @@ from PyQt4 import QtGui, QtCore
 from function_options_dialog_base import (
             Ui_FunctionOptionsDialogBase)
 
+from safe_interface import safeTr
+
 try:
     _fromUtf8 = QtCore.QString.fromUtf8
 except AttributeError:
@@ -89,7 +91,7 @@ class FunctionOptionsDialog(QtGui.QDialog,
         myKey = theParameterKey
         myKey = myKey.replace('_', ' ')
         myKey = myKey.capitalize()
-        myLabel.setText(myKey)
+        myLabel.setText(safeTr(myKey))
         myLabel.setToolTip(str(type(theParameterValue)))
         self.editableImpactFunctionsFormLayout.setWidget(self.formItemCounters,
                                         QtGui.QFormLayout.LabelRole, myLabel)
@@ -101,10 +103,6 @@ class FunctionOptionsDialog(QtGui.QDialog,
                                         QtGui.QFormLayout.FieldRole,
                                         myLineEdit)
 
-        #FIXME (MB) temporary fix through hiding for issue 365
-        if theParameterKey == 'postprocessors':
-            myLineEdit.hide()
-            myLabel.hide()
         self.formItemCounters += 1
 
     def setDialogInfo(self, theFunctionID):
