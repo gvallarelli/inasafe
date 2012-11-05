@@ -55,7 +55,7 @@ def runScript():
 
     macro.setupScenario(
         theHazard='A flood in Jakarta',
-        theExposure='Essential buildings',
+        theExposure='Bangunan-bangunan penting',
         theFunction='Terkena banjir',
     )
 
